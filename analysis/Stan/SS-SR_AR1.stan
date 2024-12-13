@@ -105,7 +105,7 @@ transformed parameters{
 
 model{
   // Priors
-  lnalpha ~ normal(0,3);
+  lnalpha ~ normal(0,1.5);
   beta ~ normal(0,1);
   sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
@@ -142,5 +142,15 @@ model{
 }
 
 generated quantities {
+  //benchmarks
+  
+  //prior and posterior predictive check
+  //below is what I did for fraser pink, but I wonder if I should:
+    //-add A_obs and 
+    //-makle the CVs rng too
+  array[nyrs] real H_rep;
+  array[nyrs] real S_rep;
 
+  H_rep = lognormal_rng(lnC, sqrt(log((H_cv^2) + 1))); 
+  S_rep = lognormal_rng(lnS, sqrt(log((S_cv^2) + 1)));
 }
