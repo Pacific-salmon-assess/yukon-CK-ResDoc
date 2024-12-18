@@ -103,30 +103,3 @@ mcmc_combo(AR1.fit, pars = c("Dir_alpha[1]", "Dir_alpha[2]",
 
 # how do correlations in leading parameters look?
 pairs(AR1.fit, pars = c("beta", "lnalpha", "sigma_R", "phi"))
-
-#loop to make stan data and fit? ---------------------------------------------------------
-
-for(i in unique(sp_har$cu)){ #just checking to see
-  sp_har1 <- filter(sp_har, cu == i) 
-  
-  a_min <- 4
-  a_max <- 7 
-  nyrs <- nrow(sp_har1) #number of spawning years
-  A <- a_max - a_min + 1 #total age classes
-  nRyrs <- nyrs + A - 1 #number of recruitment years, i.e. add in unobserved age classes at start to predict 1st year of spawners
-  
-  stan.data <- list("nyrs" = nyrs,
-                    "a_min" = a_min,
-                    "a_max" = a_max,
-                    "A" = A,
-                    "nRyrs" = nyrs + A - 1,
-                    "A_obs" = A_obs,
-                    "S_obs" = sp_har1$spwn,
-                    "H_obs" = sp_har1$harv,
-                    "S_cv" = sp_har1$spwn_cv,
-                    "H_cv" = sp_har1$harv_cv)
-  
-  AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
-                  data = stan.data)
-  
-}
