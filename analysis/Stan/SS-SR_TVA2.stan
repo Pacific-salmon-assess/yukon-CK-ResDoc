@@ -15,8 +15,8 @@ data{
 
 parameters{
   real<lower=0> beta;                     // Ricker b
-  real ln_alpha0;                         // initial productivity (on log scale)
-  vector[nRyrs-1] alpha_dev;               // time varying year-to-year deviations in a
+  real ln_alpha0;         // initial productivity (on log scale)
+  vector[nyrs-1] alpha_dev;  // time varying year-to-year deviations in a
 
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R;                  // process error
@@ -47,7 +47,7 @@ transformed parameters{
   real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
   matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
-  vector[nRyrs] ln_alpha;                // ln_alpha in each year
+  vector[nyrs] ln_alpha;                 // ln_alpha in each year
 
 
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
@@ -91,20 +91,22 @@ transformed parameters{
   
   // random walk on time varying alpha
   ln_alpha[1] = ln_alpha0;                                    // initial value is just prior
-  for(t in 2:nRyrs){
+  for(t in 2:nyrs){
     ln_alpha[t] = ln_alpha[t-1] + alpha_dev[t-1]*sigma_alpha; // random walk of log_a
   }
   
   // Ricker SR with AR1 process on log recruitment residuals for years with brood year spawners
-  for(i in 1:nRyrs){
+  for (i in 1:nRyrs) {
     lnresid[i] = 0.0;
     lnRm_1[i] = 0.0;
   }
 
-  for(y in (A+a_min):nRyrs{
-    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y-a_max] - beta * S[y-a_max];
+  for (y in (A+a_min):nRyrs) {
+    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y-1] - beta * S[y-a_max];
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
+
+
 }
 
 model{
