@@ -4,6 +4,7 @@ library(tidyverse)
 library(rstan)
 library(bayesplot)
 library(shinystan)
+library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/functions.R"))
 
 # load data ------------------------------------------------------------------------------
@@ -69,53 +70,191 @@ if(refit == TRUE){
   names(AR1.fits) <- unique(sp_har$cu)
 }
 
-AR1.summary <- AR1.fits |> 
-  map(rstan::summary) |> 
-  map(\(x) x$summary) |> 
-  map(as.data.frame) |> 
-  mutate(par = rownames()) |>
-  list_rbind(names_to = "cu")
+# describe diagnostics in loop -----------------------------------------------------------
+min_ESS <- NULL
+max_Rhat <- NULL
+for(i in unique(sp_har$cu)){
+  sub_dat <- filter(sp_har, cu==i)
+  
+  sub_summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary)
+  
+  sub_pars <- rstan::extract(AR1.fits[[i]])
+  
+  min_ESS <- rbind(min_ESS, data.frame(CU=i, 
+                                       ESS=round(min(sub_summary$n_eff, na.rm=T))))
+  
+  max_Rhat <- rbind(max_Rhat, data.frame(CU=i, 
+                                         Rhat=round(max(sub_summary$Rhat, na.rm=T), 3)))
+  
+  R <- (sub_dat$harv+sub_dat$spwn)
+  R_rep <- sub_pars$H_rep[1:500,] + sub_pars$S_rep[1:500,]
+  
+  ppc_dens_overlay(R, R_rep) +
+    xlim(NA, quantile(R_rep, 0.99)) +
+    theme(legend.position = "none") +
+    labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
+  
+  my.ggsave(here("analysis/plots/diagnostics", paste0("PPC_", i, ".PNG")))
+  
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"),
+             combo = c("dens_overlay", "trace"),
+             gg_theme = legend_none()) #wishi I could add title
+  
+  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_leading_", i, ".PNG")), p)
+  
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
+             combo = c("dens_overlay", "trace"),
+             gg_theme = legend_none())
+  
+  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_age_par_", i, ".PNG")), p)
+  
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
+                               "Dir_alpha[3]", "Dir_alpha[4]"),
+             combo = c("dens_overlay", "trace"),
+             gg_theme = legend_none())
+  
+  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_ages_", i, ".PNG")), p)
+}
+  
+#modelling results -----------------------------------------------------------------------
+bench.par.table <- NULL 
 
-AR1.pars <- AR1.fits |> 
-  map(\(x) x |> 
-      rstan::extract() |> 
-      map(as.data.frame) |> 
-      enframe()) |> 
-  list_rbind(names_to = "cu")
-# diagnostics
+for(i in unique(sp_har$cu)){
+  sub_dat <- filter(sp_har, cu==i)
+  sub_pars <- rstan::extract(AR1.fits[[i]])
+  
+  #latent states of spawners and recruits---
+  ##need to make sure this is right! - lets make it robust by adding a_obs & nyrs args  
+  spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:38] 
+  rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,5:42]
+  
+  brood_t <- as.data.frame(cbind(sub_dat$year[1:38],t(spwn.quant), t(rec.quant))) |>
+    round(2)
+  colnames(brood_t) <- c("BroodYear","S_lwr","S_med","S_upr","R_lwr","R_med","R_upr")
+  
+  #SR relationship based on full posterior---
+  spw <- seq(0,max(brood_t$S_upr),length.out=100)
+  iter <- length(sub_pars$lnalpha)
+  SR_pred <- matrix(NA,length(spw), iter)
+  
+  bench <- matrix(NA,iter,4,
+                  dimnames = list(seq(1:iter), c("Sgen","Smsy","Umsy", "Seq")))
+  
+  for(j in 1:iter){ 
+    ln_a <- sub_pars$lnalpha[j]
+    b <- sub_pars$beta[j]
+    SR_pred[,j] <- (exp(ln_a)*spw*exp(-b*spw))
+    
+    bench[j,2] <- get_Smsy(ln_a, b) #S_MSY
+    bench[j,1] <- get_Sgen(exp(ln_a),b,-1,1/b*2, bench[j,2]) #S_gen
+    bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
+    bench[j,4] <- ln_a/b #S_eq
+  }
+  
+  SR_pred <- as.data.frame(cbind(spw,t(apply(SR_pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
+    round(2)
+  colnames(SR_pred) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr")
+  
+  # get benchmarks & pars ------------------------------------------------------------------
+  bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
+  
+  #get some posteriors for plotting later
+  Smsy.8.post <- bench[,2]
+  Sgen.post <- bench[,1]
+  
+  bench.quant <- apply(bench, 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
+    t()
+  
+  mean <- apply(bench,2,mean, na.rm=T) #get means of each
+  
+  sub_benchmarks <- cbind(bench.quant, mean) |>
+    as.data.frame() |>
+    mutate(cu = i) |>
+    relocate('50%', 1)
+  
+  #other pars to report 
+  alpha <- exp(quantile(sub_pars$lnalpha, probs = c(.1, .5, .9)))
+  beta <- quantile(sub_pars$beta, probs = c(.1, .5, .9))
+  sigma <- quantile(sub_pars$sigma_R, probs = c(.1, .5, .9))
+  phi <- quantile(sub_pars$phi, probs = c(.1, .5, .9))
+  
+  par.quants <- rbind(alpha, sigma, beta, phi)
+  
+  #make big table of bench and pars
+  par.summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary) |>
+    select(mean, n_eff, Rhat)
+  
+  #summarise not alphas...
+  par.summary <- filter(par.summary, row.names(par.summary) %in% c('lnalpha', 'beta',
+                                                                   'phi', 'sigma_R')) |>
+    slice(1,4,3,2) |>
+    mutate(cu = i)
+  
+  pars <- cbind(par.quants, par.summary)
+  
+  sub.bench.par.table <- bind_rows(sub_benchmarks, pars) |>
+    mutate(n_eff = round(n_eff, 0),
+           Rhat = round(Rhat, 4))
+  
+  sub.bench.par.table <- mutate(sub.bench.par.table, bench.par = rownames(sub.bench.par.table)) 
+  
+  bench.par.table <- bind_rows(bench.par.table, sub.bench.par.table)
+  
+  #Plotting ------------------------------------------------------------------------------
+  # plot SR relationship --- ## somethin' ain't proper here 
+  ggplot() +
+    geom_abline(intercept = 0, slope = 1,col="dark grey") +
+    geom_ribbon(data = SR_pred, aes(x = Spawn, ymin = Rec_lwr, ymax = Rec_upr),
+                fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
+    geom_line(data = SR_pred, aes(x = Spawn, y = Rec_med), size = 1) +
+    geom_errorbar(data = brood_t, aes(x= S_med, y = R_med, ymin = R_lwr, ymax = R_upr),
+                  colour="grey", width=0, size=0.3) +
+    geom_errorbarh(data = brood_t, aes(y = R_med, xmin = S_lwr, xmax = S_upr),
+                   height=0, colour = "grey", size = 0.3) +
+    geom_point(data = brood_t,
+               aes(x = S_med,
+                   y = R_med,
+                   color=BroodYear),
+               size = 3) +
+  #  coord_cartesian(xlim=c(0, 20), ylim=c(0,max(brood_t[,7])), expand = FALSE) +
+    scale_colour_viridis_c(name = "Brood Year")+
+    labs(x = "Spawners (millions)",
+         y = "Recruits (millions)", 
+         title = i) +
+    theme(legend.position = "bottom",
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.key.size = unit(0.4, "cm"),
+          legend.title = element_text(size=9),
+          legend.text = element_text(size=8))
+  my.ggsave(here("analysis/plots/", paste0("SRR_", i, ".PNG")))
+  
+  # then residuals---
+  resid.quant <- apply(sub_pars$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[, 1:39]  ##check dims
+  
+  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant)))
+  colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
+  
+  ggplot(resids, aes(x=year, y = mid)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
+    geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) + #dump mid for consistency?
+    geom_line(lwd = 1.1) +
+    coord_cartesian(ylim=c(-2,2)) +
+    scale_x_continuous(breaks = c(1961, 1981, 2001, 2021)) +
+    labs(x = "Return year",
+         y = "Recruitment residuals") +
+    theme(legend.position = "none",
+          panel.grid = element_blank()) +
+    geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
+  my.ggsave(here("analysis/plots/", paste0("rec_resids_", i, ".PNG")))
+  
+  #KOBE PLOT - sort out the SR links first
+}
 
+bench.par.table <- bench.par.table |>
+  relocate(cu, 1) |>
+  relocate(bench.par, .after = 1) |>
+  relocate(mean, .after = 2)
 
 # fit TV-alpha (fix in in the single CU one) ---------------------------------------------
 
-# diagnostics
-lead_pars <- c("beta", "lnalpha", "sigma_R", "lnresid_0", "phi")
-
-AR1.fits |> 
-  map(\(x) mcmc_combo(x, 
-      pars = lead_pars,
-      combo = c("dens_overlay", "trace"),
-      gg_theme = legend_none())) |>
-  ggsave()
-
-
-# age pars
-AR1_mods |> 
-  map(
-    \(x) mcmc_combo(
-      x, 
-      pars = c("D_scale", "D_sum"),
-      combo = c("dens_overlay", "trace"),
-      gg_theme = legend_none()
-    )
-  )
-
-AR1_mods |> 
-  map(
-    \(x) mcmc_combo(
-      x, 
-      pars = paste0("Dir_alpha[", 1:4, "]"),
-      combo = c("dens_overlay", "trace"),
-      gg_theme = legend_none()
-    )
-  )
-# wrangle important outputs and write them

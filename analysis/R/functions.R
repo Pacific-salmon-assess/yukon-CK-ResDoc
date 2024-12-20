@@ -27,3 +27,21 @@ make_stan_data <- function(cu) {
   
   return(stan.data)
 }
+
+my.ggsave <- function(filename = default_name(plot), plot = last_plot(), 
+                      width= 9, height = 5.562, dpi= 180){
+  ggsave(filename=filename, plot = last_plot(), width=width, height=height, dpi=dpi, bg="white")
+}
+
+# benchmark functions --------------------------------------------------------------------
+get_Smsy <- function(a, b){
+  Smsy <- (1 - lambert_W0(exp(1 - a))) / b
+  if(Smsy <0){Smsy <- 0.001} #dumb hack for low draws so Smsy doesnt go negative
+  return(Smsy)
+}
+
+get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
+  fun_Sgen <- function(Sgen, a, b, Smsy) {Sgen * a * exp(-b * Sgen) - Smsy}
+  Sgen <- uniroot(fun_Sgen, interval=c(int_lower, int_upper), a=a, b=b, Smsy=Smsy)$root
+  return(Sgen)
+}
