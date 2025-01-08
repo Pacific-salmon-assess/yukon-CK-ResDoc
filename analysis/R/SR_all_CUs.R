@@ -1,6 +1,7 @@
 # functional programming to loop through CU fits and diagnostics
 library(here)
 library(tidyverse)
+library(ggplotify) #for as.ggplot() to help mcmc_combo() plotting
 library(rstan)
 library(bayesplot)
 library(shinystan)
@@ -30,7 +31,7 @@ A_obs <- ages |>
 
 rm(harvest)
 
-stan_data <- unique(sp_har$cu) |> 
+stan_data <- unique(sp_har$cu) |> #not currently using, just a way to make into a list
   purrr::set_names() |> 
   map(make_stan_data)
 
@@ -49,7 +50,7 @@ if(refit == TRUE){
                       "a_min" = a_min,
                       "a_max" = a_max,
                       "A" = A,
-                      "nRyrs" = nyrs + A - 1,
+                      "nRyrs" = nRyrs,
                       "A_obs" = A_obs,
                       "S_obs" = sp_har1$spwn,
                       "H_obs" = sp_har1$harv,
@@ -98,20 +99,25 @@ for(i in unique(sp_har$cu)){
   
   p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"),
              combo = c("dens_overlay", "trace"),
-             gg_theme = legend_none()) #wishi I could add title
-  
-  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_leading_", i, ".PNG")), p)
+             gg_theme = legend_none()) |> 
+    as.ggplot() +
+    labs(title = paste(i, "leading parameters"))
+  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
   
   p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
              combo = c("dens_overlay", "trace"),
-             gg_theme = legend_none())
+             gg_theme = legend_none())|> 
+    as.ggplot() +
+    labs(title = paste(i, "age pars"))
   
   my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_age_par_", i, ".PNG")), p)
   
   p <- mcmc_combo(AR1.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
                                "Dir_alpha[3]", "Dir_alpha[4]"),
              combo = c("dens_overlay", "trace"),
-             gg_theme = legend_none())
+             gg_theme = legend_none())|> 
+    as.ggplot() +
+    labs(title = paste(i, "age probs"))
   
   my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_ages_", i, ".PNG")), p)
 }
