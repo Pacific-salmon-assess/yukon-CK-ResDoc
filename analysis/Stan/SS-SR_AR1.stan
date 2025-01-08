@@ -23,7 +23,7 @@ parameters{
   real lnresid_0;                         // first residual for lag-1 correlation in process error
   real<lower=0> mean_ln_R0;               // "true" mean log recruitment in first a.max years with no spawner link
   vector<lower=0.01,upper=0.99>[nyrs] U;  // harvest rate
-  vector<lower=0,upper=1>[3] prob;        // maturity schedule probs
+  vector<lower=0,upper=1>[A-1] prob;      // maturity schedule probs, nested so 1 less than classes, final class is the leftovers of these 3
   real<lower=0,upper=1> D_scale;          // governs variability of age proportion vectors across cohorts
   matrix<lower=0.01>[nRyrs, A] g;         // individual year/age class gamma variates for generating age at maturity proportions
 }
@@ -35,15 +35,15 @@ transformed parameters{
   vector<lower=0>[nyrs] C;              // catch states
   vector[nyrs] lnC;                     // log catch states
   vector<lower=0>[nRyrs] R;             // recruitment states
-  vector[nRyrs] lnresid;                // log recruitment residuals
-  vector[nRyrs] lnRm_1;                 // log recruitment states in absence of lag-one correlation
+  vector[nRyrs] lnresid;                // log recruitment residuals ## diff between below?
+  vector[nRyrs] lnRm_1;                 // log recruitment states in absence of lag-one correlation ##diff with above?
   vector[nRyrs] lnRm_2;                 // log recruitment states after accounting for lag-one correlation
   matrix<lower=0>[nyrs, A] N_ta;        // returns by age matrix
   matrix<lower=0, upper=1>[nRyrs, A] p; // age at maturity proportions
-  vector<lower=0,upper=1>[4] pi;        // maturity schedule probs
+  vector<lower=0,upper=1>[A] pi;        // maturity schedule probs
   real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
-  matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
+  matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age class matrix
 
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
   pi[1] = prob[1];
@@ -86,17 +86,17 @@ transformed parameters{
 
   // Ricker SR with AR1 process on log recruitment residuals for years with brood year spawners
   for (i in 1:nRyrs) {
-    lnresid[i] = 0.0;
+    lnresid[i] = 0.0; //just initializing these so they can be estimated, or left at 0
     lnRm_1[i] = 0.0;
     lnRm_2[i] = 0.0;
   }
 
-  for (y in (A+a_min):nRyrs) {
-    lnRm_1[y] = lnS[y-a_max] + lnalpha - beta * S[y-a_max];
+  for (y in (A+a_min):nRyrs) { // Why start at 8? is this the first fully linked year?
+    lnRm_1[y] = lnS[y-a_max] + lnalpha - beta * S[y-a_max]; //index is like [8-7]
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
 
-  lnRm_2[A+a_min] =  lnRm_1[A+a_min] + phi * lnresid_0;
+  lnRm_2[A+a_min] =  lnRm_1[A+a_min] + phi * lnresid_0; //the first year where all 
 
   for (y in (A+a_min+1):nRyrs) {
     lnRm_2[y] =  lnRm_1[y] + phi * lnresid[y-1];
@@ -147,7 +147,7 @@ generated quantities {
   //prior and posterior predictive check
   //below is what I did for fraser pink, but I wonder if I should:
     //-add A_obs and 
-    //-makle the CVs rng too
+    //-makle the CVs rng too?
   array[nyrs] real H_rep;
   array[nyrs] real S_rep;
 
