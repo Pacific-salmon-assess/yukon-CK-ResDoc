@@ -9,7 +9,7 @@ library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/functions.R"))
 
 # load data ------------------------------------------------------------------------------
-refit <- FALSE #toggle T/F if you want to refit models
+refit <- TRUE #toggle T/F if you want to refit models
 
 harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
   dplyr::rename(stock = population, 
@@ -55,17 +55,25 @@ if(refit == TRUE){
                       "S_obs" = sp_har1$spwn,
                       "H_obs" = sp_har1$harv,
                       "S_cv" = sp_har1$spwn_cv,
-                      "H_cv" = sp_har1$harv_cv)
+                      "H_cv" = sp_har1$harv_cv, 
+                      "Smax_p" = 0.75*max(sp_har1$spwn), #what do we think Smax is? 
+                      "Smax_p_sig" = 1*max(sp_har1$spwn)) #can tinker with these values making the factor smaller mean's you've observed density dependence (i.e. the ricker "hump"))
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
                     data = stan.data)
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
+    
+    AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_semi_inform.stan"), 
+                    data = stan.data)
+    
+    saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1_semi_inform/", 
+                          paste0(i, "_AR1_semi.rds")))
   }
 }else{
   #make big summary list 
-  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), 
+  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_semi_inform"), #toggle which you want
                                 full.names = T), 
                      readRDS)
   names(AR1.fits) <- unique(sp_har$cu)
@@ -130,11 +138,10 @@ for(i in unique(sp_har$cu)){
   sub_pars <- rstan::extract(AR1.fits[[i]])
   
   #latent states of spawners and recruits---
-  ##need to make sure this is right! - lets make it robust by adding a_obs & nyrs args  
-  spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:38] 
-  rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,5:42]
+  spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)] 
+  rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs] ##need to describe WHY A+a_min
   
-  brood_t <- as.data.frame(cbind(sub_dat$year[1:38],t(spwn.quant), t(rec.quant))) |>
+  brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)],t(spwn.quant), t(rec.quant))) |>
     round(2)
   colnames(brood_t) <- c("BroodYear","S_lwr","S_med","S_upr","R_lwr","R_med","R_upr")
   
@@ -224,9 +231,9 @@ for(i in unique(sp_har$cu)){
                size = 3) +
   #  coord_cartesian(xlim=c(0, 20), ylim=c(0,max(brood_t[,7])), expand = FALSE) +
     scale_colour_viridis_c(name = "Brood Year")+
-    labs(x = "Spawners (millions)",
-         y = "Recruits (millions)", 
-         title = i) +
+    labs(x = "Spawners",
+         y = "Recruits", 
+         title = paste(i, "S-R fit")) +
     theme(legend.position = "bottom",
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -236,9 +243,10 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("SRR_", i, ".PNG")))
   
   # then residuals---
-  resid.quant <- apply(sub_pars$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[, 1:39]  ##check dims
+  ## NEED TO CHECK HOW THESE YEARS LINE UP
+  resid.quant <- apply(sub_pars$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] #CHECK INDEX
   
-  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant)))
+  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) #CHECK INDEX
   colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
   
   ggplot(resids, aes(x=year, y = mid)) +
@@ -246,9 +254,9 @@ for(i in unique(sp_har$cu)){
     geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) + #dump mid for consistency?
     geom_line(lwd = 1.1) +
     coord_cartesian(ylim=c(-2,2)) +
-    scale_x_continuous(breaks = c(1961, 1981, 2001, 2021)) +
     labs(x = "Return year",
-         y = "Recruitment residuals") +
+         y = "Recruitment residuals", 
+         title = paste(i, "recruitment residuals")) +
     theme(legend.position = "none",
           panel.grid = element_blank()) +
     geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
