@@ -35,6 +35,7 @@ transformed parameters{
   vector<lower=0>[nyrs] C;              // catch states
   vector[nyrs] lnC;                     // log catch states
   vector<lower=0>[nRyrs] R;             // recruitment states
+  real<lower=0> sigma_R_corr;           // log-normal bias-corrected process error
   vector[nRyrs] lnresid;                // log recruitment residuals ## diff between below?
   vector[nRyrs] lnRm_1;                 // log recruitment states in absence of lag-one correlation ##diff with above?
   vector[nRyrs] lnRm_2;                 // log recruitment states after accounting for lag-one correlation
@@ -60,6 +61,7 @@ transformed parameters{
   }
 
   R = exp(lnR);
+  sigma_R_corr = (sigma_R*sigma_R)/2;
 
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
@@ -129,7 +131,7 @@ model{
   lnR[1:a_max] ~ normal(mean_ln_R0, sigma_R0);
 
   // State model
-  lnR[(A+a_min):nRyrs] ~ normal(lnRm_2[(A+a_min):nRyrs], sigma_R);
+  lnR[(A+a_min):nRyrs] ~ normal(lnRm_2[(A+a_min):nRyrs], sigma_R_corr);
 
   // Observation model
   for(t in 1:nyrs){
