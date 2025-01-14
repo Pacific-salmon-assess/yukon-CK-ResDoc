@@ -25,7 +25,7 @@ A_obs <- ages |>
 rm(harvest)
 
 # fit to 1 cu ----------------------------------------------------------------------------
-sp_har1 <- filter(sp_har, cu == unique(sp_har$cu)[1]) 
+sp_har1 <- filter(sp_har, cu == unique(sp_har$cu)[4]) 
 
 a_min <- 4
 a_max <- 7 
@@ -60,12 +60,12 @@ R <- (sp_har1$harv+sp_har1$spwn) #recruit data
 R_rep <- model.pars.AR1$H_rep[1:500,] + model.pars.AR1$S_rep[1:500,]
 
 ppc_dens_overlay(R, R_rep) +
-  #xlim(quantile(R_rep, .01), quantile(R_rep, .99)) + #why are some <0? Seems ok based on vignette, not sure why xmin default =0 tho
+  xlim(quantile(R_rep, .01), quantile(R_rep, .99)) + #why are some <0? Seems ok based on vignette, not sure why xmin default =0 tho
   theme(legend.position = "none") +
   labs(y = "density", x = "y_est")
 
 
-# Ideally n_eff for individual parmeters is >200
+# Ideally n_eff for individual parameters is >200
 min(AR1.model.summary$n_eff, na.rm = TRUE)
 ggplot(AR1.model.summary, aes(n_eff)) +
   geom_histogram() +

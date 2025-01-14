@@ -60,23 +60,24 @@ if(refit == TRUE){
                       "Smax_p_sig" = 1*max(sp_har1$spwn)) #can tinker with these values making the factor smaller mean's you've observed density dependence (i.e. the ricker "hump"))
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
-                    data = stan.data)
+                    data = stan.data,
+                    iter = 2000)
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
-    AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_semi_inform.stan"), 
-                    data = stan.data)
+    #AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_semi_inform.stan"), 
+    #                data = stan.data)
     
-    saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1_semi_inform/", 
-                          paste0(i, "_AR1_semi.rds")))
+    #saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1_semi_inform/", 
+    #                      paste0(i, "_AR1_semi.rds")))
   }
 }else{
   #make big summary list 
-  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_semi_inform"), #toggle which you want
+  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), #toggle which you want
                                 full.names = T), 
                      readRDS)
-  names(AR1.fits) <- unique(sp_har$cu)
+  names(AR1.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
 }
 
 # describe diagnostics in loop -----------------------------------------------------------
@@ -271,4 +272,5 @@ bench.par.table <- bench.par.table |>
   relocate(mean, .after = 2)
 
 # fit TV-alpha (fix in in the single CU one) ---------------------------------------------
+
 
