@@ -120,7 +120,7 @@ transformed parameters{
 
 model{
   // Priors
-  lnalpha ~ normal(0,1.5);
+  lnalpha ~ normal(1,2);
   Smax ~ lognormal(Smax_p_corr, Smax_p_sig_corr);
   sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
@@ -129,7 +129,7 @@ model{
   prob[1] ~ beta(1,1);
   prob[2] ~ beta(1,1);
   prob[3] ~ beta(1,1);
-  D_scale ~ beta(1,1);
+  D_scale ~ beta(2,2);
 
   // Likelihoods
   // Gamma variates for each year and age class which are used to determine age at maturity proportions
