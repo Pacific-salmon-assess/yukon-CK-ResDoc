@@ -31,18 +31,14 @@ A_obs <- ages |>
 
 rm(harvest)
 
-stan_data <- unique(sp_har$cu) |> #not currently using, just a way to make into a list
-  purrr::set_names() |> 
-  map(make_stan_data)
-
-# fit AR1 --------------------------------------------------------------------------------
+# fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
-  for(i in unique(sp_har$cu)){ #just checking to see
+  for(i in unique(sp_har$cu)){
     sp_har1 <- filter(sp_har, cu == i) 
     
     a_min <- 4
     a_max <- 7 
-    nyrs <- nrow(sp_har1) #number of spawning years
+    nyrs <- nrow(sp_har1) #number of years
     A <- a_max - a_min + 1 #total age classes
     nRyrs <- nyrs + A - 1 #number of recruitment years, i.e. add in unobserved age classes at start to predict 1st year of spawners
     
@@ -55,63 +51,73 @@ if(refit == TRUE){
                       "S_obs" = sp_har1$spwn,
                       "H_obs" = sp_har1$harv,
                       "S_cv" = sp_har1$spwn_cv,
-                      "H_cv" = sp_har1$harv_cv, 
-                      "Smax_p" = 0.75*max(sp_har1$spwn), #what do we think Smax is? 
-                      "Smax_p_sig" = 1*max(sp_har1$spwn)) #can tinker with these values making the factor smaller mean's you've observed density dependence (i.e. the ricker "hump"))
+                      "H_cv" = sp_har1$harv_cv)
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
                     data = stan.data,
-                    iter = 2000)
+                    iter = 8000)
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
-    #AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_semi_inform.stan"), 
-    #                data = stan.data)
+    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
+                    data = stan.data,
+                    iter = 8000)
     
-    #saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1_semi_inform/", 
-    #                      paste0(i, "_AR1_semi.rds")))
+    saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
+                          paste0(i, "_TVA.rds")))
   }
 }else{
-  #make big summary list 
-  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), #toggle which you want
+  if(!dir.exists(here("analysis/data/generated/model_fits/AR1")) &
+     !dir.exists(here("analysis/data/generated/model_fits/TVA"))){
+    stop(print("Make sure you have fit both models at least once!"))
+  }
+  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
                                 full.names = T), 
                      readRDS)
   names(AR1.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+  
+  TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
+                                full.names = T), 
+                     readRDS)
+  names(TVA.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
 }
 
 # describe diagnostics in loop -----------------------------------------------------------
-min_ESS <- NULL
-max_Rhat <- NULL
+min_ESS_AR1 <- NULL
+max_Rhat_AR1 <- NULL
+min_ESS_TVA <- NULL
+max_Rhat_TVA <- NULL
 for(i in unique(sp_har$cu)){
   sub_dat <- filter(sp_har, cu==i)
   
-  sub_summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary)
+  #diagnostics associated w/ AR1 model---
+  sub_AR1_summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary)
   
-  sub_pars <- rstan::extract(AR1.fits[[i]])
+  sub_AR1_pars <- rstan::extract(AR1.fits[[i]])
   
-  min_ESS <- rbind(min_ESS, data.frame(CU=i, 
-                                       ESS=round(min(sub_summary$n_eff, na.rm=T))))
+  min_ESS_AR1 <- rbind(min_ESS_AR1, data.frame(CU=i, 
+                                       ESS=round(min(sub_AR1_summary$n_eff, na.rm=T))))
   
-  max_Rhat <- rbind(max_Rhat, data.frame(CU=i, 
-                                         Rhat=round(max(sub_summary$Rhat, na.rm=T), 3)))
+  max_Rhat_AR1 <- rbind(max_Rhat_AR1, data.frame(CU=i, 
+                                         Rhat=round(max(sub_AR1_summary$Rhat, na.rm=T), 3)))
   
   R <- (sub_dat$harv+sub_dat$spwn)
-  R_rep <- sub_pars$H_rep[1:500,] + sub_pars$S_rep[1:500,]
+  R_rep <- sub_AR1_pars$H_rep[1:500,] + sub_AR1_pars$S_rep[1:500,]
   
   ppc_dens_overlay(R, R_rep) +
     xlim(NA, quantile(R_rep, 0.99)) +
     theme(legend.position = "none") +
     labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
   
-  my.ggsave(here("analysis/plots/diagnostics", paste0("PPC_", i, ".PNG")))
+  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("PPC_", i, ".PNG")))
   
-  p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"),
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"), #for AR1
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none()) |> 
     as.ggplot() +
     labs(title = paste(i, "leading parameters"))
-  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
+  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
   
   p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
              combo = c("dens_overlay", "trace"),
@@ -119,7 +125,7 @@ for(i in unique(sp_har$cu)){
     as.ggplot() +
     labs(title = paste(i, "age pars"))
   
-  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_age_par_", i, ".PNG")), p)
+  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_age_par_", i, ".PNG")), p)
   
   p <- mcmc_combo(AR1.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
                                "Dir_alpha[3]", "Dir_alpha[4]"),
@@ -128,7 +134,52 @@ for(i in unique(sp_har$cu)){
     as.ggplot() +
     labs(title = paste(i, "age probs"))
   
-  my.ggsave(here("analysis/plots/diagnostics", paste0("mcmc_ages_", i, ".PNG")), p)
+  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_ages_", i, ".PNG")), p)
+  
+  #diagnostics associated w/ TVA model---
+  sub_TVA_summary <- as.data.frame(rstan::summary(TVA.fits[[i]])$summary)
+  
+  sub_TVA_pars <- rstan::extract(TVA.fits[[i]])
+  
+  min_ESS_TVA <- rbind(min_ESS_TVA, data.frame(CU=i, 
+                                               ESS=round(min(sub_TVA_summary$n_eff, na.rm=T))))
+  
+  max_Rhat_TVA <- rbind(max_Rhat_TVA, data.frame(CU=i, 
+                                                 Rhat=round(max(sub_TVA_summary$Rhat, na.rm=T), 3)))
+  
+  R <- (sub_dat$harv+sub_dat$spwn)
+  R_rep <- sub_TVA_pars$H_rep[1:500,] + sub_TVA_pars$S_rep[1:500,]
+  
+  ppc_dens_overlay(R, R_rep) +
+    xlim(NA, quantile(R_rep, 0.99)) +
+    theme(legend.position = "none") +
+    labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
+  
+  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("PPC_", i, ".PNG")))
+  
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R"), 
+                  combo = c("dens_overlay", "trace"),
+                  gg_theme = legend_none()) |> 
+    as.ggplot() +
+    labs(title = paste(i, "leading parameters"))
+  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
+  
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("D_scale", "D_sum"),
+                  combo = c("dens_overlay", "trace"),
+                  gg_theme = legend_none())|> 
+    as.ggplot() +
+    labs(title = paste(i, "age pars"))
+  
+  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_age_par_", i, ".PNG")), p)
+  
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
+                                          "Dir_alpha[3]", "Dir_alpha[4]"),
+                  combo = c("dens_overlay", "trace"),
+                  gg_theme = legend_none())|> 
+    as.ggplot() +
+    labs(title = paste(i, "age probs"))
+  
+  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_ages_", i, ".PNG")), p)
 }
   
 #modelling results -----------------------------------------------------------------------
@@ -198,7 +249,7 @@ for(i in unique(sp_har$cu)){
   par.summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary) |>
     select(mean, n_eff, Rhat)
   
-  #summarise not alphas...
+  #summarise not other pars...
   par.summary <- filter(par.summary, row.names(par.summary) %in% c('lnalpha', 'beta',
                                                                    'phi', 'sigma_R')) |>
     slice(1,4,3,2) |>
@@ -220,7 +271,7 @@ for(i in unique(sp_har$cu)){
     geom_abline(intercept = 0, slope = 1,col="dark grey") +
     geom_ribbon(data = SR_pred, aes(x = Spawn, ymin = Rec_lwr, ymax = Rec_upr),
                 fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
-    geom_line(data = SR_pred, aes(x = Spawn, y = Rec_med), size = 1) +
+    geom_line(data = SR_pred, aes(x = Spawn, y = Rec_med)) +
     geom_errorbar(data = brood_t, aes(x= S_med, y = R_med, ymin = R_lwr, ymax = R_upr),
                   colour="grey", width=0, size=0.3) +
     geom_errorbarh(data = brood_t, aes(y = R_med, xmin = S_lwr, xmax = S_upr),
@@ -252,7 +303,7 @@ for(i in unique(sp_har$cu)){
   
   ggplot(resids, aes(x=year, y = mid)) +
     geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
-    geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) + #dump mid for consistency?
+    geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
     geom_line(lwd = 1.1) +
     coord_cartesian(ylim=c(-2,2)) +
     labs(x = "Return year",
@@ -264,13 +315,27 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("rec_resids_", i, ".PNG")))
   
   #KOBE PLOT - sort out the SR links first
+  
+  #time varying alpha plot 
+  sub_pars_TVA <- rstan::extract(TVA.fits[[i]])
+  a_yrs <- NULL
+  for(j in 1:dim(sub_pars_TVA$ln_alpha)[2]){
+    a_yrs <- rbind(a_yrs,
+                   quantile(exp(sub_pars_TVA$ln_alpha[,j]), probs = c(.1, .5, .9)))
+  }
+  
+  a_yrs <- cbind(c(seq(min(sub_dat$year)-a_min+1, min(sub_dat$year)-1), sub_dat$year), a_yrs)
+  colnames(a_yrs) <- c("brood_year", "lwr", "mid", "upr")
+  
+  ggplot(as.data.frame(a_yrs)) +
+    geom_ribbon(aes(x = brood_year, ymin = lwr, ymax = upr), fill = "darkgrey", alpha = 0.5) +
+    geom_line(aes(x = brood_year, y = mid), lwd = 2,  color = "black") +
+    labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
+         title = paste(i, "time-verying productivity"))
+  my.ggsave(here("analysis/plots/", paste0("TV_alpha_", i, ".PNG")))
 }
 
 bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2)
-
-# fit TV-alpha (fix in in the single CU one) ---------------------------------------------
-
-

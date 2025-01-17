@@ -1,5 +1,4 @@
 // Stan version of age-structured state-space spawner-recruitment model with AR-1 process variation (adapted from Fleischman et al. CJFAS. 2013)
-
 data{
   int nyrs;           // number of calender years
   int a_min;          // minimum age class
@@ -12,26 +11,21 @@ data{
   vector[nyrs] S_cv;  // spawner observation error CV
   vector[nyrs] H_cv;  // harvest observation error CV
 }
-
 parameters{
   real<lower=0> beta;                     // Ricker b
-  real ln_alpha0;                         // initial productivity (on log scale)
-  vector[nRyrs-1] alpha_dev;               // time varying year-to-year deviations in a
-
+  vector[A+a_min-1] ln_alpha0;            // initial productivity (on log scale)
+  vector[nRyrs] alpha_dev;               // time varying year-to-year deviations in a
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R;                  // process error
   real<lower=0> sigma_R0;                 // process error for first a.max years with no spawner link
-  real<lower = 0> sigma_alpha;
-
+  real<lower=0> sigma_alpha;
   real lnresid_0;                         // first residual for lag-1 correlation in process error
   real<lower=0> mean_ln_R0;               // "true" mean log recruitment in first a.max years with no spawner link
   vector<lower=0.01,upper=0.99>[nyrs] U;  // harvest rate
-
   vector<lower=0,upper=1>[3] prob;        // maturity schedule probs
   real<lower=0,upper=1> D_scale;          // governs variability of age proportion vectors across cohorts
   matrix<lower=0.01>[nRyrs, A] g;         // individual year/age class gamma variates for generating age at maturity proportions
 }
-
 transformed parameters{
   vector<lower=0>[nyrs] N;              // run size states
   vector<lower=0>[nyrs] S;              // spawner states
@@ -47,32 +41,26 @@ transformed parameters{
   real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
   matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
-  vector[nRyrs] ln_alpha;                // ln_alpha in each year
-
-
+  vector[nRyrs] ln_alpha;               // ln_alpha in each year
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
   pi[1] = prob[1];
   pi[2] = prob[2] * (1 - pi[1]);
   pi[3] = prob[3] * (1 - pi[1] - pi[2]);
   pi[4] = 1 - pi[1] - pi[2] - pi[3];
   D_sum = 1/D_scale^2;
-
   for (a in 1:A) {
     Dir_alpha[a] = D_sum * pi[a];
     for (y in 1:nRyrs) {
       p[y,a] = g[y,a]/sum(g[y,]);
     }
   }
-
   R = exp(lnR);
-
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
     for(a in 1:A){
       N_ta[t,a] = R[t+A-a] * p[t+A-a,a];
     }
   }
-
   // Calculate returns, spawners and catch by return year
   for(t in 1:nyrs) {
     N[t] = sum(N_ta[t,1:A]);
@@ -81,35 +69,30 @@ transformed parameters{
     C[t] = N[t] * U[t];
     lnC[t] = log(C[t]);
   }
-
   // Calculate age proportions by return year
   for (t in 1:nyrs) {
     for(a in 1:A){
       q[t,a] = N_ta[t,a]/N[t];
     }
   }
-  
-  // random walk on time varying alpha
-  ln_alpha[1] = ln_alpha0;                                    // initial value is just prior
-  for(t in 2:nRyrs){
-    ln_alpha[t] = ln_alpha[t-1] + alpha_dev[t-1]*sigma_alpha; // random walk of log_a
-  }
-  
-  // Ricker SR with AR1 process on log recruitment residuals for years with brood year spawners
-  for(i in 1:nRyrs){
+  // Ricker SR with with time-varying productivity for years with brood year spawners
+  for(i in 1:nRyrs){ //just to init
     lnresid[i] = 0.0;
     lnRm_1[i] = 0.0;
+    //ln_alpha[i] = 0.0; // not sure if needed
   }
-
-  for(y in (A+a_min):nRyrs{
-    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y-a_max] - beta * S[y-a_max];
+  
+  ln_alpha[1:(A+a_min-1)] = ln_alpha0; //unobserved get the prior
+  
+  for(y in (A+a_min):nRyrs){ //8:42
+    ln_alpha[y] = ln_alpha[y-1] + alpha_dev[y-1]*sigma_alpha; // random walk of log_a // we sure -1?
+    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y] - beta * S[y-a_max];
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
 }
-
 model{
   // Priors
-  ln_alpha0 ~ normal(0,5);
+  ln_alpha0 ~ normal(1,2);
   alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
   sigma_alpha ~ normal(0,1);
   beta ~ normal(0,1);

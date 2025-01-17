@@ -98,7 +98,7 @@ transformed parameters{
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
 
-  lnRm_2[A+a_min] =  lnRm_1[A+a_min] + phi * lnresid_0; //the first year where all 
+  lnRm_2[A+a_min] =  lnRm_1[A+a_min] + phi * lnresid_0; //the first year where we have full recruit data
 
   for (y in (A+a_min+1):nRyrs) {
     lnRm_2[y] =  lnRm_1[y] + phi * lnresid[y-1];
@@ -107,13 +107,13 @@ transformed parameters{
 
 model{
   // Priors
-  lnalpha ~ normal(0,1.5);
+  lnalpha ~ normal(1,2);
   beta ~ normal(0,1);
   sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
   sigma_R0 ~ inv_gamma(2,1); 
-  prob[1] ~ beta(1,1);
+  prob[1] ~ beta(1,1); //pretty sure you don't need to index these
   prob[2] ~ beta(1,1);
   prob[3] ~ beta(1,1);
   D_scale ~ beta(1,1);
