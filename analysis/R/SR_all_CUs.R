@@ -266,7 +266,7 @@ for(i in unique(sp_har$cu)){
   bench.par.table <- bind_rows(bench.par.table, sub.bench.par.table)
   
   #Plotting ------------------------------------------------------------------------------
-  # plot SR relationship --- ## somethin' ain't proper here 
+  # plot SR relationship ---
   ggplot() +
     geom_abline(intercept = 0, slope = 1,col="dark grey") +
     geom_ribbon(data = SR_pred, aes(x = Spawn, ymin = Rec_lwr, ymax = Rec_upr),
@@ -281,7 +281,6 @@ for(i in unique(sp_har$cu)){
                    y = R_med,
                    color=BroodYear),
                size = 3) +
-  #  coord_cartesian(xlim=c(0, 20), ylim=c(0,max(brood_t[,7])), expand = FALSE) +
     scale_colour_viridis_c(name = "Brood Year")+
     labs(x = "Spawners",
          y = "Recruits", 
@@ -296,9 +295,9 @@ for(i in unique(sp_har$cu)){
   
   # then residuals---
   ## NEED TO CHECK HOW THESE YEARS LINE UP
-  resid.quant <- apply(sub_pars$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] #CHECK INDEX
+  resid.quant <- apply(sub_pars$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
   
-  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) #CHECK INDEX
+  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) ##CHECK INDEX
   colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
   
   ggplot(resids, aes(x=year, y = mid)) +
