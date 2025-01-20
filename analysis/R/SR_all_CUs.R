@@ -157,7 +157,8 @@ for(i in unique(sp_har$cu)){
   
   my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("PPC_", i, ".PNG")))
   
-  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R"), 
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R", "lnresid_0", 
+                                          "mean_ln_R0"), 
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none()) |> 
     as.ggplot() +
@@ -330,8 +331,27 @@ for(i in unique(sp_har$cu)){
     geom_ribbon(aes(x = brood_year, ymin = lwr, ymax = upr), fill = "darkgrey", alpha = 0.5) +
     geom_line(aes(x = brood_year, y = mid), lwd = 2,  color = "black") +
     labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
-         title = paste(i, "time-verying productivity"))
+         title = paste(i, "time-varying productivity"))
   my.ggsave(here("analysis/plots/", paste0("TV_alpha_", i, ".PNG")))
+  
+  #time varying alpha residuals  
+  resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
+  
+  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) ##CHECK INDEX
+  colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
+  
+  ggplot(resids, aes(x=year, y = mid)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
+    geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
+    geom_line(lwd = 1.1) +
+    coord_cartesian(ylim=c(-2,2)) +
+    labs(x = "Return year",
+         y = "Recruitment residuals", 
+         title = paste(i, "recruitment residuals (time-varying productivity)")) +
+    theme(legend.position = "none",
+          panel.grid = element_blank()) +
+    geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
+  my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
 bench.par.table <- bench.par.table |>
