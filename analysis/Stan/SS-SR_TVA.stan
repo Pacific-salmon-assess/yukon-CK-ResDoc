@@ -13,7 +13,7 @@ data{
 }
 parameters{
   real<lower=0> beta;                     // Ricker b
-  vector[A+a_min-1] ln_alpha0;            // initial productivity (on log scale)
+  real ln_alpha0;            // initial productivity (on log scale)
   vector[nRyrs] alpha_dev;               // time varying year-to-year deviations in a
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R;                  // process error
@@ -75,17 +75,21 @@ transformed parameters{
       q[t,a] = N_ta[t,a]/N[t];
     }
   }
+  
+  //time-varying alpha component
+  ln_alpha[1] = ln_alpha0; //unobserved get the prior
+
+  for(t in 2:nRyrs){
+    ln_alpha[t] = ln_alpha[t-1] + alpha_dev[t-1]*sigma_alpha; // random walk of log_a // we sure -1?
+  }
+  
   // Ricker SR with with time-varying productivity for years with brood year spawners
   for(i in 1:nRyrs){ //just to init
     lnresid[i] = 0.0;
     lnRm_1[i] = 0.0;
-    //ln_alpha[i] = 0.0; // not sure if needed
   }
   
-  ln_alpha[1:(A+a_min-1)] = ln_alpha0; //unobserved get the prior
-  
   for(y in (A+a_min):nRyrs){ //8:42
-    ln_alpha[y] = ln_alpha[y-1] + alpha_dev[y-1]*sigma_alpha; // random walk of log_a // we sure -1?
     lnRm_1[y] = lnS[y-a_max] + ln_alpha[y] - beta * S[y-a_max];
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
