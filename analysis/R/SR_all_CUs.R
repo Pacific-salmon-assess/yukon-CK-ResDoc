@@ -34,6 +34,7 @@ rm(harvest)
 # fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
   for(i in unique(sp_har$cu)){
+    
     sp_har1 <- filter(sp_har, cu == i) 
     
     a_min <- 4
@@ -51,7 +52,9 @@ if(refit == TRUE){
                       "S_obs" = sp_har1$spwn,
                       "H_obs" = sp_har1$harv,
                       "S_cv" = sp_har1$spwn_cv,
-                      "H_cv" = sp_har1$harv_cv)
+                      "H_cv" = sp_har1$harv_cv, 
+                      "Smax_p" = 0.75*max(sp_har1$spwn), #what do we think Smax is? 
+                      "Smax_p_sig" = 0.75*max(sp_har1$spwn))
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
                     data = stan.data,
@@ -60,7 +63,7 @@ if(refit == TRUE){
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
-    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
+    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA2.stan"), 
                     data = stan.data,
                     iter = 8000)
     
@@ -321,7 +324,7 @@ for(i in unique(sp_har$cu)){
   a_yrs <- NULL
   for(j in 1:dim(sub_pars_TVA$ln_alpha)[2]){
     a_yrs <- rbind(a_yrs,
-                   quantile(exp(sub_pars_TVA$ln_alpha[,j]), probs = c(.1, .5, .9)))
+                   quantile(sub_pars_TVA$ln_alpha[,j], probs = c(.1, .5, .9)))
   }
   
   a_yrs <- cbind(c(seq(min(sub_dat$year)-a_min+1, min(sub_dat$year)-1), sub_dat$year), a_yrs)
