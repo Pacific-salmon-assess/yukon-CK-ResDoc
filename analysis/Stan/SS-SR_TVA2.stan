@@ -94,12 +94,7 @@ transformed parameters{
     ln_alpha[t] = ln_alpha[t-1] + alpha_dev[t-1]*sigma_alpha; // random walk of log_a
   }
   
-  // Ricker SR with with time-varying productivity for years with brood year spawners
-  for(i in 1:nRyrs){ //just to init
-    lnresid[i] = 0.0;
-    lnRm_1[i] = 0.0;
-  }
-  
+  // Ricker SR with with time-varying productivity for years with brood year spawners  
   for(y in (A+a_min):nRyrs){ //8:42
     lnRm_1[y] = lnS[y-a_max] + ln_alpha[y] - beta * S[y-a_max];
     lnresid[y] = lnR[y] - lnRm_1[y];
@@ -107,17 +102,15 @@ transformed parameters{
 }
 model{
   // Priors
-  ln_alpha0 ~ normal(1,2);
+  ln_alpha0 ~ normal(1,4);
   alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
   sigma_alpha ~ normal(0,1);
   Smax ~ lognormal(Smax_p_corr, Smax_p_sig_corr);
   sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
-  sigma_R0 ~ inv_gamma(2,1); 
-  prob[1] ~ beta(1,1);
-  prob[2] ~ beta(1,1);
-  prob[3] ~ beta(1,1);
+  sigma_R0 ~ gamma(2,1); 
+  prob ~ beta(1,1);
   D_scale ~ beta(1,1);
 
   // Likelihoods
@@ -130,8 +123,8 @@ model{
   }
 
   // Process model
-  lnR[1] ~ normal(mean_ln_R0, sigma_R0);
-  lnR[2:nyrs] ~ normal(lnRm_1[2:nyrs], sigma_R);
+  lnR[1:a_max] ~ normal(mean_ln_R0, sigma_R0);
+  lnR[(A+a_min):nRyrs] ~ normal(lnRm_1[(A+a_min):nRyrs], sigma_R);
 
   // Observation model
   for(t in 1:nyrs){
