@@ -42,7 +42,7 @@ transformed parameters{
   matrix<lower=0>[nyrs, A] N_ta;        // returns by age matrix
   matrix<lower=0, upper=1>[nRyrs, A] p; // age at maturity proportions
   vector<lower=0,upper=1>[A] pi;        // maturity schedule probs
-  real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts
+  real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts (lower is less variable)
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
   matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age class matrix
 
@@ -66,8 +66,8 @@ transformed parameters{
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
     for(a in 1:A){
-      N_ta[t,a] = R[t+A-a] * p[t+A-a,a];
-    }
+      N_ta[t,a] = R[t+A-a] * p[t+A-a,a]; //why "-a"" in both brackets?? ref the excel visual, R&p are longer than these
+     }
   }
 
   // Calculate returns, spawners and catch by return year

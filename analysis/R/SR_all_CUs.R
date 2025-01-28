@@ -39,9 +39,9 @@ if(refit == TRUE){
     
     a_min <- 4
     a_max <- 7 
-    nyrs <- nrow(sp_har1) #number of years
+    nyrs <- nrow(sp_har1) #number of years of observations
     A <- a_max - a_min + 1 #total age classes
-    nRyrs <- nyrs + A - 1 #number of recruitment years, i.e. add in unobserved age classes at start to predict 1st year of spawners
+    nRyrs <- nyrs + A - 1 #number of recruitment years: unobserved age classes at ? to predict last year of spawners
     
     stan.data <- list("nyrs" = nyrs,
                       "a_min" = a_min,

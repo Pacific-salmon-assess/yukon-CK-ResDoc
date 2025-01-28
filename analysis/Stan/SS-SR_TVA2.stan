@@ -96,7 +96,7 @@ transformed parameters{
   
   // Ricker SR with with time-varying productivity for years with brood year spawners  
   for(y in (A+a_min):nRyrs){ //8:42
-    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y] - beta * S[y-a_max];
+    lnRm_1[y] = lnS[y-a_max] + ln_alpha[y-a_max] - beta * S[y-a_max]; //ln_alpha[y-a_max] links it to the spawners
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
 }
