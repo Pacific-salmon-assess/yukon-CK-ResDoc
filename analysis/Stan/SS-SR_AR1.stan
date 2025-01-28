@@ -87,8 +87,8 @@ transformed parameters{
   }
 
   // Ricker SR with AR1 process on log recruitment residuals for years with brood year spawners
-  for (i in 1:nRyrs) {
-    lnresid[i] = 0.0; //just initializing these so they can be estimated, or left at 0
+  for (i in 1:a_max) {
+    lnresid[i] = 0.0; //setting unobserved to 0
     lnRm_1[i] = 0.0;
     lnRm_2[i] = 0.0;
   }
@@ -113,9 +113,7 @@ model{
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
   sigma_R0 ~ inv_gamma(2,1); 
-  prob[1] ~ beta(1,1); //pretty sure you don't need to index these
-  prob[2] ~ beta(1,1);
-  prob[3] ~ beta(1,1);
+  prob ~ beta(1,1);
   D_scale ~ beta(1,1);
 
   // Likelihoods
