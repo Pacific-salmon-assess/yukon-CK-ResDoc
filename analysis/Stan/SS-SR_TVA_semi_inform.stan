@@ -10,12 +10,19 @@ data{
   vector[nyrs] H_obs; // observed harvest
   vector[nyrs] S_cv;  // spawner observation error CV
   vector[nyrs] H_cv;  // harvest observation error CV
+  real Smax_p;        // prior for Smax
+  real Smax_p_sig;    // prior for Smax
+}
+transformed data{
+  real Smax_p_corr;
+  real Smax_p_sig_corr;
+  Smax_p_sig_corr = sqrt(log(1+(Smax_p_sig^2)/(Smax_p^2))); //this converts sigma on the untransformed scale to a log scale
+  Smax_p_corr = log(Smax_p)-0.5*(Smax_p_sig_corr)^2; //convert smax prior to per capita slope - transform to log scale with bias correction
 }
 parameters{
   real<lower=0> Smax;                     // Smax (to get beta)
   real ln_alpha0;            // initial productivity (on log scale)
   vector[nRyrs] alpha_dev;               // time varying year-to-year deviations in a
-  real<lower=0> beta;                     // Ricker b
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R;                  // process error
   real<lower=0> sigma_R0;                 // process error for first a.max years with no spawner link
@@ -43,6 +50,7 @@ transformed parameters{
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
   matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
   vector[nRyrs] ln_alpha;               // ln_alpha in each year
+  real beta;                            // beta transformed to normal
 
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
   pi[1] = prob[1];
@@ -57,6 +65,7 @@ transformed parameters{
     }
   }
   R = exp(lnR);
+  beta = 1/Smax;
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
     for(a in 1:A){
@@ -100,7 +109,7 @@ model{
   ln_alpha0 ~ normal(1,4);
   alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
   sigma_alpha ~ normal(0,1);
-  beta ~ normal(0,1);
+  Smax ~ lognormal(Smax_p_corr, Smax_p_sig_corr);
   sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
