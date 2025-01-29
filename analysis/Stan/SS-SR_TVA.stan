@@ -12,14 +12,13 @@ data{
   vector[nyrs] H_cv;  // harvest observation error CV
 }
 parameters{
-  real<lower=0> Smax;                     // Smax (to get beta)
-  real ln_alpha0;            // initial productivity (on log scale)
-  vector[nRyrs] alpha_dev;               // time varying year-to-year deviations in a
+  real ln_alpha0;                         // initial productivity (on log scale)
+  vector[nRyrs] alpha_dev;                // time varying year-to-year deviations in a
   real<lower=0> beta;                     // Ricker b
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R;                  // process error
   real<lower=0> sigma_R0;                 // process error for first a.max years with no spawner link
-  real<lower=0> sigma_alpha;
+  real<lower=0> sigma_alpha;              // amount alpha can deviate
   real lnresid_0;                         // first residual for lag-1 correlation in process error
   real<lower=0> mean_ln_R0;               // "true" mean log recruitment in first a.max years with no spawner link
   vector<lower=0.01,upper=0.99>[nyrs] U;  // harvest rate
