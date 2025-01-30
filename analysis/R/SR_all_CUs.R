@@ -56,17 +56,17 @@ if(refit == TRUE){
                       "Smax_p" = 0.75*max(sp_har1$spwn), #data for priors in semi_inform models, can tinker based on what assumed Smax is 
                       "Smax_p_sig" = 0.75*max(sp_har1$spwn))
     
-    AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
+    #AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
+    #                data = stan.data,
+    #                iter = 8000)
+    
+    #saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
+    #                      paste0(i, "_AR1.rds")))
+    
+    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA2.stan"), 
                     data = stan.data,
                     iter = 8000)
-    
-    saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
-                          paste0(i, "_AR1.rds")))
-    
-    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
-                    data = stan.data,
-                    iter = 8000)
-    
+    #launch_shinystan(TV.fit)
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                           paste0(i, "_TVA.rds")))
   }
@@ -160,7 +160,7 @@ for(i in unique(sp_har$cu)){
   
   my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("PPC_", i, ".PNG")))
   
-  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R", "lnresid_0", 
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R", "sigma_tot", "F_rw", 
                                           "mean_ln_R0"), 
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none()) |> 
