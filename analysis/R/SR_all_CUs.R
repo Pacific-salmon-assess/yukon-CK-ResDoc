@@ -1,4 +1,4 @@
-# functional programming to loop through CU fits and diagnostics
+# fit SR models for all CUs, run diagnostics, make initial plots
 library(here)
 library(tidyverse)
 library(ggplotify) #for as.ggplot() to help mcmc_combo() plotting
@@ -9,7 +9,8 @@ library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/functions.R"))
 
 # load data ------------------------------------------------------------------------------
-refit <- TRUE #toggle T/F if you want to refit models
+refit <- FALSE #toggle T/F if you want to refit models
+#refit <- TRUE
 
 harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
   dplyr::rename(stock = population, 
@@ -188,6 +189,7 @@ for(i in unique(sp_har$cu)){
   
 #modelling results -----------------------------------------------------------------------
 bench.par.table <- NULL 
+bench.posts <- NULL
 
 for(i in unique(sp_har$cu)){
   sub_dat <- filter(sp_har, cu==i)
@@ -207,7 +209,8 @@ for(i in unique(sp_har$cu)){
   SR_pred <- matrix(NA,length(spw), iter)
   
   bench <- matrix(NA,iter,4,
-                  dimnames = list(seq(1:iter), c("Sgen","Smsy","Umsy", "Seq")))
+                  dimnames = list(seq(1:iter), c(paste0("Sgen_", i), paste0("Smsy_", i), 
+                                                 paste0("Umsy_", i), paste0("Seq_", i))))
   
   for(j in 1:iter){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -227,9 +230,7 @@ for(i in unique(sp_har$cu)){
   # get benchmarks & pars ------------------------------------------------------------------
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
-  #get some posteriors for plotting later
-  Smsy.8.post <- bench[,2]
-  Sgen.post <- bench[,1]
+  bench.posts <- cbind(bench.posts, bench)
   
   bench.quant <- apply(bench, 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
@@ -327,7 +328,7 @@ for(i in unique(sp_har$cu)){
                    quantile(sub_pars_TVA$ln_alpha[,j], probs = c(.1, .5, .9)))
   }
   
-  a_yrs <- cbind(c(seq(min(sub_dat$year)-a_min+1, min(sub_dat$year)-1), sub_dat$year), a_yrs)
+  a_yrs <- cbind(sub_dat$year, a_yrs)
   colnames(a_yrs) <- c("brood_year", "lwr", "mid", "upr")
   
   ggplot(as.data.frame(a_yrs)) +
@@ -338,7 +339,8 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("TV_alpha_", i, ".PNG")))
   
   #time varying alpha residuals  
-  resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
+  resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, 
+                       probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
   
   resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) ##CHECK INDEX
   colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
@@ -357,7 +359,11 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
+write.csv(bench.posts, here("analysis/data/generated/benchmark_posteriors.csv")) 
+
 bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2)
+
+write.csv(bench.par.table, here("analysis/data/generated/benchmark_posteriors.csv")) 
