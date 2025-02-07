@@ -45,3 +45,41 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
   Sgen <- uniroot(fun_Sgen, interval=c(int_lower, int_upper), a=a, b=b, Smsy=Smsy)$root
   return(Sgen)
 }
+
+
+#from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
+process.iteration = function(samp) {
+  # 1.) extract names
+  nms = colnames(samp) ##DG switched from "names()"
+  A = 4
+  ns = 8
+  # 2.) extract elements according to the names and put them into the appropriate data structure
+  
+  # parameters
+  alpha = unname(samp[substr(nms, 1, 5) == "alpha"])
+  beta = unname(samp[substr(nms, 1, 4) == "beta"])
+  last_resid = unname(samp[substr(nms, 1, 10) == "last_resid"])
+  #phi = unname(samp["phi"])
+  Sigma_R = matrix(samp[substr(nms, 1, 7) == "Sigma_R"], ns, ns) #vcov needs to be infilled
+  pis = c(as.numeric(samp["pi_1"]), as.numeric(samp["pi_2"]), as.numeric(samp["pi_3"]), as.numeric(samp["pi_4"]))
+  
+  # states
+  S = matrix(samp[substr(nms, 1, 2) == "S_"], A, ns)
+  R = matrix(samp[substr(nms, 1, 2) == "R_"], A - 1, ns)
+  
+  # 3.) create output list
+  output = list(
+    alpha = alpha,
+    beta = beta,
+    phi = phi,
+    last_resid = last_resid,
+    Sigma_R = Sigma_R,
+    S = S,
+    R = R,
+    pis = pis
+  )
+  
+  # 4.) return output
+  return(output)
+  
+}
