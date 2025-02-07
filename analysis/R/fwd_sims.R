@@ -59,7 +59,7 @@ for(i in 1:length(names(TVA.fits))){
 #INFILLING the rest of the parms (Sigma R varcov "matrix", and shared pis)
   #THIS PART NEEDS WORK/DISCUSSION!
 
-#infill the ps
+#infill the ps just by taking a single pop's to see if they work? just like pis below
 
 #pis - just taking one for now, should we average them?
 samps <- cbind(samps, TVA.fits[[1]]$pi)
