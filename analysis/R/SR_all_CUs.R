@@ -359,11 +359,11 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
-write.csv(bench.posts, here("analysis/data/generated/benchmark_posteriors.csv")) 
+write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds")) 
 
 bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2)
 
-write.csv(bench.par.table, here("analysis/data/generated/benchmark_posteriors.csv")) 
+write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv")) 
