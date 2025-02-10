@@ -6,31 +6,10 @@ library(rstan)
 library(bayesplot)
 library(shinystan)
 library(gsl) #for lambertw0() to calc U_MSY
-source(here("analysis/R/functions.R"))
+source(here("analysis/R/data_functions.R"))
 
-# load data ------------------------------------------------------------------------------
 refit <- FALSE #toggle T/F if you want to refit models
 #refit <- TRUE
-
-harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
-  dplyr::rename(stock = population, 
-                harv_cv = cv)
-
-sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
-  dplyr::rename(spwn = mean, 
-                spwn_cv = cv) |>
-  select(-obs, - se) |>
-  left_join(harvest, by = c("stock", "year")) |>
-  dplyr::rename(cu = stock) |>
-  mutate(N = spwn+harv)
-
-ages <- read.csv(here("analysis/data/raw/age-data-aggregate.csv"))
-
-A_obs <- ages |>
-  select(a4:a7) |>
-  as.matrix()
-
-rm(harvest)
 
 # fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
