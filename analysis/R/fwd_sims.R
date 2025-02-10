@@ -17,7 +17,7 @@ bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds")
 samps <- NULL
 pi.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits)))
 p.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits), 3))
-
+sig.R.samps <- NULL
 for(i in 1:length(names(TVA.fits))){
   sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),#one previous gen median alpha
                      TVA.fits[[i]]$beta,
@@ -27,23 +27,21 @@ for(i in 1:length(names(TVA.fits))){
                      TVA.fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states - 39:42 in kusko 
                      TVA.fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states - 43:45 in kusko
                      TVA.fits[[i]]$lnresid[,nRyrs]) #last resid
-                     #TVA.fits[[i]]$pi) #prob at age posterior matrix [iter, ages] ## difficulty because fit 1 at a time
   colnames(sub_samps) <- c(paste0("alpha_", i), 
                            paste0("beta_", i),
                            paste0("Umsy_", i),paste0("Smsy_", i), 
                         #paste0("Sigma_R_", 1:length(names(TVA.fits)), "_", i),                        
                         paste0("S_", (nyrs-A+1):nyrs, "_", i), 
                         paste0("R_", (nRyrs-A+2):nRyrs, "_", i), 
-                        paste0("last_resid_", i))#, 
-                        #stuff for shared p
-                        #paste0("pi_", 1:4))
+                        paste0("last_resid_", i))
+  samps <- cbind(samps, sub_samps) #cbind posteriors of parms we care about
                   
   pi.samps[,,i] <- TVA.fits[[i]]$pi #store pis to summarise later
   
   for(j in 1:3){
     p.samps[,,i,j] <- TVA.fits[[i]]$p[,nyrs+j, ] #store ps for last 3 nRyrs to summarise later
   }
-  samps <- cbind(samps, sub_samps) #cbind posteriors of parms we care about
+  sig.R.samps <- cbind(sig.R.samps, TVA.fits[[i]]$sigma_R)
 }
 
 #get median of pis and ps for all pops 
@@ -58,9 +56,10 @@ for(i in 1:3){
 median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange to match kusko
 colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
+Sig.R <- cov(sig.R.samps)
 
-
-
+#old hack way to get Sig_R cols as posteriors to match kusko code
+if(FALSE){
 #get sigma_R varcov matrix 
 for(i in 1:length(names(TVA.fits))){
   samps <- cbind(samps, TVA.fits[[i]]$sigma_R) #bind un-correlated sigma_R to samps
@@ -74,8 +73,11 @@ colnames(samps)[93:ncol(samps)] #need to figure out how to name these MFers and 
 
 paste0("Sigma_R_", 1:8, "_", rep(1:8, 8)) #hack to get all the sigma R names...
   #^ could create full empty matrix of sigma_R's as 0's then populate them in a loop with i = i+8 or something
+} 
 
 #bind all samps into one object 
+samps.final <- cbind(samps, median.p.samps, median.pi.samps)
+
 
 #------------------------------------------------------------------------------#
 # Multi-stock simulation function with alternative structural forms
