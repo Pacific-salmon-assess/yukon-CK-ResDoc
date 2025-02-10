@@ -1,4 +1,31 @@
-#functions
+#common data to be read in ---------------------------------------------------------------
+harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
+  dplyr::rename(stock = population, 
+                harv_cv = cv)
+
+sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
+  dplyr::rename(spwn = mean, 
+                spwn_cv = cv) |>
+  select(-obs, - se) |>
+  left_join(harvest, by = c("stock", "year")) |>
+  dplyr::rename(cu = stock) |>
+  mutate(N = spwn+harv)
+
+ages <- read.csv(here("analysis/data/raw/age-data-aggregate.csv"))
+
+A_obs <- ages |>
+  select(a4:a7) |>
+  as.matrix()
+
+a_min <- 4
+a_max <- 7 
+nyrs <- max(sp_har$year)-min(sp_har$year)+1 #number of years of observations
+A <- a_max - a_min + 1 #total age classes
+nRyrs <- nyrs + A - 1 #number of recruitment years: unobserved age classes at ? to predict last year of spawners
+
+rm(harvest, ages)
+
+#functions -------------------------------------------------------------------------------
 
 make_stan_data <- function(cu) {
   
