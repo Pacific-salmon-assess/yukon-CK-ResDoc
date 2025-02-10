@@ -1,25 +1,6 @@
 library(here)
 library(tidyverse)
-source(here("analysis/R/functions.R"))
-
-#setting up some data to be used in BC's function below, not sure if we want to source() these or ?
-harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
-  dplyr::rename(stock = population, 
-                harv_cv = cv)
-
-sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
-  dplyr::rename(spwn = mean, 
-                spwn_cv = cv) |>
-  select(-obs, - se) |>
-  left_join(harvest, by = c("stock", "year")) |>
-  dplyr::rename(cu = stock) |>
-  mutate(N = spwn+harv)
-
-a_min <- 4
-a_max <- 7 
-nyrs <- max(sp_har$year)-min(sp_har$year)+1 #number of years of observations
-A <- a_max - a_min + 1 #total age classes
-nRyrs <- nyrs + A - 1 #number of recruitment years: unobserved age classes at ? to predict last year of spawners
+source(here("analysis/R/data_functions.R"))
 
 #wrangle TVA fits into same structure as the "samps" matrix here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
@@ -34,18 +15,22 @@ bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds")
 #infilling the "samps" object from the kusko example, not I am NOT SURE if these need to be in order!
   #- especially ordering on the things that will be matricies (i.e., Sigma_R, R, S)
 samps <- NULL
+pi.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits)))
+p.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits), 3))
+
 for(i in 1:length(names(TVA.fits))){
-  sub_samps <- cbind(TVA.fits[[i]]$beta, 
-                     exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),  #one previous gen median alpha
-                     #SKIP phi from kusko- don't have in yukon TVA!
-                     #Sigma_R varcov samples - how get?
+  sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),#one previous gen median alpha
+                     TVA.fits[[i]]$beta,
+                     bench.posts[, grep("Umsy", colnames(bench.posts))[i]],
+                     bench.posts[, grep("Smsy", colnames(bench.posts))[i]], 
                      #latent S&R states. Kusko has same ages, but nyrs=42 
                      TVA.fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states - 39:42 in kusko 
                      TVA.fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states - 43:45 in kusko
                      TVA.fits[[i]]$lnresid[,nRyrs]) #last resid
                      #TVA.fits[[i]]$pi) #prob at age posterior matrix [iter, ages] ## difficulty because fit 1 at a time
-  colnames(sub_samps) <- c(paste0("beta_", i), paste0("alpha_", i), 
-                            #paste0("Umsy_", i),paste0("Smsy_", i), 
+  colnames(sub_samps) <- c(paste0("alpha_", i), 
+                           paste0("beta_", i),
+                           paste0("Umsy_", i),paste0("Smsy_", i), 
                         #paste0("Sigma_R_", 1:length(names(TVA.fits)), "_", i),                        
                         paste0("S_", (nyrs-A+1):nyrs, "_", i), 
                         paste0("R_", (nRyrs-A+2):nRyrs, "_", i), 
@@ -53,18 +38,30 @@ for(i in 1:length(names(TVA.fits))){
                         #stuff for shared p
                         #paste0("pi_", 1:4))
                   
+  pi.samps[,,i] <- TVA.fits[[i]]$pi #store pis to summarise later
+  
+  for(j in 1:3){
+    p.samps[,,i,j] <- TVA.fits[[i]]$p[,nyrs+j, ] #store ps for last 3 nRyrs to summarise later
+  }
   samps <- cbind(samps, sub_samps) #cbind posteriors of parms we care about
 }
 
-#INFILLING the rest of the parms (Sigma R varcov "matrix", and shared pis)
-  #THIS PART NEEDS WORK/DISCUSSION!
+#get median of pis and ps for all pops 
+  #(i.e. take the median across posterior slices by "page" of array)
+median.pi.samps <- apply(pi.samps, c(1,2), median)
+colnames(median.pi.samps) <- paste0("pi_", 1:4)
 
-#infill the ps just by taking a single pop's to see if they work? just like pis below
+median.p.samps <- NULL
+for(i in 1:3){
+  median.p.samps <- cbind(median.p.samps, apply(p.samps[,,,i], c(1,2), median))
+}
+median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange to match kusko
+colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
-#pis - just taking one for now, should we average them?
-samps <- cbind(samps, TVA.fits[[1]]$pi)
-colnames(samps)[81:84] <- paste0("pi_", 1:4)
 
+
+
+#get sigma_R varcov matrix 
 for(i in 1:length(names(TVA.fits))){
   samps <- cbind(samps, TVA.fits[[i]]$sigma_R) #bind un-correlated sigma_R to samps
 }
@@ -77,6 +74,8 @@ colnames(samps)[93:ncol(samps)] #need to figure out how to name these MFers and 
 
 paste0("Sigma_R_", 1:8, "_", rep(1:8, 8)) #hack to get all the sigma R names...
   #^ could create full empty matrix of sigma_R's as 0's then populate them in a loop with i = i+8 or something
+
+#bind all samps into one object 
 
 #------------------------------------------------------------------------------#
 # Multi-stock simulation function with alternative structural forms
