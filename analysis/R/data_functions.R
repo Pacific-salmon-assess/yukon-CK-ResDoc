@@ -131,6 +131,7 @@ process.iteration = function(samp) {
 # ny <- number of years simulations runs over
 # n.pops <- number of pops
 SR_para_devs = function(alpha, beta, step.num, start.step, ny, n.pops){
+  #browser()
   id <- seq(1:n.pops)
   
   end.states.order <- c(1:n.pops) ##does this need to be ordered some funky way? thought it was just for plotting or something?
@@ -205,8 +206,9 @@ SR_para_devs = function(alpha, beta, step.num, start.step, ny, n.pops){
 # SR.devs <- deviations in SR parameters by time step if dir.SR == "Y"
 # expan <- expansion of system to account for unmodelled spawning populations
 
-process = function(ny,vcov.matrix,phi,mat,alpha,beta,sub,com,egfloor,pm.yr,for.error,
-                   OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV,period,dir.SR,SR_devs,expan){
+process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
+                   for.error,OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV=NULL,
+                   period=NULL,dir.SR, SR_devs=NULL, expan){
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -224,7 +226,7 @@ process = function(ny,vcov.matrix,phi,mat,alpha,beta,sub,com,egfloor,pm.yr,for.e
   
   #Create recruitment deviations that are correlated among stocks 
   epi <- rmvnorm(ny, sigma= vcov.matrix)
-  
+  #browser()
   #Build time series of Spawners (S), abundance of returning spawners pre-harvest
   # (N), and the component of the residual that is correlated throught time (v)
   R <- t(matrix(0,ns,ny))

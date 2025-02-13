@@ -339,7 +339,6 @@ for(i in unique(sp_har$cu)){
 }
 
 ggplot(a.yrs.all, aes(color = cu)) +
-  #geom_ribbon(aes(x = brood_year, ymin = lwr, ymax = upr), fill = "darkgrey", alpha = 0.5) +
   geom_line(aes(x = brood_year, y = mid), lwd = 2) +
   scale_color_viridis_d() +
   labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
