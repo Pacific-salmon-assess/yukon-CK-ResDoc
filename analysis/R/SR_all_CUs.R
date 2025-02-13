@@ -189,8 +189,7 @@ for(i in unique(sp_har$cu)){
   SR_pred <- matrix(NA,length(spw), iter)
   
   bench <- matrix(NA,iter,4,
-                  dimnames = list(seq(1:iter), c(paste0("Sgen_", i), paste0("Smsy_", i), 
-                                                 paste0("Umsy_", i), paste0("Seq_", i))))
+                  dimnames = list(seq(1:iter), c("Sgen", "Smsy", "Umsy", "Seq")))
   
   for(j in 1:iter){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -352,4 +351,5 @@ bench.par.table <- bench.par.table |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2)
 
-write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv")) 
+write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
+          row.names = FALSE) 
