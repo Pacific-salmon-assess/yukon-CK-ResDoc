@@ -1,4 +1,5 @@
 # Fit run reconstruction
+
 fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlFile.txt",
                    arrivSD=NULL,
                    folder="analysis/R/run-reconstructions/fittedMod",

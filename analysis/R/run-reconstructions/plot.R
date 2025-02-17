@@ -1,3 +1,6 @@
+ctlFile="analysis/R/run-reconstructions/fittedMod/estControlFile.txt"
+
+
 plotAll <- function( rpt, folder="." )
 {
   plotFitI(rpt=rpt,folder=folder)

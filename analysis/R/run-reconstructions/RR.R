@@ -26,6 +26,21 @@ CU_spwn <- CU_border_passage * (1-cdn_er)
 colnames(CU_spwn) <- seq(1985,2023)
 rownames(CU_spwn) <- c("NorthernYukonR.andtribs.","Whiteandtribs.","Pelly","Stewart","Nordenskiold","YukonR.Teslinheadwaters","MiddleYukonR.andtribs.","UpperYukonR.")
 
+# estimate proportional contribution of Big Salmon to Middle CU, generate full time series, remove from Middle CU
+big_salmon <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
+  filter(system == "bigsalmon",
+         year < 2024)
+
+prop_comp <- mean(big_salmon$estimate/(CU_spwn[7,c(21:39)]*1000), na.rm=TRUE)
+
+big_salmon_inf <- CU_spwn[7,]*1000 * prop_comp
+big_salmon_inf_2 <- big_salmon_inf
+big_salmon_inf_2[c(21:39)] <- big_salmon$estimate
+big_salmon_inf_2[38] <- big_salmon_inf[38]
+big_salmon_recon <- big_salmon_inf_2/1000
+CU_spwn[7,] <- CU_spwn[7,]-big_salmon_recon
+
+# turn spawners into long data frame
 CU_spwn_df <- as.data.frame(CU_spwn)
 CU_spwn_df$CU <- rownames(CU_spwn)
 
@@ -45,7 +60,21 @@ mssr_spwn <- CU_spawn_long %>%
          obs = 1) %>%
   select(stock, year, mean, se, cv, obs)
 
-write.csv(mssr_spwn, here("analysis/data/raw/esc-data.csv"),row.names = F)
+# add Big Salmon into spawner dataframe
+year <- seq(1985,2023)
+big.S <- cbind(year,(big_salmon_recon*1000))
+big.S <- as.data.frame(big.S)
+big.S$stock <- "Big.Salmon"
+big.S$se <- "na"
+big.S$cv <- 0.50
+big.S$obs <- 1
+big.S$cv[c(21:39)] <- 0.05
+big.S <- big.S[,c(3,1,2,4,5,6)]
+colnames(big.S)[3] <- "mean"
+
+mssr_spwn_2 <- rbind(mssr_spwn,big.S)
+
+write.csv(mssr_spwn_2, here("analysis/data/raw/esc-data.csv"),row.names = F)
 
 # calculate CU specific harvest based on reconstructed spawner abundance and aggregate exploitation rate
 er <- read.csv(here("analysis/data/raw/rr-table.csv"))
@@ -56,10 +85,10 @@ cdn_er <- er %>%
   mutate(er = Harvest.rate..../100,
          cv = Harvest.CV)
 
-agg_er <- rep(as.vector(cdn_er$er),8)
-agg_cv <- rep(as.vector(cdn_er$cv),8)
+agg_er <- rep(as.vector(cdn_er$er),9)
+agg_cv <- rep(as.vector(cdn_er$cv),9)
 
-harv <- cbind(mssr_spwn, agg_er,agg_cv)
+harv <- cbind(mssr_spwn_2, agg_er,agg_cv)
 harv$harv <- (harv$mean/(1-harv$agg_er))*harv$agg_er
 harvest <- harv[,c(1,2,9,8)]
 colnames(harvest) <- c("population", "year","harv","cv")

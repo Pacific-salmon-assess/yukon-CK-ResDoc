@@ -1,5 +1,8 @@
 library(TMB)
 library(mvtnorm)
+library(colorRamps)
+library(RColorBrewer)
+library(reshape2)
 
 #source("simRR.R")   # Simulate run reconstruction
 source(here("analysis/R/run-reconstructions/fitRR.R"))   # Fit run reconstruction
