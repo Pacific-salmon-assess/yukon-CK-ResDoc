@@ -1,4 +1,4 @@
-# functional programming to loop through CU fits and diagnostics
+# fit SR models for all CUs, run diagnostics, make initial plots
 library(here)
 library(tidyverse)
 library(ggplotify) #for as.ggplot() to help mcmc_combo() plotting
@@ -6,30 +6,10 @@ library(rstan)
 library(bayesplot)
 library(shinystan)
 library(gsl) #for lambertw0() to calc U_MSY
-source(here("analysis/R/functions.R"))
+source(here("analysis/R/data_functions.R"))
 
-# load data ------------------------------------------------------------------------------
-refit <- TRUE #toggle T/F if you want to refit models
-
-harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
-  dplyr::rename(stock = population, 
-                harv_cv = cv)
-
-sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
-  dplyr::rename(spwn = mean, 
-                spwn_cv = cv) |>
-  select(-obs, - se) |>
-  left_join(harvest, by = c("stock", "year")) |>
-  dplyr::rename(cu = stock) |>
-  mutate(N = spwn+harv)
-
-ages <- read.csv(here("analysis/data/raw/age-data-aggregate.csv"))
-
-A_obs <- ages |>
-  select(a4:a7) |>
-  as.matrix()
-
-rm(harvest)
+refit <- FALSE #toggle T/F if you want to refit models
+#refit <- TRUE
 
 # fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
@@ -188,14 +168,16 @@ for(i in unique(sp_har$cu)){
   
 #modelling results -----------------------------------------------------------------------
 bench.par.table <- NULL 
+bench.posts <- NULL
+a.yrs.all <- NULL
 
 for(i in unique(sp_har$cu)){
   sub_dat <- filter(sp_har, cu==i)
   sub_pars <- rstan::extract(AR1.fits[[i]])
   
   #latent states of spawners and recruits---
-  spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)] 
-  rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs] ##need to describe WHY A+a_min
+  spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)]
+  rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs]
   
   brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)],t(spwn.quant), t(rec.quant))) |>
     round(2)
@@ -207,7 +189,7 @@ for(i in unique(sp_har$cu)){
   SR_pred <- matrix(NA,length(spw), iter)
   
   bench <- matrix(NA,iter,4,
-                  dimnames = list(seq(1:iter), c("Sgen","Smsy","Umsy", "Seq")))
+                  dimnames = list(seq(1:iter), c("Sgen", "Smsy", "Umsy", "Seq")))
   
   for(j in 1:iter){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -227,9 +209,7 @@ for(i in unique(sp_har$cu)){
   # get benchmarks & pars ------------------------------------------------------------------
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
-  #get some posteriors for plotting later
-  Smsy.8.post <- bench[,2]
-  Sgen.post <- bench[,1]
+  bench.posts <- cbind(bench.posts, bench)
   
   bench.quant <- apply(bench, 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
@@ -277,9 +257,9 @@ for(i in unique(sp_har$cu)){
                 fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
     geom_line(data = SR_pred, aes(x = Spawn, y = Rec_med)) +
     geom_errorbar(data = brood_t, aes(x= S_med, y = R_med, ymin = R_lwr, ymax = R_upr),
-                  colour="grey", width=0, size=0.3) +
+                  colour="grey", width=0, linewidth=0.3) +
     geom_errorbarh(data = brood_t, aes(y = R_med, xmin = S_lwr, xmax = S_upr),
-                   height=0, colour = "grey", size = 0.3) +
+                   height=0, colour = "grey", linewidth = 0.3) +
     geom_point(data = brood_t,
                aes(x = S_med,
                    y = R_med,
@@ -321,24 +301,24 @@ for(i in unique(sp_har$cu)){
   
   #time varying alpha plot 
   sub_pars_TVA <- rstan::extract(TVA.fits[[i]])
-  a_yrs <- NULL
-  for(j in 1:dim(sub_pars_TVA$ln_alpha)[2]){
-    a_yrs <- rbind(a_yrs,
-                   quantile(sub_pars_TVA$ln_alpha[,j], probs = c(.1, .5, .9)))
-  }
   
-  a_yrs <- cbind(c(seq(min(sub_dat$year)-a_min+1, min(sub_dat$year)-1), sub_dat$year), a_yrs)
-  colnames(a_yrs) <- c("brood_year", "lwr", "mid", "upr")
+  a.yrs <- apply(sub_pars_TVA$ln_alpha, 2, quantile, probs=c(0.1,0.5,0.9))
+  a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
   
-  ggplot(as.data.frame(a_yrs)) +
+  colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
+  
+  ggplot(a.yrs) +
     geom_ribbon(aes(x = brood_year, ymin = lwr, ymax = upr), fill = "darkgrey", alpha = 0.5) +
     geom_line(aes(x = brood_year, y = mid), lwd = 2,  color = "black") +
     labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
          title = paste(i, "time-varying productivity"))
   my.ggsave(here("analysis/plots/", paste0("TV_alpha_", i, ".PNG")))
   
+  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, cu = i)) #store all alpha trends for plotting outside loop 
+  
   #time varying alpha residuals  
-  resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
+  resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, 
+                       probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
   
   resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) ##CHECK INDEX
   colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
@@ -357,7 +337,19 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
+ggplot(a.yrs.all, aes(color = cu)) +
+  geom_line(aes(x = brood_year, y = mid), lwd = 2) +
+  scale_color_viridis_d() +
+  labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
+       title = "Time-varying productivity across CUs")
+my.ggsave(here("analysis/plots/TVA_all.PNG"))
+
+write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds")) 
+
 bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2)
+
+write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
+          row.names = FALSE) 
