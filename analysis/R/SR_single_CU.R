@@ -16,7 +16,9 @@ sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
   dplyr::rename(cu = stock) |>
   mutate(N = spwn+harv)
 
-ages <- read.csv(here("analysis/data/raw/age-data-aggregate.csv"))
+ages <- read.csv(here("analysis/data/raw/run-age-comp.csv")) |>
+  filter(Year > 1984,
+         Year < 2024)
 
 A_obs <- ages |>
   select(a4:a7) |>

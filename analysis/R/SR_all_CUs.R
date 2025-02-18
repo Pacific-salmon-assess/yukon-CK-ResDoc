@@ -8,8 +8,8 @@ library(shinystan)
 library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/data_functions.R"))
 
-refit <- FALSE #toggle T/F if you want to refit models
-#refit <- TRUE
+#refit <- FALSE #toggle T/F if you want to refit models
+refit <- TRUE
 
 # fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
@@ -43,12 +43,12 @@ if(refit == TRUE){
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
-    #TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA2.stan"), 
-    #                data = stan.data,
-    #                iter = 8000)
+    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA2.stan"), 
+                    data = stan.data,
+                    iter = 2000)
     #launch_shinystan(TV.fit)
-    #saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
-    #                      paste0(i, "_TVA.rds")))
+    saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
+                          paste0(i, "_TVA.rds")))
   }
 }else{
   if(!dir.exists(here("analysis/data/generated/model_fits/AR1")) &
