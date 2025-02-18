@@ -307,7 +307,7 @@ for(i in unique(sp_har$cu)){
   
   colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
   
-  ggplot(a.yrs) +
+  ggplot(a.yrs|> filter(brood_year < 2018)) +
     geom_ribbon(aes(x = brood_year, ymin = lwr, ymax = upr), fill = "darkgrey", alpha = 0.5) +
     geom_line(aes(x = brood_year, y = mid), lwd = 2,  color = "black") +
     labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
@@ -337,8 +337,9 @@ for(i in unique(sp_har$cu)){
   my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
-ggplot(a.yrs.all, aes(color = cu)) +
-  geom_line(aes(x = brood_year, y = mid), lwd = 2) +
+ggplot(a.yrs.all
+       |> filter(brood_year < 2018), aes(color = cu)) +
+  geom_line(aes(x = brood_year , y = mid), lwd = 2) +
   scale_color_viridis_d() +
   labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
        title = "Time-varying productivity across CUs")
