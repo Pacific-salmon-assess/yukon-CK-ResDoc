@@ -9,7 +9,7 @@ stks c("NYR","White","Pelly","Stewart","Norden","Teslin","MidYR","UpperYR")
 
 # Model bounds
 initYear 1985
-lastYear 2023
+lastYear 2024
 
 # Optimization settings
 maxFunEval 100000

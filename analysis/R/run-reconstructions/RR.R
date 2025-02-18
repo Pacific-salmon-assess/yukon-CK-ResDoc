@@ -12,7 +12,7 @@ source(here("analysis/R/run-reconstructions/initRR.R"))
 rpt <- fitRR()
 
 # process RR model output and save time-series of spawner abundance
-cdn_harvest <- read.csv(here("analysis/data/raw/YkCk_Harvest_CA_Data.csv")) %>%
+cdn_harvest <- read.csv(here("analysis/data/raw/YkCk_Harvest_CA_Data_2024.csv")) %>%
   filter(Type == "CA_Mainstem",
          Year > 1984) %>%
   select(Year, Estimate)
@@ -23,19 +23,19 @@ cdn_er <- cdn_harvest$Estimate/(cdn_harvest$Estimate+border_passage)
 CU_border_passage <- exp(rpt$lnRunSize_st)*1e-3
 CU_spwn <- CU_border_passage * (1-cdn_er)
 
-colnames(CU_spwn) <- seq(1985,2023)
+colnames(CU_spwn) <- seq(1985,2024)
 rownames(CU_spwn) <- c("NorthernYukonR.andtribs.","Whiteandtribs.","Pelly","Stewart","Nordenskiold","YukonR.Teslinheadwaters","MiddleYukonR.andtribs.","UpperYukonR.")
 
 # estimate proportional contribution of Big Salmon to Middle CU, generate full time series, remove from Middle CU
 big_salmon <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(system == "bigsalmon",
-         year < 2024)
+         year < 2025)
 
-prop_comp <- mean(big_salmon$estimate/(CU_spwn[7,c(21:39)]*1000), na.rm=TRUE)
+prop_comp <- mean(big_salmon$estimate/(CU_spwn[7,c(21:40)]*1000), na.rm=TRUE)
 
 big_salmon_inf <- CU_spwn[7,]*1000 * prop_comp
 big_salmon_inf_2 <- big_salmon_inf
-big_salmon_inf_2[c(21:39)] <- big_salmon$estimate
+big_salmon_inf_2[c(21:40)] <- big_salmon$estimate
 big_salmon_inf_2[38] <- big_salmon_inf[38]
 big_salmon_recon <- big_salmon_inf_2/1000
 CU_spwn[7,] <- CU_spwn[7,]-big_salmon_recon
@@ -61,14 +61,14 @@ mssr_spwn <- CU_spawn_long %>%
   select(stock, year, mean, se, cv, obs)
 
 # add Big Salmon into spawner dataframe
-year <- seq(1985,2023)
+year <- seq(1985,2024)
 big.S <- cbind(year,(big_salmon_recon*1000))
 big.S <- as.data.frame(big.S)
 big.S$stock <- "Big.Salmon"
 big.S$se <- "na"
 big.S$cv <- 0.50
 big.S$obs <- 1
-big.S$cv[c(21:39)] <- 0.05
+big.S$cv[c(21:40)] <- 0.05
 big.S <- big.S[,c(3,1,2,4,5,6)]
 colnames(big.S)[3] <- "mean"
 

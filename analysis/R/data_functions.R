@@ -13,7 +13,7 @@ sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
 
 ages <- read.csv(here("analysis/data/raw/run-age-comp.csv")) |>
   filter(Year > 1984,
-         Year < 2024)
+         Year < 2025)
 
 A_obs <- ages |>
   select(a4:a7) |>

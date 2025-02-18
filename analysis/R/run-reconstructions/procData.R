@@ -13,7 +13,7 @@ processData <- function()
 	counts$gear <- as.character(counts$gear)
 	
 	# -- GSI sub-stock sampling by day, n_sgyd --
-	gsi <- read.csv(here("analysis/data/raw/border-gsi-table.csv")) %>%
+	gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update.csv")) %>%
 	  rename( sample_num=fish )
 	stockID <- read.csv(here("analysis/data/raw/stockIDs.csv")) %>% arrange(plotOrder)
 	stockID$stockNum <- stockID$plotOrder
