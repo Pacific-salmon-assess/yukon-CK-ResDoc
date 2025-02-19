@@ -12,13 +12,13 @@ data{
   vector[nyrs] H_cv;  // harvest observation error CV
 }
 parameters{
+  real<lower=0,upper=1> F_rw; //fraction of variance attributed to random walk in alpha
+  real<lower=0> sigma_tot;
   real ln_alpha0;                         // initial productivity (on log scale)
   vector[nyrs] alpha_dev;                // time varying year-to-year deviations in a
   real<lower=0> beta;                     // Ricker b
   vector<lower=0>[nRyrs] lnR;             // log recruitment states
-  real<lower=0> sigma_R;                  // process error
   real<lower=0> sigma_R0;                 // process error for first a.max years with no spawner link
-  real<lower=0> sigma_alpha;              // amount alpha can deviate
   real lnresid_0;                         // first residual for lag-1 correlation in process error
   real<lower=0> mean_ln_R0;               // "true" mean log recruitment in first a.max years with no spawner link
   vector<lower=0.01,upper=0.99>[nyrs] U;  // harvest rate
@@ -42,6 +42,8 @@ transformed parameters{
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
   matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
   vector[nyrs] ln_alpha;               // ln_alpha in each year
+  real<lower=0> sigma_alpha;              // amount alpha can deviate
+  real<lower=0> sigma_R;                  // process error
 
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
   pi[1] = prob[1];
@@ -55,6 +57,10 @@ transformed parameters{
       p[y,a] = g[y,a]/sum(g[y,]);
     }
   }
+  
+  sigma_alpha = F_rw*sigma_tot; //process variance - fraction of total attributed to random walk
+  sigma_R = (1-F_rw)*sigma_tot; //obs variance - remaining fraction of total variance
+  
   R = exp(lnR);
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
@@ -96,11 +102,13 @@ transformed parameters{
 }
 model{
   // Priors
+  sigma_tot ~ gamma(2,1);
+  F_rw ~ beta(2,4);
   ln_alpha0 ~ normal(1,4);
   alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
-  sigma_alpha ~ normal(0,1);
+  //sigma_alpha ~ normal(0,1);
   beta ~ normal(0,1);
-  sigma_R ~ normal(0,2);
+  //sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
   sigma_R0 ~ gamma(2,1); 

@@ -43,7 +43,7 @@ if(refit == TRUE){
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
-    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA2.stan"), 
+    TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
                     data = stan.data,
                     iter = 2000)
     #launch_shinystan(TV.fit)
