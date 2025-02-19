@@ -188,8 +188,8 @@ for(i in unique(sp_har$cu)){
   iter <- length(sub_pars$lnalpha)
   SR_pred <- matrix(NA,length(spw), iter)
   
-  bench <- matrix(NA,iter,4,
-                  dimnames = list(seq(1:iter), c("Sgen", "Smsy", "Umsy", "Seq")))
+  bench <- matrix(NA,iter,5,
+                  dimnames = list(seq(1:iter), c("Sgen", "Smsy", "Umsy", "Seq", "S.recent")))
   
   for(j in 1:iter){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -200,6 +200,7 @@ for(i in unique(sp_har$cu)){
     bench[j,1] <- get_Sgen(exp(ln_a),b,-1,1/b*2, bench[j,2]) #S_gen
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
+    bench[j,5] <- sub_pars$S[j, nyrs] 
   }
   
   SR_pred <- as.data.frame(cbind(spw,t(apply(SR_pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
@@ -209,12 +210,12 @@ for(i in unique(sp_har$cu)){
   # get benchmarks & pars ------------------------------------------------------------------
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
-  bench.posts <- cbind(bench.posts, bench)
+  bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
   
-  bench.quant <- apply(bench, 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
+  bench.quant <- apply(bench[,1:4], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
   
-  mean <- apply(bench,2,mean, na.rm=T) #get means of each
+  mean <- apply(bench[,1:4],2,mean, na.rm=T) #get means of each
   
   sub_benchmarks <- cbind(bench.quant, mean) |>
     as.data.frame() |>
