@@ -2,3 +2,5 @@
 .Rhistory
 analysis/data/generated/model_fits/
 analysis/data/generated/simulations/
+analysis/plots/CU_detail/
+analysis/plots/diagnostics/

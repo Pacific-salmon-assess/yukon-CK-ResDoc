@@ -276,7 +276,7 @@ for(i in unique(sp_har$cu)){
           legend.key.size = unit(0.4, "cm"),
           legend.title = element_text(size=9),
           legend.text = element_text(size=8))
-  my.ggsave(here("analysis/plots/", paste0("SRR_", i, ".PNG")))
+  my.ggsave(here("analysis/plots/CU_detail/", paste0("SRR_", i, ".PNG")))
   
   # then residuals---
   ## NEED TO CHECK HOW THESE YEARS LINE UP
@@ -296,7 +296,7 @@ for(i in unique(sp_har$cu)){
     theme(legend.position = "none",
           panel.grid = element_blank()) +
     geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
-  my.ggsave(here("analysis/plots/", paste0("rec_resids_", i, ".PNG")))
+  my.ggsave(here("analysis/plots/CU_detail/", paste0("rec_resids_", i, ".PNG")))
   
   #KOBE PLOT - sort out the SR links first
   
@@ -313,7 +313,7 @@ for(i in unique(sp_har$cu)){
     geom_line(aes(x = brood_year, y = mid), lwd = 2,  color = "black") +
     labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
          title = paste(i, "time-varying productivity"))
-  my.ggsave(here("analysis/plots/", paste0("TV_alpha_", i, ".PNG")))
+  my.ggsave(here("analysis/plots/CU_detail/", paste0("TV_alpha_", i, ".PNG")))
   
   a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, cu = i)) #store all alpha trends for plotting outside loop 
   
@@ -335,7 +335,7 @@ for(i in unique(sp_har$cu)){
     theme(legend.position = "none",
           panel.grid = element_blank()) +
     geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
-  my.ggsave(here("analysis/plots/", paste0("TV_rec_resids_", i, ".PNG"))) 
+  my.ggsave(here("analysis/plots/CU_detail/", paste0("TV_rec_resids_", i, ".PNG"))) 
 }
 
 ggplot(a.yrs.all
