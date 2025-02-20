@@ -3,6 +3,8 @@
 library(tidyverse)
 library(here)
 library(zoo)
+library(ggpubr)
+library(ggsidekick)
 
 # Hamachan selectivity corrected age and sex comps 1981-2006
 fw_age_sex <- read.csv(here("analysis/data/raw/fw-border-age-sex-comps.csv"))
@@ -16,7 +18,7 @@ eagle_age_sex_len <- read.csv(here("analysis/data/raw/ASL_Output_Chinook_Eagle_2
 ## wrangling for full age and sex dataset
 #  eagle ASL prep
 eagle_asl <- eagle_age_sex_len %>% 
-  filter(!is.na(Total.Age), Sex != "unknown") |>
+  filter(!is.na(Total.Age), Sex != "unknown", Species != "Chum") |>
   group_by(Sample.Year, Sex, Total.Age) |>
   count() |>
   group_by(Sample.Year) |>
@@ -113,4 +115,77 @@ female_length_comps_egg_mass <- 8.71e-12*cdn_len_1985_2024[,3:6]^4.83
 
 write.csv(female_length_comps_eggs, here("analysis/data/raw/female_length_comps_eggs.csv"),row.names = FALSE)
 write.csv(female_length_comps_egg_mass, here("analysis/data/raw/female_length_comps_egg_mass.csv"),row.names = FALSE)
+
+
+#### plots
+
+fem_len_comp <- read.csv(here("analysis/data/raw/female_length_comps.csv"))
+fem_age_comps <- read.csv(here("analysis/data/raw/female_age_comps.csv"))
+
+fem_age_comp <- fem_age_comps[,c(1,3:6)]%>%
+  group_by(Sample.Year) %>%
+  mutate(total_prop=sum(age_4,age_5,age_6,age_7),
+         age4=age_4/total_prop,
+         age5=age_5/total_prop,
+         age6=age_6/total_prop,
+         age7=age_7/total_prop)%>%
+  select(Sample.Year,age4, age5, age6, age7)%>%
+  rename(Four = age4, Five = age5, Six = age6, Seven = age7)%>%
+  pivot_longer(!Sample.Year , names_to = "Age",
+               values_to = "prop")
+
+fem_age_comp$age_f <- factor(fem_age_comp$Age, levels = c("Four", "Five", "Six", "Seven"))
+
+a <- ggplot(fem_age_comp, aes(fill=age_f, y=prop, x=Sample.Year)) + 
+  geom_bar(position="stack", stat="identity")+
+  xlab("Year") +
+  ylab("Proportion") +
+  scale_fill_viridis_d(name = "Age") +
+  theme_sleek() +
+  theme(legend.key.size = unit(0.4, "cm"),
+        legend.title = element_text(size=9),
+        legend.text = element_text(size=8),
+        legend.position="top")
+
+
+prop_females <- rowSums(fem_age_comps[,3:6])
+
+sex_ratio<-cbind(seq(1985,2024),prop_females)
+colnames(sex_ratio)<-c("Year","prop_fem")
+sex_ratio<-as.data.frame(sex_ratio)
+
+b <- ggplot(sex_ratio, aes(x = Year, y = prop_fem)) +
+  geom_smooth(method="lm", color="grey") +
+  geom_point(size=1)+ 
+  xlab("Year") +
+  ylab("Proportion female") +
+  coord_cartesian(ylim=c(0,1)) +
+  theme_sleek() +
+  theme(plot.margin = margin(0.5,20,0.5,20))
+
+laa <- as.data.frame(fem_len_comp)%>%
+  select(Sample.Year,age_4, age_5, age_6, age_7)%>%
+  rename(Four = age_4, Five = age_5, Six = age_6, Seven = age_7)%>%
+  pivot_longer(!Sample.Year , names_to = "Age",
+               values_to = "length") 
+
+
+laa$age_f <- factor(laa$Age, levels = c("Four", "Five", "Six", "Seven"))
+
+c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
+  geom_smooth(method="lm", color="grey") +
+  geom_point(size=1)+ 
+  xlab("Year") +
+  ylab("Female length \n  (mm; MEFL)") +
+  theme_sleek() +
+  facet_wrap(~age_f) +
+  scale_x_continuous(breaks=c(1985, 1995, 2005, 2015)) +
+  theme(strip.text.x = element_text(size=8),
+        plot.margin = margin(0.5,10,0.5,0.5))
+
+g <- ggarrange(b,c,a, 
+               labels = c("a", "b","c"),
+               heights = c(0.8,1))
+
+g
 
