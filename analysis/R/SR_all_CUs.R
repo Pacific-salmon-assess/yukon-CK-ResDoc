@@ -200,7 +200,7 @@ for(i in unique(sp_har$cu)){
     bench[j,1] <- get_Sgen(exp(ln_a),b,-1,1/b*2, bench[j,2]) #S_gen
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
-    bench[j,5] <- sub_pars$S[j, nyrs] 
+    bench[j,5] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
   }
   
   SR_pred <- as.data.frame(cbind(spw,t(apply(SR_pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
@@ -228,7 +228,7 @@ for(i in unique(sp_har$cu)){
   sigma <- quantile(sub_pars$sigma_R, probs = c(.1, .5, .9))
   phi <- quantile(sub_pars$phi, probs = c(.1, .5, .9))
   
-  par.quants <- rbind(alpha, sigma, beta, phi)
+  par.quants <- rbind(alpha, beta, sigma, phi)
   
   #make big table of bench and pars
   par.summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary) |>
@@ -236,10 +236,10 @@ for(i in unique(sp_har$cu)){
   
   #summarise not other pars...
   par.summary <- filter(par.summary, row.names(par.summary) %in% c('lnalpha', 'beta',
-                                                                   'phi', 'sigma_R')) |>
-    slice(1,4,3,2) |>
+                                                                    'sigma_R', 'phi')) |>
     mutate(cu = i)
-  
+  par.summary[1,1] <- exp(par.summary[1,1]) #exp ln_alpha
+   
   pars <- cbind(par.quants, par.summary)
   
   sub.bench.par.table <- bind_rows(sub_benchmarks, pars) |>
@@ -351,7 +351,8 @@ write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
 bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
-  relocate(mean, .after = 2)
+  relocate(mean, .after = 2) |>
+  mutate_at(3:6, ~round(.,5))
 
 write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE) 
