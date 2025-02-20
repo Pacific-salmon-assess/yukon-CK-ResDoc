@@ -34,7 +34,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   theme(legend.position = "bottom") +
   scale_fill_manual(values = c("black", "darkred", "forestgreen"), 
                     aesthetics = c("fill", "color"), 
-                    labels = c(expression(italic(S["'24"])), expression(italic(S[gen])), 
+                    labels = c(expression(italic(S[recent])), expression(italic(S[gen])), 
                                expression(italic(paste("80% ",S)[MSY])))) +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
