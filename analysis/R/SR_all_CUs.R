@@ -189,7 +189,7 @@ for(i in unique(sp_har$cu)){
   SR_pred <- matrix(NA,length(spw), iter)
   
   bench <- matrix(NA,iter,5,
-                  dimnames = list(seq(1:iter), c("Sgen", "Smsy", "Umsy", "Seq", "S.recent")))
+                  dimnames = list(seq(1:iter), c("Sgen", "80.Smsy", "Umsy", "Seq", "S.recent")))
   
   for(j in 1:iter){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -223,7 +223,7 @@ for(i in unique(sp_har$cu)){
     relocate('50%', 1)
   
   #other pars to report 
-  alpha <- exp(quantile(sub_pars$lnalpha, probs = c(.1, .5, .9)))
+  alpha <- quantile(exp(sub_pars$lnalpha), probs = c(.1, .5, .9))
   beta <- quantile(sub_pars$beta, probs = c(.1, .5, .9))
   sigma <- quantile(sub_pars$sigma_R, probs = c(.1, .5, .9))
   phi <- quantile(sub_pars$phi, probs = c(.1, .5, .9))
@@ -303,7 +303,7 @@ for(i in unique(sp_har$cu)){
   #time varying alpha plot 
   sub_pars_TVA <- rstan::extract(TVA.fits[[i]])
   
-  a.yrs <- apply(sub_pars_TVA$ln_alpha, 2, quantile, probs=c(0.1,0.5,0.9))
+  a.yrs <- apply(exp(sub_pars_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
   a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
   
   colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
@@ -319,9 +319,9 @@ for(i in unique(sp_har$cu)){
   
   #time varying alpha residuals  
   resid.quant <- apply(sub_pars_TVA$lnresid, 2, quantile, 
-                       probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs] ##CHECK INDEX
+                       probs=c(0.1,0.25,0.5,0.75,0.9))[,(A):nRyrs]
   
-  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) ##CHECK INDEX
+  resids <- as.data.frame(cbind(sub_dat$year, t(resid.quant))) 
   colnames(resids) <- c("year","lwr","midlwr","mid","midupr","upr")
   
   ggplot(resids, aes(x=year, y = mid)) +
@@ -352,7 +352,8 @@ bench.par.table <- bench.par.table |>
   relocate(cu, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
-  mutate_at(3:6, ~round(.,5))
+  mutate_at(3:6, ~round(.,5)) |>
+  arrange(bench.par, mean)
 
 write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE) 
