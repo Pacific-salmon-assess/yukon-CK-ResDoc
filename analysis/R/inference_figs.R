@@ -216,7 +216,7 @@ ggplot(a.yrs.all
   labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
        title = "Time-varying productivity across CUs")
 
-my.ggsave(here("analysis/plots/TVA_all.PNG"))
+my.ggsave(here("analysis/plots/changing_productivity.PNG"))
 
 ggplot() +
   geom_point(data = brood.all,
