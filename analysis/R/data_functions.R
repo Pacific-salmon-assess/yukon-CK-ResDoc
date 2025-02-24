@@ -124,66 +124,6 @@ process.iteration = function(samp) {
 }
 
 #------------------------------------------------------------------------------#
-# Generate deviations in alpha and beta for directional change simulations
-#------------------------------------------------------------------------------#
-# alpha <- median posterior estimate of alpha
-# beta <- median posterior estimate of beta
-# step.num <- number of time steps transition occurs over
-# start.step <- time step transition begins
-# ny <- number of years simulations runs over
-# n.pops <- number of pops
-SR_para_devs = function(alpha, beta, step.num, start.step, ny, n.pops){
-  #browser()
-  id <- seq(1:n.pops)
-  
-  end.states.order <- c(1:n.pops) ##does this need to be ordered some funky way? thought it was just for plotting or something?
-  
-  alpha.end <- alpha[end.states.order]
-  beta.end <- beta[end.states.order]
-  
-  df <- data.frame(
-    alpha=vector(mode="numeric", length=2),
-    beta=vector(mode="numeric", length=2),
-    steps=vector(mode="numeric", length=2))
-  
-  input <- list(df,df,df,df,df,df,df,df)
-  
-  for(j in 1:n.pops) {                        
-    input[[j]]$steps<- c(1,step.num)
-    input[[j]]$alpha<- c(alpha[j]/alpha[j], alpha.end[j]/alpha[j]) ##WTF is going on here?! 
-    input[[j]]$beta<- c(beta[j]/beta[j], beta.end[j]/beta[j])		
-  }
-  output <- array(NA,dim=c(step.num,2,n.pops))
-  for (i in 1:length(input)) {
-    # in future; process 'n1' 2-at-a-time (1,2; 2,3; 3,4)
-    # not just 2-1,calling approx() each time and removing duplicates
-    n1 <- input[[i]]$steps[2]-input[[i]]$steps[1]+1
-    if(i!= step.num){if(n1>1) {
-      ans <- approx(
-        x=input[[i]]$alpha,
-        y=input[[i]]$beta,
-        method="linear",
-        n=n1
-      )
-      if(ans$x[1] < 1){ans$x <- rev(ans$x)
-      ans$y <- rev(ans$y)}
-      output[,,i] <- cbind(ans$x,ans$y)
-    }
-    }
-    if(i== step.num) {output[,,i] <- matrix(1, step.num,2)}   	
-  }
-  
-  SR_devs <- array(1,dim=c(ny,2,n.pops))
-  SR_devs[start.step:(start.step+step.num-1),,] <- output
-  
-  for(w in (start.step+step.num):ny){
-    SR_devs[w,,] <- output[step.num,,]
-  }
-  
-  return(SR_devs)	
-}
-
-#------------------------------------------------------------------------------#
 # Multi-stock simulation function with alternative structural forms
 #------------------------------------------------------------------------------#
 # ny <- the number of years
@@ -216,19 +156,10 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   OU <- OU
   m.alpha <- alpha
   m.beta <- beta
-  
-  # create vectors of time varying alpha
-  if (SR_rel == "Beverton-Holt"){ 
-    beta.tim <- (alpha/beta)*exp(-1)
-    alpha.time <- matrix(NA,ny,length(alpha))
-    for (t in 1:ny){
-      alpha.time[t,] <- sin(2*pi*(t/period))*((alpha + (alpha * BH.alpha.CV)) - alpha) + alpha
-    }
-  }
+
   
   #Create recruitment deviations that are correlated among stocks 
   epi <- rmvnorm(ny, sigma= vcov.matrix)
-  #browser()
   #Build time series of Spawners (S), abundance of returning spawners pre-harvest
   # (N), and the component of the residual that is correlated throught time (v)
   R <- t(matrix(0,ns,ny))
@@ -267,7 +198,7 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     N[i,4,] <- R[i-(7),] * mat[4]
     Ntot[i,] <- colSums(N[i,,])
     
-    # apply harvest control rule
+    # apply harvest control rule ## needs changing based on Yukon HCR (no fishing, 42k esc goal, havest above)
     run.size <- sum(Ntot[i,])
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000}
@@ -286,32 +217,22 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     }
     
     # predict recruitment
-    if (SR_rel == "Ricker"){
-      R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,]) ##add alpha.time? to here?
+    if (SR_rel == "Ricker"){ ##dump if statement - this is the only one
+      R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,]) 
       predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
       v[i,] <- log(R[i,])-log(predR[i,])
-      v[v[,]=='NaN'] <- 0
-    }
-    
-    if (SR_rel == "Beverton-Holt"){
-      R[i,] = alpha.time[i,]*S[i,]/(1+(alpha.time[i,]/beta.tim[])*S[i,])*exp(phi*v[i-1,]+epi[i,])
-      predR[i,] = alpha.time[i,]*S[i,]/(1+(alpha.time[i,]/beta.tim[])*S[i,])
-      v[i,] = log(R[i,])-log(predR[i,])
       v[v[,]=='NaN'] <- 0
     }
   }
   
   # Output
-  # Performance measures:
+  # Performance measures: ##set up to describe FULL sim, not like each time step for pinks 
   #	1: escapement
   #	2: harvest
-  #	3: harvest rate
-  #	4: predicted overfished
-  #	5: predicted trending towards extinction
-  #	6: empirical extinction
-  #	7: proportion of years failed to meet subsistence goal
+  #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
+  ## new 4: which zone is the CU in? vector (length(CU)) of what "zone" the CU is in (below LRP, between, or above USR)
+    #^at the END of the simulation, what is your status (sim.yrs-5):sim.yrs
   #	8: CV in harvest
-  #	9: proportion of tributary goals met
   
   pms <- matrix(NA,1,9) 
   
@@ -347,9 +268,9 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   pms[,8] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,]) 
   pms[,9] <- sum(trib.gl)/length(alpha) 
   
-  if (SR_rel == "Beverton-Holt"){
-    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],BH_alpha = alpha.time, BH_beta = beta.tim, PMs=pms)}
-  else{
-    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)}
+ ## if (SR_rel == "Beverton-Holt"){
+##    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],BH_alpha = alpha.time, BH_beta = beta.tim, PMs=pms)}
+  #else{
+    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)#}
   
 }
