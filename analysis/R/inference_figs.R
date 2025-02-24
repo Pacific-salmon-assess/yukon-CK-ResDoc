@@ -213,7 +213,7 @@ ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
   geom_line(aes(x = brood_year , y = mid), lwd = 2) +
   scale_color_viridis_d() +
-  labs(y = "Productivity (Ricker alpha 80th percentiles)", x = "Brood year", 
+  labs(y = "Productivity (Ricker alpha)", x = "Brood year", 
        title = "Time-varying productivity across CUs")
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
