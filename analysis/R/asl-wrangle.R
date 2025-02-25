@@ -59,6 +59,7 @@ fw_as_1984_2006 <- fw_age_sex |>
 cdn_as_1985_2024 <- rbind(fw_as_1984_2006,eagle_as_2005_2024)
 
 write.csv(cdn_as_1985_2024[which(cdn_as_1985_2024$Sex=="female"),], here("analysis/data/raw/female_age_comps.csv"),row.names = FALSE)
+write.csv(cdn_as_1985_2024[which(cdn_as_1985_2024$Sex=="male"),], here("analysis/data/raw/male_age_comps.csv"),row.names = FALSE)
 
 ## wrangling for full length dataset
 # fish wheel data
