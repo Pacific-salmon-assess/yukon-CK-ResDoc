@@ -8,12 +8,12 @@ source(here("analysis/R/data_functions.R"))
 AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
                               full.names = T), 
                    readRDS)
-names(AR1.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                               full.names = T), 
                    readRDS)
-names(TVA.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 # process data and fits to make plots later ----------------------------------------------
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
@@ -25,8 +25,8 @@ AR1.resids <- NULL
 TV.resids <- NULL
 TV.SR.preds <- NULL
 
-for(i in unique(sp_har$cu)){
-  sub_dat <- filter(sp_har, cu==i)
+for(i in unique(sp_har$CU)){
+  sub_dat <- filter(sp_har, CU==i)
   sub_pars <- rstan::extract(AR1.fits[[i]])
   
   #latent states of spawners and recruits---
