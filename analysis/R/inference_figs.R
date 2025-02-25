@@ -280,7 +280,7 @@ my.ggsave(here("analysis/plots/status.PNG"))
 
 # write important objects/tables to repo -------------------------------------------------
 bench.par.table <- bench.par.table |>
-  relocate(cu, 1) |>
+  relocate(CU, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
   mutate_at(3:6, ~round(.,5)) |>
