@@ -29,6 +29,7 @@ rm(harvest, ages)
 
 fem_S_comps <- read.csv(here("analysis/data/raw/female_age_comps.csv"))[,3:6] # female spawner age composition
 fem_fec_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")) # female spawner eggs by age
+fem_egg_mass_comps <- read.csv(here("analysis/data/raw/female_length_comps_egg_mass.csv")) # female spawner eggs by age
 
 #functions -------------------------------------------------------------------------------
 my.ggsave <- function(filename = default_name(plot), plot = last_plot(), 
