@@ -5,11 +5,11 @@ library(mvtnorm) #for rmvnorm()
 source(here("analysis/R/data_functions.R"))
 
 # wrangle TVA fits into same structure as the "samps" matrix -----------------------------
-  #here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
+#here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                               full.names = T), 
                    readRDS)
-names(TVA.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 TVA.fits <- lapply(TVA.fits, rstan::extract)
 
@@ -36,7 +36,7 @@ for(i in 1:length(names(TVA.fits))){
                            paste0("R_", (nRyrs-A+2):nRyrs, "_", i), 
                            paste0("last_resid_", i))
   samps <- cbind(samps, sub_samps) #cbind posteriors of parms we care about
-                  
+  
   pi.samps[,,i] <- TVA.fits[[i]]$pi #store pis to summarise later
   
   for(j in 1:3){
@@ -46,7 +46,7 @@ for(i in 1:length(names(TVA.fits))){
 }
 
 #get median of pis and ps for all pops 
-  #(i.e. take the median across posterior slices by "page" of array)
+#(i.e. take the median across posterior slices by "page" of array)
 median.pi.samps <- apply(pi.samps, c(1,2), median)
 colnames(median.pi.samps) <- paste0("pi_", 1:4)
 
@@ -68,49 +68,43 @@ ny = 50 # number of years in forward simulation #originally 50
 pm.yr <- ny-20
 for.error <- 0.27 ## base this off something observed  
 OU <- 0.1 
-  
-# --- Create array to store outcomes ----------------------------------------------------
-harvest_goal <- seq(1000,100000,length.out=40)
-egfloor <- seq(1,100000,length.out=40) ## should just be 42k?
-sim.outcomes <- array(NA,dim=c(length(egfloor),5, length(harvest_goal),num.sims)) #5 = n(perf.metrics)
-sim.outcomes.spw.time <- array(NA,dim=c(ny,length(unique(sp_har$cu)),length(egfloor),
-                                          length(harvest_goal),num.sims)) #was 13, changed to 8
-  
+
+# --- Create array to store outcomes -----------------------------------------------------
+HCRs <- c("no.fishing", "status.quo")
+sim.outcomes <- array(NA, dim=c(length(HCRs), 5, num.sims))  #5 perf metrics
+sim.outcomes.time <- array(NA, dim=c(length(HCRs), 3, num.sims)) #3 states: catch, esc, state 
 # --- Time-varying Ricker SR dynamics ----------------------------------------------------
 
 # run simulations
-ptm <- proc.time()
-for (w in 1:length(harvest_goal)){
-  for (k in 1:length(egfloor)){
-    for (l in 1: num.sims){
-      draw <- sample(10000,1)
-      alpha <- process.iteration(samps[draw,])$alpha
-      beta <- process.iteration(samps[draw,])$beta
-      vcov.matrix <- Sig.R # had to change this, ##check w/ BC if appropriate to leave it fixed.
-      mat <- process.iteration(samps[draw,])$pis
-      Rec <- process.iteration(samps[draw,])$R
-      Spw <- process.iteration(samps[draw,])$S
-      lst.resid <- process.iteration(samps[draw,])$last_resid
-      sub <- ifelse(harvest_goal[w]<45000,harvest_goal[w],45000)
-      com <- ifelse(harvest_goal[w]<45000,0,harvest_goal[w]-45000)
-      expan <- 1/(rnorm(1,0.56,0.05))
-        
-      out <- process(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor[k],pm.yr,
-                     for.error,OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV=NULL,
-                     period=NULL,dir.SR, SR_devs=NULL, expan)
-      sim.outcomes[k,,w,l] <- out$PMs
-      sim.outcomes.spw.time[,,k,w,l] <- out$S
-    }
-  }	
+ptm <- proc.time() #w & k deleted
+for(i in 1:length(HCRs)){
+  for(j in 1:num.sims){ #l been changed to j
+    draw <- sample(nrow(samps),1)
+    alpha <- process.iteration(samps[draw,])$alpha
+    beta <- process.iteration(samps[draw,])$beta
+    vcov.matrix <- Sig.R # had to change this, ##check w/ BC if appropriate to leave it fixed.
+    mat <- process.iteration(samps[draw,])$pis
+    Rec <- process.iteration(samps[draw,])$R
+    Spw <- process.iteration(samps[draw,])$S
+    lst.resid <- process.iteration(samps[draw,])$last_resid
+    expan <- 1/(rnorm(1,0.56,0.05))
+    
+    out <- process(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub=NULL,com=NULL,egfloor[k]=NULL,pm.yr,
+                   for.error,OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV=NULL,
+                   period=NULL,dir.SR, SR_devs=NULL, expan)
+    sim.outcomes[] <- out$PMs
+    #sim.outcomes.spw.time[,,i] <- out$S
+  }
 }
+
 (proc.time() - ptm)/60
-  
+
 saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
 saveRDS(sim.outcomes.spw.time, here("analysis/data/generated/base_sims_projections.rickerTV"))  
 
 #sim.outcomes <- read_rds(here("analysis/data/generated/base_sims.rickerTV"))
- #sim.outcomes.spw.time <-  read_rds(here("analysis/data/generated/base_sims_projections.rickerTV"))
-  #}
+#sim.outcomes.spw.time <-  read_rds(here("analysis/data/generated/base_sims_projections.rickerTV"))
+#}
 
 
 #sim inference?
