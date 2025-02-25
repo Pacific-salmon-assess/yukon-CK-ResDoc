@@ -1,12 +1,11 @@
-#fwd sim attempt. "##" comments are Q's for BC
+# fwd sim "##" comments are Q's for BC to address
 library(here)
 library(tidyverse)
 library(mvtnorm) #for rmvnorm()
-
 source(here("analysis/R/data_functions.R"))
 
-#wrangle TVA fits into same structure as the "samps" matrix here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
-#read models and posts
+# wrangle TVA fits into same structure as the "samps" matrix -----------------------------
+  #here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                               full.names = T), 
                    readRDS)
@@ -78,7 +77,7 @@ if(run.sim == TRUE){
   
   # --- Create array to store outcomes ----------------------------------------------------
   harvest_goal <- seq(1000,100000,length.out=40)
-  egfloor <- seq(1,100000,length.out=40)
+  egfloor <- seq(1,100000,length.out=40) ## should just be 42k?
   sim.outcomes <- array(NA,dim=c(length(egfloor),9, length(harvest_goal),num.sims)) ##why 9? length of perf metrics?
   sim.outcomes.spw.time <- array(NA,dim=c(ny,length(unique(sp_har$cu)),length(egfloor),
                                           length(harvest_goal),num.sims)) #was 13, changed to 8
