@@ -8,7 +8,7 @@ sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
                 spwn_cv = cv) |>
   select(-obs, - se) |>
   left_join(harvest, by = c("stock", "year")) |>
-  dplyr::rename(cu = stock) |>
+  dplyr::rename(CU = stock) |>
   mutate(N = spwn+harv)
 
 ages <- read.csv(here("analysis/data/raw/run-age-comp.csv")) |>
@@ -50,7 +50,7 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
   return(Sgen)
 }
 
-#from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
+# adapted from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
 
 #------------------------------------------------------------------------------#
 # Subsistence harvest control rule function
@@ -61,7 +61,7 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
 # com <- maximum commercial harvest
 # for.error <- forecast error 
 # OU <- outcome uncertainty
-sub_hcr = function(sub, com, egfloor, run,for.error){
+sub_hcr = function(sub, com, egfloor, run, for.error){
   run.est <- run * rlnorm(1, 0, for.error); if(is.na(run.est)==TRUE){run.est <- run};if(is.na(run)==TRUE){run <- 0}
   if(run.est - egfloor <= 0){hr = 0}
   if(run.est > egfloor){
@@ -73,7 +73,7 @@ sub_hcr = function(sub, com, egfloor, run,for.error){
   }
   if(hr < 0){hr=0}
   if(hr >1 ){hr=1}
-  return(hr)
+  return(hr) ##harvest rate?
 }
 
 #------------------------------------------------------------------------------#
@@ -97,7 +97,7 @@ process.iteration = function(samp) {
   # 1.) extract names
   nms = names(samp)
   A = 4
-  ns = 8
+  ns = length(unique(sp_har$CU))
   # 2.) extract elements according to the names and put them into the appropriate data structure
   
   # parameters
@@ -160,12 +160,11 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   OU <- OU
   m.alpha <- alpha
   m.beta <- beta
-
   
   #Create recruitment deviations that are correlated among stocks 
   epi <- rmvnorm(ny, sigma= vcov.matrix)
   #Build time series of Spawners (S), abundance of returning spawners pre-harvest
-  # (N), and the component of the residual that is correlated throught time (v)
+  # (N), and the component of the residual that is correlated through time (v)
   R <- t(matrix(0,ns,ny))
   S <- R * (1-0)
   v <- R; v[,] <- 0
@@ -206,7 +205,10 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     run.size <- sum(Ntot[i,])
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000}
-    HR.all <- sub_hcr(sub,com,egfloor, run.size,for.error)
+    #HR.all <- sub_hcr(sub,com,egfloor,run.size,for.error)
+    
+    ##Add HCRs here 
+    
     HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
     outcome_error <- (1+rnorm(1,0,OU))
@@ -215,18 +217,12 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     S_exp[S_exp<0] <- 0
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
-    if (dir.SR == "T") {
-      alpha <- m.alpha* SR_devs[i,1,]
-      beta <- m.beta* SR_devs[i,2,]
-    }
     
     # predict recruitment
-    if (SR_rel == "Ricker"){ ##dump if statement - this is the only one
-      R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,]) 
-      predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
-      v[i,] <- log(R[i,])-log(predR[i,])
-      v[v[,]=='NaN'] <- 0
-    }
+    R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,]) 
+    predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
+    v[i,] <- log(R[i,])-log(predR[i,])
+    v[v[,]=='NaN'] <- 0
   }
   
   # Output
@@ -234,9 +230,9 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   #	1: escapement
   #	2: harvest
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
-  ## new 4: which zone is the CU in? vector (length(CU)) of what "zone" the CU is in (below LRP, between, or above USR)
-    #^at the END of the simulation, what is your status (sim.yrs-5):sim.yrs
-  #	8: CV in harvest
+  #	4: CV in harvest
+  # 5: which zone is the CU in? vector (length(CU)) of what "zone" the CU is in (below LRP, between, or above USR)
+  #^at the END of the simulation, what is your status (sim.yrs-5):sim.yrs
   
   pms <- matrix(NA,1,9) 
   
@@ -265,18 +261,10 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) * expan
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1)) * expan
   pms[,3] <- median(harvest_rate)
-  pms[,4] <- sum(over)/length(alpha)
-  pms[,5] <- sum(ext)/length(alpha)
-  pms[,6] <- sum(ext.emp)/length(alpha)
-  pms[,7] <- sum(rowSums(H[pm.yr:ny,]) < (sub*0.90))/(ny - pm.yr +1)
-  pms[,8] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,]) 
-  pms[,9] <- sum(trib.gl)/length(alpha) 
+  pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
+  pms[,5] <- 1 ##DO
   
- ## if (SR_rel == "Beverton-Holt"){
-##    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],BH_alpha = alpha.time, BH_beta = beta.tim, PMs=pms)}
-  #else{
-    list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)#}
-  
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
 }
 
 #------------------------------------------------------------------------------#
