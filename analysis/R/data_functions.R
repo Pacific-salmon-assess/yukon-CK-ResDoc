@@ -27,6 +27,9 @@ nRyrs <- nyrs + A - 1 #number of recruitment years: unobserved age classes at ? 
 
 rm(harvest, ages)
 
+fem_S_comps <- read.csv(here("analysis/data/raw/female_age_comps.csv"))[,3:6] # female spawner age composition
+fem_fec_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")) # female spawner eggs by age
+
 #functions -------------------------------------------------------------------------------
 my.ggsave <- function(filename = default_name(plot), plot = last_plot(), 
                       width= 9, height = 5.562, dpi= 180){
@@ -273,4 +276,33 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   #else{
     list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)#}
   
+}
+
+#------------------------------------------------------------------------------#
+# functions to estimate spawners associated with maximum yield or recruits, 
+#   based on yield per recruit under fishing mortality Fmax under a give age/sex 
+#   class-specific reproductive output, and  probability of returning by age/sex
+#------------------------------------------------------------------------------#
+calcCeq <- function(Fmax)
+{
+  U_as <- 1-exp(-Fmax) # assume all ages/sexes equally vulnerable sp set v_as = 1
+  reproOutputPerSpawner <- sum((1-U_as)*z_as*eta_as)
+  alpha <- exp(ln_a)
+  Req <- log(alpha*reproOutputPerSpawner) / (beta*reproOutputPerSpawner)# equilibrium population fished at Fmax
+  Neq_as <- Req * eta_as # age/sex structured abundance
+  Ceq_as <- Neq_as * U_as # age/sex structured harvest
+  Seq_as <<- Neq_as * (1-U_as) # age/sex structured escapement
+  sum(Ceq_as)
+}
+
+calcNeq <- function(Fmax)
+{
+  U_as <- 1-exp(-Fmax) # assume all ages/sexes equally vulnerable sp set v_as = 1
+  reproOutputPerSpawner <- sum((1-U_as)*z_as*eta_as)
+  alpha <- exp(ln_a)
+  Req <- log(alpha*reproOutputPerSpawner) / (beta*reproOutputPerSpawner)# equilibrium population fished at Fmax
+  Neq_as <- Req * eta_as # age/sex structured abundance
+  Ceq_as <- Neq_as * U_as # age/sex structured harvest
+  Seq_as <<- Neq_as * (1-U_as) # age/sex structured escapement
+  sum(Neq_as)
 }
