@@ -214,7 +214,7 @@ ggplot(a.yrs.all
   geom_line(aes(x = brood_year , y = mid), lwd = 2) +
   scale_color_viridis_d() +
   labs(y = "Productivity (Ricker alpha)", x = "Brood year", 
-       title = "Time-varying productivity across CUs")
+       title = "Time-varying productivity")
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
 
