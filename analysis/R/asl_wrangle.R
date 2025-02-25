@@ -146,7 +146,8 @@ a <- ggplot(fem_age_comp, aes(fill=age_f, y=prop, x=Sample.Year)) +
   theme(legend.key.size = unit(0.4, "cm"),
         legend.title = element_text(size=9),
         legend.text = element_text(size=8),
-        legend.position="top")
+        legend.position="top",
+        plot.margin = margin(10,20,0.5,20))
 
 
 prop_females <- rowSums(fem_age_comps[,3:6])
@@ -157,12 +158,12 @@ sex_ratio<-as.data.frame(sex_ratio)
 
 b <- ggplot(sex_ratio, aes(x = Year, y = prop_fem)) +
   geom_smooth(method="lm", color="grey") +
-  geom_point(size=1)+ 
+  geom_point(size=2, color="dark grey")+ 
   xlab("Year") +
   ylab("Proportion female") +
   coord_cartesian(ylim=c(0,1)) +
   theme_sleek() +
-  theme(plot.margin = margin(0.5,20,0.5,20))
+  theme(plot.margin = margin(15,20,0.5,20))
 
 laa <- as.data.frame(fem_len_comp)%>%
   select(Sample.Year,age_4, age_5, age_6, age_7)%>%
@@ -175,18 +176,19 @@ laa$age_f <- factor(laa$Age, levels = c("Four", "Five", "Six", "Seven"))
 
 c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
   geom_smooth(method="lm", color="grey") +
-  geom_point(size=1)+ 
+  geom_point(size=2, color="dark grey")+ 
   xlab("Year") +
   ylab("Female length \n  (mm; MEFL)") +
   theme_sleek() +
-  facet_wrap(~age_f) +
+  facet_wrap(~age_f, scales = "free_y") +
   scale_x_continuous(breaks=c(1985, 1995, 2005, 2015)) +
   theme(strip.text.x = element_text(size=8),
-        plot.margin = margin(0.5,10,0.5,0.5))
+        plot.margin = margin(0.5,10,1,0.5))
 
 g <- ggarrange(b,c,a, 
                labels = c("a", "b","c"),
                heights = c(0.8,1))
+
 
 g
 

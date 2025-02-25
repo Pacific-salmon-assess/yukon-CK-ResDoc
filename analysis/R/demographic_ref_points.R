@@ -6,6 +6,12 @@ source(here("analysis/R/data_functions.R"))
 male_S_comps <- read.csv(here("analysis/data/raw/male_age_comps.csv"))[,3:6] # male spawner age composition
 fem_S_comps <- read.csv(here("analysis/data/raw/female_age_comps.csv"))[,3:6] # female spawner age composition
 fem_fec_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")) # female spawner eggs by age
+fem_egg_mass_comps <- read.csv(here("analysis/data/raw/female_length_comps_egg_mass.csv")) # female spawner eggs by age
+
+AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_egg_mass"),
+                                   full.names = T), 
+                        readRDS)
+names(AR1.eggs.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
 
 bench_AR1_eggs <- NULL
 
@@ -24,11 +30,11 @@ for(i in unique(sp_har$cu)){
     beta <- sub_AR1_eggs_pars$beta[j]
     year_index = c(1:5)  
     #year_index = c(1:40)  
-    #year_index = c(35:40)  
+    #year_index = c(30:40)  
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
-    z_as <- c(colMeans(fem_fec_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
+    z_as <- c(colMeans(fem_egg_mass_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
     opt <- optimize(calcCeq, c(0,5), maximum=TRUE)
     bench_early[j,1] <- sum(Seq_as)
     opt <- optimize(calcNeq, c(0,5), maximum=TRUE)
@@ -47,13 +53,13 @@ for(i in unique(sp_har$cu)){
   for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     beta <- sub_AR1_eggs_pars$beta[j]
-    #year_index = c(1:5)  
+    #year_index = c(1:10)  
     year_index = c(1:40)  
     #year_index = c(35:40)  
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
-    z_as <- c(colMeans(fem_fec_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
+    z_as <- c(colMeans(fem_egg_mass_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
     opt <- optimize(calcCeq, c(0,5), maximum=TRUE)
     bench_avg[j,1] <- sum(Seq_as)
     opt <- optimize(calcNeq, c(0,5), maximum=TRUE)
@@ -78,7 +84,7 @@ for(i in unique(sp_har$cu)){
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
-    z_as <- c(colMeans(fem_fec_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
+    z_as <- c(colMeans(fem_egg_mass_comps[year_index,]),c(0,0,0,0)) #  age/sex class-specific reproductive output
     opt <- optimize(calcCeq, c(0,5), maximum=TRUE)
     bench_recent[j,1] <- sum(Seq_as)
     opt <- optimize(calcNeq, c(0,5), maximum=TRUE)
@@ -98,9 +104,9 @@ for(i in unique(sp_har$cu)){
     summarize(upper.BM = median(0.8*Smsy, na.rm=T))
     
   bench_AR1_eggslong <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
-    filter(par=="Smsr") |>
+    filter(par=="Smsy") |>
     mutate(upper.bm = value*0.8)|>
-    filter(value <= 30000)
+    filter(value <= 20000)
 
   ggplot(bench_AR1_eggslong, aes(value, fill = period, color = period)) +
     geom_density(alpha = 0.3) +

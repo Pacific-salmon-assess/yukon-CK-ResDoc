@@ -36,21 +36,28 @@ if(refit == TRUE){
                       "Smax_p" = 0.75*max(sp_har1$spwn), #data for priors in semi_inform models, can tinker based on what assumed Smax is 
                       "Smax_p_sig" = 0.75*max(sp_har1$spwn),
                       "fem_S_comps"=fem_S_comps, 
-                      "fem_fec_comps"=fem_fec_comps)
+                      "fem_fec_comps"=fem_fec_comps,
+                      "fem_egg_mass_comps"=fem_egg_mass_comps)
     
-    AR1.eggs.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_eggs.stan"), 
-                    data = stan.data,
-                    iter = 2000)
+    #AR1.eggs.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_eggs.stan"), 
+    #                data = stan.data,
+    #                iter = 2000)
     
-    saveRDS(AR1.eggs.fit, here("analysis/data/generated/model_fits/AR1_eggs/", 
-                          paste0(i, "_AR1_eggs.rds")))
+    AR1.eggs.fit <- stan(file = here("analysis/Stan/SS-SR_AR1_egg_mass.stan"), 
+                         data = stan.data,
+                         iter = 2000)
     
+    #saveRDS(AR1.eggs.fit, here("analysis/data/generated/model_fits/AR1_eggs/", 
+    #                      paste0(i, "_AR1_eggs.rds")))
+
+    saveRDS(AR1.eggs.fit, here("analysis/data/generated/model_fits/AR1_egg_mass/", 
+                          paste0(i, "_AR1_eggs.rds")))    
   }
 }else{
-  if(!dir.exists(here("analysis/data/generated/model_fits/AR1_eggs"))){
+  if(!dir.exists(here("analysis/data/generated/model_fits/AR1_egg_mass"))){
     stop(print("Make sure you have fit  models at least once!"))
   }
-  AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_eggs"),
+  AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_egg_mass"),
                                 full.names = T), 
                      readRDS)
   names(AR1.eggs.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
@@ -83,14 +90,14 @@ for(i in unique(sp_har$cu)){
     theme(legend.position = "none") +
     labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
   
-  my.ggsave(here("analysis/plots/diagnostics/AR1_eggs", paste0("PPC_", i, ".PNG")))
+  my.ggsave(here("analysis/plots/diagnostics/AR1_egg_mass", paste0("PPC_", i, ".PNG")))
   
   p <- mcmc_combo(AR1.eggs.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"), #for AR1
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none()) |> 
     as.ggplot() +
     labs(title = paste(i, "leading parameters"))
-  my.ggsave(here("analysis/plots/diagnostics/AR1_eggs", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
+  my.ggsave(here("analysis/plots/diagnostics/AR1_egg_mass", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
   
   p <- mcmc_combo(AR1.eggs.fits[[i]], pars = c("D_scale", "D_sum"),
                   combo = c("dens_overlay", "trace"),
@@ -98,7 +105,7 @@ for(i in unique(sp_har$cu)){
     as.ggplot() +
     labs(title = paste(i, "age pars"))
   
-  my.ggsave(here("analysis/plots/diagnostics/AR1_eggs", paste0("mcmc_age_par_", i, ".PNG")), p)
+  my.ggsave(here("analysis/plots/diagnostics/AR1_egg_mass", paste0("mcmc_age_par_", i, ".PNG")), p)
   
   p <- mcmc_combo(AR1.eggs.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
                                           "Dir_alpha[3]", "Dir_alpha[4]"),
@@ -107,7 +114,7 @@ for(i in unique(sp_har$cu)){
     as.ggplot() +
     labs(title = paste(i, "age probs"))
   
-  my.ggsave(here("analysis/plots/diagnostics/AR1_eggs", paste0("mcmc_ages_", i, ".PNG")), p)
+  my.ggsave(here("analysis/plots/diagnostics/AR1_egg_mass", paste0("mcmc_ages_", i, ".PNG")), p)
   
 }
 
