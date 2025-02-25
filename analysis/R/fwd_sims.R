@@ -1,5 +1,4 @@
 #fwd sim attempt. "##" comments are Q's for BC
-
 library(here)
 library(tidyverse)
 library(mvtnorm) #for rmvnorm()
@@ -74,27 +73,21 @@ if(run.sim == TRUE){
   num.sims = 50 # number of Monte Carlo trials #originally 500
   ny = 50 # number of years in forward simulation #originally 50
   pm.yr <- ny-20
-  for.error <- 0.27 
+  for.error <- 0.27 ## base this off something observed  
   OU <- 0.1 
   
   # --- Create array to store outcomes ----------------------------------------------------
   harvest_goal <- seq(1000,100000,length.out=40)
   egfloor <- seq(1,100000,length.out=40)
   sim.outcomes <- array(NA,dim=c(length(egfloor),9, length(harvest_goal),num.sims)) ##why 9? length of perf metrics?
-  sim.outcomes.spw.time <- array(NA,dim=c(ny,length(unique(sp_har$cu)),length(egfloor),length(harvest_goal),num.sims)) #was 13, changed to 8
-  
+  sim.outcomes.spw.time <- array(NA,dim=c(ny,length(unique(sp_har$cu)),length(egfloor),
+                                          length(harvest_goal),num.sims)) #was 13, changed to 8
   
   ## starting with this version
   # --- Time-varying Ricker SR dynamics ----------------------------------------------------
   
   # set structural form of SR relationship
-  SR_rel <-  "Ricker" 
-  dir.SR <- "F" ##toggled to false because line below doesn't work
-  SR_devs  <- SR_para_devs(apply(samps[,grepl("alpha", colnames(samps))],c(2),quantile,probs=c(0.5),na.rm=T),
-                           apply(samps[,grepl("beta", colnames(samps))],c(2),quantile,probs=c(0.5),na.rm=T),
-                           5,35,ny, length(unique(sp_har$cu))) #5 steps, starting at 35 - see function description
-  ##^can't figure out the point of this, approx() inside function doesn't even work in kusko 
-  #example (get out of bounds warning)
+  SR_rel <-  "Ricker"  ##delete this and make sure 
   
   # run simulations
   ptm <- proc.time()
