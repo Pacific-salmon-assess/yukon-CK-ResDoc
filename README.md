@@ -3,7 +3,8 @@ Code to analyse yukon chinook data and generate corresponding CSAS Research Docu
 
 ## To reproduce the analysis:
  - Fork or clone this repository  
- - Run the [code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_all_CUs.R) to fit the spawner-recruit models, making sure you [toggle](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_all_CUs.R#L12) `refit <- TRUE` on. This will also generate diagnostic and plots of the fits.  
+ - Run the [spawner-recruit model fitting code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_all_CUs.R) to fit the spawner-recruit models, making sure you [toggle](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_all_CUs.R#L12) `refit <- TRUE` on. This will also generate diagnostics metrics and figures.
+ - Run the [figure and benchmark generation code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/inference_figs.R) 
  - Run the [forward simulation code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/fwd_sims.R)
  - etc. as repo develops.
 
