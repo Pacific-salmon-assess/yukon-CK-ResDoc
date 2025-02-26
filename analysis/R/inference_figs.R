@@ -262,7 +262,6 @@ for(i in unique(sp_har$CU)){
   print(p)
   my.ggsave(here("analysis/plots/CU_detail", paste0("status_", i, ".PNG")))
 } 
-
 ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
   geom_vline(xintercept = 1.5) +
@@ -278,7 +277,23 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
         legend.title=element_blank()) +
   labs(x = "Spawners (thousands)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
-my.ggsave(here("analysis/plots/status.PNG"))
+
+# peek at benchmarks with Smsr ---
+bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>
+  select(-Umsy, - Seq) |>
+  arrange(CU, par, value) |>
+  filter(value <= 15000)
+
+ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
+  geom_density(alpha = 0.3) +
+  geom_vline(xintercept = 1.5) +
+  facet_wrap(~CU, scales = "free_y") +
+  theme(legend.position = "bottom") +
+  theme(axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank(), 
+        legend.title=element_blank()) +
+  labs(x = "Spawners (thousands)", y = "Posterior density", 
+       title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
 # write important objects/tables to repo -------------------------------------------------
 bench.par.table <- bench.par.table |>
