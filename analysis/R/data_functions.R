@@ -130,31 +130,22 @@ process.iteration = function(samp) {
 #------------------------------------------------------------------------------#
 # Multi-stock simulation function with alternative structural forms
 #------------------------------------------------------------------------------#
+# HCR <- which pre-determined HCR are we using
 # ny <- the number of years
 # vcov.matrix <- process error variance-covariance matrix
 # phi <- the expected correlation through time
 # mat <- maturation schedule
 # alpha <- sub-stock productivity (NOT in log space)
 # beta <- sub-stock density dependence 
-# sub <- subsistence requirement
-# com <- maximum commercial harvest
-# egfloor <- escapement goal
 # pm.yr <- year of simulation that pms start to be calculated over
 # for.error <- forecast error (CV)
 # OU <- outcome uncertainty (CV)
 # Rec <- estimated recruits from last years of empirical data 
 # Spw <- estimated spawners from last years of empirical data
 # lst.resid <- estimated recruitment deviation from last year of empirical data
-# SR_rel <- structural form of the SR relationship ("Ricker" or "Beverton-Holt")
-# BH.alpha.CV <- magnitude (amplitude) of environmental forcing on alpha if SR_rel = "Beverton-Holt"
-# period <- period of enviro forcing cycle if SR_rel = "Beverton-Holt"
-# dir.SR <- flag for directional change in SR parameters ("Y" or "N")
-# SR.devs <- deviations in SR parameters by time step if dir.SR == "Y"
-# expan <- expansion of system to account for unmodelled spawning populations
 
-process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
-                   for.error,OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV=NULL,
-                   period=NULL,dir.SR, SR_devs=NULL, expan){
+process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
+                   lst.resid){
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -205,16 +196,17 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     run.size <- sum(Ntot[i,])
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000}
-    #HR.all <- sub_hcr(sub,com,egfloor,run.size,for.error)
-    
-    ##Add HCRs here 
+    if(HCR == "no.fishing"){HR.all <- 0} ##BC double check this should be HR.all like the sub_hcr() in kusko
+    if(HCR == "status.quo"){
+      catch <- ifelse(run.size<=42000, 0, run.size-42000)
+      HR.all <- catch/run.size}
     
     HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
     outcome_error <- (1+rnorm(1,0,OU))
     H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) 
     S_exp <- Ntot[i,]-H[i,]
-    S_exp[S_exp<0] <- 0
+    S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs?
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
     
@@ -234,7 +226,7 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   # 5: which zone is the CU in? vector (length(CU)) of what "zone" the CU is in (below LRP, between, or above USR)
   #^at the END of the simulation, what is your status (sim.yrs-5):sim.yrs
   
-  pms <- matrix(NA,1,9) 
+  pms <- matrix(NA,1,5) 
   
   S[S[,]=='NaN'] <- 0
   Ntot[Ntot[,]=='NaN'] <- 0
@@ -242,7 +234,7 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
   ext <- matrix(NA,length(alpha))
   ext.emp <-ext
   trib.gl <-ext
-  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1]
+  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not really sure what's going on here 
   harvest_rate[harvest_rate>1] <- 1
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
   harvest_rates[harvest_rates>1] <- 1
@@ -258,11 +250,11 @@ process = function(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub,com,egfloor,pm.yr,
     trib.gl[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) >= (Smsy[j]),1,0)
   }
   
-  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) * expan
-  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1)) * expan
+  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))# * expan ## got rid of this. unnecessary?
+  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# * expan
   pms[,3] <- median(harvest_rate)
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
-  pms[,5] <- 1 ##DO
+  pms[,5] <- 1 ##DO - below Sgen, between BBs, above 80% Smsy?
   
   list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
 }

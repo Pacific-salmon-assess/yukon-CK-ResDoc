@@ -65,7 +65,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 #Set common conditions for simulations----------------------------------------------------
 num.sims = 50 # number of Monte Carlo trials #originally 500
 ny = 50 # number of years in forward simulation #originally 50
-pm.yr <- ny-20
+pm.year <- ny-20
 for.error <- 0.27 ## base this off something observed  
 OU <- 0.1 
 
@@ -75,10 +75,10 @@ sim.outcomes <- array(NA, dim=c(length(HCRs), 5, num.sims))  #5 perf metrics
 sim.outcomes.time <- array(NA, dim=c(length(HCRs), 3, num.sims)) #3 states: catch, esc, state 
 # --- Time-varying Ricker SR dynamics ----------------------------------------------------
 
-# run simulations
-ptm <- proc.time() #w & k deleted
+# run simulation
 for(i in 1:length(HCRs)){
   for(j in 1:num.sims){ #l been changed to j
+    HCR <- HCRs[i]
     draw <- sample(nrow(samps),1)
     alpha <- process.iteration(samps[draw,])$alpha
     beta <- process.iteration(samps[draw,])$beta
@@ -87,17 +87,13 @@ for(i in 1:length(HCRs)){
     Rec <- process.iteration(samps[draw,])$R
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
-    expan <- 1/(rnorm(1,0.56,0.05))
-    
-    out <- process(ny,vcov.matrix,phi=NULL,mat,alpha,beta,sub=NULL,com=NULL,egfloor[k]=NULL,pm.yr,
-                   for.error,OU,Rec,Spw,lst.resid,SR_rel,BH.alpha.CV=NULL,
-                   period=NULL,dir.SR, SR_devs=NULL, expan)
+
+    out <- process(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.year,for.error,OU,Rec,
+                   Spw,lst.resid)
     sim.outcomes[] <- out$PMs
-    #sim.outcomes.spw.time[,,i] <- out$S
+    #sim.outcomes.time[,,i] <- out$S ##fix 
   }
 }
-
-(proc.time() - ptm)/60
 
 saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
 saveRDS(sim.outcomes.spw.time, here("analysis/data/generated/base_sims_projections.rickerTV"))  
