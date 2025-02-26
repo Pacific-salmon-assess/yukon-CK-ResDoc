@@ -44,8 +44,8 @@ for(i in unique(sp_har$CU)){
   #SR relationship based on full posterior---
   spw <- seq(0,max(brood_t$S_upr),length.out=100)
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
-  bench <- matrix(NA,length(sub_pars$lnalpha),5,
-                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "80.Smsy", "Umsy", "Seq", "S.recent")))
+  bench <- matrix(NA,length(sub_pars$lnalpha),6,
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "80.Smsy", "Umsy", "Seq", "Smsr", "S.recent")))
   
   for(j in 1:length(sub_pars$lnalpha)){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -56,7 +56,8 @@ for(i in unique(sp_har$CU)){
     bench[j,1] <- get_Sgen(exp(ln_a),b,-1,1/b*2, bench[j,2]) #S_gen
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
-    bench[j,5] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
+    bench[j,5] <- 1/b #S_msr 
+    bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
   }
   
   SR.pred <- as.data.frame(cbind(spw,t(apply(SR.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
@@ -70,10 +71,10 @@ for(i in unique(sp_har$CU)){
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
   
-  bench.quant <- apply(bench[,1:4], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
+  bench.quant <- apply(bench[,1:5], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
   
-  mean <- apply(bench[,1:4],2,mean, na.rm=T) #get means of each
+  mean <- apply(bench[,1:5],2,mean, na.rm=T) #get means of each
   
   sub_benchmarks <- cbind(bench.quant, mean) |>
     as.data.frame() |>
@@ -283,7 +284,7 @@ bench.par.table <- bench.par.table |>
   relocate(CU, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
-  mutate_at(3:6, ~round(.,5)) |>
+  mutate_at(3:7, ~round(.,5)) |>
   arrange(bench.par, mean)
 
 write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
