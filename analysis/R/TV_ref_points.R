@@ -53,23 +53,8 @@ for(i in unique(sp_har$CU)){
 
   par.quants <- as.data.frame(rbind(alpha, beta, sigma)) |>
     mutate(CU = i)
-  
-  #make big table of bench and pars
-  #par.summary <- as.data.frame(rstan::summary(TVA.fits[[i]])$summary) |>
-  #  select(mean, n_eff, Rhat)
-  
-  #summarise not other pars...
-  #par.summary <- filter(par.summary, row.names(par.summary) %in% c('ln_alpha', 'beta',
-                                                                   #'sigma_R')) |>
-  #  mutate(CU = i)
-  #par.summary[1,1] <- exp(par.summary[1,1]) #exp ln_alpha
-  #^ doesn't work nicely with the multiple alphas; turned off for now
-  
-  #pars <- cbind(par.quants, par.summary)
-  
-  sub.bench.par.table <- bind_rows(sub_benchmarks, par.quants)# |>
-   # mutate(n_eff = round(n_eff, 0),
-    #       Rhat = round(Rhat, 4))
+
+  sub.bench.par.table <- bind_rows(sub_benchmarks, par.quants)
   
   sub.bench.par.table <- mutate(sub.bench.par.table, bench.par = rownames(sub.bench.par.table)) 
   
