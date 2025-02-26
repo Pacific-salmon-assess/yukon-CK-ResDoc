@@ -191,4 +191,5 @@ g <- ggarrange(b,c,a,
 
 
 g
+my.ggsave(here("analysis/plots/asl.PNG"))
 
