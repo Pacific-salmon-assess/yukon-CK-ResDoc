@@ -94,7 +94,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
         axis.text.y = element_blank(), 
         legend.title=element_blank()) +
   labs(x = "Spawners (thousands)", y = "Posterior density", 
-       title = "Recent spawners relative to TIME- VARYING benchmarks and 1500 cutoff")
+       title = "Recent spawners relative to TIME-VARYING benchmarks and 1500 cutoff")
 my.ggsave(here("analysis/plots/TV_status.PNG"))
 
 candidate.bench.par.table <- candidate.bench.par.table |>
@@ -103,3 +103,6 @@ candidate.bench.par.table <- candidate.bench.par.table |>
   relocate(mean, .after = 2) |>
   mutate_at(3:6, ~round(.,5)) |>
   arrange(bench.par, mean)
+
+write.csv(candidate.bench.par.table, here("analysis/data/generated/TV_refpts.csv"), 
+          row.names = FALSE)
