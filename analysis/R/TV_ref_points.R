@@ -18,7 +18,7 @@ for(i in unique(sp_har$CU)){
   sub_pars <- rstan::extract(TVA.fits[[i]])
   
   bench <- matrix(NA,length(sub_pars$beta),5,
-                  dimnames = list(seq(1:length(sub_pars$beta)), c("Sgen", "80.Smsy", "Umsy", "Seq", "S.recent")))
+                  dimnames = list(seq(1:length(sub_pars$beta)), c("Sgen", "Smsy.80", "Umsy", "Seq", "S.recent")))
   
   for(j in 1:length(sub_pars$beta)){ 
     ln_a <- median(sub_pars$ln_alpha[j, period]) #TOGGLE TO PLAY WITH DIFFERENT PERIODS of alpha
@@ -76,7 +76,7 @@ for(i in unique(sp_har$CU)){
   candidate.bench.par.table <- bind_rows(candidate.bench.par.table, sub.bench.par.table)
 }
 
-bench.long <- pivot_longer(candidate.bench.posts, cols = c(Sgen, '80.Smsy', S.recent), names_to = "par") |>
+bench.long <- pivot_longer(candidate.bench.posts, cols = c(Sgen, Smsy.80, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
   filter(value <= 10000)

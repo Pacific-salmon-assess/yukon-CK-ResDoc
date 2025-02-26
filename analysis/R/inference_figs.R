@@ -45,7 +45,7 @@ for(i in unique(sp_har$CU)){
   spw <- seq(0,max(brood_t$S_upr),length.out=100)
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
   bench <- matrix(NA,length(sub_pars$lnalpha),6,
-                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "80.Smsy", "Umsy", "Seq", "Smsr", "S.recent")))
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent")))
   
   for(j in 1:length(sub_pars$lnalpha)){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -241,20 +241,20 @@ ggplot() +
 my.ggsave(here("analysis/plots/TV_SR_fits.PNG"))
 
 # "status" plots ---
-bench.long <- pivot_longer(bench.posts, cols = c(Sgen, '80.Smsy', S.recent), names_to = "par") |>
+bench.long <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
   filter(value <= 10000) #hack to cut off fat tails to help with density visualization, also an IUCN cutoff... 
 
-for(i in unique(sp_har$cu)){
+for(i in unique(sp_har$CU)){
   sub <- filter(bench.posts, CU == i)
   
   p <- ggplot(sub) +
-    geom_density(aes(`80.Smsy`), color = "forestgreen", fill = "forestgreen", alpha = 0.2) +
+    geom_density(aes(Smsy.80), color = "forestgreen", fill = "forestgreen", alpha = 0.2) +
     geom_density(aes(Sgen), color = "darkred", fill = "darkred", alpha = 0.2) +
     geom_density(aes(S.recent), fill = "grey", alpha = 0.5) +
     geom_vline(xintercept = 1500) +
-    coord_cartesian(xlim = c(0, quantile(sub$`80.Smsy`, 0.99))) +
+    coord_cartesian(xlim = c(0, quantile(sub$Smsy.80, 0.99))) +
     theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank()) +
     labs(x = "Spawners", y = "Posterior density", 
@@ -268,7 +268,8 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   geom_vline(xintercept = 1.5) +
   facet_wrap(~CU, scales = "free_y") +
   theme(legend.position = "bottom") +
-  scale_fill_manual(values = c("black", "darkred", "forestgreen"), 
+  scale_fill_manual(breaks = c("S.recent", "Sgen", "Smsy.80"),
+    values = c("black", "darkred", "forestgreen"), 
                     aesthetics = c("fill", "color"), 
                     labels = c(expression(italic(S[recent])), expression(italic(S[gen])), 
                                expression(italic(paste("80% ",S)[MSY])))) +
