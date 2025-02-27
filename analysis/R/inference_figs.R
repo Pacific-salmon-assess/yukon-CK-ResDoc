@@ -287,6 +287,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
         legend.title=element_blank()) +
   labs(x = "Spawners (thousands)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
+my.ggsave(here("analysis/plots/status.PNG"))
 
 # peek at benchmarks with Smsr ---
 bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>

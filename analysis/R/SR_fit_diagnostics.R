@@ -58,7 +58,7 @@ if(refit == TRUE){
   AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
                                 full.names = T), 
                      readRDS)
-  names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$cu))]
+  names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
   
   TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                                 full.names = T), 
