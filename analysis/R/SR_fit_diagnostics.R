@@ -71,8 +71,8 @@ min_ESS_AR1 <- NULL
 max_Rhat_AR1 <- NULL
 min_ESS_TVA <- NULL
 max_Rhat_TVA <- NULL
-for(i in unique(sp_har$cu)){
-  sub_dat <- filter(sp_har, cu==i)
+for(i in unique(sp_har$CU)){
+  sub_dat <- filter(sp_har, CU==i)
   
   #diagnostics associated w/ AR1 model---
   sub_AR1_summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary)
