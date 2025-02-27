@@ -2,6 +2,8 @@
 library(here)
 library(tidyverse)
 library(gsl)
+library(ggsidekick)
+
 source(here("analysis/R/data_functions.R"))
 
 # read in model fits ---------------------------------------------------------------------
@@ -14,6 +16,14 @@ TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"),
                               full.names = T), 
                    readRDS)
 names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+
+
+# read in escapement estimates -----------------------------------------------------------
+
+esc <- read.csv(here("analysis/data/raw/esc-data.csv")) 
+esc$lwr <- as.numeric(esc$lower)
+esc$upr <- as.numeric(esc$upper)
+esc$year <- as.numeric(esc$year)
 
 # process data and fits to make plots later ----------------------------------------------
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
@@ -305,3 +315,14 @@ bench.par.table <- bench.par.table |>
 
 write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE) 
+
+# escapement plot ----------------------------------------------------------------------
+
+ggplot(esc, aes(x = year, y = mean)) + 
+  geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
+  geom_line(lwd = 1.1) +
+  xlab("Year") +
+  ylab("Spawners (000s)") +
+  facet_wrap(~stock, ncol=3, scales = "free_y") +
+  theme_sleek() 
+my.ggsave(here("analysis/plots/cu-escape.PNG"))
