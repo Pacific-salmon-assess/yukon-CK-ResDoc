@@ -13,9 +13,9 @@ refit <- TRUE
 
 # fit AR1 and time varying productivity (TVA) models--------------------------------------
 if(refit == TRUE){
-  for(i in unique(sp_har$cu)){
+  for(i in unique(sp_har$CU)){
     
-    sp_har1 <- filter(sp_har, cu == i) 
+    sp_har1 <- filter(sp_har, CU == i) 
     
     a_min <- 4
     a_max <- 7 
@@ -38,14 +38,14 @@ if(refit == TRUE){
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
                     data = stan.data,
-                    iter = 2000)
+                    iter = 4000)
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
     TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
                     data = stan.data,
-                    iter = 2000)
+                    iter = 4000)
     #launch_shinystan(TV.fit)
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                           paste0(i, "_TVA.rds")))
@@ -58,12 +58,12 @@ if(refit == TRUE){
   AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
                                 full.names = T), 
                      readRDS)
-  names(AR1.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+  names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$cu))]
   
   TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                                 full.names = T), 
                      readRDS)
-  names(TVA.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+  names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 }
 
 # describe diagnostics in loop -----------------------------------------------------------

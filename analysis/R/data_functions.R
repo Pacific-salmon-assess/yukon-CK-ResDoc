@@ -6,7 +6,6 @@ harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
 sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
   dplyr::rename(spwn = mean, 
                 spwn_cv = cv) |>
-  select(-obs, - se) |>
   left_join(harvest, by = c("stock", "year")) |>
   dplyr::rename(CU = stock) |>
   mutate(N = spwn+harv)
