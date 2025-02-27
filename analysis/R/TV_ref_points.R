@@ -2,6 +2,8 @@
 library(here)
 library(tidyverse)
 library(gsl)
+library(ggsidekick)
+
 source(here("analysis/R/data_functions.R"))
 
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
@@ -91,3 +93,43 @@ candidate.bench.par.table <- candidate.bench.par.table |>
 
 write.csv(candidate.bench.par.table, here("analysis/data/generated/TV_refpts.csv"), 
           row.names = FALSE)
+
+#### plot alphas and betas ----
+
+param.posts <- NULL
+period <- (nyrs-A):nyrs #last generation - can change if desired
+
+for(i in unique(sp_har$CU)){
+  sub_dat <- filter(sp_har, CU==i)
+  sub_pars <- rstan::extract(TVA.fits[[i]])
+  
+  params <- matrix(NA,length(sub_pars$beta),2,
+                  dimnames = list(seq(1:length(sub_pars$beta)), c("alpha","beta")))
+  
+  for(j in 1:length(sub_pars$beta)){ 
+    params[j,1] <- median(sub_pars$ln_alpha[j, period]) #TOGGLE TO PLAY WITH DIFFERENT PERIODS of alpha
+    params[j,2] <- sub_pars$beta[j]
+    }
+  
+  param.posts <- rbind(param.posts, as.data.frame(params) |> mutate(CU = i))
+}
+
+param.long <- pivot_longer(param.posts, cols = c(alpha, beta), names_to = "par") |>
+  arrange(CU, par, value) 
+
+ggplot(param.long |> filter(par == "alpha"), aes(value)) +
+  geom_density(alpha = 0.3, fill="grey") +
+  facet_wrap(~CU, scales = "free") +
+  geom_vline(xintercept = 0, lty=2) +
+  theme(legend.position = "bottom") +
+  theme_sleek() +
+  labs(x = "ln(alpha) over last 5 brood years", y = "Posterior density")
+my.ggsave(here("analysis/plots/TV_alpha_post.PNG"))
+
+ggplot(param.long |> filter(par == "beta"), aes(value)) +
+  geom_density(alpha = 0.3, fill="grey") +
+  facet_wrap(~CU, scales = "free") +
+  theme(legend.position = "bottom") +
+  theme_sleek() +
+  labs(x = "beta", y = "Posterior density")
+my.ggsave(here("analysis/plots/TV_beta_post.PNG"))

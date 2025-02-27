@@ -1,6 +1,8 @@
 # script to calculate reference points for demographic models
 library(here)
 library(tidyverse)
+library(rstan)
+
 source(here("analysis/R/data_functions.R"))
 
 male_S_comps <- read.csv(here("analysis/data/raw/male_age_comps.csv"))[,3:6] # male spawner age composition
@@ -11,12 +13,12 @@ fem_egg_mass_comps <- read.csv(here("analysis/data/raw/female_length_comps_egg_m
 AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_egg_mass"),
                                    full.names = T), 
                         readRDS)
-names(AR1.eggs.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 bench_AR1_eggs <- NULL
 
-for(i in unique(sp_har$cu)){
-  sub_dat <- filter(sp_har, cu==i)
+for(i in unique(sp_har$CU)){
+  sub_dat <- filter(sp_har, CU==i)
   
   #load AR1 model with eggs parameters ---
   sub_AR1_eggs_pars <- rstan::extract(AR1.eggs.fits[[i]])
@@ -101,7 +103,8 @@ for(i in unique(sp_har$cu)){
 
   summary_bench_AR1_eggs <- bench_AR1_eggs |>
     group_by(CU,period) |>
-    summarize(upper.BM = median(0.8*Smsy, na.rm=T))
+    summarize(upper.BM = median(0.8*Smsy, na.rm=T),
+              upper.alt = median(Smsr, na.rm=T))
     
   bench_AR1_eggslong <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
     filter(par=="Smsy") |>
