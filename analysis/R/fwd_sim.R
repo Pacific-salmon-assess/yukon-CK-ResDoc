@@ -72,7 +72,8 @@ OU <- 0.1
 # --- Create array to store outcomes -----------------------------------------------------
 HCRs <- c("no.fishing", "status.quo")
 sim.outcomes <- array(NA, dim=c(length(HCRs), 5, num.sims))  #5 perf metrics
-sim.outcomes.time <- array(NA, dim=c(length(HCRs), 3, num.sims)) #3 states: catch, esc, state 
+S.time <- NULL #null objects to bind too - because dataframes for ggplotting
+H.time <- NULL
 # --- Time-varying Ricker SR dynamics ----------------------------------------------------
 
 # run simulation
@@ -87,20 +88,71 @@ for(i in 1:length(HCRs)){
     Rec <- process.iteration(samps[draw,])$R
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
-
+    
     out <- process(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.year,for.error,OU,Rec,
                    Spw,lst.resid)
+    
     sim.outcomes[] <- out$PMs
-    #sim.outcomes.time[,,i] <- out$S ##fix 
+    S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
+                                  (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states
+                                  rep(j, ny-a_max+1))) 
+    H.time <- rbind(H.time, cbind(out$H[7:ny,], rep(HCR, ny-a_max+1), 
+                                  (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
+                                  rep(j, ny-a_max+1)))
   }
 }
 
-saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
-saveRDS(sim.outcomes.spw.time, here("analysis/data/generated/base_sims_projections.rickerTV"))  
+#saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
 
-#sim.outcomes <- read_rds(here("analysis/data/generated/base_sims.rickerTV"))
-#sim.outcomes.spw.time <-  read_rds(here("analysis/data/generated/base_sims_projections.rickerTV"))
-#}
+colnames(S.time) <- c(unique(sp_har$CU), "HCR", "year", "sim")
+S.time <- as.data.frame(S.time) |>
+  pivot_longer(1:9, names_to = "CU") |>
+  rename(Spawners = value) |>
+  mutate(Spawners = round(as.numeric(Spawners), 0), 
+         year = as.numeric(year))
 
+colnames(H.time) <- c(unique(sp_har$CU), "HCR", "year", "sim")
+H.time <- as.data.frame(H.time) |>
+  pivot_longer(1:9, names_to = "CU") |>
+  rename(Harvest = value) |>
+  mutate(Harvest = round(as.numeric(Harvest), 0), 
+         year = as.numeric(year))
 
-#sim inference?
+S.fwd.summmary <- S.time |>
+  group_by(HCR, CU, year) |>
+  summarise(S.50 = median(Spawners), 
+            S.25 = quantile(Spawners, 0.25), 
+            S.75 = quantile(Spawners, 0.75))
+write.csv(S.fwd.summmary, here("analysis/data/generated/simulations/S_fwd.csv"), 
+          row.names = FALSE)
+
+H.fwd.summmary <- H.time |>
+  group_by(HCR, CU, year) |>
+  summarise(H.50 = median(Harvest), 
+            H.25 = quantile(Harvest, 0.25), 
+            H.75 = quantile(Harvest, 0.75))
+write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd.csv"), 
+          row.names = FALSE)
+
+#prelim figs
+
+ggplot(S.fwd.summmary, aes(year, S.50/1000, color = HCR, fill = HCR)) +
+  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year), 
+              alpha = 0.2) +
+  geom_line(lwd=1) +
+  facet_wrap(~CU) +
+  labs(title = "Forward simulation spawner trajectory", 
+       y = "Spawners (thousands)") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+ggplot(H.fwd.summmary, aes(year, H.50, color = HCR, fill = HCR)) +
+  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year), 
+              alpha = 0.2) +
+  geom_line(lwd=1) +
+  facet_wrap(~CU) +
+  labs(title = "Forward simulation harvest trajectory", 
+       y = "Harvest") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+

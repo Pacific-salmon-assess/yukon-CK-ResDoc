@@ -1,8 +1,7 @@
-#old code for looping through and making individual plots 1 by 1
 library(here)
 library(tidyverse)
 library(gsl)
-library(ggsidekick)
+#library(ggsidekick) #for theme_sleek() - doesnt work with some vs of R, hence the comment
 
 source(here("analysis/R/data_functions.R"))
 
@@ -34,6 +33,7 @@ a.yrs.all <- NULL
 AR1.resids <- NULL
 TV.resids <- NULL
 TV.SR.preds <- NULL
+TV.spwn <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
@@ -154,14 +154,33 @@ for(i in unique(sp_har$CU)){
              year = unique(sp_har$year)[j]) |>
       cbind(spw)
     TV.SR.preds <- rbind(TV.SR.preds, pred)
-    }
+  }
+  
+  #storing spawner quantiles for fwd sim plot
+  spwn.quant <- data.frame(t(apply(sub_pars_TVA$S, 2, quantile, probs=c(0.25,0.5,0.75)))) |>
+    mutate(CU =i, 
+           year = unique(sub_dat$year))
+  
+  TV.spwn <- bind_rows(TV.spwn, spwn.quant)
 }
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
+colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
+
+# write important tables to repo ---------------------------------------------------------
+bench.par.table <- bench.par.table |>
+  relocate(CU, 1) |>
+  relocate(bench.par, .after = 1) |>
+  relocate(mean, .after = 2) |>
+  mutate_at(3:7, ~round(.,5)) |>
+  arrange(bench.par, mean)
+
+write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
+          row.names = FALSE) 
 
 # make key plots for pub -----------------------------------------------------------------
-
+# SR fits ---
 ggplot() +
   geom_abline(intercept = 0, slope = 1,col="dark grey") +
   geom_ribbon(data = SR.preds, aes(x = Spawn/1000, ymin = Rec_lwr/1000, ymax = Rec_upr/1000),
@@ -191,6 +210,7 @@ ggplot() +
 
 my.ggsave(here("analysis/plots/SR_fits.PNG"))
 
+# AR1 resids --- 
 ggplot(AR1.resids, aes(x=year, y = mid)) +
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
@@ -206,6 +226,7 @@ ggplot(AR1.resids, aes(x=year, y = mid)) +
 
 my.ggsave(here("analysis/plots/AR1_resids.PNG"))
 
+# TV resids ---
 ggplot(TV.resids, aes(x=year, y = mid)) +
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
@@ -220,6 +241,7 @@ ggplot(TV.resids, aes(x=year, y = mid)) +
 
 my.ggsave(here("analysis/plots/TV_resids.PNG"))
 
+# TV alpha ---
 ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
   geom_line(aes(x = brood_year , y = mid), lwd = 2) +
@@ -229,6 +251,7 @@ ggplot(a.yrs.all
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
 
+# TV SR fits --- 
 ggplot() +
   geom_point(data = brood.all,
              aes(x = S_med/1000,
@@ -256,29 +279,13 @@ bench.long <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, S.recent), names
   arrange(CU, par, value) |>
   filter(value <= 10000) #hack to cut off fat tails to help with density visualization, also an IUCN cutoff... 
 
-for(i in unique(sp_har$CU)){
-  sub <- filter(bench.posts, CU == i)
-  
-  p <- ggplot(sub) +
-    geom_density(aes(Smsy.80), color = "forestgreen", fill = "forestgreen", alpha = 0.2) +
-    geom_density(aes(Sgen), color = "darkred", fill = "darkred", alpha = 0.2) +
-    geom_density(aes(S.recent), fill = "grey", alpha = 0.5) +
-    geom_vline(xintercept = 1500) +
-    coord_cartesian(xlim = c(0, quantile(sub$Smsy.80, 0.99))) +
-    theme(axis.text.y = element_blank(), 
-          axis.ticks.y = element_blank()) +
-    labs(x = "Spawners", y = "Posterior density", 
-         title = paste(i, "spawner density and benchmarks"))
-  print(p)
-  my.ggsave(here("analysis/plots/CU_detail", paste0("status_", i, ".PNG")))
-} 
 ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
   geom_vline(xintercept = 1.5) +
   facet_wrap(~CU, scales = "free_y") +
   theme(legend.position = "bottom") +
   scale_fill_manual(breaks = c("S.recent", "Sgen", "Smsy.80"),
-    values = c("black", "darkred", "forestgreen"), 
+                    values = c("black", "darkred", "forestgreen"), 
                     aesthetics = c("fill", "color"), 
                     labels = c(expression(italic(S[recent])), expression(italic(S[gen])), 
                                expression(italic(paste("80% ",S)[MSY])))) +
@@ -287,9 +294,8 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
         legend.title=element_blank()) +
   labs(x = "Spawners (thousands)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
-my.ggsave(here("analysis/plots/status.PNG"))
 
-# peek at benchmarks with Smsr ---
+# EXPERIMENTAL: benchmarks with Smsr ---
 bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
@@ -306,24 +312,36 @@ ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
   labs(x = "Spawners (thousands)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
-# write important objects/tables to repo -------------------------------------------------
-bench.par.table <- bench.par.table |>
-  relocate(CU, 1) |>
-  relocate(bench.par, .after = 1) |>
-  relocate(mean, .after = 2) |>
-  mutate_at(3:7, ~round(.,5)) |>
-  arrange(bench.par, mean)
-
-write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
-          row.names = FALSE) 
-
-# escapement plot ----------------------------------------------------------------------
-
+# escapement plot ---
 ggplot(esc, aes(x = year, y = mean)) + 
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~stock, ncol=3, scales = "free_y") +
-  theme_sleek() 
+  theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
+
+# forward simulations --------------------------------------------------------------------
+S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
+H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
+
+
+ggplot(S.fwd, aes(color = HCR, fill = HCR)) +
+  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year), 
+              alpha = 0.2) +
+  geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+              aes(ymin = S.25/1000, ymax = S.50/1000, 
+                  x= year), #offset to return year 
+              fill = "grey", color = "grey") +
+  geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##SOMETHING AIN'T PROPER
+            aes(y=S.50/1000, x= year),  
+            color = "black", lwd=1) + 
+  geom_line(aes(year, S.50/1000), lwd=1) +
+  facet_wrap(~CU) +
+  labs(title = "Forward simulation spawner trajectory", 
+       y = "Spawners (thousands)") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+my.ggsave(here("analysis/plots/S-fwd.PNG"))
