@@ -1,7 +1,7 @@
 library(here)
 library(tidyverse)
 library(gsl)
-#library(ggsidekick) #for theme_sleek() - doesnt work with some vs of R, hence the comment
+library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
 
 source(here("analysis/R/data_functions.R"))
 
@@ -313,12 +313,22 @@ ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
 # escapement plot ---
+
+bench_plot <- bench.par.table |>
+  filter(bench.par == "Smsr") |>
+  mutate(upper = `50%`,
+         lower = `50%`*0.2,
+         stock = CU) |>
+  select(stock, upper, lower)
+
 ggplot(esc, aes(x = year, y = mean)) + 
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~stock, ncol=3, scales = "free_y") +
+  geom_hline(data= bench_plot, aes(yintercept=upper), lty=2, lwd=1,col="dark green") +
+  geom_hline(data= bench_plot, aes(yintercept=lower), lty=2, lwd=1,col="red") +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
