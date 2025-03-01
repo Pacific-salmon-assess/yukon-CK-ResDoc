@@ -9,7 +9,11 @@ source(here("analysis/R/run-reconstructions/initRR.R"))
 # processData()
 
 # fit run-reconstruction model
-rpt <- fitRR()
+#rpt <- fitRR()
+
+# load run-reconstruction model fit
+
+load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
 
 # process RR model output and save time-series of spawner abundance
 cdn_harvest <- read.csv(here("analysis/data/raw/YkCk_Harvest_CA_Data_2024.csv")) %>%
