@@ -157,11 +157,11 @@ for(i in unique(sp_har$CU)){
   }
   
   #storing spawner quantiles for fwd sim plot
-  spwn.quant <- data.frame(t(apply(sub_pars_TVA$S, 2, quantile, probs=c(0.25,0.5,0.75)))) |>
+  TV.spwn.quant <- data.frame(t(apply(sub_pars_TVA$S, 2, quantile, probs=c(0.25,0.5,0.75)))) |>
     mutate(CU =i, 
            year = unique(sub_dat$year))
   
-  TV.spwn <- bind_rows(TV.spwn, spwn.quant)
+  TV.spwn <- bind_rows(TV.spwn, TV.spwn.quant)
 }
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
@@ -198,8 +198,8 @@ ggplot() +
   geom_line(data = SR.preds, aes(x = Spawn/1000, y = Rec_med/1000)) +
   facet_wrap(~CU, scales = "free") +
   scale_colour_viridis_c(name = "Brood Year")+
-  labs(x = "Spawners (thousands)",
-       y = "Recruits (thousands)", 
+  labs(x = "Spawners (000s)",
+       y = "Recruits (000s)", 
        title = "Spawner-recruit fits") +
   theme(legend.position = "bottom",
         panel.grid.major = element_blank(),
@@ -261,8 +261,8 @@ ggplot() +
   facet_wrap(~CU, scales = "free") +
   scale_colour_viridis_c(name = "Brood Year")+
   geom_abline(intercept = 0, slope = 1,col="dark grey") +
-  labs(x = "Spawners (thousands)",
-       y = "Recruits (thousands)", 
+  labs(x = "Spawners (000s)",
+       y = "Recruits (000s)", 
        title = "Time varying productivity spawner-recruit fits") +
   theme(legend.position = "bottom",
         panel.grid.major = element_blank(),
@@ -292,7 +292,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
         legend.title=element_blank()) +
-  labs(x = "Spawners (thousands)", y = "Posterior density", 
+  labs(x = "Spawners (000s)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
 # EXPERIMENTAL: benchmarks with Smsr ---
@@ -309,7 +309,7 @@ ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
         legend.title=element_blank()) +
-  labs(x = "Spawners (thousands)", y = "Posterior density", 
+  labs(x = "Spawners (000s)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
 # escapement plot ---
@@ -336,22 +336,26 @@ my.ggsave(here("analysis/plots/cu-escape.PNG"))
 S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
 H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
 
-
-ggplot(S.fwd, aes(color = HCR, fill = HCR)) +
-  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year), 
+ggplot(S.fwd) +
+  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
               alpha = 0.2) +
   geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
               aes(ymin = S.25/1000, ymax = S.50/1000, 
                   x= year), #offset to return year 
               fill = "grey", color = "grey") +
-  geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##SOMETHING AIN'T PROPER
-            aes(y=S.50/1000, x= year),  
-            color = "black", lwd=1) + 
-  geom_line(aes(year, S.50/1000), lwd=1) +
+  geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
+            aes(y=S.50/1000, x= year), color = "black") + 
+  geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
+  geom_hline(data = filter(bench.par.table, bench.par=="Smsy.80"), aes(yintercept = mean/1000), 
+             color = "forestgreen", lty = 2) +
+  geom_hline(data = filter(bench.par.table, bench.par=="Sgen"), aes(yintercept = mean/1000), 
+             color = "darkred", lty = 2) +
   facet_wrap(~CU) +
-  labs(title = "Forward simulation spawner trajectory", 
-       y = "Spawners (thousands)") +
+  coord_cartesian(ylim = c(0, 15)) +
+  labs(title = "Forward simulation spawner trajectory with Sgen (red) and 80% Smsy (green)", 
+       y = "Spawners (000s)") +
   theme_bw() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  scale_color_viridis_d(aesthetics = c("fill", "color"))
 
 my.ggsave(here("analysis/plots/S-fwd.PNG"))
