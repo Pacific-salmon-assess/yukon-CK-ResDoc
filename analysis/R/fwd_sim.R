@@ -70,7 +70,7 @@ for.error <- 0.27 ## base this off something observed
 OU <- 0.1 
 
 # --- Create array to store outcomes -----------------------------------------------------
-HCRs <- c("no.fishing", "status.quo")
+HCRs <- c("no.fishing", "status.quo", "fixed.ER")
 sim.outcomes <- array(NA, dim=c(length(HCRs), 5, num.sims))  #5 perf metrics
 S.time <- NULL #null objects to bind too - because dataframes for ggplotting
 H.time <- NULL
@@ -88,9 +88,10 @@ for(i in 1:length(HCRs)){
     Rec <- process.iteration(samps[draw,])$R
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
+    ER <- 0.6
     
     out <- process(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.year,for.error,OU,Rec,
-                   Spw,lst.resid)
+                   Spw,lst.resid, ER)
     
     sim.outcomes[] <- out$PMs
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
