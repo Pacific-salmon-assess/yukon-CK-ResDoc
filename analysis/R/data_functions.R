@@ -51,29 +51,6 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
 
 # adapted from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
 
-#------------------------------------------------------------------------------#
-# Subsistence harvest control rule function
-#------------------------------------------------------------------------------#
-# sub < - subsistence requirement
-# egfloor <- escapement goal
-# run <- run size (i.e., pre-harvest recruitment) 
-# com <- maximum commercial harvest
-# for.error <- forecast error 
-# OU <- outcome uncertainty
-sub_hcr = function(sub, com, egfloor, run, for.error){
-  run.est <- run * rlnorm(1, 0, for.error); if(is.na(run.est)==TRUE){run.est <- run};if(is.na(run)==TRUE){run <- 0}
-  if(run.est - egfloor <= 0){hr = 0}
-  if(run.est > egfloor){
-    if((run.est - egfloor) <= (sub)){hr = (run - egfloor)/run}
-    if((run.est - egfloor) > (sub)){
-      if((run.est - egfloor) > (sub + com)){hr = (sub + com)/run}
-      if((run.est - egfloor) <= (sub + com)){hr = (sub + (run - egfloor - sub))/run}
-    }
-  }
-  if(hr < 0){hr=0}
-  if(hr >1 ){hr=1}
-  return(hr) ##harvest rate?
-}
 
 #------------------------------------------------------------------------------#
 # Status function (to estimate whether stock is overfished or predicted to go 
@@ -97,8 +74,8 @@ process.iteration = function(samp) {
   nms = names(samp)
   A = 4
   ns = length(unique(sp_har$CU))
-  # 2.) extract elements according to the names and put them into the appropriate data structure
   
+  # 2.) extract elements according to the names and put them into the appropriate data structure
   # parameters
   alpha = unname(samp[substr(nms, 1, 5) == "alpha"])
   beta = unname(samp[substr(nms, 1, 4) == "beta"])
@@ -120,10 +97,8 @@ process.iteration = function(samp) {
     R = R,
     pis = pis
   )
-  
   # 4.) return output
   return(output)
-  
 }
 
 #------------------------------------------------------------------------------#
@@ -255,7 +230,7 @@ process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
   pms[,5] <- 1 ##DO - below Sgen, between BBs, above 80% Smsy?
   
-  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms) ##I can just pull H right here for the harvest timeseries
 }
 
 #------------------------------------------------------------------------------#
