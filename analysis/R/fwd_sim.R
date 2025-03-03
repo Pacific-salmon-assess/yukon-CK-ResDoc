@@ -147,7 +147,7 @@ ggplot(S.fwd.summmary, aes(year, S.50/1000, color = HCR, fill = HCR)) +
   theme(legend.position = "bottom")
 
 ggplot(H.fwd.summmary, aes(year, H.50, color = HCR, fill = HCR)) +
-  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year), 
+  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year),# if only doine 50th percentiles it stays 0
               alpha = 0.2) +
   geom_line(lwd=1) +
   facet_wrap(~CU) +
