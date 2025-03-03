@@ -34,6 +34,7 @@ AR1.resids <- NULL
 TV.resids <- NULL
 TV.SR.preds <- NULL
 TV.spwn <- NULL
+TV.harv <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
@@ -162,11 +163,18 @@ for(i in unique(sp_har$CU)){
            year = unique(sub_dat$year))
   
   TV.spwn <- bind_rows(TV.spwn, TV.spwn.quant)
+  
+  TV.harv.quant <- data.frame(t(apply(sub_pars_TVA$C, 2, quantile, probs=c(0.25,0.5,0.75)))) |>
+    mutate(CU =i, 
+           year = unique(sub_dat$year))
+  
+  TV.harv <- bind_rows(TV.harv, TV.harv.quant)
 }
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
+colnames(TV.harv) <- c("H.25", "H.50", "H.75", "CU", "year")
 
 # write important tables to repo ---------------------------------------------------------
 bench.par.table <- bench.par.table |>
@@ -359,3 +367,24 @@ ggplot(S.fwd) +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
 my.ggsave(here("analysis/plots/S-fwd.PNG"))
+
+ggplot(H.fwd) +
+  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
+              alpha = 0.2) +
+  geom_ribbon(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+              aes(ymin = H.25, ymax = H.75, x= year), #offset to return year 
+              fill = "grey", color = "grey") +
+  geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), ##Should line up?
+            aes(y=H.50, x= year), color = "black") + 
+  geom_line(aes(year, H.50, color = HCR), lwd=1) +
+  #geom_hline(data = filter(bench.par.table, bench.par=="Umsy"), aes(yintercept = mean), 
+  #           color = "forestgreen", lty = 2) +
+  facet_wrap(~CU) +
+  scale_x_continuous(expand = expansion(mult = c(0, .01))) +
+  labs(title = "Forward simulation harvest trajectory", 
+       y = "Harvest (number caught)") +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  scale_color_viridis_d(aesthetics = c("fill", "color"))
+
+my.ggsave(here("analysis/plots/H-fwd.PNG"))
