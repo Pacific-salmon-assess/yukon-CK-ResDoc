@@ -117,9 +117,10 @@ process.iteration = function(samp) {
 # Rec <- estimated recruits from last years of empirical data 
 # Spw <- estimated spawners from last years of empirical data
 # lst.resid <- estimated recruitment deviation from last year of empirical data
+# ER <- fixed exploitation rate (illustrative)
 
 process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
-                   lst.resid){
+                   lst.resid, ER){
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -174,6 +175,10 @@ process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU
     if(HCR == "status.quo"){
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
       HR.all <- catch/run.size}
+    if(HCR == "fixed.ER"){
+      catch <- run.size*ER
+      HR.all <- ER
+    }
     
     HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
