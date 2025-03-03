@@ -346,13 +346,13 @@ ggplot(S.fwd) +
   geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
             aes(y=S.50/1000, x= year), color = "black") + 
   geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
-  geom_hline(data = filter(bench.par.table, bench.par=="Smsy.80"), aes(yintercept = mean/1000), 
+  geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
              color = "forestgreen", lty = 2) +
-  geom_hline(data = filter(bench.par.table, bench.par=="Sgen"), aes(yintercept = mean/1000), 
+  geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
              color = "darkred", lty = 2) +
   facet_wrap(~CU) +
-  coord_cartesian(ylim = c(0, 15)) +
-  labs(title = "Forward simulation spawner trajectory with Sgen (red) and 80% Smsy (green)", 
+  scale_x_continuous(expand = expansion(mult = c(0, .01))) +
+  labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
        y = "Spawners (000s)") +
   theme_bw() +
   theme(legend.position = "bottom") +
