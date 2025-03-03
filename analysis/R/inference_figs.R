@@ -358,7 +358,7 @@ ggplot(S.fwd) +
              color = "forestgreen", lty = 2) +
   geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
              color = "darkred", lty = 2) +
-  facet_wrap(~CU) +
+  facet_wrap(~CU, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
        y = "Spawners (000s)") +
@@ -379,7 +379,7 @@ ggplot(H.fwd) +
   geom_line(aes(year, H.50, color = HCR), lwd=1) +
   #geom_hline(data = filter(bench.par.table, bench.par=="Umsy"), aes(yintercept = mean), 
   #           color = "forestgreen", lty = 2) +
-  facet_wrap(~CU) +
+  facet_wrap(~CU, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(title = "Forward simulation harvest trajectory", 
        y = "Harvest (number caught)") +
