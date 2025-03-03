@@ -104,14 +104,14 @@ for(i in 1:length(HCRs)){
 
 #saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
 
-colnames(S.time) <- c(unique(sp_har$CU), "HCR", "year", "sim")
+colnames(S.time) <- c(names(TVA.fits), "HCR", "year", "sim")
 S.time <- as.data.frame(S.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Spawners = value) |>
   mutate(Spawners = round(as.numeric(Spawners), 0), 
          year = as.numeric(year))
 
-colnames(H.time) <- c(unique(sp_har$CU), "HCR", "year", "sim")
+colnames(H.time) <- c(names(TVA.fits), "HCR", "year", "sim")
 H.time <- as.data.frame(H.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Harvest = value) |>
