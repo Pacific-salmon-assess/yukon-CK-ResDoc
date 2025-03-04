@@ -440,7 +440,8 @@ ggplot(S.fwd |>
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(x = "Year", 
        y = "Spawners (000s)") +
-  theme_sleek() +
+#  theme_sleek() +
+  theme_minimal() + #alternate for those with an R version that doesn't play with ggsidekick
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
