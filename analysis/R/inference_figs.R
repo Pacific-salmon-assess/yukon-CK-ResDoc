@@ -352,14 +352,10 @@ porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
          upr = NA) |>
   select(year, stock, mean,lwr, upr)
   
-aggregrate <- read.csv(here("analysis/data/raw/rr-table.csv")) |>
-  filter(stock == "Canadian",
-         Year > 1984) |>
+aggregrate <- read.csv(here("analysis/data/raw/cdn-esc.csv")) |>
+  filter(year > 1984) |>
   mutate(stock = "Aggregrate",
-         year = Year,
-         mean = Escapement,
-         lwr = NA,
-         upr = NA) |>
+         mean = Escapement) |>
   select(year, stock, mean,lwr, upr)
 
 esc_plus <- esc |>
