@@ -386,7 +386,7 @@ ggplot(S.fwd) +
   geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
               alpha = 0.2) +
   geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
-              aes(ymin = S.25/1000, ymax = S.50/1000, 
+              aes(ymin = S.25/1000, ymax = S.75/1000, 
                   x= year), #offset to return year 
               fill = "grey", color = "grey") +
   geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
