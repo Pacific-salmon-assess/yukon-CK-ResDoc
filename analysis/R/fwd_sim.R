@@ -58,7 +58,7 @@ for(i in 1:3){
 median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange order of p match kusko
 colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
-Sig.R <- cor(sig.R.samps)
+Sig.R <- cov(sig.R.samps) ##look at this object and double check all good
 
 #bind all samps into one object 
 samps <- cbind(samps, median.p.samps, median.pi.samps)
@@ -68,7 +68,7 @@ num.sims = 50 # number of Monte Carlo trials #originally 500
 ny = 50 # number of years in forward simulation #originally 50
 pm.year <- ny-20
 for.error <- 0.27 ## base this off something observed  
-OU <- 0.1 
+OU <- 0.1         ## could also base this off something else from fisheries management 
 
 # --- Create array to store outcomes -----------------------------------------------------
 HCRs <- c("no.fishing", "status.quo", "fixed.ER")
@@ -84,7 +84,7 @@ for(i in 1:length(HCRs)){
     draw <- sample(nrow(samps),1)
     alpha <- process.iteration(samps[draw,])$alpha
     beta <- process.iteration(samps[draw,])$beta
-    vcov.matrix <- Sig.R # had to change this, ##check w/ BC if appropriate to leave it fixed.
+    vcov.matrix <- Sig.R
     mat <- process.iteration(samps[draw,])$pis
     Rec <- process.iteration(samps[draw,])$R
     Spw <- process.iteration(samps[draw,])$S
