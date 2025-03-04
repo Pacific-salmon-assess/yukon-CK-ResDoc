@@ -116,7 +116,8 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
             between.ref = median(between.ref), 
             above.USR = median(above.USR))
 
-write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"))
+write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"), 
+          row.names = FALSE)
 
 colnames(S.time) <- c(names(TVA.fits), "HCR", "year", "sim")
 S.time <- as.data.frame(S.time) |>
