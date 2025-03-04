@@ -66,20 +66,20 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 #Set common conditions for simulations----------------------------------------------------
 num.sims = 50 # number of Monte Carlo trials #originally 500
 ny = 50 # number of years in forward simulation #originally 50
-pm.year <- ny-20
+pm.yr <- ny-20 ## add comment - is this the nyrs that we evaluate pms across?
 for.error <- 0.27 ## base this off something observed  
 OU <- 0.1         ## could also base this off something else from fisheries management 
 
 # --- Create array to store outcomes -----------------------------------------------------
 HCRs <- c("no.fishing", "status.quo", "fixed.ER")
-sim.outcomes <- array(NA, dim=c(length(HCRs), 5, num.sims))  #5 perf metrics
+sim.outcomes <- NULL
 S.time <- NULL #null objects to bind too - because dataframes for ggplotting
 H.time <- NULL
 # --- Time-varying Ricker SR dynamics ----------------------------------------------------
 
 # run simulation
 for(i in 1:length(HCRs)){
-  for(j in 1:num.sims){ #l been changed to j
+  for(j in 1:num.sims){
     HCR <- HCRs[i]
     draw <- sample(nrow(samps),1)
     alpha <- process.iteration(samps[draw,])$alpha
@@ -91,10 +91,9 @@ for(i in 1:length(HCRs)){
     lst.resid <- process.iteration(samps[draw,])$last_resid
     ER <- 0.6
     
-    out <- process(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.year,for.error,OU,Rec,
-                   Spw,lst.resid, ER)
+    out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,lst.resid,ER)
     
-    sim.outcomes[] <- out$PMs
+    sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states
                                   rep(j, ny-a_max+1))) 
@@ -103,8 +102,21 @@ for(i in 1:length(HCRs)){
                                   rep(j, ny-a_max+1)))
   }
 }
+colnames(sim.outcomes) <- c("HCR", "sim", "escapement", "harvest", "ER", "harv.stability", 
+                            "below.LSR", "between.ref", "above.USR")
 
-#saveRDS(sim.outcomes, here("analysis/data/generated/base_sims.rickerTV"))  
+sim.outcome.summary <- as.data.frame(sim.outcomes) |>
+  mutate_at(2:9, as.numeric) |>
+  group_by(HCR) |>
+  summarise(escapement = median(escapement), 
+            harvest = median(harvest), 
+            ER = median(ER),  ## is this really appropriate with all the 1 and 0s?
+            harv.stability = median(harv.stability, na.rm=TRUE), 
+            below.LSR = median(below.LSR), 
+            between.ref = median(between.ref), 
+            above.USR = median(above.USR))
+
+write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"))
 
 colnames(S.time) <- c(names(TVA.fits), "HCR", "year", "sim")
 S.time <- as.data.frame(S.time) |>
@@ -118,8 +130,7 @@ H.time <- as.data.frame(H.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Harvest = value) |>
   mutate(Harvest = round(as.numeric(Harvest), 0), 
-         year = as.numeric(year)) |>
-  mutate(Harvest = ifelse(is.na(Harvest), 0, Harvest)) #flip NAs to 0 (NA because run.size=0)
+         year = as.numeric(year))
 
 S.fwd.summmary <- S.time |>
   group_by(HCR, CU, year) |>

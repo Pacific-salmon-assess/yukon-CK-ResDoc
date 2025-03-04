@@ -119,7 +119,7 @@ process.iteration = function(samp) {
 # lst.resid <- estimated recruitment deviation from last year of empirical data
 # ER <- fixed exploitation rate (illustrative)
 
-process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
+process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
                    lst.resid, ER){
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
@@ -176,16 +176,17 @@ process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
       HR.all <- catch/run.size}
     if(HCR == "fixed.ER"){
+      if(run.size==0){ER <- 0}
       catch <- run.size*ER
       HR.all <- ER
     }
     
-    HR_adj <- 1
+    HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary?
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
     outcome_error <- (1+rnorm(1,0,OU))
     H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) 
     S_exp <- Ntot[i,]-H[i,]
-    S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs?
+    S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs? add comment
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
     
@@ -197,43 +198,48 @@ process = function(HCR,ny,vcov.matrix,phi=NULL,mat,alpha,beta,pm.yr,for.error,OU
   }
   
   # Output
-  # Performance measures: ##set up to describe FULL sim, not like each time step for pinks 
+  # Performance measures:
   #	1: escapement
   #	2: harvest
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
   #	4: CV in harvest
-  # 5: which zone is the CU in? vector (length(CU)) of what "zone" the CU is in (below LRP, between, or above USR)
-  #^at the END of the simulation, what is your status (sim.yrs-5):sim.yrs
-  
-  pms <- matrix(NA,1,5) 
+  # 5: number of CUs below LRP at end of sim
+  # 6: number of CUs between RPs " "
+  # 7: number of CUs above USR at ""
+
+  pms <- matrix(NA,1,7) 
   
   S[S[,]=='NaN'] <- 0
   Ntot[Ntot[,]=='NaN'] <- 0
-  over <- matrix(NA,length(alpha))
-  ext <- matrix(NA,length(alpha))
-  ext.emp <-ext
-  trib.gl <-ext
-  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not really sure what's going on here 
+#  over <- matrix(NA,length(alpha)) ##don't think I need any of this stuff I just commented out?
+#  ext <- matrix(NA,length(alpha))
+#  ext.emp <-ext
+#  trib.gl <-ext
+  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not really sure what's going on here, why take only the first CU (i.e. column)?
   harvest_rate[harvest_rate>1] <- 1
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
   harvest_rates[harvest_rates>1] <- 1
-  harvest_rate[harvest_rate=='NaN']<-1
+  harvest_rate[harvest_rate=='NaN']<-1 ## i.e. fully harvested because Nan means run.size = 0?
   harvest_rates[harvest_rates=='NaN']<-1
+    ##^why make these = 1 and not 0? if extinct you arent harvesting at all... 
   Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
-  for(j in 1:length(alpha)){
-    over[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[3]
-    ext[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[4]
-    ext.emp[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) < ((log(alpha)/beta)*0.05)[j],1,0) # less than 5% of unfished biomass/abundance
-    trib.gl[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) >= (Smsy[j]),1,0)
-  }
+ # for(j in 1:length(alpha)){
+#    over[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[3] #if overfished == 1 
+#    ext[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[4] #if extinct == 1
+#    ext.emp[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) < ((log(alpha)/beta)*0.05)[j],1,0) # less than 5% of unfished biomass/abundance
+#    trib.gl[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) >= (Smsy[j]),1,0)
+#  }
   
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))# * expan ## got rid of this. unnecessary?
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# * expan
   pms[,3] <- median(harvest_rate)
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
-  pms[,5] <- 1 ##DO - below Sgen, between BBs, above 80% Smsy?
+  #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
+  pms[,5] <- sum(S[ny,] < 0.2*Smax) #1 #below 20% Smax (i.e. Smsr) 
+  pms[,6] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)#between 20% and Smax
+  pms[,7] <- sum(S[ny,] > Smax) #above Smax
   
   list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms) ##I can just pull H right here for the harvest timeseries
 }
