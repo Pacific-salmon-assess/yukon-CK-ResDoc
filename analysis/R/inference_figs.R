@@ -254,7 +254,9 @@ ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
   geom_line(aes(x = brood_year , y = mid), lwd = 2) +
   scale_color_viridis_d() +
-  labs(y = "Productivity (Ricker alpha)", x = "Brood year", 
+  theme_sleek() +
+  geom_hline(yintercept = 1, lty=2, col = "grey") +
+  labs(y = "Productivity (maximum R/S)", x = "Brood year", 
        title = "Time-varying productivity")
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
@@ -320,7 +322,7 @@ ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
   labs(x = "Spawners (000s)", y = "Posterior density", 
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
-# escapement plot ---
+# escapement plot ----
 
 bench_plot <- bench.par.table |>
   filter(bench.par == "Smsr") |>
@@ -339,6 +341,42 @@ ggplot(esc, aes(x = year, y = mean/1000)) +
   geom_hline(data= bench_plot, aes(yintercept=lower/1000), lty=2, lwd=1,col="red") +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
+
+# escapement plot all CUs plus aggregrate ----
+
+porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
+  filter(CU == "Porcupine") |>
+  mutate(stock = CU,
+         mean = estimate,
+         lwr = NA,
+         upr = NA) |>
+  select(year, stock, mean,lwr, upr)
+  
+aggregrate <- read.csv(here("analysis/data/raw/rr-table.csv")) |>
+  filter(stock == "Canadian",
+         Year > 1984) |>
+  mutate(stock = "Aggregrate",
+         year = Year,
+         mean = Escapement,
+         lwr = NA,
+         upr = NA) |>
+  select(year, stock, mean,lwr, upr)
+
+esc_plus <- esc |>
+  select(year, stock, mean,lwr, upr)
+
+esc_plus <- rbind(esc_plus, porcupine,aggregrate)
+
+ggplot(esc_plus, aes(x = year, y = mean/1000)) + 
+  geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
+  geom_line(lwd = 1.1) +
+  xlab("Year") +
+  ylab("Spawners (000s)") +
+  facet_wrap(~stock, ncol=4, scales = "free_y") +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme_sleek()  
+
+my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # forward simulations --------------------------------------------------------------------
 S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
