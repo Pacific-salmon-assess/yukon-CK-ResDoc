@@ -411,8 +411,6 @@ ggplot(H.fwd) +
   geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), ##Should line up?
             aes(y=H.50, x= year), color = "black") + 
   geom_line(aes(year, H.50, color = HCR), lwd=1) +
-  #geom_hline(data = filter(bench.par.table, bench.par=="Umsy"), aes(yintercept = mean), 
-  #           color = "forestgreen", lty = 2) +
   facet_wrap(~CU, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(title = "Forward simulation harvest trajectory", 
@@ -445,3 +443,21 @@ ggplot(S.fwd |>
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
+
+# performance metrics ---
+perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv"))
+
+perf.plot <- perf.metrics |>
+  pivot_longer(2:8, names_to = "metric")
+
+ggplot(perf.plot, aes(x=HCR, y = value, color = HCR, fill = HCR)) + 
+  geom_col() +
+  facet_wrap(~metric, scales = "free_y") +
+  theme_bw() +
+  scale_color_viridis_d(aesthetics = c("fill", "color")) +
+  theme(legend.position = "bottom", 
+        axis.text.x = element_blank(), 
+        legend.title = element_blank()) +
+  labs(title = "Forward simulaiton performance metrics") 
+
+my.ggsave(here("analysis/plots/perf_metrics.PNG"))
