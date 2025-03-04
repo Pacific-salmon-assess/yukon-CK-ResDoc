@@ -42,7 +42,8 @@ for(i in 1:length(names(TVA.fits))){
   for(j in 1:3){
     p.samps[,,i,j] <- TVA.fits[[i]]$p[,nyrs+j, ] #store ps for last 3 nRyrs to summarise later
   }
-  sig.R.samps <- cbind(sig.R.samps, TVA.fits[[i]]$sigma_R)
+  TVA.fits[[i]]$lnresid
+  sig.R.samps <- cbind(sig.R.samps, apply(TVA.fits[[i]]$lnresid, 2, median)[8:nRyrs])
 }
 
 #get median of pis and ps for all pops 
@@ -57,7 +58,7 @@ for(i in 1:3){
 median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange order of p match kusko
 colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
-Sig.R <- cov(sig.R.samps)
+Sig.R <- cov(sig.R.samps) ##investigate
 
 #bind all samps into one object 
 samps <- cbind(samps, median.p.samps, median.pi.samps)
@@ -134,26 +135,3 @@ H.fwd.summmary <- H.time |>
             H.75 = quantile(Harvest, 0.75))
 write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd.csv"), 
           row.names = FALSE)
-
-#prelim figs
-
-ggplot(S.fwd.summmary, aes(year, S.50/1000, color = HCR, fill = HCR)) +
-  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year), 
-              alpha = 0.2) +
-  geom_line(lwd=1) +
-  facet_wrap(~CU) +
-  labs(title = "Forward simulation spawner trajectory", 
-       y = "Spawners (thousands)") +
-  theme_bw() +
-  theme(legend.position = "bottom")
-
-ggplot(H.fwd.summmary, aes(year, H.50, color = HCR, fill = HCR)) +
-  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year),# if only doine 50th percentiles it stays 0
-              alpha = 0.2) +
-  geom_line(lwd=1) +
-  facet_wrap(~CU) +
-  labs(title = "Forward simulation harvest trajectory", 
-       y = "Harvest") +
-  theme_bw() +
-  theme(legend.position = "bottom")
-
