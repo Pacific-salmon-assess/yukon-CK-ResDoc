@@ -58,7 +58,7 @@ for(i in 1:3){
 median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange order of p match kusko
 colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
-Sig.R <- cov(sig.R.samps) ##investigate
+Sig.R <- cor(sig.R.samps)
 
 #bind all samps into one object 
 samps <- cbind(samps, median.p.samps, median.pi.samps)
@@ -118,7 +118,8 @@ H.time <- as.data.frame(H.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Harvest = value) |>
   mutate(Harvest = round(as.numeric(Harvest), 0), 
-         year = as.numeric(year))
+         year = as.numeric(year)) |>
+  mutate(Harvest = ifelse(is.na(Harvest), 0, Harvest)) #flip NAs to 0 (NA because run.size=0)
 
 S.fwd.summmary <- S.time |>
   group_by(HCR, CU, year) |>
