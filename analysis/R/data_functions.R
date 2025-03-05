@@ -49,8 +49,7 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
   return(Sgen)
 }
 
-# adapted from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
-
+# below funs adapted from BC's kusko code (https://github.com/brendanmichaelconnors/Kusko-harvest-diversity-tradeoffs/blob/master/functions.R#L237)
 
 #------------------------------------------------------------------------------#
 # Status function (to estimate whether stock is overfished or predicted to go 
@@ -59,7 +58,7 @@ get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
 # U <- harvest rate
 # a <- productivity (Ricker a parameter)
 # b <- density dependence (Ricker beta parameter)
-SC.eq <- function(U,a,b){
+SC.eq <- function(U,a,b){ ## Think we can delete this?
   a <- log(a)
   S.eq <- max(0,(a-(-log(1-U)))/b)
   C.eq <- max(0,((a-(-log(1-U)))/b)*exp(a-b*((a-(-log(1-U)))/b))-((a-(-log(1-U)))/b))
@@ -167,16 +166,15 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     N[i,4,] <- R[i-(7),] * mat[4]
     Ntot[i,] <- colSums(N[i,,])
     
-    # apply harvest control rule ## needs changing based on Yukon HCR (no fishing, 42k esc goal, havest above)
+    # apply harvest control rules
     run.size <- sum(Ntot[i,])
     if(is.na(run.size)==TRUE){run.size <- 0}
-    if(run.size > 999000) {run.size <- 1000000}
-    if(HCR == "no.fishing"){HR.all <- 0} ##BC double check this should be HR.all like the sub_hcr() in kusko
+    if(run.size > 999000) {run.size <- 1000000} 
+    if(HCR == "no.fishing"){HR.all <- 0}
     if(HCR == "status.quo"){
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
-      if(run.size==0){HR.all <- 0}else{
-        HR.all <- catch/run.size}
-      }
+      if(run.size==0){HR.all <- 0}else{ #to keep the NaN warnings at bay later
+        HR.all <- catch/run.size}}
     if(HCR == "fixed.ER"){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
@@ -213,15 +211,15 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   S[S[,]=='NaN'] <- 0
   Ntot[Ntot[,]=='NaN'] <- 0
-#  over <- matrix(NA,length(alpha)) ##don't think I need any of this stuff I just commented out?
+#  over <- matrix(NA,length(alpha)) ##don't think I need any of this stuff? if so - delete
 #  ext <- matrix(NA,length(alpha))
 #  ext.emp <-ext
 #  trib.gl <-ext
-  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not really sure what's going on here, why take only the first CU (i.e. column)?
+  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not sure what's going on here, why take only the first CU (i.e. column)?
   harvest_rate[harvest_rate>1] <- 1
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
   harvest_rates[harvest_rates>1] <- 1
-  harvest_rate[harvest_rate=='NaN']<-1 ## i.e. fully harvested because Nan means run.size = 0?
+  harvest_rate[harvest_rate=='NaN']<-1 ## i.e. fully harvested because NaN means run.size = 0? this messes up pms
   harvest_rates[harvest_rates=='NaN']<-1
     ##^why make these = 1 and not 0? if extinct you arent harvesting at all... 
   Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
@@ -236,14 +234,14 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))# * expan ## got rid of this. unnecessary?
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# * expan
-  pms[,3] <- median(harvest_rate)
+  pms[,3] <- median(harvest_rate) ## see comment ~L218 re: why is harvest_rate on only the first CU?
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
   #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
   pms[,5] <- sum(S[ny,] < 0.2*Smax) #1 #below 20% Smax (i.e. Smsr) 
   pms[,6] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)#between 20% and Smax
   pms[,7] <- sum(S[ny,] > Smax) #above Smax
   
-  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms) ##I can just pull H right here for the harvest timeseries
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
 }
 
 #------------------------------------------------------------------------------#

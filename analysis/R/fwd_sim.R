@@ -1,7 +1,7 @@
 # fwd sim "##" comments are Q's for BC to address
 library(here)
 library(tidyverse)
-library(mvtnorm) #for rmvnorm()
+library(mvtnorm) #for rmvnorm() nested in the functions
 source(here("analysis/R/data_functions.R"))
 
 # wrangle TVA fits into same structure as the "samps" matrix -----------------------------
@@ -110,7 +110,7 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
   group_by(HCR) |>
   summarise(escapement = median(escapement), 
             harvest = median(harvest), 
-            ER = median(ER),  ## is this really appropriate with all the 1 and 0s?
+            ER = median(ER),  ## is this really appropriate with all the 1 and 0s? - see data_functions.R
             harv.stability = median(harv.stability, na.rm=TRUE), 
             below.LSR = median(below.LSR), 
             between.ref = median(between.ref), 
