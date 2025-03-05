@@ -3,9 +3,6 @@ library(here)
 library(tidyverse)
 library(ggplotify) #for as.ggplot() to help mcmc_combo() plotting
 library(rstan)
-library(bayesplot)
-library(shinystan)
-library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/data_functions.R"))
 
 #refit <- FALSE #toggle T/F if you want to refit models
@@ -46,7 +43,6 @@ if(refit == TRUE){
     TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
                     data = stan.data,
                     iter = 4000)
-    #launch_shinystan(TV.fit)
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                           paste0(i, "_TVA.rds")))
   }
