@@ -29,7 +29,6 @@ names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 Common diagnostic plots for spawner-recruit models by CU.  
 
-
 ```{r diagnostics, results = 'asis'}
 # describe diagnostics in loop -----------------------------------------------------------
 min_ESS_AR1 <- NULL
@@ -60,24 +59,20 @@ for(i in unique(sp_har$CU)){
     theme(legend.position = "none") +
     labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
   
-  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("PPC_", i, ".PNG")))
-  
   p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"), #for AR1
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none()) |> 
     as.ggplot() +
     labs(title = paste(i, "leading parameters"))
   print(p)
-  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
-  
+
   p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none())|> 
     as.ggplot() +
     labs(title = paste(i, "age pars"))
     print(p)
-  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_age_par_", i, ".PNG")), p)
-  
+
   p <- mcmc_combo(AR1.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
                                "Dir_alpha[3]", "Dir_alpha[4]"),
              combo = c("dens_overlay", "trace"),
@@ -85,8 +80,7 @@ for(i in unique(sp_har$CU)){
     as.ggplot() +
     labs(title = paste(i, "age probs"))
     print(p)
-  my.ggsave(here("analysis/plots/diagnostics/AR1", paste0("mcmc_ages_", i, ".PNG")), p)
-  
+
   #diagnostics associated w/ TVA model---
   sub_TVA_summary <- as.data.frame(rstan::summary(TVA.fits[[i]])$summary)
   
@@ -106,8 +100,6 @@ for(i in unique(sp_har$CU)){
     theme(legend.position = "none") +
     labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
   
-  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("PPC_", i, ".PNG")))
-  
   p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R", "sigma_tot", "F_rw", 
                                           "mean_ln_R0"), 
                   combo = c("dens_overlay", "trace"),
@@ -115,16 +107,14 @@ for(i in unique(sp_har$CU)){
     as.ggplot() +
     labs(title = paste(i, "leading parameters"))
     print(p)
-  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_leading_", i, ".PNG")), plot = as.ggplot(p))
-  
+
   p <- mcmc_combo(TVA.fits[[i]], pars = c("D_scale", "D_sum"),
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none())|> 
     as.ggplot() +
     labs(title = paste(i, "age pars"))
     print(p)
-  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_age_par_", i, ".PNG")), p)
-  
+
   p <- mcmc_combo(TVA.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
                                           "Dir_alpha[3]", "Dir_alpha[4]"),
                   combo = c("dens_overlay", "trace"),
@@ -132,7 +122,6 @@ for(i in unique(sp_har$CU)){
     as.ggplot() +
     labs(title = paste(i, "age probs"))
     print(p)
-  my.ggsave(here("analysis/plots/diagnostics/TVA", paste0("mcmc_ages_", i, ".PNG")), p)
   cat('\n')
 }
 ```
