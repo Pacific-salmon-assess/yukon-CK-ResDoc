@@ -24,14 +24,14 @@ for(i in 1:length(names(TVA.fits))){
   sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),#one previous gen median alpha
                      TVA.fits[[i]]$beta,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Umsy,
-                     filter(bench.posts, CU == unique(bench.posts$CU)[i])$`80.Smsy`,
-                     #latent S&R states. Kusko has same ages, but nyrs=42 
+                     filter(bench.posts, CU == unique(bench.posts$CU)[i])$Smsy.80,
                      TVA.fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states - 39:42 in kusko 
                      TVA.fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states - 43:45 in kusko
                      TVA.fits[[i]]$lnresid[,nRyrs]) #last resid
   colnames(sub_samps) <- c(paste0("alpha_", i), 
                            paste0("beta_", i),
-                           paste0("Umsy_", i),paste0("Smsy_", i), 
+                           paste0("Umsy_", i),
+                           paste0("Smsy_", i), 
                            paste0("S_", (nyrs-A+1):nyrs, "_", i), 
                            paste0("R_", (nRyrs-A+2):nRyrs, "_", i), 
                            paste0("last_resid_", i))
@@ -64,8 +64,8 @@ Sig.R <- cov(sig.R.samps) ##look at this object and double check all good
 samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------------------------
-num.sims = 50 # number of Monte Carlo trials #originally 500
-ny = 50 # number of years in forward simulation #originally 50
+num.sims = 500 # number of Monte Carlo trials
+ny = 50 # number of years in forward simulation
 pm.yr <- ny-20 ## add comment - is this the nyrs that we evaluate pms across?
 for.error <- 0.27 ## base this off something observed  
 OU <- 0.1         ## could also base this off something else from fisheries management 
@@ -73,7 +73,7 @@ OU <- 0.1         ## could also base this off something else from fisheries mana
 # --- Create array to store outcomes -----------------------------------------------------
 HCRs <- c("no.fishing", "status.quo", "fixed.ER")
 sim.outcomes <- NULL
-S.time <- NULL #null objects to bind too - because dataframes for ggplotting
+S.time <- NULL #null objects to bind too - because need dataframes for ggplot
 H.time <- NULL
 # --- Time-varying Ricker SR dynamics ----------------------------------------------------
 
