@@ -176,6 +176,14 @@ colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
 colnames(TV.harv) <- c("H.25", "H.50", "H.75", "CU", "year")
 
+SR.preds$CU_f <- factor(SR.preds$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+AR1.resids$CU_f <- factor(AR1.resids$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+TV.resids$CU_f <- factor(TV.resids$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+TV.spwn$CU_f <- factor(TV.spwn$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+TV.harv$CU_f <- factor(TV.harv$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+brood.all$CU_f <- factor(brood.all$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+
 # write important tables to repo ---------------------------------------------------------
 bench.par.table <- bench.par.table |>
   relocate(CU, 1) |>
@@ -204,7 +212,7 @@ ggplot() +
                  color=BroodYear),
              size = 1.5) +
   geom_line(data = SR.preds, aes(x = Spawn/1000, y = Rec_med/1000)) +
-  facet_wrap(~CU, scales = "free") +
+  facet_wrap(~CU_f, scales = "free") +
   scale_colour_viridis_c(name = "Brood Year")+
   labs(x = "Spawners (000s)",
        y = "Recruits (000s)", 
@@ -227,7 +235,7 @@ ggplot(AR1.resids, aes(x=year, y = mid)) +
   labs(x = "Return year",
        y = "Recruitment residuals", 
        title = "AR1 recruitment residuals") + 
-  facet_wrap(~CU) +
+  facet_wrap(~CU_f) +
   theme(legend.position = "none",
         panel.grid = element_blank()) +
   geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
@@ -242,7 +250,7 @@ ggplot(TV.resids, aes(x=year, y = mid)) +
   labs(x = "Return year",
        y = "Recruitment residuals", 
        title = "Time-varying recruitment residuals") + 
-  facet_wrap(~CU) +
+  facet_wrap(~CU_f) +
   theme(legend.position = "none",
         panel.grid = element_blank()) +
   geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
@@ -252,7 +260,7 @@ my.ggsave(here("analysis/plots/TV_resids.PNG"))
 # TV alpha ---
 ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
-  geom_line(aes(x = brood_year , y = mid), lwd = 2) +
+  geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
   scale_color_viridis_d() +
   theme_sleek() +
   geom_hline(yintercept = 1, lty=2, col = "grey") +
@@ -268,7 +276,7 @@ ggplot() +
                  y = R_med/1000),
              size = 1.5) +
   geom_line(data = TV.SR.preds, aes(x = spw/1000, y = pred.R/1000, color = year, group = year)) +
-  facet_wrap(~CU, scales = "free") +
+  facet_wrap(~CU_f, scales = "free") +
   scale_colour_viridis_c(name = "Brood Year")+
   geom_abline(intercept = 0, slope = 1,col="dark grey") +
   labs(x = "Spawners (000s)",
@@ -331,12 +339,15 @@ bench_plot <- bench.par.table |>
          stock = CU) |>
   select(stock, upper, lower)
 
+esc$CU_f <- factor(esc$stock, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+bench_plot$CU_f <- factor(bench_plot$stock, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+
 ggplot(esc, aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~stock, ncol=3, scales = "free_y") +
+  facet_wrap(~CU_f, ncol=3, scales = "free_y") +
   geom_hline(data= bench_plot, aes(yintercept=upper/1000), lty=2, lwd=1,col="dark green") +
   geom_hline(data= bench_plot, aes(yintercept=lower/1000), lty=2, lwd=1,col="red") +
   theme_sleek()  
@@ -346,29 +357,31 @@ my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
 porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU == "Porcupine") |>
-  mutate(stock = CU,
-         mean = estimate,
+  mutate(mean = estimate,
          lwr = NA,
          upr = NA) |>
-  select(year, stock, mean,lwr, upr)
+  select(year, CU, mean,lwr, upr)
   
 aggregrate <- read.csv(here("analysis/data/raw/cdn-esc.csv")) |>
   filter(year > 1984) |>
-  mutate(stock = "Aggregrate",
-         mean = Escapement) |>
-  select(year, stock, mean,lwr, upr)
+  mutate(stock = "Aggregate",
+         mean = Escapement,
+         CU = stock) |>
+  select(year, CU, mean,lwr, upr)
 
 esc_plus <- esc |>
-  select(year, stock, mean,lwr, upr)
+  mutate(CU = stock)|>
+  select(year, CU, mean,lwr, upr)
 
 esc_plus <- rbind(esc_plus, porcupine,aggregrate)
-
+esc_plus$CU_f <- factor(esc_plus$CU, levels = c("Porcupine","NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters", "Aggregate"))
+  
 ggplot(esc_plus, aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~stock, ncol=4, scales = "free_y") +
+  facet_wrap(~CU_f, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()  
 
@@ -377,6 +390,10 @@ my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 # forward simulations --------------------------------------------------------------------
 S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
 H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
+
+S.fwd$CU_f <- factor(S.fwd$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+H.fwd$CU_f <- factor(H.fwd$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+bench.par.table$CU_f <- factor(bench.par.table$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
 
 ggplot(S.fwd) +
   geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
@@ -392,7 +409,7 @@ ggplot(S.fwd) +
              color = "forestgreen", lty = 2) +
   geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
              color = "darkred", lty = 2) +
-  facet_wrap(~CU, scales = "free_y") +
+  facet_wrap(~CU_f, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
        y = "Spawners (000s)") +
@@ -411,7 +428,7 @@ ggplot(H.fwd) +
   geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), ##Should line up?
             aes(y=H.50, x= year), color = "black") + 
   geom_line(aes(year, H.50, color = HCR), lwd=1) +
-  facet_wrap(~CU, scales = "free_y") +
+  facet_wrap(~CU_f, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(title = "Forward simulation harvest trajectory", 
        y = "Harvest (number caught)") +
@@ -434,7 +451,7 @@ ggplot(S.fwd |>
   geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-5), ##Should line up?
             aes(y=S.50/1000, x= year), color = "black") + 
   geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
-  facet_wrap(~CU, scales = "free_y") +
+  facet_wrap(~CU_f, scales = "free_y") +
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(x = "Year", 
        y = "Spawners (000s)") +
