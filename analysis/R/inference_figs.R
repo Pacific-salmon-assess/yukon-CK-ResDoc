@@ -193,7 +193,9 @@ bench.par.table <- bench.par.table |>
   arrange(bench.par, mean)
 
 write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
-          row.names = FALSE) 
+          row.names = FALSE)
+
+write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
 
 # make key plots for pub -----------------------------------------------------------------
 # SR fits ---
