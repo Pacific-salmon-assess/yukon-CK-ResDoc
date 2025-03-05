@@ -176,13 +176,17 @@ colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
 colnames(TV.harv) <- c("H.25", "H.50", "H.75", "CU", "year")
 
-SR.preds$CU_f <- factor(SR.preds$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-AR1.resids$CU_f <- factor(AR1.resids$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-TV.resids$CU_f <- factor(TV.resids$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-TV.spwn$CU_f <- factor(TV.spwn$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-TV.harv$CU_f <- factor(TV.harv$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-brood.all$CU_f <- factor(brood.all$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters")
+
+SR.preds$CU_f <- factor(SR.preds$CU, levels = CU_order)
+AR1.resids$CU_f <- factor(AR1.resids$CU, levels = CU_order)
+TV.resids$CU_f <- factor(TV.resids$CU, levels = CU_order)
+TV.spwn$CU_f <- factor(TV.spwn$CU, levels = CU_order)
+TV.harv$CU_f <- factor(TV.harv$CU, levels = CU_order)
+brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
+TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = CU_order)
 
 # write important tables to repo ---------------------------------------------------------
 bench.par.table <- bench.par.table |>
@@ -341,8 +345,8 @@ bench_plot <- bench.par.table |>
          stock = CU) |>
   select(stock, upper, lower)
 
-esc$CU_f <- factor(esc$stock, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-bench_plot$CU_f <- factor(bench_plot$stock, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+esc$CU_f <- factor(esc$stock, levels = CU_order)
+bench_plot$CU_f <- factor(bench_plot$stock, levels = CU_order)
 
 ggplot(esc, aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
@@ -376,7 +380,7 @@ esc_plus <- esc |>
   select(year, CU, mean,lwr, upr)
 
 esc_plus <- rbind(esc_plus, porcupine,aggregrate)
-esc_plus$CU_f <- factor(esc_plus$CU, levels = c("Porcupine","NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters", "Aggregate"))
+esc_plus$CU_f <- factor(esc_plus$CU, levels = c("Porcupine", CU_order, "Aggregate"))
   
 ggplot(esc_plus, aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
@@ -393,9 +397,9 @@ my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
 H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
 
-S.fwd$CU_f <- factor(S.fwd$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-H.fwd$CU_f <- factor(H.fwd$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
-bench.par.table$CU_f <- factor(bench.par.table$CU, levels = c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", "UpperYukonR.","YukonR.Teslinheadwaters"))
+S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
+H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
+bench.par.table$CU_f <- factor(bench.par.table$CU, levels = CU_order)
 
 ggplot(S.fwd) +
   geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
