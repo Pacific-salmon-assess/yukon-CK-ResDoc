@@ -174,7 +174,9 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     if(HCR == "no.fishing"){HR.all <- 0} ##BC double check this should be HR.all like the sub_hcr() in kusko
     if(HCR == "status.quo"){
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
-      HR.all <- catch/run.size}
+      if(run.size==0){HR.all <- 0}else{
+        HR.all <- catch/run.size}
+      }
     if(HCR == "fixed.ER"){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
