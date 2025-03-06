@@ -5,7 +5,7 @@ output:
   html_document:
     collapsed: no
     fig_caption: no
-    number_sections: yes
+    number_sections: no
     smooth_scroll: yes
     theme: cerulean
     toc: yes
@@ -51,7 +51,7 @@ We fit the spawner-recruitment model in a Bayesian estimation framework with Sta
 We sampled from 4 chains with **2,000** iterations each and discarded the first half as warm-up. 
 We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.    
 
-### Trace plots  
+## Trace plots  
 These should be clearly mixed, with no single distribution deviating from others (left column), and no chains exploring a strange space for a few iterations (right column).  
 
 
@@ -65,7 +65,7 @@ max_Rhat_TVA <- NULL
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
   cat('\n')
-  cat("## ", i, "\n") #escape loop and print CU name
+  cat("### ", i, "\n") #escape loop and print CU name
   #diagnostics associated w/ AR1 model---
   sub_AR1_summary <- as.data.frame(rstan::summary(AR1.fits[[i]])$summary)
   
@@ -80,23 +80,24 @@ for(i in unique(sp_har$CU)){
   R <- (sub_dat$harv+sub_dat$spwn)
   R_rep <- sub_AR1_pars$H_rep[1:500,] + sub_AR1_pars$S_rep[1:500,]
   
-  ppc_dens_overlay(R, R_rep) +
+  p <- ppc_dens_overlay(R, R_rep) +
     xlim(NA, quantile(R_rep, 0.99)) +
     theme(legend.position = "none") +
-    labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
+    labs(y = "density", x = "y_est", title = "AR1 posterior predictive check")
+  print(p)
   
-  p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"), #for AR1
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("beta", "lnalpha", "sigma_R", "phi"),
              combo = c("dens_overlay", "trace"),
-             gg_theme = legend_none()) |> 
-    as.ggplot() +
-    labs(title = paste(i, "leading parameters"))
+             gg_theme = legend_none()) |>
+    as.ggplot() + 
+    labs(title = "AR1 leading parameters")
   print(p)
 
   p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none())|> 
     as.ggplot() +
-    labs(title = paste(i, "age pars"))
+    labs(title = "AR1 age pars")
     print(p)
 
   p <- mcmc_combo(AR1.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
@@ -104,7 +105,7 @@ for(i in unique(sp_har$CU)){
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none())|> 
     as.ggplot() +
-    labs(title = paste(i, "age probs"))
+    labs(title = "AR1 age probs")
     print(p)
 
   #diagnostics associated w/ TVA model---
@@ -121,24 +122,30 @@ for(i in unique(sp_har$CU)){
   R <- (sub_dat$harv+sub_dat$spwn)
   R_rep <- sub_TVA_pars$H_rep[1:500,] + sub_TVA_pars$S_rep[1:500,]
   
-  ppc_dens_overlay(R, R_rep) +
+  p <- ppc_dens_overlay(R, R_rep) +
     xlim(NA, quantile(R_rep, 0.99)) +
     theme(legend.position = "none") +
-    labs(y = "density", x = "y_est", title = paste(i, "posterior predictive check"))
+    labs(y = "density", x = "y_est", title = "TV posterior predictive check")
   
-  p <- mcmc_combo(TVA.fits[[i]], pars = c("beta", "sigma_alpha", "sigma_R", "sigma_tot", "F_rw", 
-                                          "mean_ln_R0"), 
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("ln_alpha0", "beta", "F_rw", "mean_ln_R0"), 
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none()) |> 
     as.ggplot() +
-    labs(title = paste(i, "leading parameters"))
+    labs(title =  "TV leading parameters")
+    print(p)
+    
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("sigma_alpha", "sigma_R", "sigma_tot"), 
+                  combo = c("dens_overlay", "trace"),
+                  gg_theme = legend_none()) |> 
+    as.ggplot() +
+    labs(title =  "TV variance components")
     print(p)
 
   p <- mcmc_combo(TVA.fits[[i]], pars = c("D_scale", "D_sum"),
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none())|> 
     as.ggplot() +
-    labs(title = paste(i, "age pars"))
+    labs(title = "TV age pars")
     print(p)
 
   p <- mcmc_combo(TVA.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
@@ -146,37 +153,28 @@ for(i in unique(sp_har$CU)){
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none())|> 
     as.ggplot() +
-    labs(title = paste(i, "age probs"))
+    labs(title = "TV age probs")
     print(p)
   cat('\n')
 }
 ```
 
-We hope minimum effective sample sizes are greater than ***2000***?
+## ESS and $\hat{R}$  
+
+We hope minimum effective sample sizes are greater than ***2000*** and that $\hat{R}$ are less than 1.05.  
 
 For the AR1 model:  
-```{r ESS AR1}
-kable(min_ESS_AR1)
+```{r AR1-diag}
+AR1.diag <- left_join(min_ESS_AR1, max_Rhat_AR1, by = "CU")
+kable(AR1.diag)
 ```
 
 and the time varying model:  
-
-```{r ESS TV}
-kable(min_ESS_TVA)
+```{r TV-diag}
+TVA.diag <- left_join(min_ESS_TVA, max_Rhat_TVA, by = "CU")
+kable(TVA.diag)
 ```
 
+We see some problems with the time varying model, and have explored various parametrizations and options to include [semi-informative beta priors](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan/semi_inform) that did not improve diagnostics. We imagine these issues in the time-varying model are due to the extreme, pronounced decline in productivity, and the correlation between productivity and the stationary capacity prior (i.e., Ricker $\beta$). 
 
-and that $\hat{R}$ are less than 1.05  
-
-for the AR1 model  
-```{r rhat AR1}
-kable(max_Rhat_AR1)
-```
-
-and the time varying model:  
-
-```{r rhat TV}
-kable(max_Rhat_TVA)
-```
-
-We see some problems with the time varying model, and have explored various parametrizations and options to include [semi-informative beta priors](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan/semi_inform) that did not improve diagnostics. We imagine these issues in the time-varying model are due to the extreme, pronounced decline in productivity, and the correlation between productivity and the stationary capacity prior (i.e., Ricker $\beta$)
+**add a head(max(Rhat)) type thing to show what model*parms had problems?**
