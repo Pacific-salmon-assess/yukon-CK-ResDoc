@@ -4,6 +4,8 @@ library(tidyverse)
 library(rstan)
 source(here("analysis/R/data_functions.R"))
 
+set.seed(2)
+
 #refit <- FALSE #toggle T/F if you want to refit models
 refit <- TRUE
 
