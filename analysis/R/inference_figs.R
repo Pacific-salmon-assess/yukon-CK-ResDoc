@@ -471,7 +471,7 @@ my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
 perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv"))
 
 perf.plot <- perf.metrics |>
-  pivot_longer(2:8, names_to = "metric")
+  pivot_longer(2:9, names_to = "metric")
 
 ggplot(perf.plot, aes(x=HCR, y = value, color = HCR, fill = HCR)) + 
   geom_col() +

@@ -103,18 +103,19 @@ for(i in 1:length(HCRs)){
   }
 }
 colnames(sim.outcomes) <- c("HCR", "sim", "escapement", "harvest", "ER", "harv.stability", 
-                            "below.LSR", "between.ref", "above.USR")
+                            "below.LSR", "between.ref", "above.USR", "extinct")
 
 sim.outcome.summary <- as.data.frame(sim.outcomes) |>
-  mutate_at(2:9, as.numeric) |>
+  mutate_at(2:10, as.numeric) |>
   group_by(HCR) |>
-  summarise(escapement = median(escapement), 
-            harvest = median(harvest), 
-            ER = median(ER),  ## is this really appropriate with all the 1 and 0s? - see data_functions.R
-            harv.stability = median(harv.stability, na.rm=TRUE), 
-            below.LSR = median(below.LSR), 
-            between.ref = median(between.ref), 
-            above.USR = median(above.USR))
+  summarise(escapement = mean(escapement), 
+            harvest = mean(harvest), 
+            ER = mean(ER, na.rm = TRUE),
+            harv.stability = mean(harv.stability, na.rm=TRUE), 
+            below.LSR = mean(below.LSR), 
+            between.ref = mean(between.ref), 
+            above.USR = mean(above.USR), 
+            extinct = mean(extinct))
 
 write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"), 
           row.names = FALSE)
