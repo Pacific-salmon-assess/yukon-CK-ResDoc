@@ -1,8 +1,15 @@
 ---
-title: "SR model Diagnostics"
+title: "Supplement: Spawner-recruit model diagnostics"
 author: "Authors"
-date: "2025-03-05"
-output: html_document
+output: 
+  html_document:
+    collapsed: no
+    fig_caption: no
+    number_sections: yes
+    smooth_scroll: yes
+    theme: cerulean
+    toc: yes
+    toc_float: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -27,7 +34,26 @@ TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"),
 names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 ```
 
-Common diagnostic plots for spawner-recruit models by CU.  
+
+This document describes fits from both state-space Ricker spawner-recruit models used fit in the Research Document (**link once published online**):
+
+**citation**
+
+Two state-space spawner-recruit models were fit in this paper that serve different purposes. 
+First, a Ricker model with autoregressive (AR1) recruitment residuals was fit to estimate biological benchmarks ($S_{gen}$, $S_{MSY}$, and $U_{MSY}$), then a model with time-varying productivity (Ricker $\alpha$ parameter) was fit in order to condition the biological submodel on recent population dynamics in the closed-loop forward simulation. 
+These models were fit to each of the 9 CUs one by one, yielding 18 models to diagnose total. 
+Data and code to reproduce the analysis and report is available in this [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main), where you can see the [R code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_fit.R) to run the models, and the [models](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan) themselves. 
+
+
+# Diagnostics  
+
+We fit the spawner-recruitment model in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. 
+We sampled from 4 chains with **2,000** iterations each and discarded the first half as warm-up. 
+We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.    
+
+### Trace plots  
+These should be clearly mixed, with no single distribution deviating from others (left column), and no chains exploring a strange space for a few iterations (right column).  
+
 
 ```{r diagnostics, results = 'asis'}
 # describe diagnostics in loop -----------------------------------------------------------
@@ -128,15 +154,28 @@ for(i in unique(sp_har$CU)){
 
 We hope minimum effective sample sizes are greater than ***2000***?
 
-```{r ESS}
+For the AR1 model:  
+```{r ESS AR1}
 kable(min_ESS_AR1)
+```
+
+and the time varying model:  
+
+```{r ESS TV}
 kable(min_ESS_TVA)
 ```
 
+
 and that $\hat{R}$ are less than 1.05  
 
-```{r rhat}
+for the AR1 model  
+```{r rhat AR1}
 kable(max_Rhat_AR1)
+```
+
+and the time varying model:  
+
+```{r rhat TV}
 kable(max_Rhat_TVA)
 ```
 
