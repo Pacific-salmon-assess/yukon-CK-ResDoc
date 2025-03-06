@@ -199,15 +199,16 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   # Output
   # Performance measures:
-  #	1: escapement
-  #	2: harvest
+  #	1: avg annual escapement
+  #	2: avg annual harvest
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
   #	4: CV in harvest
   # 5: number of CUs below LRP at end of sim
   # 6: number of CUs between RPs " "
   # 7: number of CUs above USR at ""
+  # 8: number of extinct pops 
 
-  pms <- matrix(NA,1,7) 
+  pms <- matrix(NA,1,8) 
   
   S[S[,]=='NaN'] <- 0
   Ntot[Ntot[,]=='NaN'] <- 0
@@ -215,13 +216,12 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
 #  ext <- matrix(NA,length(alpha))
 #  ext.emp <-ext
 #  trib.gl <-ext
-  harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##not sure what's going on here, why take only the first CU (i.e. column)?
-  harvest_rate[harvest_rate>1] <- 1
+ # harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##harvest rate among CUs used to be equal, hence only taking first CU
+ # harvest_rate[harvest_rate>1] <- 1
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
-  harvest_rates[harvest_rates>1] <- 1
-  harvest_rate[harvest_rate=='NaN']<-1 ## i.e. fully harvested because NaN means run.size = 0? this messes up pms
-  harvest_rates[harvest_rates=='NaN']<-1
-    ##^why make these = 1 and not 0? if extinct you arent harvesting at all... 
+  #harvest_rates[harvest_rates>1] <- 1 ## how could a harvest rate be > 1?
+  #harvest_rate[harvest_rate=='NaN']<-1 
+  #harvest_rates[harvest_rates=='NaN'] <- 1 ##why make these = 1 and not 0? NaN means run.size = 0 if extinct you aren't harvesting at all... 
   Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
@@ -234,12 +234,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))# * expan ## got rid of this. unnecessary?
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# * expan
-  pms[,3] <- median(harvest_rate) ## see comment ~L218 re: why is harvest_rate on only the first CU?
+  pms[,3] <- median(harvest_rates, na.rm = TRUE)
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
   #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
-  pms[,5] <- sum(S[ny,] < 0.2*Smax) #1 #below 20% Smax (i.e. Smsr) 
-  pms[,6] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)#between 20% and Smax
-  pms[,7] <- sum(S[ny,] > Smax) #above Smax
+  pms[,5] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
+  pms[,6] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
+  pms[,7] <- sum(S[ny,] > Smax)
+  pms[,8] <- sum(S[ny,] ==0)
   
   list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
 }
