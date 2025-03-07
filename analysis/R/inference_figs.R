@@ -5,24 +5,19 @@ library(gsl)
 
 source(here("analysis/R/data_functions.R"))
 
-# read in model fits ---------------------------------------------------------------------
+# read in data ---------------------------------------------------------------------------
+# model fits --- 
 AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
-                              full.names = T), 
-                   readRDS)
-names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+                              full.names = T), readRDS)
+names(AR1.fits) <- unique(sp_har$CU)
 
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
-                              full.names = T), 
-                   readRDS)
-names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+                              full.names = T), readRDS)
+names(TVA.fits) <- unique(sp_har$CU)
 
-
-# read in escapement estimates -----------------------------------------------------------
-
-esc <- read.csv(here("analysis/data/raw/esc-data.csv")) 
-esc$lwr <- as.numeric(esc$lower)
-esc$upr <- as.numeric(esc$upper)
-esc$year <- as.numeric(esc$year)
+# escapement estimates ---
+esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
+  mutate_at(2:6, as.numeric)
 
 # process data and fits to make plots later ----------------------------------------------
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
@@ -82,10 +77,10 @@ for(i in unique(sp_har$CU)){
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
   
-  bench.quant <- apply(bench[,1:5], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
+  bench.quant <- apply(bench[,1:6], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
   
-  mean <- apply(bench[,1:5],2,mean, na.rm=T) #get means of each
+  mean <- apply(bench[,1:6],2,mean, na.rm=T) #get means of each
   
   sub_benchmarks <- cbind(bench.quant, mean) |>
     as.data.frame() |>
@@ -323,7 +318,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
 bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
-  filter(value <= 15000)
+  filter(value <= 15000) #hack to cut big tails of observations, worth looking without this line
 
 ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
@@ -337,7 +332,6 @@ ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
        title = "Recent spawners relative to benchmarks and 1500 cutoff")
 
 # escapement plot ----
-
 bench_plot <- bench.par.table |>
   filter(bench.par == "Smsr") |>
   mutate(upper = `50%`,
@@ -360,7 +354,6 @@ ggplot(esc, aes(x = year, y = mean/1000)) +
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
 # escapement plot all CUs plus aggregrate ----
-
 porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU == "Porcupine") |>
   mutate(mean = estimate,
@@ -468,19 +461,31 @@ ggplot(S.fwd |>
 my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
 
 # performance metrics ---
-perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv"))
+perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv")) |>
+  pivot_longer(2:9, names_to = "metric") 
 
-perf.plot <- perf.metrics |>
-  pivot_longer(2:9, names_to = "metric")
+perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
-ggplot(perf.plot, aes(x=HCR, y = value, color = HCR, fill = HCR)) + 
+ggplot(perf.plot, aes(x=HCR, y = value)) + 
   geom_col() +
   facet_wrap(~metric, scales = "free_y") +
   theme_bw() +
-  scale_color_viridis_d(aesthetics = c("fill", "color")) +
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(), 
         legend.title = element_blank()) +
   labs(title = "Forward simulaiton performance metrics") 
 
 my.ggsave(here("analysis/plots/perf_metrics.PNG"))
+
+perf.status <- perf.metrics |>
+  filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
+  mutate(status = factor(metric, levels = c("above.USR", "between.ref", "below.LSR", "extinct")))
+
+ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
+  geom_col() +
+  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
+  scale_y_continuous(breaks = c(2,4,6,8)) +
+  labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
+  theme_bw()
+
+my.ggsave(here("analysis/plots/perf_status.PNG"))
