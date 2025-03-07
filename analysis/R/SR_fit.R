@@ -50,18 +50,4 @@ if(refit == TRUE){
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                           paste0(i, "_TVA.rds")))
   }
-}else{
-  if(!dir.exists(here("analysis/data/generated/model_fits/AR1")) &
-     !dir.exists(here("analysis/data/generated/model_fits/TVA"))){
-    stop(print("Make sure you have fit both models at least once!"))
-  }
-  AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
-                                full.names = T), 
-                     readRDS)
-  names(AR1.fits) <- unique(sp_har$CU)
-  
-  TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
-                                full.names = T), 
-                     readRDS)
-  names(TVA.fits) <- unique(sp_har$CU)
 }
