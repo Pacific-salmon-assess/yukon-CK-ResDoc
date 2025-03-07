@@ -7,9 +7,8 @@ source(here("analysis/R/data_functions.R"))
 # wrangle TVA fits into same structure as the "samps" matrix -----------------------------
 #here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
-                              full.names = T), 
-                   readRDS)
-names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+                              full.names = T), readRDS)
+names(TVA.fits) <- unique(sp_har$CU)
 
 TVA.fits <- lapply(TVA.fits, rstan::extract)
 
@@ -17,8 +16,8 @@ bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds")
 
 #infilling the "samps" object from the kusko example -------------------------------------
 samps <- NULL
-pi.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits)))
-p.samps <- array(NA, dim = c(nrow(TVA.fits$MiddleYukonR.andtribs.$beta), A, length(TVA.fits), 3))
+pi.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits)))
+p.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits), 3))
 sig.R.samps <- NULL
 for(i in 1:length(names(TVA.fits))){
   sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),#one previous gen median alpha

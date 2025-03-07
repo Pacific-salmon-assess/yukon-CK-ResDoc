@@ -8,11 +8,12 @@ sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
                 spwn_cv = cv) |>
   left_join(harvest, by = c("stock", "year")) |>
   dplyr::rename(CU = stock) |>
-  mutate(N = spwn+harv)
+  mutate(N = spwn+harv) |>
+  arrange(CU)
 
 ages <- read.csv(here("analysis/data/raw/run-age-comp.csv")) |>
-  filter(Year > 1984,
-         Year < 2025)
+  filter(Year >= min(sp_har$year),
+         Year <= max(sp_har$year))
 
 A_obs <- ages |>
   select(a4:a7) |>
@@ -38,13 +39,13 @@ my.ggsave <- function(filename = default_name(plot), plot = last_plot(),
 
 # benchmark functions ---
 get_Smsy <- function(a, b){
-  Smsy <- (1 - lambert_W0(exp(1 - a))) / b
+  Smsy <- (1-lambert_W0(exp(1-a)))/b
   if(Smsy <0){Smsy <- 0.001} #dumb hack for low draws so Smsy doesnt go negative
   return(Smsy)
 }
 
 get_Sgen <- function(a, b, int_lower, int_upper, Smsy){
-  fun_Sgen <- function(Sgen, a, b, Smsy) {Sgen * a * exp(-b * Sgen) - Smsy}
+  fun_Sgen <- function(Sgen, a, b, Smsy){Sgen*a*exp(-b*Sgen)-Smsy}
   Sgen <- uniroot(fun_Sgen, interval=c(int_lower, int_upper), a=a, b=b, Smsy=Smsy)$root
   return(Sgen)
 }
@@ -173,7 +174,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     if(HCR == "no.fishing"){HR.all <- 0}
     if(HCR == "status.quo"){
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
-      if(run.size==0){HR.all <- 0}else{ #to keep the NaN warnings at bay later
+      if(run.size==0){HR.all <- 0}else{ #to overwrite NaNs
         HR.all <- catch/run.size}}
     if(HCR == "fixed.ER"){
       if(run.size==0){ER <- 0}

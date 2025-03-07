@@ -36,14 +36,17 @@ if(refit == TRUE){
     
     AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
                     data = stan.data,
-                    iter = 8000)
+                    iter = 8000, 
+                    model_name = paste(i, "AR1"))
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
     
     TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
                     data = stan.data,
-                    iter = 8000)
+                    iter = 8000, 
+                   model_name = paste(i, "TVA"))
+    
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                           paste0(i, "_TVA.rds")))
   }
@@ -55,10 +58,10 @@ if(refit == TRUE){
   AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"),
                                 full.names = T), 
                      readRDS)
-  names(AR1.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+  names(AR1.fits) <- unique(sp_har$CU)
   
   TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                                 full.names = T), 
                      readRDS)
-  names(TVA.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
+  names(TVA.fits) <- unique(sp_har$CU)
 }
