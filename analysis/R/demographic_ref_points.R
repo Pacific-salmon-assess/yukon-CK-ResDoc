@@ -117,4 +117,9 @@ for(i in unique(sp_har$CU)){
     facet_wrap(~CU, scales = "free_y") +
     theme(legend.position = "bottom")
   
+  
+  ggplot(bench_AR1_eggslong, aes(y=value, x=  period, color = period)) +
+    geom_violin() +
+    facet_wrap(~CU, scales = "free_y") +
+    theme(legend.position = "bottom")
  

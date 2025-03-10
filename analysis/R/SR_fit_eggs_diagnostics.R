@@ -60,7 +60,7 @@ if(refit == TRUE){
   AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_egg_mass"),
                                 full.names = T), 
                      readRDS)
-  names(AR1.eggs.fits) <- unique(sp_har$cu)[order(unique(sp_har$cu))]
+  names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
   
 }
 
