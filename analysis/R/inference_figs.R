@@ -165,6 +165,8 @@ for(i in unique(sp_har$CU)){
   
   TV.harv <- bind_rows(TV.harv, TV.harv.quant)
 }
+
+
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
@@ -184,14 +186,14 @@ brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = CU_order)
 
 # write important tables to repo ---------------------------------------------------------
-bench.par.table <- bench.par.table |>
+bench.par.table.out <- bench.par.table |>
   relocate(CU, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
-  mutate_at(3:7, ~round(.,5)) |>
-  arrange(bench.par, mean)
+  #mutate_at(3:7, ~round(.,5)) |> #remove rounding while we figure out inconsistencies
+  arrange(bench.par, CU)
 
-write.csv(bench.par.table, here("analysis/data/generated/bench_par_table.csv"), 
+write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE)
 
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
