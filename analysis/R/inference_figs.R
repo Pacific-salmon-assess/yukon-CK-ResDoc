@@ -190,10 +190,10 @@ bench.par.table.out <- bench.par.table |>
   relocate(CU, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
-  #mutate_at(3:7, ~round(.,5)) |> #remove rounding while we figure out inconsistencies
+  mutate_at(3:7, ~round(.,5)) |> 
   arrange(bench.par, CU)
 
-write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), 
+write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), # ADD YOUR NAME for comparison
           row.names = FALSE)
 
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
