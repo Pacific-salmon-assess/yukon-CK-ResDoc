@@ -196,6 +196,8 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
     v[i,] <- log(R[i,])-log(predR[i,])
     v[v[,]=='NaN'] <- 0
+    
+    #browser(expr = {anyNA(H[i,])})
   }
   
   # Output
@@ -212,6 +214,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   pms <- matrix(NA,1,8) 
   
   S[S[,]=='NaN'] <- 0
+  H[H[,] == 'NAN'] <- 0# not sure if this is an appropriate fix
   Ntot[Ntot[,]=='NaN'] <- 0
 #  over <- matrix(NA,length(alpha)) ##don't think I need any of this stuff? if so - delete
 #  ext <- matrix(NA,length(alpha))
