@@ -4,29 +4,34 @@ library(tidyverse)
 library(mvtnorm) #for rmvnorm() nested in the functions
 source(here("analysis/R/data_functions.R"))
 
-# wrangle TVA fits into same structure as the "samps" matrix -----------------------------
-#here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
-TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
-                              full.names = T), readRDS)
-names(TVA.fits) <- unique(sp_har$CU)
+set.seed(2)
 
-TVA.fits <- lapply(TVA.fits, rstan::extract)
+# wrangle fits into same structure as the "samps" matrix -----------------------------
+#here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
+fit_type <- "AR1" 
+#fit_type <- "TVA" # toggle on to use TVA fits
+
+AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), 
+                              full.names = T), readRDS)
+names(AR1.fits) <- unique(sp_har$CU)
+
+AR1.fits <- lapply(AR1.fits, rstan::extract)
 
 bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds"))
 
 #infilling the "samps" object from the kusko example -------------------------------------
 samps <- NULL
-pi.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits)))
-p.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits), 3))
+pi.samps <- array(NA, dim = c(nrow(AR1.fits[[1]]$beta), A, length(AR1.fits)))
+p.samps <- array(NA, dim = c(nrow(AR1.fits[[1]]$beta), A, length(AR1.fits), 3))
 sig.R.samps <- NULL
-for(i in 1:length(names(TVA.fits))){
-  sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_max+1):nyrs], 1, median)),#one previous gen median alpha
-                     TVA.fits[[i]]$beta,
+for(i in 1:length(names(AR1.fits))){
+  sub_samps <- cbind(exp(AR1.fits[[i]]$lnalpha),#one previous gen median alpha
+                     AR1.fits[[i]]$beta,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Umsy,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Smsy.80,
-                     TVA.fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states - 39:42 in kusko 
-                     TVA.fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states - 43:45 in kusko
-                     TVA.fits[[i]]$lnresid[,nRyrs]) #last resid
+                     AR1.fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states - 39:42 in kusko 
+                     AR1.fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states - 43:45 in kusko
+                     AR1.fits[[i]]$lnresid[,nRyrs]) #last resid
   colnames(sub_samps) <- c(paste0("alpha_", i), 
                            paste0("beta_", i),
                            paste0("Umsy_", i),
@@ -36,19 +41,19 @@ for(i in 1:length(names(TVA.fits))){
                            paste0("last_resid_", i))
   samps <- cbind(samps, sub_samps) #cbind posteriors of parms we care about
   
-  pi.samps[,,i] <- TVA.fits[[i]]$pi #store pis to summarise later
+  pi.samps[,,i] <- AR1.fits[[i]]$pi #store pis to summarise later
   
   for(j in 1:3){
-    p.samps[,,i,j] <- TVA.fits[[i]]$p[,nyrs+j, ] #store ps for last 3 nRyrs to summarise later
+    p.samps[,,i,j] <- AR1.fits[[i]]$p[,nyrs+j, ] #store ps for last 3 nRyrs to summarise later
   }
-  TVA.fits[[i]]$lnresid
-  sig.R.samps <- cbind(sig.R.samps, apply(TVA.fits[[i]]$lnresid, 2, median)[8:nRyrs])
+  AR1.fits[[i]]$lnresid
+  sig.R.samps <- cbind(sig.R.samps, apply(AR1.fits[[i]]$lnresid, 2, median)[8:nRyrs])
 }
 
 #get median of pis and ps for all pops 
 #(i.e. take the median across posterior slices by "page" of array)
-median.pi.samps <- apply(pi.samps, c(1,2), median)
-colnames(median.pi.samps) <- paste0("pi_", 1:4)
+median.pi.samps <- apply(pi.samps, c(1,2), median) # Is this supposed to avg across CUs?
+colnames(median.pi.samps) <- paste0("pi_", 1:4) 
 
 median.p.samps <- NULL
 for(i in 1:3){
@@ -99,8 +104,13 @@ for(i in 1:length(HCRs)){
     H.time <- rbind(H.time, cbind(out$H[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
                                   rep(j, ny-a_max+1)))
+    #if(anyNA(out$H[7:ny,])){
+     # stop(c("NA produced -- HCR: ", HCRs[i], ", sim: ", j)) }
+    
+    
   }
-}
+} # end of simulation loop
+
 colnames(sim.outcomes) <- c("HCR", "sim", "escapement", "harvest", "ER", "harv.stability", 
                             "below.LSR", "between.ref", "above.USR", "extinct")
 
@@ -119,14 +129,14 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
 write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"), 
           row.names = FALSE)
 
-colnames(S.time) <- c(names(TVA.fits), "HCR", "year", "sim")
+colnames(S.time) <- c(names(AR1.fits), "HCR", "year", "sim")
 S.time <- as.data.frame(S.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Spawners = value) |>
   mutate(Spawners = round(as.numeric(Spawners), 0), 
          year = as.numeric(year))
 
-colnames(H.time) <- c(names(TVA.fits), "HCR", "year", "sim")
+colnames(H.time) <- c(names(AR1.fits), "HCR", "year", "sim")
 H.time <- as.data.frame(H.time) |>
   pivot_longer(1:9, names_to = "CU") |>
   rename(Harvest = value) |>
