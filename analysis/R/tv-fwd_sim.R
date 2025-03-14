@@ -20,8 +20,9 @@ pi.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits)))
 p.samps <- array(NA, dim = c(nrow(TVA.fits[[1]]$beta), A, length(TVA.fits), 3))
 sig.R.samps <- NULL
 a_yrs <- 10 # number of years to average recent productivity over (7 would be one generation)
+
 for(i in 1:length(names(TVA.fits))){
-  sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, a_yrs:nyrs], 1, median)),
+  sub_samps <- cbind(exp(apply(TVA.fits[[i]]$ln_alpha[, (nyrs-a_yrs):nyrs], 1, median)),
                      TVA.fits[[i]]$beta,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Umsy,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Smsy.80,
