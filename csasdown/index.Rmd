@@ -1,28 +1,35 @@
 ---
 title: |
-  "Title Here (*Latin Species Name*)"
+  "Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook Salmon (*Oncorhynchus tshawytscha*)"
 french_title: "Titre ici (*Nom latin de l'espèce*)"
 author: |
-  First. M. Last^1^ and
-  Alex B. Smith^2^
-author_list: "Last, F.M. and Smith, A.B."
+  Brendan M. Connors^1^, 
+  Hannah Hunter^2^,
+  Dylan Glaser^3^,
+  Adam O'Dell^4^, and
+  Jessica Gill^5^,
+author_list: "Connors, B.M., Hunter, H., Glaser, D., O'Dell, A., and Gill, J."
 address: |
-  ^1^Pacific Biological Station\
-     Fisheries and Oceans Canada, 3190 Hammond Bay Road\
-     Nanaimo, British Columbia, V9T 6N7, Canada\
-  \smallskip
-  ^2^Far, far away\
-     Another Galaxy
-french_address: |
-  ^1^Station biologique du Pacifique\
-     Pêches et Océans Canada, 3190 Hammond Bay Road\
-     Nanaimo, Colombie-Britannique, V9T 6N7, Canada\
-  \smallskip
-  ^2^Loin, très loin\
-     Une autre galaxie
+  ^1^Institute of Ocean Sciences\
+     Fisheries and Oceans Canada, 9860 W. Saanich Road\
+     Sidney, British Columbia, V8L 5T5, Canada\
+  ^2^Fairbanks Fish and Wildlife Conservation Office\
+     U.S. Fish and Wildlife Service, 101 12th Avenue\
+     Fairbanks, Alaska 99701, USA\
+  ^3^College of Fisheries and Ocean Sciences\
+     University of Alaska Fairbanks, 17101 Point Lena Loop Road\
+     Juneau, Alaska, 99801, USA\
+  ^4^Alaska Department of Fish and Game\
+     Division of Commercial Fisheries, 333 Raspberry Road\
+     Anchorage, Alaska, 99518, USA\  
+  ^5^Alaska Department of Fish and Game\
+     Division of Commercial Fisheries, 333 Raspberry Road\
+     Anchorage, Alaska, 99518, USA\  
+
+french_address: |         
 month: "Month"
 french_month: "Mois"
-year: 2022
+year: 2025
 report_number: nnn
 region: "Pacific Region"
 french_region: "Région du Pacifique"
@@ -39,6 +46,7 @@ french_abstract: |
   Voici le texte du résumé. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
   
   Commencez les nouveaux paragraphes après une ligne blanche et avec un retrait de 2 espaces. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  
 header: "Draft working paper --- Do not cite or circulate" # or "" to omit
 # `show_continued_text` is a logical which, if `true`, places
 # "Continued on the next page..." and "...Continued from the previous page" or
