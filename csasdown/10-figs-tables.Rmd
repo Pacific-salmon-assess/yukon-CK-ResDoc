@@ -1,0 +1,10 @@
+# FIGURES  
+
+(ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
+```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
+knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
+```
+
+\clearpage
+
+# TABLES  

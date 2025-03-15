@@ -1,0 +1,81 @@
+<!-- The following code should appear at the beginning of the first appendix.
+After that, all subsequent sections will be turned into appendices. -->
+
+`r if(knitr:::is_latex_output()) '\\Appendices'`
+
+`r if(!knitr:::is_latex_output()) '# (APPENDIX) Appendix {-}'`
+
+# RUN_RECONSTRUCTION MODEL {#app:first-appendix}
+
+- general description of multi-population run-reconstruction model
+
+## POPULATION DYNAMICS 
+
+## OBSERVATION MODEL 
+
+## MODEL FITTING AND DIAGNOSTICS 
+
+\clearpage
+
+
+# SPAWNER_RECRUITMENT MODELS  {#app:second-appendix}
+
+- general description of multi-population state-space approach and why we chose it
+- acknowledge that approach is expected to yield less biased estimates of key population characteristic than traditional spawner-recruitment models that can arise due to errors-in-variables and time-series bias
+
+
+## PROCESS MODEL 
+
+- equations and descriptions 
+
+## OBSERVATION MODEL 
+
+- equations and descriptions 
+
+## MODEL FITTING AND DIAGNOSTICS 
+- description [table: parameters and associated prior and posterior distributions]
+- brief description of why we think fit was adequate (e.g., R-hat, ESS, trace plots and posterior predictive checks) along with any parameters that were hard to estimate [HTML Supplement: prior/posterior predictive checks, traceplots, ESS, R-hat]
+- description of spawner-recruitment relationships [figure: spawner-recruitment relationships by CU]
+
+## BIOLOGICAL REFERENCE POINTS 
+- equations for each benchmark (Sgen, Smsy, Umsy, Smsr)
+- equations and approach for estimating benchmarks from demographic SR models
+
+
+
+# WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:third-appendix}
+
+# COMPUTING ENVIRONMENT {#app:fourth-appendix}  
+
+This document aims to be transparent and reproducible. 
+All data and code to reproduce the analysis in the report, and generate it, is available in [this Zenodo hosted](https://doi.org/10.5281/zenodo.13328248) [GitHub repository](https://github.com/Pacific-salmon-assess/FR-PK-ResDoc/tree/v1.0?tab=readme-ov-file)  
+The document describing model diagnostics and some additional figures can be found within the repository at `Supplement-model-check.html`. 
+
+
+To reproduce this report, clone the repository from GitHub, make sure you have the required software installed, run `fit-sr-stan.R` to fit the models, then `index.Rmd` to create the document. 
+
+Look at documentation on the `README` on the main page of the repository for more details.  
+
+R packages (and dependencies therein) necessary to recreate this analysis are: 
+```{r env}
+suppressWarnings({suppressMessages({
+library(here)
+library(tidyverse)
+library(rosettafish)
+library(csasdown)
+library(kableExtra)
+library(rstan)
+library(gsl)
+library(cowplot)
+library(scales)
+})})
+pkgs <- sort(c("here", "tidyverse", "rosettafish", "csasdown", "kableExtra", "rstan", "gsl", "cowplot", "scales"))
+
+pkg_table <- devtools::session_info()$packages %>%
+  dplyr::filter(package %in% pkgs) %>%
+  dplyr::select(package, loadedversion, date) %>%
+  dplyr::rename(Package = package, Version = loadedversion, Date = date) 
+
+rownames(pkg_table) <- NULL
+csasdown::csas_table(pkg_table)
+```

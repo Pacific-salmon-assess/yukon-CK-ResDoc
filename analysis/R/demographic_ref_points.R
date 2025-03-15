@@ -107,19 +107,34 @@ for(i in unique(sp_har$CU)){
               upper.alt = median(Smsr, na.rm=T))
     
   bench_AR1_eggslong <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
-    filter(par=="Smsy") |>
-    mutate(upper.bm = value*0.8)|>
-    filter(value <= 20000)
+    filter(par=="Smsr") |>
+    mutate(upper.bm = value)|>
+    filter(value <= 35000)
 
-  ggplot(bench_AR1_eggslong, aes(value, fill = period, color = period)) +
-    geom_density(alpha = 0.3) +
+  ggplot(bench_AR1_eggslong|> filter(period !="avg"), aes(value, fill = period, color = period)) +
+    geom_density(alpha = 0.8, adjust = 4) +
     geom_vline(xintercept = 1.5) +
     facet_wrap(~CU, scales = "free_y") +
-    theme(legend.position = "bottom")
+    theme_sleek()+
+    xlab("S[MSR]") +
+    ylab("") +
+    theme(legend.position = "bottom",
+          axis.ticks.y = element_blank(), 
+          axis.text.y = element_blank()) +
+    scale_color_viridis_d(aesthetics = c("fill", "color"))
+
+my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
   
   
   ggplot(bench_AR1_eggslong, aes(y=value, x=  period, color = period)) +
     geom_violin() +
+    facet_wrap(~CU, scales = "free_y") +
+    theme(legend.position = "bottom") +
+    theme_sleek()
+    
+  
+  ggplot(bench_AR1_eggslong |> filter(period !="avg"), aes(y=value, x=  period, color = period)) +
+    geom_boxplot(outlier.shape = NA) +
     facet_wrap(~CU, scales = "free_y") +
     theme(legend.position = "bottom")
  

@@ -65,3 +65,38 @@ S.tot.summ = apply(S.tot, 1, function(x) c(mean = mean(x), sd = sd(x), quantile(
 C.tot.summ = apply(C.tot, 1, function(x) c(mean = mean(x), sd = sd(x), quantile(x, c(0.5, 0.025, 0.975))))
 overfished.summ = apply(p.overfished, 1, function(x) c(mean = mean(x), sd = sd(x), quantile(x, c(0.5, 0.025, 0.975))))
 extinct.summ = apply(p.extinct, 1, function(x) c(mean = mean(x), sd = sd(x), quantile(x, c(0.5, 0.025, 0.975))))
+
+
+tradeoffs <- cbind(U.range,S.tot,C.tot,overfished.summ[1,],extinct.summ[1,])
+colnames(tradeoffs) <- c("U","spawn","harvest", "overfished", "extinct")
+tradeoffs <- as.data.frame(tradeoffs)
+
+ggplot(tradeoffs, aes(x=U*100, y=harvest/500)) +
+  geom_line(linetype = "solid", size=0.5) +
+  geom_line(aes(x=U*100,y=overfished*100), lty=2, size=0.5) +
+  geom_line(aes(x=U*100,y=extinct*100), lty=3, size=0.5) +
+  scale_y_continuous(limits = c(0,30), breaks=c(0,10,20,30,40)) +
+  scale_y_continuous(sec.axis = sec_axis(~./1, name = "Populations at risk (%)"),limits = c(0,100)) +
+  scale_x_continuous(limits = c(0,100), breaks=c(0,20,40,60,80,100)) +
+  ylab("Harvest (000s)") +
+  xlab("Harvest rate (%)") +
+  theme_bw() +
+  theme(axis.title = element_text(size= 9),
+        axis.text = element_text(size = 6),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "none",
+        plot.margin = unit(c(1,0,3,0.5), units = "lines")) +
+  annotate("text", x = c(9,9,9),
+           y = c(95,90,85),
+           label = c("Harvest", "Overfished", "Extinct"),
+           color="black", 
+           size=2,
+           hjust=0) +
+  annotate("segment", x = c(0,0,0),
+           xend=c(7,7,7),
+           y = c(95,90,85),
+           yend = c(95,90,85),
+           lty = c(1,2,3),
+           color="black", 
+           size=0.3)

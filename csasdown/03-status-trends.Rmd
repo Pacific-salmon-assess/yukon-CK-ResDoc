@@ -1,0 +1,29 @@
+# STOCK STATUS AND TRENDS
+
+## DATA SOURCES 
+
+- general description of sources of data (spawners, harvest, age-comps, GSI)
+
+## RUN RECONSTRUCTION AND SPAWNER-RECRUITMENT MODELS 
+
+- general description of models used, details in Appendix A and B
+
+## CU STATUS AND TRENDS 
+
+- trends in escapement and harvest by CU (where possible) and recent escapements relative to benchmarks
+
+- trends in demographics overall (b/c not CU specific data), impact of explicitly considering demographics in SR models and resulting benchmarks/status
+- trends in productivity over time
+- CU statuses based on WSP rapid status algorithm/assessment (Appendix C) 
+
+[figure: posterior distribution of most recent generation abundance relative to CU benchmarks]
+[figure: escapement time series by CU]
+[figure: age composition [stacked barplot] over time and reproductive output (total eggs and total egg mass) over time; consider also reproducing length-fecundity plot from Ohlberger et al 2020]
+[figure: time-varying productivity by CU]
+[figure: map with CUs color coded based on WSP statuses?] 
+
+## SMU STATUS, TRENDS, AND REFERENCE POINTS 
+
+- trends in escapement and harvest at SMU scale, status of SMU based on component CU WSP statuses
+
+[figure: escapement and harvest time series for mainstem SMU]

@@ -7,24 +7,24 @@ author: |
   Hannah Hunter^2^,
   Dylan Glaser^3^,
   Adam O'Dell^4^, and
-  Jessica Gill^5^,
+  Jessica Gill^2^,
 author_list: "Connors, B.M., Hunter, H., Glaser, D., O'Dell, A., and Gill, J."
 address: |
   ^1^Institute of Ocean Sciences\
      Fisheries and Oceans Canada, 9860 W. Saanich Road\
      Sidney, British Columbia, V8L 5T5, Canada\
-  ^2^Fairbanks Fish and Wildlife Conservation Office\
-     U.S. Fish and Wildlife Service, 101 12th Avenue\
-     Fairbanks, Alaska 99701, USA\
-  ^3^College of Fisheries and Ocean Sciences\
-     University of Alaska Fairbanks, 17101 Point Lena Loop Road\
-     Juneau, Alaska, 99801, USA\
-  ^4^Alaska Department of Fish and Game\
-     Division of Commercial Fisheries, 333 Raspberry Road\
-     Anchorage, Alaska, 99518, USA\  
-  ^5^Alaska Department of Fish and Game\
-     Division of Commercial Fisheries, 333 Raspberry Road\
-     Anchorage, Alaska, 99518, USA\  
+  \smallskip
+  ^2^Regional Headquarters (Pacific)\
+     Fisheries and Oceans Canada, 200-401 Burrard Street\
+     Vancouver, British Columbia, V6C 3S4, Canada\
+  \smallskip
+  ^3^Pacific Biological Station\
+     Fisheries and Oceans Canada, 3190 Hammond Bay Road\
+     Nanaimo, British Columbia, V9T 6N7, Canada\
+  \smallskip
+  ^4^Yukon Rivers and Transboundary Area\ 
+     Fisheries and Oceans Canada, 419 Range Road\
+     Whitehorse, Yukon Territory, Y0A 0A2, Canada\ 
 
 french_address: |         
 month: "Month"
@@ -140,4 +140,7 @@ library(dplyr)
 library(readr)
 library(tibble)
 library(csasdown)
+library(ggplot2)
+library(tidyverse)
+library(kableExtra)
 ```

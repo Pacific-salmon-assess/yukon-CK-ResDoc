@@ -1,0 +1,28 @@
+# IMPACT OF FISHERY MANAGEMENT MEASURES     {#sec:impact}
+
+- general description of closed-loop simulation model, and purpose (i.e., to shed light on expected biological and fishery consequences of current and alternative harvest management measures that could contribute to stock rebuilding)
+
+[figure: Illustration of closed loop simulation model including Operating Model, Management Procedures and performance metrics]
+
+
+## CLOSED LOOP SIMULATION MODEL  
+
+### BIOLOGICAL SUB-MODEL  
+- description of biological model, propagating uncertainty by taking samples from joint posterior distributions
+
+### FISHERY SUB-MODEL
+- description of current and alternative harvest control rules and alternative fishery management measures explored (e.g., no fishing, interim aggregate escapement goal, rebuilding goal, exploitation rate caps based on CU overfishing risk, Basic Needs Allocation, etc.)
+- description of forecast error and justification
+- description of outcome uncertainty and justification
+
+### PERFORMANCE MEASURES
+- description of performance measures (% CUs above lower and upper benchmarks, average annual catch, relative catch – BNA met?), why chosen (i.e., what objectives they represent), and how calculated [table: performance measure descriptions]
+
+## CONSEQUENCES OF CURRENT AND ALTERNATIVE HARVEST MANAGEMENT MEASURES 
+
+- description of the performance of current, and then alternative, harvest control rules relative to performance measures, emphasize instances where there are tradeoffs [figure: trajectory of spawners and catch by HCR, rose diagram(s) of performance metrics? Look to groundfish MP framework doc for ideas] [table: HCR performance relative to objectives]
+
+- performance under robustness tests if any done (perhaps demographics is treated as robustness test?)
+
+
+

@@ -1,0 +1,7 @@
+# STOCK STRUCTURE, BIOLOGY AND DISTRIBUTION {#sec:stock}
+
+- description of number of known spawning locations and distribution within Canadian portion of Yukon Basin [figure: map of CDN portion of Yukon River basin, assessment projects, and known chinook salmon spawning locations (plus baseline genetic sample locations?)]
+
+- description of stock structure including genetic information, number of Conservation Units, outmigration and run timing etc.
+
+- description of Chinook salmon biology/life history, marine distribution and migration routes

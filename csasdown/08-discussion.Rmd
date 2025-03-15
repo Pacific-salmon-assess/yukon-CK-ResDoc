@@ -1,0 +1,16 @@
+# DISCUSSION     {#sec:discussion}
+
+## SUMMARY OF KEY FINDINGS 
+
+- proposed reference points (LRP, USR, RR), SMU status; emphasize LRP is based on CU status but Lower Management Reference Point can be aggregate abundance based 
+
+- recap performance of current and alternative harvest control rules, as well as rebuilding actions
+
+- sensitivity to key axes of uncertainty (robustness tests)
+
+## EXCEPTIONAL CIRCUMSTANCES OR ASSESSMENT TRIGGERS FOR THE STOCK 
+- recommend frequency of reassessments then propose circumstances that would trigger a reassessment earlier (e.g., new proposed HCRs, broader range of objectives/performance measures, multiple years of very depressed productivity, end of fishing moratorium) 
+
+
+## KEY KNOWLEDGE GAPS AND AREAS OF POTENTIAL FUTURE WORK  
+
