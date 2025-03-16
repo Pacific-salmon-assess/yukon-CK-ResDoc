@@ -22,6 +22,7 @@ esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
 # process data and fits to make plots later ----------------------------------------------
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
 bench.posts <- NULL
+par.posts <- NULL
 SR.preds <- NULL
 brood.all <- NULL
 a.yrs.all <- NULL
@@ -52,6 +53,9 @@ for(i in unique(sp_har$CU)){
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
   bench <- matrix(NA,length(sub_pars$lnalpha),6,
                   dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent")))
+
+  par <- matrix(NA,length(sub_pars$lnalpha),3,
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("sample","ln_a","beta")))
   
   for(j in 1:length(sub_pars$lnalpha)){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -64,6 +68,10 @@ for(i in unique(sp_har$CU)){
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
     bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
+    
+    par[j,1] <- j
+    par[j,2] <- ln_a
+    par[j,3] <- b
   }
   
   SR.pred <- as.data.frame(cbind(spw,t(apply(SR.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
@@ -76,6 +84,8 @@ for(i in unique(sp_har$CU)){
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
+  
+  par.posts <- rbind(par.posts, as.data.frame(par) |> mutate(CU = i))
   
   bench.quant <- apply(bench[,1:6], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
