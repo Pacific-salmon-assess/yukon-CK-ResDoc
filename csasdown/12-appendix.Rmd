@@ -27,6 +27,9 @@ To characterize Chinook salmon population diversity we fit individual age-struct
 These sources of information, along with measures of observation variance, were externally derived from the multi-population run-reconstructions described in Appendix S1 for spawner abundance and published estimates for catch and age composition.
 An alternative approach would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model.
 However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
+These models could have also been fit in a multi-population framework [@connors-etal-2022; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation. Generally, we should expect the autocorrelation to be positive (good years followed by good years, poor years followed by poor years) as is commonly observed in other salmon populations, and the recruitment variability estimates appear to be spuriously too high, which could lead to biases in other model parameters in manners that are difficult to predict.
+
+
 Because the same model was fitted to each population, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual populations.
 We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each population separately.
 
@@ -36,23 +39,21 @@ The process model is intended to represent the true population dynamics (i.e., f
 This component of our state-space spawner-recruitment model specifies productivity, density-dependence, and age-at-return by cohort (i.e. brood year, $y$).
 Recruitment abundances of adult Chinook (i.e., the total number of adults from a given brood year that will ever return, $R_y$) were treated as unobserved states and modeled as a function of spawner abundance in year $y$ ($S_y$) assuming a @ricker-1954 spawner-recruitment relationship with serially auto-correlated log-normal process variation:
 
-<a id="eq-ricker"></a>
 \begin{equation}
 \ln(R_y) = \ln(S_y) + \ln(\alpha) - \beta S_y + v_y
-\tag{Eqn. S1}
+\label{eq:AR1-ricker}
 \end{equation}
 
 where $\alpha$ is productivity (intrinsic rate of growth), $\beta$ is the magnitude of within brood year density-dependent effects, and $v_y$ reflects inter-annual variation in survival from egg to adulthood, which we term "recruitment anomalies".
 
 This variation was assumed to follow a lag-1 autoregressive process (correlation coefficient denoted by $\phi$) over time:
 
-<a id="eq-residuals"></a>
 \begin{equation}
 \begin{aligned}
 v_y &= \phi v_{y-1} + \varepsilon_y \\
 \varepsilon_y &\sim \mathcal{N}(0, \sigma_R)
 \end{aligned}
-\tag{Eqn. S2}
+\label{eq:eq-residuals}
 \end{equation}
 
 where $\varepsilon_y$ reflects the portion of the recruitment anomaly $v_y$ that is temporally independent (i.e., white noise).
