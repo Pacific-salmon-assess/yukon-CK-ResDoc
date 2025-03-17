@@ -112,7 +112,7 @@ process.iteration = function(samp) {
 # alpha <- sub-stock productivity (NOT in log space)
 # beta <- sub-stock density dependence 
 # pm.yr <- year of simulation that pms start to be calculated over
-# for.error <- forecast error (CV)
+# for.error <- forecast error (lognormal SD)
 # OU <- outcome uncertainty (CV)
 # Rec <- estimated recruits from last years of empirical data 
 # Spw <- estimated spawners from last years of empirical data
@@ -169,7 +169,8 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     Ntot[i,] <- colSums(N[i,,])
     
     # apply harvest control rules
-    run.size <- sum(Ntot[i,])
+    run.size.true <- sum(Ntot[i,])
+    run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000} 
     if(HCR == "no.fishing"){HR.all <- 0}
