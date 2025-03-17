@@ -1,5 +1,4 @@
 // Stan version of age-structured state-space spawner-recruitment model with AR-1 process variation (adapted from Fleischman et al. CJFAS. 2013)
-
 data{
   int nyrs;           // number of calender years
   int a_min;          // minimum age class
@@ -16,16 +15,17 @@ data{
 }
 
 parameters{
-  vector<lower=0>[nRyrs] lnR;             // log recruitment states
-  real<lower=-10, upper=5> lnalpha;       // log Ricker a
+  real<lower=0,upper=1> F_rw; //fraction of variance attributed to random walk in alpha
+  real<lower=0> sigma_tot;
+  real ln_alpha0;                         // initial productivity (on log scale)
+  vector[nyrs] alpha_dev;                // time varying year-to-year deviations in a
   real<lower=0> beta;                     // Ricker b
-  real<lower=0> sigma_R;                  // process error
+  vector<lower=0>[nRyrs] lnR;             // log recruitment states
   real<lower=0> sigma_R0;                 // process error for first a.max years with no spawner link
-  real<lower=-1,upper=1> phi;             // lag-1 correlation in process error
   real lnresid_0;                         // first residual for lag-1 correlation in process error
   real<lower=0> mean_ln_R0;               // "true" mean log recruitment in first a.max years with no spawner link
   vector<lower=0.01,upper=0.99>[nyrs] U;  // harvest rate
-  vector<lower=0,upper=1>[A-1] prob;      // maturity schedule probs, nested so 1 less than classes, final class is the leftovers of these 3
+  vector<lower=0,upper=1>[3] prob;        // maturity schedule probs
   real<lower=0,upper=1> D_scale;          // governs variability of age proportion vectors across cohorts
   matrix<lower=0.01>[nRyrs, A] g;         // individual year/age class gamma variates for generating age at maturity proportions
 }
@@ -37,18 +37,19 @@ transformed parameters{
   vector<lower=0>[nyrs] C;              // catch states
   vector[nyrs] lnC;                     // log catch states
   vector<lower=0>[nRyrs] R;             // recruitment states
-  real<lower=0> sigma_R_corr;           // log-normal bias-corrected process error
-  vector[nRyrs] lnresid;                // log recruitment residuals ## diff between below?
-  vector[nRyrs] lnRm_1;                 // log recruitment states in absence of lag-one correlation ##diff with above?
-  vector[nRyrs] lnRm_2;                 // log recruitment states after accounting for lag-one correlation
+  vector[nRyrs] lnresid;                // log recruitment residuals
+  vector[nRyrs] lnRm_1;                 // log recruitment states in absence of lag-one correlation //DO I NEED THIS
   matrix<lower=0>[nyrs, A] N_ta;        // returns by age matrix
   matrix<lower=0, upper=1>[nRyrs, A] p; // age at maturity proportions
-  vector<lower=0,upper=1>[A] pi;        // maturity schedule probs
-  real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts (lower is less variable)
+  vector<lower=0,upper=1>[4] pi;        // maturity schedule probs
+  real<lower=0> D_sum;                  // inverse of D_scale which governs variability of age proportion vectors across cohorts
   vector<lower=0>[A] Dir_alpha;         // Dirichlet shape parameter for gamma distribution used to generate vector of age-at-maturity proportions
-  matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age class matrix
+  matrix<lower=0, upper=1>[nyrs, A] q;  // age composition by year/age classr matrix
   matrix<lower=0>[nyrs, A] EM_A;         // observed total egg mass by age class
   vector[nyrs] lnEM;                     // log total egg mass states
+  vector[nyrs] ln_alpha;                // ln_alpha in each year
+  real<lower=0> sigma_alpha;            // amount alpha can deviate
+  real<lower=0> sigma_R;                // process error
 
   // Maturity schedule: use a common maturation schedule to draw the brood year specific schedules
   pi[1] = prob[1];
@@ -56,24 +57,23 @@ transformed parameters{
   pi[3] = prob[3] * (1 - pi[1] - pi[2]);
   pi[4] = 1 - pi[1] - pi[2] - pi[3];
   D_sum = 1/D_scale^2;
-
   for (a in 1:A) {
     Dir_alpha[a] = D_sum * pi[a];
     for (y in 1:nRyrs) {
       p[y,a] = g[y,a]/sum(g[y,]);
     }
   }
-
+  
+  sigma_alpha = F_rw*sigma_tot; //process variance - fraction of total attributed to random walk
+  sigma_R = (1-F_rw)*sigma_tot; //obs variance - remaining fraction of total variance
+  
   R = exp(lnR);
-  sigma_R_corr = (sigma_R*sigma_R)/2;
-
   // Calculate the numbers at age matrix as brood year recruits at age (proportion that matured that year)
   for (t in 1:nyrs) {
     for(a in 1:A){
-      N_ta[t,a] = R[t+A-a] * p[t+A-a,a]; //why "-a"" in both brackets?? ref the excel visual, R&p are longer than these
-     }
+      N_ta[t,a] = R[t+A-a] * p[t+A-a,a];
+    }
   }
-
   // Calculate returns, spawners and catch by return year
   for(t in 1:nyrs) {
     N[t] = sum(N_ta[t,1:A]);
@@ -82,14 +82,13 @@ transformed parameters{
     C[t] = N[t] * U[t];
     lnC[t] = log(C[t]);
   }
-
   // Calculate age proportions by return year
   for (t in 1:nyrs) {
     for(a in 1:A){
       q[t,a] = N_ta[t,a]/N[t];
     }
   }
-
+  
   // Total egg mass by age and return year
   for (t in 1:nyrs) {
     for(a in 1:A){
@@ -98,33 +97,35 @@ transformed parameters{
     lnEM[t] = log(sum(EM_A[t,]));
   }  
 
-  // Ricker SR with AR1 process on log recruitment residuals for years with brood year spawners
-  for (i in 1:a_max) {
-    lnresid[i] = 0.0; //setting unobserved to 0
-    lnRm_1[i] = 0.0;
-    lnRm_2[i] = 0.0;
-  }
+  //time-varying alpha component
+  ln_alpha[1] = ln_alpha0; //first gets the prior
 
-  for (y in (A+a_min):nRyrs) { // Why start at 8? is this the first fully linked year?
-    lnRm_1[y] = lnEM[y-a_max] + lnalpha - beta * exp(lnEM[y-a_max]); 
+  for(t in 2:nyrs){
+    ln_alpha[t] = ln_alpha[t-1] + alpha_dev[t-1]*sigma_alpha; // random walk of log_a
+  }
+  
+  // Ricker SR with with time-varying productivity for years with brood year spawners  
+  for (i in 1:a_max) { //unobserved resids
+    lnresid[i] = 0.0;
+    lnRm_1[i] = 0.0;
+  }
+  for(y in (A+a_min):nRyrs){ //8:42
+    lnRm_1[y] = lnEM[y-a_max] + ln_alpha[y-a_max] - beta * exp(lnEM[y-a_max]); //ln_alpha[y-a_max] links it to the spawners
     lnresid[y] = lnR[y] - lnRm_1[y];
   }
-
-  lnRm_2[A+a_min] =  lnRm_1[A+a_min] + phi * lnresid_0; //the first year where we have full recruit data
-
-  for (y in (A+a_min+1):nRyrs) {
-    lnRm_2[y] =  lnRm_1[y] + phi * lnresid[y-1];
-  }
 }
-
 model{
   // Priors
-  lnalpha ~ normal(-6,2);
+  sigma_tot ~ gamma(2,1);
+  F_rw ~ beta(2,4);
+  ln_alpha0 ~ normal(-6,2);
+  alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
+  //sigma_alpha ~ normal(0,1);
   beta ~ normal(0,1);
-  sigma_R ~ normal(0,2);
+  //sigma_R ~ normal(0,2);
   lnresid_0 ~ normal(0,20);
   mean_ln_R0 ~ normal(0,20);
-  sigma_R0 ~ inv_gamma(2,1); 
+  sigma_R0 ~ gamma(2,1); 
   prob ~ beta(1,1);
   D_scale ~ beta(1,1);
 
@@ -137,11 +138,9 @@ model{
     }
   }
 
-  // First `a.max` years of recruits, for which there is no spawner link
+  // Process model
   lnR[1:a_max] ~ normal(mean_ln_R0, sigma_R0);
-
-  // State model
-  lnR[(A+a_min):nRyrs] ~ normal(lnRm_2[(A+a_min):nRyrs], sigma_R_corr);
+  lnR[(A+a_min):nRyrs] ~ normal(lnRm_1[(A+a_min):nRyrs], sigma_R);
 
   // Observation model
   for(t in 1:nyrs){
@@ -159,7 +158,7 @@ generated quantities {
   //prior and posterior predictive check
   //below is what I did for fraser pink, but I wonder if I should:
     //-add A_obs and 
-    //-makle the CVs rng too?
+    //-makle the CVs rng too
   array[nyrs] real H_rep;
   array[nyrs] real S_rep;
 
