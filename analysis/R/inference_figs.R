@@ -1,7 +1,7 @@
 library(here)
 library(tidyverse)
 library(gsl)
-#library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
+library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
 
 source(here("analysis/R/data_functions.R"))
 
@@ -203,7 +203,7 @@ bench.par.table.out <- bench.par.table |>
   mutate_at(3:7, ~round(.,5)) |> 
   arrange(bench.par, CU)
 
-write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), # ADD YOUR NAME for comparison
+write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE)
 
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
@@ -399,8 +399,11 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # forward simulations --------------------------------------------------------------------
-S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
-H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
+S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_tv.csv"))
+H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
+
+# S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
+# H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
 
 S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
 H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
@@ -428,7 +431,8 @@ ggplot(S.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/S-fwd.PNG"))
+my.ggsave(here("analysis/plots/S-fwd_tv.PNG"))
+#my.ggsave(here("analysis/plots/S-fwd_AR1.PNG"))
 
 ggplot(H.fwd) +
   geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
@@ -447,7 +451,8 @@ ggplot(H.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/H-fwd.PNG"))
+my.ggsave(here("analysis/plots/H-fwd_tv.PNG"))
+#my.ggsave(here("analysis/plots/H-fwd_AR1.PNG"))
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
@@ -466,15 +471,18 @@ ggplot(S.fwd |>
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(x = "Year", 
        y = "Spawners (000s)") +
-#  theme_sleek() +
-  theme_minimal() + #alternate for those with an R version that doesn't play with ggsidekick
+  theme_sleek() +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
+my.ggsave(here("analysis/plots/S-fwd-bc-alternative_tv.PNG"))
+# my.ggsave(here("analysis/plots/S-fwd-bc-alternative_AR1.PNG"))
 
 # performance metrics ---
-perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv")) |>
+perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
   pivot_longer(2:9, names_to = "metric") 
+
+#perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
+#  pivot_longer(2:9, names_to = "metric") 
 
 perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
@@ -487,7 +495,8 @@ ggplot(perf.plot, aes(x=HCR, y = value)) +
         legend.title = element_blank()) +
   labs(title = "Forward simulaiton performance metrics") 
 
-my.ggsave(here("analysis/plots/perf_metrics.PNG"))
+my.ggsave(here("analysis/plots/perf_metrics_tv.PNG"))
+# my.ggsave(here("analysis/plots/perf_metrics_AR1.PNG"))
 
 perf.status <- perf.metrics |>
   filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
@@ -500,4 +509,5 @@ ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
   labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
   theme_bw()
 
-my.ggsave(here("analysis/plots/perf_status.PNG"))
+my.ggsave(here("analysis/plots/perf_status_tv.PNG"))
+#my.ggsave(here("analysis/plots/perf_status_AR1.PNG"))

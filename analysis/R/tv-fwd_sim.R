@@ -66,7 +66,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------------------------
 num.sims = 500 # number of Monte Carlo trials
-ny = 50 # number of years in forward simulation
+ny = 26 # number of years in forward simulation
 pm.yr <- ny-20 ## add comment - is this the nyrs that we evaluate pms across?
 for.error <- 0.27 ## base this off something observed  
 OU <- 0.1         ## could also base this off something else from fisheries management 
@@ -90,9 +90,10 @@ for(i in 1:length(HCRs)){
     Rec <- process.iteration(samps[draw,])$R
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
+    phi <- 0.75
     ER <- 0.6
     
-    out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,lst.resid,ER)
+    out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,lst.resid,phi, ER)
     
     sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
@@ -118,7 +119,7 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
             above.USR = mean(above.USR), 
             extinct = mean(extinct))
 
-write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics.csv"), 
+write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics_tv.csv"), 
           row.names = FALSE)
 
 colnames(S.time) <- c(names(TVA.fits), "HCR", "year", "sim")
@@ -140,7 +141,7 @@ S.fwd.summmary <- S.time |>
   summarise(S.50 = median(Spawners), 
             S.25 = quantile(Spawners, 0.25), 
             S.75 = quantile(Spawners, 0.75))
-write.csv(S.fwd.summmary, here("analysis/data/generated/simulations/S_fwd.csv"), 
+write.csv(S.fwd.summmary, here("analysis/data/generated/simulations/S_fwd_tv.csv"), 
           row.names = FALSE)
 
 H.fwd.summmary <- H.time |>
@@ -148,5 +149,5 @@ H.fwd.summmary <- H.time |>
   summarise(H.50 = median(Harvest), 
             H.25 = quantile(Harvest, 0.25), 
             H.75 = quantile(Harvest, 0.75))
-write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd.csv"), 
+write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd_tv.csv"), 
           row.names = FALSE)

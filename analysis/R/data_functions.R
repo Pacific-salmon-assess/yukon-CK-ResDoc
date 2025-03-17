@@ -117,10 +117,11 @@ process.iteration = function(samp) {
 # Rec <- estimated recruits from last years of empirical data 
 # Spw <- estimated spawners from last years of empirical data
 # lst.resid <- estimated recruitment deviation from last year of empirical data
+# phi <- expected correlation in recruitment deviation from one year to next
 # ER <- fixed exploitation rate (illustrative)
 
 process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
-                   lst.resid, ER){
+                   lst.resid, phi, ER){
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -142,13 +143,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   predR <- Ntot
   
   # populate first few years with realized states
-  R[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,]+(lst.resid)+epi[4,])
+  R[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,]+(phi*lst.resid)+epi[4,])
   predR[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,])
   v[4,] <- log(R[4,])-log(predR[4,])
   v[v[,]=='NaN'] <- 0
   
   for(i in 5:7){
-    R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,])
+    R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,])
     predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
     v[i,] <- log(R[i,])-log(predR[i,])
     v[v[,]=='NaN'] <- 0	
@@ -192,7 +193,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     S[i,] <- S_exp
     
     # predict recruitment
-    R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+v[i-1,]+epi[i,]) 
+    R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,]) 
     predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
     v[i,] <- log(R[i,])-log(predR[i,])
     v[v[,]=='NaN'] <- 0
@@ -214,30 +215,14 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   pms <- matrix(NA,1,8) 
   
   S[S[,]=='NaN'] <- 0
-  H[H[,] == 'NAN'] <- 0# not sure if this is an appropriate fix
+  H[H[,] == 'NAN'] <- 0 # not sure if this is an appropriate fix
   Ntot[Ntot[,]=='NaN'] <- 0
-#  over <- matrix(NA,length(alpha)) ##don't think I need any of this stuff? if so - delete
-#  ext <- matrix(NA,length(alpha))
-#  ext.emp <-ext
-#  trib.gl <-ext
- # harvest_rate <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])[,1] ##harvest rate among CUs used to be equal, hence only taking first CU
- # harvest_rate[harvest_rate>1] <- 1
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
-  #harvest_rates[harvest_rates>1] <- 1 ## how could a harvest rate be > 1?
-  #harvest_rate[harvest_rate=='NaN']<-1 
-  #harvest_rates[harvest_rates=='NaN'] <- 1 ##why make these = 1 and not 0? NaN means run.size = 0 if extinct you aren't harvesting at all... 
   Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
- # for(j in 1:length(alpha)){
-#    over[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[3] #if overfished == 1 
-#    ext[j] <- SC.eq(median(harvest_rates[,j]),alpha[j],beta[j])[4] #if extinct == 1
-#    ext.emp[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) < ((log(alpha)/beta)*0.05)[j],1,0) # less than 5% of unfished biomass/abundance
-#    trib.gl[j] <- ifelse(median(S[(ny-pm.yr):ny,j]) >= (Smsy[j]),1,0)
-#  }
-  
-  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))# * expan ## got rid of this. unnecessary?
-  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# * expan
+  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))
+  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,3] <- median(harvest_rates, na.rm = TRUE)
   pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
   #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
