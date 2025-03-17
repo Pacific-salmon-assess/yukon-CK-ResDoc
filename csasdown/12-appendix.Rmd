@@ -18,28 +18,150 @@ After that, all subsequent sections will be turned into appendices. -->
 \clearpage
 
 
-# SPAWNER_RECRUITMENT MODELS  {#app:second-appendix}
+# SPAWNER RECRUITMENT MODELS  {#app:second-appendix}
 
 - general description of multi-population state-space approach and why we chose it
 - acknowledge that approach is expected to yield less biased estimates of key population characteristic than traditional spawner-recruitment models that can arise due to errors-in-variables and time-series bias
 
+To characterize Chinook salmon population diversity we fit individual age-structured state-space spawner-recruitment models [@fleischman-etal-2013] to all available data for each population (i.e., time series of estimated catch, spawner abundance and age composition).
+These sources of information, along with measures of observation variance, were externally derived from the multi-population run-reconstructions described in Appendix S1 for spawner abundance and published estimates for catch and age composition.
+An alternative approach would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model.
+However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
+Because the same model was fitted to each population, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual populations.
+We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each population separately.
 
-## PROCESS MODEL 
+## PROCESS MODEL
 
-- equations and descriptions 
+The process model is intended to represent the true population dynamics (i.e., free of measurement error).
+This component of our state-space spawner-recruitment model specifies productivity, density-dependence, and age-at-return by cohort (i.e. brood year, $y$).
+Recruitment abundances of adult Chinook (i.e., the total number of adults from a given brood year that will ever return, $R_y$) were treated as unobserved states and modeled as a function of spawner abundance in year $y$ ($S_y$) assuming a @ricker-1954 spawner-recruitment relationship with serially auto-correlated log-normal process variation:
 
-## OBSERVATION MODEL 
+<a id="eq-ricker"></a>
+\begin{equation}
+\ln(R_y) = \ln(S_y) + \ln(\alpha) - \beta S_y + v_y
+\tag{Eqn. S1}
+\end{equation}
 
-- equations and descriptions 
+where $\alpha$ is productivity (intrinsic rate of growth), $\beta$ is the magnitude of within brood year density-dependent effects, and $v_y$ reflects inter-annual variation in survival from egg to adulthood, which we term "recruitment anomalies".
+
+This variation was assumed to follow a lag-1 autoregressive process (correlation coefficient denoted by $\phi$) over time:
+
+<a id="eq-residuals"></a>
+\begin{equation}
+\begin{aligned}
+v_y &= \phi v_{y-1} + \varepsilon_y \\
+\varepsilon_y &\sim \mathcal{N}(0, \sigma_R)
+\end{aligned}
+\tag{Eqn. S2}
+\end{equation}
+
+where $\varepsilon_y$ reflects the portion of the recruitment anomaly $v_y$ that is temporally independent (i.e., white noise).
+The first seven years of recruitment states were not linked to observations of spawner abundance in the spawner-recruitment relationship (eqn. [S1](#eq-ricker)) and were modeled as random draws from a log-normal distribution with mean $\ln(R_0)$ and variance $\sigma_R^2$.
+Rather than estimating $\ln(R_0)$ as a free parameter as in @fleischman-etal-2013, we choose to follow @staton-etal-2020 and inform its value using the expected recruitment under equilibrium unfished conditions $\ln(\alpha)/\beta$ to enable more consistent comparisons between the two approaches we used.
+The number of Chinook salmon that returned to spawn in year $y$ at age $a$ ($a \in$ 4:7) was the product of the total recruitment produced by spawning that occurred in brood year $y-a$ and the proportion from brood year $y-a$ that returned at age $a$:
+
+<a id="eq-apportion-R"></a>
+\begin{equation}
+N_{y,a} = R_{y-a} p_{y-a,a}
+\tag{Eqn. S3}
+\end{equation}
+
+where $p_{y,a}$ is the probability that a fish spawned in brood year $y$ will return at age $a$. Because we lacked empirical data on life stage-specific abundances (e.g., smolts, fish abundance of different ages/brood years in the ocean) from which to directly estimate maturation rates and life-stage specific mortality, the sole purpose of this probability of return-at-age model (eqn. [S3](#eq-apportion-R)-[S4](#eq-dirichlet)) is to apportion the abundance of total adult recruitment to the correct age and year of return.
+We modeled this among brood year variation in age-at-return as Dirichlet random vectors drawn form a common hyperdistribution characterized by a mean age-at-return probability vector ($\boldsymbol{\pi}$) and an inverse dispersion parameter ($D$):
+
+<a id="eq-dirichlet"></a>
+\begin{equation}
+p_{y,a} \stackrel{\mathrm{iid}}{\sim} \mathcal{D}(\boldsymbol{\pi}D)
+\tag{Eqn. S4}
+\end{equation}
+
+Following @fleischman-etal-2013, we implemented the Dirichlet distribution as a mixture of several gamma distributions (see JAGS code, below). The total run in year $y$ was made up of recruitments from multiple brood years as shown in eqn. [S3](#eq-apportion-R) and was calculated as the sum of the age-specific run abundances:
+
+<a id="eq-get-N-tot"></a>
+\begin{equation}
+N_{y} = \sum_{a=4}^{7} N_{y,a}
+\tag{Eqn. S5}
+\end{equation}
+
+Harvest in a given year ($H_y$) was modeled as the product of total run size and the harvest rate ($U_y$) experienced that year:
+
+<a id="eq-harvest"></a>
+\begin{equation}
+H_y = N_y U_y
+\tag{Eqn. S6}
+\end{equation}
+
+and spawner abundance ($S_y$) was modeled as the portion of $N_y$ remaining after harvest $H_y$:
+
+<a id="eq-get-S"></a>
+\begin{equation}
+S_y = N_y (1 - U_y)
+\tag{Eqn. S7}
+\end{equation}
+
+It is this spawner abundance $S_y$ (which is itself made up of fish of multiple ages from multiple brood years) that is used in eqn.[S1](#eq-ricker) to produce the recruitment abundance produced by spawning in brood year $y$.
+
+## OBSERVATION MODEL
+
+We assumed a coefficient of variation (CV) for spawner observations that was based on the CV in estimated spawner abundances derived from the run reconstruction.
+Observed spawner abundance was therefore assumed to be log-normally distributed with the CVs converted to log-normal variance following [@forbes-etal-2011]:
+
+<a id="eq-get-sigma"></a>
+\begin{equation}
+\sigma^2_{o,y} = \ln\left(\mathrm{CV}_y^2 + 1\right)
+\tag{Eqn. S8}
+\end{equation}
+
+We assumed that harvest had a 15% CV and so harvest observations were log-normally distributed with the CV converted to log-normal variance as per eqn.
+[S8](#eq-get-sigma).
+
+Age composition by return year was assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 100.
+An ESS equal to 100 is the multinomial sample size expected to produce uncertainty roughly equivalent to that which would be anticipated from the average number of fish sampled in a given year from a population with age proportions and classes similar to that of the aggregate population.
 
 ## MODEL FITTING AND DIAGNOSTICS 
 - description [table: parameters and associated prior and posterior distributions]
 - brief description of why we think fit was adequate (e.g., R-hat, ESS, trace plots and posterior predictive checks) along with any parameters that were hard to estimate [HTML Supplement: prior/posterior predictive checks, traceplots, ESS, R-hat]
 - description of spawner-recruitment relationships [figure: spawner-recruitment relationships by CU]
 
+We fit the spawner-recruitment model in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. 
+We sampled from 4 chains with 2,000 iterations each and discarded the first half as warm-up. 
+We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. 
+Posterior predictive checks were used to make sure that the model returned data similar to the data used to fit parameters.  
+
+Priors were generally uninformative or weakly informative and are summarized in...
+
 ## BIOLOGICAL REFERENCE POINTS 
-- equations for each benchmark (Sgen, Smsy, Umsy, Smsr)
-- equations and approach for estimating benchmarks from demographic SR models
+We calculated biological reference points for each MCMC sample to propagate uncertainty. The spawning abundance expected to maximize sustainable yield over the long-term under equilibrium conditions, $S_{MSY}$ was derived as:  
+
+\begin{equation}
+S_{MSY} = 1 - W(e^{1-ln(\alpha)})/\beta
+\label{eq:get-Smsy}
+\end{equation}
+
+where $W$ is the Lambert function [@scheuerellExplicitSolutionCalculating2016], and $\alpha$ and $\beta$ are intrinsic productivity and the magnitude of within stock density dependence, respectively. 
+We chose to apply this exact solution for $S_{MSY}$ instead of the commonly applied @hilborn1985simplified approximation because the approximation only holds for $0 <ln(\alpha) \leq3$ such that infrequent, but large, posterior samples of $\alpha$ can result in biased estimates of the posterior distribution of $S_{MSY}$. 
+We used 80% of $S_{MSY}$ as the USR following @holtEvaluationBenchmarksConservation2009 and @dfoSustainableFisheriesFramework2022.  
+
+The catch rate expected to lead to maximum sustainable yield, $U_{MSY}$ was used as the RR and derived according to the solution proposed by @scheuerellExplicitSolutionCalculating2016 as:  
+
+\begin{equation}
+U_{MSY} = 1 - W(e^{1-ln(\alpha)})
+\label{eq:get-Umsy}
+\end{equation}
+
+and $S_{gen}$, the spawner abundance expected to result in the stock rebuilding to $S_{MSY}$ in one generation in the absence of fishing [@holtEvaluationBenchmarksConservation2009], which we considered the LRP, was solved numerically according to: 
+
+\begin{equation}
+S_{MSY} = S_{gen}\alpha e^{-\beta S_{gen}}
+\label{eq:get-Sgen}
+\end{equation}
+
+Equilibrium spawner abundance ($S_{eq}$), where recruitment exactly replaces spawners, was estimated as:  
+
+\begin{equation}
+S_{eq} = ln(\alpha)/\beta
+\label{eq:get-Seq}
+\end{equation}
 
 
 
