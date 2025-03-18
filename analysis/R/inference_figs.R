@@ -230,6 +230,7 @@ ggplot() +
   labs(x = "Spawners (000s)",
        y = "Recruits (000s)", 
        title = "Spawner-recruit fits") +
+  theme_sleek()+
   theme(legend.position = "bottom",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
