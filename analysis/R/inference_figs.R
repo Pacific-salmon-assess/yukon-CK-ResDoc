@@ -231,12 +231,12 @@ ggplot() +
        y = "Recruits (000s)", 
        title = "Spawner-recruit fits") +
   theme_sleek()+
-  theme(legend.position = "bottom",
+  theme(legend.position = "top",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=9),
-        legend.text = element_text(size=8))
+        legend.title = element_text(size=7),
+        legend.text = element_text(size=6))
 
 my.ggsave(here("analysis/plots/SR_fits.PNG"))
 
