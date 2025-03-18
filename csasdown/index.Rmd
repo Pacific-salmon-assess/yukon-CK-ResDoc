@@ -1,30 +1,38 @@
 ---
 title: |
-  "Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook Salmon (*Oncorhynchus tshawytscha*)"
+  "Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*)"
 french_title: "Titre ici (*Nom latin de l'espèce*)"
 author: |
   Brendan M. Connors^1^, 
-  Hannah Hunter^2^,
-  Dylan Glaser^3^,
-  Adam O'Dell^4^, and
-  Jessica Gill^2^,
-author_list: "Connors, B.M., Hunter, H., Glaser, D., O'Dell, A., and Gill, J."
+  Adam O'Dell^2^,
+  Hannah Hunter^3^,
+  Dylan Glaser^4^,
+  Jessica Gill^3^,
+  Steven Rossi^5^, 
+  Carolyn Churchland^3^, and
+  Cheyenne Bradley^2^
+
+author_list: "Connors, B.M., O'Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., Churchland, C., and Bradley, C."
 address: |
   ^1^Institute of Ocean Sciences\
      Fisheries and Oceans Canada, 9860 W. Saanich Road\
      Sidney, British Columbia, V8L 5T5, Canada\
   \smallskip
-  ^2^Regional Headquarters (Pacific)\
+  ^2^Yukon Rivers and Transboundary Area\ 
+     Fisheries and Oceans Canada, 419 Range Road\
+     Whitehorse, Yukon Territory, Y0A 0A2, Canada\ 
+  \smallskip
+  ^3^Regional Headquarters (Pacific)\
      Fisheries and Oceans Canada, 200-401 Burrard Street\
      Vancouver, British Columbia, V6C 3S4, Canada\
   \smallskip
-  ^3^Pacific Biological Station\
+  ^4^Pacific Biological Station\
      Fisheries and Oceans Canada, 3190 Hammond Bay Road\
      Nanaimo, British Columbia, V9T 6N7, Canada\
   \smallskip
-  ^4^Yukon Rivers and Transboundary Area\ 
-     Fisheries and Oceans Canada, 419 Range Road\
-     Whitehorse, Yukon Territory, Y0A 0A2, Canada\ 
+  ^5^LGL Limited\ 
+     9768 Second Street\
+     Sidney, British Columbia, V8L 3Y8, Canada\ 
 
 french_address: |         
 month: "Month"
