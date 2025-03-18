@@ -148,7 +148,7 @@ S.fwd.summmary <- S.time |>
   summarise(S.50 = median(Spawners), 
             S.25 = quantile(Spawners, 0.25), 
             S.75 = quantile(Spawners, 0.75))
-write.csv(S.fwd.summmary, here("analysis/data/generated/simulations/S_fwd.csv"), 
+write.csv(S.fwd.summmary, here("analysis/data/generated/simulations/S_fwd-AR1.csv"), 
           row.names = FALSE)
 
 H.fwd.summmary <- H.time |>
@@ -156,5 +156,5 @@ H.fwd.summmary <- H.time |>
   summarise(H.50 = median(Harvest), 
             H.25 = quantile(Harvest, 0.25), 
             H.75 = quantile(Harvest, 0.75))
-write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd.csv"), 
+write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd-AR1.csv"), 
           row.names = FALSE)

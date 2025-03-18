@@ -389,8 +389,8 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # forward simulations --------------------------------------------------------------------
-S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd.csv"))
-H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd.csv"))
+S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd-AR1.csv"))
+H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd-AR1.csv"))
 
 S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
 H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
@@ -418,7 +418,7 @@ ggplot(S.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/S-fwd.PNG"))
+my.ggsave(here("analysis/plots/S-fwd-AR1.PNG"))
 
 ggplot(H.fwd) +
   geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
@@ -437,7 +437,7 @@ ggplot(H.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/H-fwd.PNG"))
+my.ggsave(here("analysis/plots/H-fwd-AR1.PNG"))
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
@@ -477,7 +477,7 @@ ggplot(perf.plot, aes(x=HCR, y = value)) +
         legend.title = element_blank()) +
   labs(title = "Forward simulaiton performance metrics") 
 
-my.ggsave(here("analysis/plots/perf_metrics.PNG"))
+my.ggsave(here("analysis/plots/perf_metrics-AR1.PNG"))
 
 perf.status <- perf.metrics |>
   filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
@@ -490,4 +490,4 @@ ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
   labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
   theme_bw()
 
-my.ggsave(here("analysis/plots/perf_status.PNG"))
+my.ggsave(here("analysis/plots/perf_status-AR1.PNG"))
