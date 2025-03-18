@@ -15,10 +15,15 @@ AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_
                         readRDS)
 names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
+TVA.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA_egg_mass"), 
+                              full.names = T), readRDS)
+names(TVA.eggs.fits) <- unique(sp_har$CU)
+
 # Demographic reference points ----
 bench_AR1_eggs <- NULL
 ER.preds <- NULL
 brood.all <- NULL
+a.yrs.all <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
@@ -129,7 +134,18 @@ for(i in unique(sp_har$CU)){
   bench_recent$CU <- i
   
   bench_AR1_eggs <- rbind(bench_AR1_eggs, bench_early, bench_avg, bench_recent)
+  
+  #time varying alpha --------------------------------------------------------------------
+  sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
+  
+  a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
+  a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
+  
+  colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
+  
+  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
 }
+
 colnames(ER.preds) <- c("EM", "Rec_lwr","Rec_med","Rec_upr", "CU")
 
 CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
@@ -164,7 +180,6 @@ brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
   
   
-
 # source(inference_figs.R)
 
 bench_eggs <- bench_AR1_eggslong|> filter(period =="recent") |>
@@ -220,9 +235,20 @@ ggplot() +
   labs(x = "Egg mass (kgs)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "bottom",
+  theme(legend.position = "top",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=9),
-        legend.text = element_text(size=8))
+        legend.title = element_text(size=7),
+        legend.text = element_text(size=6))
+my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
+
+# Demographic time-varying alpha (recruits/gram egg mass) relationships ----
+ggplot(a.yrs.all
+       |> filter(brood_year < 2018), aes(color = CU)) +
+  geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
+  scale_color_viridis_d() +
+  theme_sleek() +
+  labs(y = "Productivity (maximum R/EM)", x = "Brood year")
+
+my.ggsave(here("analysis/plots/changing_demo_productivity.PNG"))
