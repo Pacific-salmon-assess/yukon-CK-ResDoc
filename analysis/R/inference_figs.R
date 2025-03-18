@@ -1,7 +1,7 @@
 library(here)
 library(tidyverse)
 library(gsl)
-#library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
+library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
 
 source(here("analysis/R/data_functions.R"))
 
@@ -22,6 +22,7 @@ esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
 # process data and fits to make plots later ----------------------------------------------
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
 bench.posts <- NULL
+par.posts <- NULL
 SR.preds <- NULL
 brood.all <- NULL
 a.yrs.all <- NULL
@@ -52,6 +53,9 @@ for(i in unique(sp_har$CU)){
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
   bench <- matrix(NA,length(sub_pars$lnalpha),6,
                   dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent")))
+
+  par <- matrix(NA,length(sub_pars$lnalpha),3,
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("sample","ln_a","beta")))
   
   for(j in 1:length(sub_pars$lnalpha)){ 
     ln_a <- sub_pars$lnalpha[j]
@@ -64,6 +68,10 @@ for(i in unique(sp_har$CU)){
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
     bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
+    
+    par[j,1] <- j
+    par[j,2] <- ln_a
+    par[j,3] <- b
   }
   
   SR.pred <- as.data.frame(cbind(spw,t(apply(SR.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
@@ -76,6 +84,8 @@ for(i in unique(sp_har$CU)){
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
+  
+  par.posts <- rbind(par.posts, as.data.frame(par) |> mutate(CU = i))
   
   bench.quant <- apply(bench[,1:6], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
@@ -193,7 +203,7 @@ bench.par.table.out <- bench.par.table |>
   mutate_at(3:7, ~round(.,5)) |> 
   arrange(bench.par, CU)
 
-write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), # ADD YOUR NAME for comparison
+write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE)
 
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
@@ -389,8 +399,11 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # forward simulations --------------------------------------------------------------------
-S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd-AR1.csv"))
-H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd-AR1.csv"))
+S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_tv.csv"))
+H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
+
+# S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
+# H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
 
 S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
 H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
@@ -418,7 +431,8 @@ ggplot(S.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/S-fwd-AR1.PNG"))
+my.ggsave(here("analysis/plots/S-fwd_tv.PNG"))
+#my.ggsave(here("analysis/plots/S-fwd_AR1.PNG"))
 
 ggplot(H.fwd) +
   geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
@@ -437,7 +451,8 @@ ggplot(H.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/H-fwd-AR1.PNG"))
+my.ggsave(here("analysis/plots/H-fwd_tv.PNG"))
+#my.ggsave(here("analysis/plots/H-fwd_AR1.PNG"))
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
@@ -456,15 +471,18 @@ ggplot(S.fwd |>
   scale_x_continuous(expand = expansion(mult = c(0, .01))) +
   labs(x = "Year", 
        y = "Spawners (000s)") +
-#  theme_sleek() +
-  theme_minimal() + #alternate for those with an R version that doesn't play with ggsidekick
+  theme_sleek() +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here("analysis/plots/S-fwd-bc-alternative.PNG"))
+my.ggsave(here("analysis/plots/S-fwd-bc-alternative_tv.PNG"))
+# my.ggsave(here("analysis/plots/S-fwd-bc-alternative_AR1.PNG"))
 
 # performance metrics ---
-perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics.csv")) |>
+perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
   pivot_longer(2:9, names_to = "metric") 
+
+#perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
+#  pivot_longer(2:9, names_to = "metric") 
 
 perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
@@ -477,7 +495,8 @@ ggplot(perf.plot, aes(x=HCR, y = value)) +
         legend.title = element_blank()) +
   labs(title = "Forward simulaiton performance metrics") 
 
-my.ggsave(here("analysis/plots/perf_metrics-AR1.PNG"))
+my.ggsave(here("analysis/plots/perf_metrics_tv.PNG"))
+# my.ggsave(here("analysis/plots/perf_metrics_AR1.PNG"))
 
 perf.status <- perf.metrics |>
   filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
@@ -490,4 +509,5 @@ ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
   labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
   theme_bw()
 
-my.ggsave(here("analysis/plots/perf_status-AR1.PNG"))
+my.ggsave(here("analysis/plots/perf_status_tv.PNG"))
+#my.ggsave(here("analysis/plots/perf_status_AR1.PNG"))

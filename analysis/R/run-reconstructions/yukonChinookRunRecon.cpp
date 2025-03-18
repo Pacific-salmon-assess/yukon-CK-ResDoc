@@ -54,22 +54,22 @@ Type objective_function<Type>::operator() ()
   int nG = n_sdtg.dim(3);    // Number of fleets
 
   // Parameters
-  PARAMETER_ARRAY(lnRunSize_st);  // Run size (log scale)
-  PARAMETER_VECTOR(lnArrivMu_s);  // Mean date of arrival in initial year (log scale)
-  //PARAMETER(lnArrivSD);  // SD around mean Julian date of arrival (log scale)
-  PARAMETER_VECTOR(lnArrivSD_s);  // SD around mean Julian date of arrival (log scale)
-  PARAMETER_ARRAY(arrivErr_st);   // Process error in mean date of arrival
-  //PARAMETER(lnErrSD);    // Process error standard deviation (log scale)
-  PARAMETER_VECTOR(lnErrSD_s);    // Process error standard deviation (log scale)
-  PARAMETER_ARRAY(logitCor_ss);   // Correlation matrix for process errors (log scale)
-  PARAMETER_ARRAY(lnqE_sg);       // Count catchability (log scale)
-  PARAMETER_VECTOR(lnqI_s);       // Index catchability
+  PARAMETER_ARRAY(lnRunSize_st);  	// Run size (log scale)
+  PARAMETER_VECTOR(lnArrivMu_s);  	// Mean date of arrival in initial year (log scale)
+  //PARAMETER(lnArrivSD);  		// SD around mean Julian date of arrival (log scale)
+  PARAMETER_VECTOR(lnArrivSD_s); 	 // SD around mean Julian date of arrival (log scale)
+  PARAMETER_ARRAY(arrivErr_st);   	// Process error in mean date of arrival
+  //PARAMETER(lnErrSD);    		// Process error standard deviation (log scale)
+  PARAMETER_VECTOR(lnErrSD_s);    	// Process error standard deviation (log scale)
+  PARAMETER_ARRAY(logitCor_ss);   	// Correlation matrix for process errors (log scale)
+  PARAMETER_ARRAY(lnqE_sg);       	// Count catchability (log scale)
+  PARAMETER_VECTOR(lnqI_s);       	// Index catchability
   PARAMETER_ARRAY(lnDisp_tg);
 
   // Transformed parameters
-  array<Type> runSize_st(nS,nT);          // Run size
-  vector<Type> arrivMu_s = exp(lnArrivMu_s);  // SD around mean Julian date of arrival
-  vector<Type> arrivSD_s = exp(lnArrivSD_s);  // SD around mean Julian date of arrival
+  array<Type> runSize_st(nS,nT);          	// Run size
+  vector<Type> arrivMu_s = exp(lnArrivMu_s);  	// SD around mean Julian date of arrival
+  vector<Type> arrivSD_s = exp(lnArrivSD_s);  	// SD around mean Julian date of arrival
   vector<Type> errSD_s = exp(lnErrSD_s);
 
   // Latent variables
@@ -82,15 +82,15 @@ Type objective_function<Type>::operator() ()
   vector<Type> mrSD_t(nT);
 
   // Model predictions
-  array<Type> Ihat_dtg(nD,nT,nG);     // Abundance indices
-  vector<Type> mrIhat_t(nT);     // Abundance indices
-  array<Type> Phat_sdtg(nS,nD,nT,nG); // Proportions by stock
+  array<Type> Ihat_dtg(nD,nT,nG);    	 // Abundance indices
+  vector<Type> mrIhat_t(nT);     	// Abundance indices
+  array<Type> Phat_sdtg(nS,nD,nT,nG); 	// Proportions by stock
 
   // Likelihood objects
-  array<Type> nllI_tg(nT,nG);  // Abundance index likelihood
-  vector<Type> nllP_g(nG);  // Stock composition likelihood
+  array<Type> nllI_tg(nT,nG);  	// Abundance index likelihood
+  vector<Type> nllP_g(nG);  	// Stock composition likelihood
   Type nllMR = 0;
-  Type nlp = 0;             // Prior penalty
+  Type nlp = 0;             	// Prior penalty
   Type varPen = 0;
 
   // Initialize accumulating variables

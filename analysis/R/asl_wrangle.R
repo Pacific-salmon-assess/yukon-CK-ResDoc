@@ -204,3 +204,17 @@ g <- ggarrange(b,c,a,d,
 g
 my.ggsave(here("analysis/plots/asl.PNG"))
 
+
+# calculate total egg and egg mass time series for Jim M
+rr <- read.csv(here("analysis/data/raw/rr-table.csv"))
+
+cdn_rr <- rr %>%
+  filter(stock == "Canadian",
+         Year >1984) |>
+  select(Year,Escapement)
+
+cdn_rr$total_females <- cdn_rr$Escapement*rowSums(fem_S_comps)
+cdn_rr$total_eggs <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_eggs)
+cdn_rr$total_egg_mass <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_egg_mass)
+
+write.csv(cdn_rr, here("analysis/data/raw/cdn-yukon-chinook-repro-output.17Mar2025.csv"),row.names = FALSE)

@@ -90,7 +90,7 @@ transformed parameters{
     }
   }
 
-  // Total eggs by age and return year
+  // Total egg mass by age and return year
   for (t in 1:nyrs) {
     for(a in 1:A){
       EM_A[t,a] = (S[t]*(fem_S_comps[t,a]))*fem_egg_mass_comps[t,a];

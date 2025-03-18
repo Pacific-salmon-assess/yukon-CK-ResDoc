@@ -1,0 +1,24 @@
+# INTRODUCTION {#sec:introduction}
+
+
+## BACKGROUND
+
+The Yukon River is one of the largest and most isolated river systems in North America, draining over 850,000 square kilometers and flowing from its headwaters in northern British Columbia through the Yukon Territory and Alaska before emptying into the Bering Sea. The Yukon River is also one of the largest salmon producing river basins in the world and Chinook salmon (*Oncorhynchus tshawytscha*) spawn throughout it. Within the Canadian portion of the basin, Chinook salmon spawn in hundreds of streams [@brown_catalog_2017] which, under Canada’s Wild Salmon Policy [@WSP2005], are considered to make up nine genetically and ecologically unique groups of salmon or Conservation Units [@holtbyConservationUnitsPacific2007]. These Chinook salmon have a stream-type life history in which juveniles emerge from spawning beds in the spring, remain in freshwater for a year or two [@bradford2009freshwater], migrate from freshwater to the Bering Sea in the spring and summer as 1- or 2-year-old smolts, and remain in the ocean for 2-6 years before returning to the Yukon River as adults in May-July [@gilbert1922salmon]. Returning adults migrate upstream to spawning areas during the summer months and die after spawning in the fall. Chinook salmon from the Canadian portion of the basin enter the Yukon River earlier than those that spawn in Alaska and migrate upstream for up to 3,200km to reach their spawning grounds. As a result of their long freshwater migrations, Canadian origin Yukon Chinook salmon are generally thought to have relatively larger body size, proportionally older age-classes, and proportionally more females that are less fecund than Chinook salmon that spawn in the lower, Alaskan, portions of the river [@bromaghin2011using].  
+
+## OBJECTIVES
+
+The specific objectives of this research document are to:
+
+1. describe current understanding of (a) stock structure and distribution, (b) stock, and component Conservation Unit, Wild Salmon Policy biological status and trends, and (c) anthropogenic, ecosystem, and climate factors affecting the stock;
+
+2. describe potential rebuilding and enhancement activities that could contribute to stock rebuilding;
+
+3. provide estimates of a Limit Reference Point and other candidate reference points (e.g., Upper Stock Reference and Removal Reference) for the SMU; 
+
+4. provide quantitative estimates of the expected biological and fishery consequences of current and alternative harvest management measures (e.g., no fishing, interim aggregate escapement goal, rebuilding goal, exploitation rate caps based on CU overfishing risk, etc.) that could contribute to stock rebuilding;
+
+5. propose exceptional circumstances or assessment triggers for the stock (e.g., circumstances or conditions that represent a substantial departure from those under which the advice in this assessment was developed); and 
+
+6. identify key knowledge gaps and areas requiring future work.
+
+
