@@ -22,6 +22,9 @@ In 2022 a state-space run reconstruction and spawner-recruitment model, fit to d
 
 Our approach to reconstructing Conservation Unit (CU) scale spawner abundance and population dynamics largely followed the approach described in @connors_incorporating_2020. It consisted of three general steps: (1) estimate daily CU composition (i.e., proportion of daily total abundance assigned to each of nine Conservation Units) in test fisheries at the US-Canada border via molecular analyses of archived scale and tissue samples collected from returning spawners; (2) estimate annual CU-specific border passage and abundance via a state-space run-reconstruction model fitted to daily estimates of total border passage and CU composition from step one; and (3) characterize CU scale population dynamics by fitting age-structured, state-space spawner (or egg mass) recruitment models to estimated spawner abundances, harvest, and age composition. Details on the molecular analyses and run-reconstruction model are provided in Appendix \@ref(app:first-appendix) and spawner-recruitment analyses are detailed in Appendix \@ref(app:second-appendix). 
 
+## REFERENCE POINTS
+- background on reference points at both CU and SMU scale.
+
 ## CONSERVATION UNIT STATUS AND TRENDS 
 
 - trends in escapement and harvest by CU (where possible) and recent escapements relative to benchmarks
