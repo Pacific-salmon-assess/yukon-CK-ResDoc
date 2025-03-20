@@ -13,6 +13,9 @@ After that, all subsequent sections will be turned into appendices. -->
 
 ## OBSERVATION MODEL 
 
+- make point that spawners was estimated as border passage minus CU harvest based on CDN Er
+- make point we subtracted the Big Salmon sonar estimates from the Midle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
+
 ## MODEL FITTING AND DIAGNOSTICS 
 
 \clearpage
@@ -23,12 +26,12 @@ After that, all subsequent sections will be turned into appendices. -->
 - general description of multi-population state-space approach and why we chose it
 - acknowledge that approach is expected to yield less biased estimates of key population characteristic than traditional spawner-recruitment models that can arise due to errors-in-variables and time-series bias
 
-To characterize Chinook salmon population diversity we fit individual age-structured state-space spawner-recruitment models [@fleischman-etal-2013] to all available data for each population (i.e., time series of estimated catch, spawner abundance and age composition).
-These sources of information, along with measures of observation variance, were externally derived from the multi-population run-reconstructions described in Appendix S1 for spawner abundance and published estimates for catch and age composition.
-An alternative approach would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model.
-However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
-These models could have also been fit in a multi-population framework [@connors-etal-2022; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation. Generally, we should expect the autocorrelation to be positive (good years followed by good years, poor years followed by poor years) as is commonly observed in other salmon populations, and the recruitment variability estimates appear to be spuriously too high, which could lead to biases in other model parameters in manners that are difficult to predict.
+To characterize Yukon Chinook salmon CU spawner-recruitment relationships we fit individual age-structured state-space spawner-recruitment models [@fleischman-etal-2013] to all available data for each CU (i.e., time series of estimated catch, spawner abundance and age composition).
+These sources of information, along with measures of observation variance, were externally derived from the multi-CU run-reconstructions described in Appendix \@ref(app:first-appendix) for spawner abundance and published estimates for catch and age composition [@connors_estimates_2023], updated through 2024.
 
+An alternative to the sequential modelling approach would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model. However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
+
+These models could have also been fit in a multi-population framework [@connors-etal-2022; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation which appear to be spuriously too high (low), and which could lead to biases in other model parameters in manners that are difficult to predic [@staton-etal-2020]
 
 Because the same model was fitted to each population, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual populations.
 We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each population separately.
@@ -37,11 +40,12 @@ We omit this for the presentation here, both to simplify it and to emphasize tha
 
 The process model is intended to represent the true population dynamics (i.e., free of measurement error).
 This component of our state-space spawner-recruitment model specifies productivity, density-dependence, and age-at-return by cohort (i.e. brood year, $y$).
+
 Recruitment abundances of adult Chinook (i.e., the total number of adults from a given brood year that will ever return, $R_y$) were treated as unobserved states and modeled as a function of spawner abundance in year $y$ ($S_y$) assuming a @ricker-1954 spawner-recruitment relationship with serially auto-correlated log-normal process variation:
 
 \begin{equation}
-\ln(R_y) = \ln(S_y) + \ln(\alpha) - \beta S_y + v_y
-\label{eq:AR1-ricker}
+  \ln(R_y) = \ln(S_y) + \ln(\alpha) - \beta S_y + v_y
+  \label{eq:AR1-ricker}
 \end{equation}
 
 where $\alpha$ is productivity (intrinsic rate of growth), $\beta$ is the magnitude of within brood year density-dependent effects, and $v_y$ reflects inter-annual variation in survival from egg to adulthood, which we term "recruitment anomalies".
@@ -49,75 +53,116 @@ where $\alpha$ is productivity (intrinsic rate of growth), $\beta$ is the magnit
 This variation was assumed to follow a lag-1 autoregressive process (correlation coefficient denoted by $\phi$) over time:
 
 \begin{equation}
-\begin{aligned}
-v_y &= \phi v_{y-1} + \varepsilon_y \\
-\varepsilon_y &\sim \mathcal{N}(0, \sigma_R)
-\end{aligned}
-\label{eq:eq-residuals}
+  \begin{aligned}
+  v_y &= \phi v_{y-1} + \varepsilon_y \\
+  \varepsilon_y &\sim \mathcal{N}(0, \sigma_R)
+  \end{aligned}
+  \label{eq:eq-residuals}
 \end{equation}
 
 where $\varepsilon_y$ reflects the portion of the recruitment anomaly $v_y$ that is temporally independent (i.e., white noise).
-The first seven years of recruitment states were not linked to observations of spawner abundance in the spawner-recruitment relationship (eqn. [S1](#eq-ricker)) and were modeled as random draws from a log-normal distribution with mean $\ln(R_0)$ and variance $\sigma_R^2$.
-Rather than estimating $\ln(R_0)$ as a free parameter as in @fleischman-etal-2013, we choose to follow @staton-etal-2020 and inform its value using the expected recruitment under equilibrium unfished conditions $\ln(\alpha)/\beta$ to enable more consistent comparisons between the two approaches we used.
+
+The first seven years of recruitment states were not linked to observations of spawner abundance in the spawner-recruitment relationship (Equ. \@ref(eq:AR1-ricker)) and were modeled as random draws from a log-normal distribution with mean $\ln(R_0)$ and variance $\sigma_R^2$.
+
+Rather than estimating $\ln(R_0)$ as a free parameter as in @fleischman-etal-2013, we choose to follow @staton-etal-2020 and inform its value using the expected recruitment under equilibrium unfished conditions $\ln(\alpha)/\beta$.
+
 The number of Chinook salmon that returned to spawn in year $y$ at age $a$ ($a \in$ 4:7) was the product of the total recruitment produced by spawning that occurred in brood year $y-a$ and the proportion from brood year $y-a$ that returned at age $a$:
 
-<a id="eq-apportion-R"></a>
 \begin{equation}
-N_{y,a} = R_{y-a} p_{y-a,a}
-\tag{Eqn. S3}
+  N_{y,a} = R_{y-a} p_{y-a,a}
+  \label{eq:returnage}
 \end{equation}
 
-where $p_{y,a}$ is the probability that a fish spawned in brood year $y$ will return at age $a$. Because we lacked empirical data on life stage-specific abundances (e.g., smolts, fish abundance of different ages/brood years in the ocean) from which to directly estimate maturation rates and life-stage specific mortality, the sole purpose of this probability of return-at-age model (eqn. [S3](#eq-apportion-R)-[S4](#eq-dirichlet)) is to apportion the abundance of total adult recruitment to the correct age and year of return.
-We modeled this among brood year variation in age-at-return as Dirichlet random vectors drawn form a common hyperdistribution characterized by a mean age-at-return probability vector ($\boldsymbol{\pi}$) and an inverse dispersion parameter ($D$):
+where $p_{y,a}$ is the probability that a fish spawned in brood year $y$ will return at age $a$. Because we lacked empirical data on life stage-specific abundances (e.g., smolts, fish abundance of different ages/brood years in the ocean) from which to directly estimate maturation rates and life-stage specific mortality, the sole purpose of this probability of return-at-age model (Equ. \@ref(eq:returnage)-\@ref(eq:returnagevar)) is to apportion the abundance of total adult recruitment to the correct age and year of return.
 
-<a id="eq-dirichlet"></a>
+We modeled brood year variation in age at return as Dirichlet random vectors drawn from a common hyperdistribution characterized by a mean age-at-maturity probability vector ($\pi$) and an inverse dispersion parameter ($1/D^2$):
+
 \begin{equation}
-p_{y,a} \stackrel{\mathrm{iid}}{\sim} \mathcal{D}(\boldsymbol{\pi}D)
-\tag{Eqn. S4}
+  p_{y,a}  \stackrel{\mathrm{iid}}{\sim}  \mathcal{D}(\pi(\frac{1}{D^2}))
+  \label{eq:returnagevar}
 \end{equation}
 
-Following @fleischman-etal-2013, we implemented the Dirichlet distribution as a mixture of several gamma distributions (see JAGS code, below). The total run in year $y$ was made up of recruitments from multiple brood years as shown in eqn. [S3](#eq-apportion-R) and was calculated as the sum of the age-specific run abundances:
+The total run in year $y$ was made up of recruitments from multiple brood years as shown in Equ. \@ref(eq:returnage) and was calculated as the sum of the age-specific run abundances:
 
-<a id="eq-get-N-tot"></a>
 \begin{equation}
-N_{y} = \sum_{a=4}^{7} N_{y,a}
-\tag{Eqn. S5}
+  N_{y} = \sum_{a=4}^{7} N_{y,a}
+  \label{eq:totalreturn}
 \end{equation}
 
 Harvest in a given year ($H_y$) was modeled as the product of total run size and the harvest rate ($U_y$) experienced that year:
 
-<a id="eq-harvest"></a>
 \begin{equation}
-H_y = N_y U_y
-\tag{Eqn. S6}
+  H_y = N_y U_y
+  \label{eq:harvest}
 \end{equation}
 
 and spawner abundance ($S_y$) was modeled as the portion of $N_y$ remaining after harvest $H_y$:
 
-<a id="eq-get-S"></a>
 \begin{equation}
-S_y = N_y (1 - U_y)
-\tag{Eqn. S7}
+  S_y = N_y (1 - U_y)
+  \label{eq:spawners}
 \end{equation}
 
-It is this spawner abundance $S_y$ (which is itself made up of fish of multiple ages from multiple brood years) that is used in eqn.[S1](#eq-ricker) to produce the recruitment abundance produced by spawning in brood year $y$.
+It is this spawner abundance $S_y$ (which is itself made up of fish of multiple ages from multiple brood years) that is used in Equ. \@ref(eq:AR1-ricker) to produce the recruitment abundance from spawning in brood year $y$.
+
 
 ## OBSERVATION MODEL
 
-We assumed a coefficient of variation (CV) for spawner observations that was based on the CV in estimated spawner abundances derived from the run reconstruction.
-Observed spawner abundance was therefore assumed to be log-normally distributed with the CVs converted to log-normal variance following [@forbes-etal-2011]:
+We assumed a coefficient of variation (CV) for spawner observations that was based on the annual CV in estimated spawner abundances derived from the run reconstruction model (Appendix \@ref(app:first-appendix)).
 
-<a id="eq-get-sigma"></a>
+Observed spawner abundance ($S_{obs,y}$) was therefore assumed to be log-normally distributed with the CVs converted to log-normal variance following [@forbes-etal-2011]:
+
 \begin{equation}
-\sigma^2_{o,y} = \ln\left(\mathrm{CV}_y^2 + 1\right)
-\tag{Eqn. S8}
+  \sigma^2_{o,y} = \ln\left(\mathrm{CV}_y^2 + 1\right)
+  \label{eq:get-sigm}
 \end{equation}
 
-We assumed that harvest had a 15% CV and so harvest observations were log-normally distributed with the CV converted to log-normal variance as per eqn.
-[S8](#eq-get-sigma).
+Direct estimates of harvest by CU do not exist because most harvest occurs in highly mixed-stock fisheries in the mainstem of the Yukon River and this harvest has never been apportioned back to CUs. Harvest observations were therefore approximated based on the stock aggregate harvest rate [$U_{obs,y}$; @connors_estimates_2023] and CU specific spawner abundance:
 
-Age composition by return year was assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 100.
-An ESS equal to 100 is the multinomial sample size expected to produce uncertainty roughly equivalent to that which would be anticipated from the average number of fish sampled in a given year from a population with age proportions and classes similar to that of the aggregate population.
+\begin{equation}
+  H_{obs,y} = S_{obs,y}(1-U_{obs,y})^{-1}U_{obs,y}
+  \label{eq:obs-harvest}
+\end{equation}
+
+and were assumed to have a CV equal to that of the spawner abundance estimate which was log-normally distributed and converted to log-normal variance as per Equ. \@ref(eq:get-sigm).
+
+Age composition by return year at the Conservation Unit scale is available from fish passing from Alaska into the Yukon most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bluk of harvest occur. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs. 
+
+These age composition by return year estimates were assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 50 pre-2007 and 100 thereafter. These ESSs are lower than the likely observed sample sizes to account for the non-independence of observation within a given sampling event [@maunder_review_2011] and were chosen to reflect the reduced confidence in age composition data prior to the Eagle test fishery sampling program which was standardized beginning in 2007.
+
+## TIME-VARYING PRODUCTIVITY
+
+Given widespread evidence for changes in salmon productivity over time (@refs), and interest in understanding the evidence for changing productivity in Yukon Chinook, we also fit a version of the model described in Equ. \@ref(eq:AR1-ricker)-\@ref(eq:obs-harvest) with time-varying intrinsic productivity. Specifically, we allowed the $\alpha$ parameter to evolve through time as a random walk, yielding time-varying estimates of productivity: 
+
+\begin{equation}
+  \begin{aligned}
+  \alpha_y &= \alpha_{y-1} + \varepsilon_y \\
+  \varepsilon_y &\sim \mathcal{N}(0, \sigma_\alpha)
+  \end{aligned}
+  \label{eq:tv-alpha}
+\end{equation}
+
+and where recruitment anomalies were no longer modeled as being auto-correlated but all other parameters in equation \@ref(eq:AR1-ricker) otherwise remained the same.
+
+## ESCAPEMENT QUALITY
+The spawner-recruitment models described in the previous section assumed that demographic attributes of spawning escapement have not changed over time such that reproductive output is homogeneous among individuals and has been static over the past 40 years. However, changes in age, sex, and length-at-age of returning Chinook salmon, including in the Yukon [@lewis_changes_2015; @ohlberger_demographic_2018; @ohlberger_reproductive_2020], have been widely observed, suggesting concurrent declines in per capita reproductive output as smaller females carry disproportionately fewer eggs of a smaller mass compared to larger females (i.e., fecundity and total egg mass scale exponentially with female size) [@ohlberger_reproductive_2020]. While changes in age, sex, and length-at-age (aka “escapement quality”) are not typically considered when deriving spawner-recruitment based reference points and setting escapement goals, recent research on Chinook salmon in the Kuskokwim River of western Alaska suggests that failing to account for declines in escapement quality may result in underestimating the escapement needed to maximize long-term sustainable yield or recruitment [@staton_incorporating_2021]. In addition, simulation analyses suggest that accounting for the consequences of declining "escapement quality" in fishery management (via reference points) can reduce conservation risks relative to assessment frameworks that do not take demographic change into account [@ohlberger2025accounting].  
+
+To evaluate the potential consequences of changes in escapement quality over time (which we operationalized as total egg mass) we translated time trends in sex ratios, age composition, and size-at-age to annual estimates of total egg mass production. We chose to focus on total egg mass instead of eggs because it it tightly correlated with egg energy content [@ohlberger_reproductive_2020] and may be a better proxy for female reproductive output than egg number. Large females produce not only more but also larger eggs compared to small females [@ohlberger_reproductive_2020]. 
+
+With this alternative measure of reproductive potential we then refit our our spawner-recruitment models, replacing the spawner abundance term ($S_{y}$) in Equ. \@ref(eq:AR1-ricker) with:  
+
+\begin{equation} 
+  Z_{m,y} = \sum_a S_{y} \cdot q_{y,a} \cdot w_{em,y,a} 
+  (\#eq:reprometric)
+\end{equation}
+
+where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year specific total spawner abundance, $q_{y,a}$is the year- and age-specific proportion females, and $w_{em,y,a}$ is the average total egg mass ($em$) per individual in each year ($y$) and age ($a$).
+
+##### THIS NEEDS TO GO IN REF POINTS SECTION 
+
+For each joint posterior sample of $\alpha'$ and $b$ (Equ. \@ref(eq:alphaCorr) and \@ref(eq:processmodel), respectively) we then back calculated the spawner abundance expected to maximize yield and recruitment for a given set of assumptions about escapement age, sex, and length-at-age. The specific assumptions we considered for female age composition, proportion females, and female length at age, were either the long-term average or the average over the first (1982-1992) or last (2009-2019) decade with data.  
+
+To model changes in escapement quality, we needed to consider two additional sources of data: (i) annual age and sex composition as well as mean length derived from assessment projects at the U.S.-Canada border, and (ii) allometric relationships between female Chinook salmon size and total eggs, or total egg mass, to translate female size to expected reproductive output by age. Estimates of annual age and sex composition, and mean length were derived from records of individual fish sampled by fishwheels (pre-2007), and more recently by multi-mesh size gill net test fishery, near the Alaska-Yukon border (ADF&G AYK Database Management System). These data were corrected for the known size selectivity of fishwheels using the length selectivity method described in @Hamazaki2018BorderAgeComp. The allometric relationships between female Chinook salmon size and total eggs, or total egg mass, were based on 140 samples of female fish with paired measurements of length (mid-eye to tail fork; METF), egg count and egg (ovary) mass, based on collections in the gill net test fishery between 2008 and 2010 [@ohlberger_reproductive_2020].  
 
 ## MODEL FITTING AND DIAGNOSTICS 
 - description [table: parameters and associated prior and posterior distributions]

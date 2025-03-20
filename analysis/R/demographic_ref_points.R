@@ -15,14 +15,49 @@ AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_
                         readRDS)
 names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
+TVA.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA_egg_mass"), 
+                              full.names = T), readRDS)
+names(TVA.eggs.fits) <- unique(sp_har$CU)
+
+# Demographic reference points ----
 bench_AR1_eggs <- NULL
+ER.preds <- NULL
+brood.all <- NULL
+a.yrs.all <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
   
   #load AR1 model with eggs parameters ---
   sub_AR1_eggs_pars <- rstan::extract(AR1.eggs.fits[[i]])
+
+  #egg-recruit relationship
+  egg.quant <- apply(exp(sub_AR1_eggs_pars$lnEM), 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)]
+  rec.quant <- apply(sub_AR1_eggs_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs]
   
+  brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)],t(egg.quant), t(rec.quant))) |>
+    round(2)
+  colnames(brood_t) <- c("BroodYear","EM_lwr","EM_med","EM_upr","R_lwr","R_med","R_upr")
+  
+  brood_t <- mutate(brood_t, CU = i)
+  
+  brood.all <- rbind(brood.all, brood_t)
+  
+  #SR relationship based on full posterior---
+  em <- seq(0,max(brood_t$EM_upr),length.out=100)
+  ER.pred <- matrix(NA,length(em), length(sub_AR1_eggs_pars$lnalpha))
+  
+  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
+    ln_a <- sub_AR1_eggs_pars$lnalpha[j]
+    b <- sub_AR1_eggs_pars$beta[j]
+    ER.pred[,j] <- (exp(ln_a)*em*exp(-b*em))
+  }
+  ER.pred <- as.data.frame(cbind(em,t(apply(ER.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
+    round(2) |>
+    mutate(CU = i)
+  
+  ER.preds <- rbind(ER.preds, ER.pred)
+    
   #benchamrks based on early demographics
   bench_early <- matrix(NA,length(sub_AR1_eggs_pars$lnalpha),2,
                   dimnames = list(seq(1:length(sub_AR1_eggs_pars$lnalpha)), c("Smsy","Smsr")))
@@ -99,7 +134,26 @@ for(i in unique(sp_har$CU)){
   bench_recent$CU <- i
   
   bench_AR1_eggs <- rbind(bench_AR1_eggs, bench_early, bench_avg, bench_recent)
+  
+  #time varying alpha --------------------------------------------------------------------
+  sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
+  
+  a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
+  a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
+  
+  colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
+  
+  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
 }
+
+colnames(ER.preds) <- c("EM", "Rec_lwr","Rec_med","Rec_upr", "CU")
+
+CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters")
+
+ER.preds$CU_f <- factor(ER.preds$CU, levels = CU_order)
+brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 
   summary_bench_AR1_eggs <- bench_AR1_eggs |>
     group_by(CU,period) |>
@@ -126,15 +180,75 @@ for(i in unique(sp_har$CU)){
 my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
   
   
-  ggplot(bench_AR1_eggslong, aes(y=value, x=  period, color = period)) +
-    geom_violin() +
-    facet_wrap(~CU, scales = "free_y") +
-    theme(legend.position = "bottom") +
-    theme_sleek()
-    
-  
-  ggplot(bench_AR1_eggslong |> filter(period !="avg"), aes(y=value, x=  period, color = period)) +
-    geom_boxplot(outlier.shape = NA) +
-    facet_wrap(~CU, scales = "free_y") +
-    theme(legend.position = "bottom")
- 
+# source(inference_figs.R)
+
+bench_eggs <- bench_AR1_eggslong|> filter(period =="recent") |>
+  mutate(unit = "egg mass") |>
+  select(unit, CU, par, value)
+
+bench_body <- pivot_longer(bench.posts, cols = c(Smsr), names_to = "par") |>
+  mutate(unit = "spawners") |>
+  select(unit, CU, par, value)
+
+bench_post <- rbind(bench_eggs, bench_body) |>
+  filter(value <= 35000)
+
+ggplot(bench_post, aes(value, fill = unit, color = unit)) +
+  geom_density(alpha = 0.8, adjust = 4) +
+  geom_vline(xintercept = 1.5) +
+  facet_wrap(~CU, scales = "free_y") +
+  theme_sleek()+
+  xlab("S[MSR]") +
+  ylab("") +
+  theme(legend.position = "bottom",
+        axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank()) +
+  scale_color_viridis_d(aesthetics = c("fill", "color"))
+
+my.ggsave(here("analysis/plots/demo_bench_compare_spawn-vs-recent.PNG"))
+
+summary_bench_AR1_eggs <- bench_post |>
+  group_by(CU,unit) |>
+  summarize(upper.alt = median(value, na.rm=T))
+
+
+# Demographic recruitment relationships ----
+
+# SR fits ---
+ggplot() +
+  geom_abline(intercept = 0, slope = 1,col="dark grey") +
+  geom_ribbon(data = ER.preds, aes(x = EM/1000, ymin = Rec_lwr/1000, ymax = Rec_upr/1000),
+              fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
+  geom_errorbar(data = brood.all, aes(x= EM_med/1000, y = R_med/1000, 
+                                      ymin = R_lwr/1000, ymax = R_upr/1000),
+                colour="grey", width=0, linewidth=0.3) +
+  geom_errorbarh(data = brood.all, aes(y = R_med/1000, xmin = EM_lwr/1000, xmax = EM_upr/1000),
+                 height=0, colour = "grey", linewidth = 0.3) +
+  geom_point(data = brood.all,
+             aes(x = EM_med/1000,
+                 y = R_med/1000,
+                 color=BroodYear),
+             size = 1.5) +
+  geom_line(data = ER.preds, aes(x = EM/1000, y = Rec_med/1000)) +
+  facet_wrap(~CU_f, scales = "free") +
+  scale_colour_viridis_c(name = "Brood Year")+
+  labs(x = "Egg mass (kgs)",
+       y = "Recruits (000s)") +
+  theme_sleek()+
+  theme(legend.position = "top",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.key.size = unit(0.4, "cm"),
+        legend.title = element_text(size=7),
+        legend.text = element_text(size=6))
+my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
+
+# Demographic time-varying alpha (recruits/gram egg mass) relationships ----
+ggplot(a.yrs.all
+       |> filter(brood_year < 2018), aes(color = CU)) +
+  geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
+  scale_color_viridis_d() +
+  theme_sleek() +
+  labs(y = "Productivity (maximum R/EM)", x = "Brood year")
+
+my.ggsave(here("analysis/plots/changing_demo_productivity.PNG"))
