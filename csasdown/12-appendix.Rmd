@@ -217,9 +217,9 @@ We calculated biological reference points for each MCMC sample and then summariz
 \end{equation}
 
 where $W$ is the Lambert function [@scheuerellExplicitSolutionCalculating2016], and $\alpha$ and $\beta$ are intrinsic productivity and the magnitude of within stock density dependence, respectively. We chose to apply this exact solution for $S_{MSY}$ instead of the commonly applied @hilborn1985simplified approximation because the approximation only holds for $0 <ln(\alpha) \leq3$ such that infrequent, but large, posterior samples of $\alpha$ can result in biased estimates of the posterior distribution of $S_{MSY}$. 
-We used 80% of $S_{MSY}$ as the USR following @holtEvaluationBenchmarksConservation2009 and @dfoSustainableFisheriesFramework2022.  
+ 
 
-The spawner abundance expected to result in the stock rebuilding to $S_{MSY}$ in one generation in the absence of fishing [$S_{gen}$; @holtEvaluationBenchmarksConservation2009], often used as a lower biological benchmarks for CUs under the Wild Salmon Policy, was solved numerically according to: 
+The spawner abundance expected to result in the stock rebuilding to $S_{MSY}$ in one generation in the absence of fishing ($S_{gen}$; [@holtEvaluationBenchmarksConservation2009]), often used as a lower biological benchmarks for CUs under the Wild Salmon Policy, was solved numerically according to: 
 
 \begin{equation}
   S_{MSY} = S_{gen}\alpha e^{-\beta S_{gen}}
@@ -240,7 +240,7 @@ Equilibrium spawner abundance ($S_{eq}$), where recruitment exactly replaces spa
   \label{eq:get-Seq}
 \end{equation}
 
-The harvest rate expected to lead to maximum sustainable yield, $U_{MSY}$ was used as the RR and derived according to the solution proposed by @scheuerellExplicitSolutionCalculating2016 as:  
+The harvest rate expected to lead to maximum sustainable yield, $U_{MSY}$, was derived according to the solution proposed by @scheuerellExplicitSolutionCalculating2016 as:  
 
 \begin{equation}
   U_{MSY} = 1 - W(e^{1-ln(\alpha)})
