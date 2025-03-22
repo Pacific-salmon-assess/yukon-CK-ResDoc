@@ -77,7 +77,7 @@ OU <- 0.1         ## could also base this off something else from fisheries mana
 # --- Create array to store outcomes -----------------------------------------------------
 HCRs <- c("no.fishing", "status.quo", "fixed.ER")
 sim.outcomes <- NULL
-S.time <- NULL #null objects to bind too - because need dataframes for ggplot
+S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
 # --- Stationary Ricker SR dynamics ----------------------------------------------------
 
@@ -159,3 +159,4 @@ H.fwd.summmary <- H.time |>
             H.75 = quantile(Harvest, 0.75, na.rm = T))
 write.csv(H.fwd.summmary, here("analysis/data/generated/simulations/H_fwd_AR1.csv"), 
           row.names = FALSE)
+
