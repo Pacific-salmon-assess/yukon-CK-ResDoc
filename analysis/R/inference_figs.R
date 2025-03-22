@@ -24,6 +24,7 @@ bench.par.table <- NULL #empty objects to rbind CU's outputs to
 bench.posts <- NULL
 par.posts <- NULL
 SR.preds <- NULL
+AR1.spwn <- NULL
 brood.all <- NULL
 a.yrs.all <- NULL
 AR1.resids <- NULL
@@ -32,9 +33,16 @@ TV.SR.preds <- NULL
 TV.spwn <- NULL
 TV.harv <- NULL
 
-for(i in unique(sp_har$CU)){
+
+for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs 
+  
+  # AR1 (base S-R) models -----------------------------------------------------------------
   sub_dat <- filter(sp_har, CU==i)
   sub_pars <- rstan::extract(AR1.fits[[i]])
+  
+  AR1.spwn <- rbind(AR1.spwn, bind_cols(t(apply(sub_pars$S, 2, quantile, c(0.25, .5, .75))),
+                                        unique(sub_dat$year),
+                                        i))
   
   #latent states of spawners and recruits---
   spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)]
@@ -57,6 +65,8 @@ for(i in unique(sp_har$CU)){
   par <- matrix(NA,length(sub_pars$lnalpha),3,
                   dimnames = list(seq(1:length(sub_pars$lnalpha)), c("sample","ln_a","beta")))
   
+  # get benchmarks & pars (AR1 model)------------------------------------------------------------------
+  
   for(j in 1:length(sub_pars$lnalpha)){ 
     ln_a <- sub_pars$lnalpha[j]
     b <- sub_pars$beta[j]
@@ -67,7 +77,7 @@ for(i in unique(sp_har$CU)){
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
-    bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #mean spawners in last generation 
+    bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #S recent - mean spawners in last generation 
     
     par[j,1] <- j
     par[j,2] <- ln_a
@@ -80,7 +90,6 @@ for(i in unique(sp_har$CU)){
   
   SR.preds <- rbind(SR.preds, SR.pred)
   
-  # get benchmarks & pars ------------------------------------------------------------------
   bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
@@ -174,10 +183,11 @@ for(i in unique(sp_har$CU)){
            year = unique(sub_dat$year))
   
   TV.harv <- bind_rows(TV.harv, TV.harv.quant)
-}
+}  # End data wrangling loop by CU 
 
 
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
+colnames(AR1.spwn) <- c("S.25", "S.50", "S.75", "year", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
@@ -356,7 +366,7 @@ esc$CU_f <- factor(esc$stock, levels = CU_order)
 bench_plot$CU_f <- factor(bench_plot$stock, levels = CU_order)
 
 ggplot(esc, aes(x = year, y = mean/1000)) + 
-  geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
+  geom_ribbon(aes(ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
@@ -400,16 +410,36 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # forward simulations --------------------------------------------------------------------
-S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_tv.csv"))
-H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
 
-# S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
-# H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
+# Use "standard" (non-TV) benchmarks
+bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
+
+# Use alpha from which models? TVA = Reference set, recent 5 years; AR1 = robustness set, all yrs
+#alpha_type = "TVA"
+alpha_type = "AR1"
+
+## Plots for TV alpha models - "Reference set" 
+if(alpha_type == "TVA"){
+    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_tv.csv"))
+    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
+    spwn.fwd <- TVA.spwn
+    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
+      pivot_longer(2:9, names_to = "metric") 
+   } else if (alpha_type == "AR1"){
+    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
+    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
+    spwn.fwd <- AR1.spwn 
+    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
+       pivot_longer(2:9, names_to = "metric") 
+}
+
 
 S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
 H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
 bench.par.table$CU_f <- factor(bench.par.table$CU, levels = CU_order)
+spwn.fwd$CU_f <- factor(spwn.fwd$CU, levels = CU_order)
 
+## Spawners projection, 3 scenarios
 ggplot(S.fwd) +
   geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
               alpha = 0.2) +
@@ -432,9 +462,9 @@ ggplot(S.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/S-fwd_tv.PNG"))
-#my.ggsave(here("analysis/plots/S-fwd_AR1.PNG"))
+my.ggsave(here(paste0("analysis/plots/S-fwd_", alpha_type, ".PNG")))
 
+## Harvest projection, 3 scenarios 
 ggplot(H.fwd) +
   geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
               alpha = 0.2) +
@@ -452,8 +482,7 @@ ggplot(H.fwd) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/H-fwd_tv.PNG"))
-#my.ggsave(here("analysis/plots/H-fwd_AR1.PNG"))
+my.ggsave(here(paste0("analysis/plots/H-fwd_", alpha_type, ".PNG")))
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
@@ -475,16 +504,10 @@ ggplot(S.fwd |>
   theme_sleek() +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here("analysis/plots/S-fwd-bc-alternative_tv.PNG"))
-# my.ggsave(here("analysis/plots/S-fwd-bc-alternative_AR1.PNG"))
+my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative", alpha_type, ".PNG")))
 
-# performance metrics ---
-perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
-  pivot_longer(2:9, names_to = "metric") 
 
-#perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-#  pivot_longer(2:9, names_to = "metric") 
-
+# Performance metrics
 perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
 ggplot(perf.plot, aes(x=HCR, y = value)) + 
@@ -496,9 +519,9 @@ ggplot(perf.plot, aes(x=HCR, y = value)) +
         legend.title = element_blank()) +
   labs(title = "Forward simulaiton performance metrics") 
 
-my.ggsave(here("analysis/plots/perf_metrics_tv.PNG"))
-# my.ggsave(here("analysis/plots/perf_metrics_AR1.PNG"))
+my.ggsave(here(paste0("analysis/plots/perf_metrics_", alpha_type, ".PNG")))
 
+# Performance status
 perf.status <- perf.metrics |>
   filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
   mutate(status = factor(metric, levels = c("above.USR", "between.ref", "below.LSR", "extinct")))
@@ -510,5 +533,8 @@ ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
   labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
   theme_bw()
 
-my.ggsave(here("analysis/plots/perf_status_tv.PNG"))
-#my.ggsave(here("analysis/plots/perf_status_AR1.PNG"))
+my.ggsave(here(paste0("analysis/plots/perf_status_", alpha_type, ".PNG")))
+
+
+
+
