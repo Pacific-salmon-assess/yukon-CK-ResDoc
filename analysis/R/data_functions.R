@@ -174,15 +174,15 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000} 
     if(HCR == "no.fishing"){HR.all <- 0}
-    if(HCR == "status.quo"){
+    if(HCR == "status.quo"){ # Is this correct?
       catch <- ifelse(run.size<=42000, 0, run.size-42000)
       if(run.size==0){HR.all <- 0}else{ #to overwrite NaNs
         HR.all <- catch/run.size}}
     if(HCR == "fixed.ER"){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
-      HR.all <- ER
-    }
+      HR.all <- ER}
+
     
     HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary?
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
@@ -203,18 +203,21 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   }
   
   # Output
-  # Performance measures:
+  # SMU-level Performance measures:
   #	1: avg annual escapement
   #	2: avg annual harvest
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
-  #	4: CV in harvest
-  # 5: number of CUs below LRP at end of sim
-  # 6: number of CUs between RPs " "
-  # 7: number of CUs above USR at ""
-  # 8: number of extinct pops 
+  # 4: % of years with no harvest
+  # 5: % of yrs harv > 10k (basic needs)
+  #	6: CV in harvest
+  # 7: number of CUs below LRP at end of sim
+  # 8: number of CUs between RPs " "
+  # 9: number of CUs above USR at ""
+  # 10: number of extinct pops 
 
-  pms <- matrix(NA,1,8) 
+    pms <- matrix(NA,1,10) 
   
+  # SMU level PMs 
   S[S[,]=='NaN'] <- 0
   H[H[,] == 'NAN'] <- 0 # not sure if this is an appropriate fix
   Ntot[Ntot[,]=='NaN'] <- 0
@@ -225,14 +228,28 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,3] <- median(harvest_rates, na.rm = TRUE)
-  pms[,4] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
+  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs)
+  pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
+  pms[,6] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
   #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
-  pms[,5] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
-  pms[,6] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
-  pms[,7] <- sum(S[ny,] > Smax)
-  pms[,8] <- sum(S[ny,] ==0)
+  pms[,7] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
+  pms[,8] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
+  pms[,9] <- sum(S[ny,] > Smax)
+  pms[,10] <- sum(S[ny,] ==0)
   
-  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms)
+  
+  # Output
+  # CU-level performance measures
+  # 1: % yrs above LRP (20% Smsr/Smax)
+  # 2: % yrs above Smsr/Smax
+  
+  pms_cu <- matrix(NA,length(alpha),2)
+  pms_cu[,1] <- colSums(S[pm.yr:ny,] > matrix(0.2*Smax, 21,9, byrow = T))/(ny - pm.yr +1)
+  pms_cu[,2] <- colSums(S[pm.yr:ny,] > matrix(Smax, 21,9, byrow = T))/(ny - pm.yr +1)
+  
+  
+  
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms, PMs_cu=pms_cu)
 }
 
 #------------------------------------------------------------------------------#
