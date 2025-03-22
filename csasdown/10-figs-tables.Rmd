@@ -13,3 +13,39 @@ knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
 \clearpage
 
 # TABLES  
+(ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
+```{r ref-points, results = "asis"}
+priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)", 
+                                               "Upper Stock Reference Point (USR)", 
+                                               "Removal Reference Point", 
+                                               "Lower stock reference point", 
+                                               "Lower Wild Salmon Policy biological benchmark ", 
+                                               "Upper Wild Salmon Policy biological benchmark ",
+                                               "Other biological reference points"), 
+                        Scale = c("Stock Management Unit", 
+                                     "Stock Management Unit", 
+                                     "Stock Management Unit or Conservation Unit", 
+                                     "Stock Management Unit", 
+                                     "Conservation Unit", 
+                                     "Conservation Unit",
+                                     "Stock Management Unit or Conservation Unit"),
+                           Definition = c("CU-status based, meaning that whether an SMU is above or below its LRP depends on whether any component CUs are below their lower biological benchmark (in the ‘red’ Wild Salmon Policy status zone). This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs. However, it is difficult to operationalize this type of LRP for fisheries management and so there may also be a “lower stock reference point” that is abundance based.",
+                                          "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives.",
+                                          "The maximum acceptable harvest rate the SMU can be subject to; is typically set to be less than or equal to the removal rate associated with maximum sustainable yield ($U_{MSY}$).", 
+                                          "Aggregate SMU spawner abundance below which all fishery removals should be limited to the maximum extent possible and below which there is a high risk of serious and irreversible harm to the stock. This type of reference point is helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized.", 
+                                          "Differentiates amber and red Wild Salmon Policy status zones. When it can be estimated $S_{GEN}$ is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions. Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”.",
+                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80%$S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU”",
+                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest."))
+
+priors.df |>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:ref-points)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "3cm")|>
+    kableExtra::column_spec(2, width = "3cm")|>
+    kableExtra::column_spec(3, width = "10cm")
+```
+\clearpage

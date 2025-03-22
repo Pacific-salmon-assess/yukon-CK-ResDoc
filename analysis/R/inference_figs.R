@@ -376,7 +376,7 @@ ggplot(esc, aes(x = year, y = mean/1000)) +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
-# escapement plot all CUs plus aggregrate ----
+# escapement plot all CUs plus aggregate ----
 porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU == "Porcupine") |>
   mutate(mean = estimate,
@@ -408,6 +408,28 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
   theme_sleek()  
 
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
+
+# trib vs RR spawner elationships ----
+esc_join <- esc |>
+  mutate(CU = stock) |>
+  select(CU, year, mean, CU_f)
+
+tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
+  filter(CU != "Porcupine") |>
+  unite(tributary, c("system", "type"))
+
+trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
+  drop_na()
+
+ggplot(trib_rr, aes(x = mean, y = estimate)) +
+  geom_smooth(method="lm", color="grey") +
+  geom_point(size=2, color="dark grey")+ 
+  xlab("CU spawners") +
+  ylab("Tributary spawners") +
+  theme_sleek() +
+  facet_wrap(~tributary, scales = "free") 
+
+my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
 
 # forward simulations --------------------------------------------------------------------
 
