@@ -9,7 +9,7 @@ set.seed(2)
 # wrangle fits into same structure as the "samps" matrix -----------------------------
 #here(https://github.com/DylanMG/Kusko-harvest-diversity-tradeoffs/blob/master/load.R)
 
-fit_type <- "AR1" 
+#fit_type <- "AR1" # delete?
 
 AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), 
                               full.names = T), readRDS)
@@ -19,7 +19,7 @@ AR1.fits <- lapply(AR1.fits, rstan::extract)
 
 bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds"))
 
-#infilling the "samps" object from the kusko example -------------------------------------
+#populating the "samps" object  -------------------------------------
 samps <- NULL
 pi.samps <- array(NA, dim = c(nrow(AR1.fits[[1]]$beta), A, length(AR1.fits)))
 p.samps <- array(NA, dim = c(nrow(AR1.fits[[1]]$beta), A, length(AR1.fits), 3))
@@ -72,10 +72,10 @@ num.sims = 500 # number of Monte Carlo trials
 ny = 26 # number of years in forward simulation (through 2050)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
-OU <- 0.1         ## could also base this off something else from fisheries management 
+OU <- 0.1  ## could also base this off something else from fisheries management 
 
 # --- Create array to store outcomes -----------------------------------------------------
-HCRs <- c("no.fishing", "status.quo", "fixed.ER")
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap",  "fixed.ER", "alt.rebuilding")
 sim.outcomes <- NULL
 S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
@@ -112,20 +112,22 @@ for(i in 1:length(HCRs)){
   }
 } # end of simulation loop
 
-colnames(sim.outcomes) <- c("HCR", "sim", "escapement", "harvest", "ER", "harv.stability", 
-                            "below.LSR", "between.ref", "above.USR", "extinct")
+pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs", "harv.stability", "n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct")
+colnames(sim.outcomes) <- c("HCR", "sim", pms)
 
 sim.outcome.summary <- as.data.frame(sim.outcomes) |>
-  mutate_at(2:10, as.numeric) |>
+  mutate_at(2:ncol(sim.outcomes), as.numeric) |>
   group_by(HCR) |>
   summarise(escapement = mean(escapement), 
             harvest = mean(harvest), 
-            ER = mean(ER, na.rm = TRUE),
-            harv.stability = mean(harv.stability, na.rm=TRUE), 
-            below.LSR = mean(below.LSR), 
-            between.ref = mean(between.ref), 
-            above.USR = mean(above.USR), 
-            extinct = mean(extinct))
+            ER = mean(ER), 
+            pr.no.harv = mean(pr.no.harv),
+            pr.basic.needs = mean(pr.basic.needs),
+            harv.stability = mean(harv.stability, na.rm=TRUE), # how should NAs be treated? there should be NAs where harv=0 
+            n.below.LSR = mean(n.below.LSR), 
+            n.between.ref = mean(n.between.ref), 
+            n.above.USR = mean(n.above.USR), 
+            n.extinct = mean(n.extinct))
 
 write.csv(sim.outcome.summary, here("analysis/data/generated/perf_metrics_AR1.csv"), 
           row.names = FALSE)

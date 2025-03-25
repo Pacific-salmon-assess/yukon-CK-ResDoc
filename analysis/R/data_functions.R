@@ -174,14 +174,46 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(run.size > 999000) {run.size <- 1000000} 
     if(HCR == "no.fishing"){HR.all <- 0}
-    if(HCR == "status.quo"){ # Is this correct?
-      catch <- ifelse(run.size<=42000, 0, run.size-42000)
-      if(run.size==0){HR.all <- 0}else{ #to overwrite NaNs
-        HR.all <- catch/run.size}}
+    if(HCR == "status.quo"){ 
+      catch <- ifelse(run.size<=42500, 0, run.size-42500)
+      HR.all <- ifelse(run.size==0, 0, catch/run.size)
+      if(HR.all > 0.8){       ## Add ER cap (80%) 
+          catch <- run.size*0.8
+          HR.all <- catch/run.size }}
+    if(HCR == "status.quo.cap"){
+      catch <- ifelse(run.size<=42500, 0, run.size-42500)
+      HR.all <- ifelse(run.size==0, 0, catch/run.size)
+      if(HR.all > 0.4){       ## Lower ER cap (40%) 
+        catch <- run.size*0.4
+        HR.all <- catch/run.size }}
+    if(HCR == "rebuilding"){
+      catch <- ifelse(run.size<=71000, 0, run.size-71000)
+      HR.all <- ifelse(run.size==0, 0, catch/run.size)
+      if(HR.all > 0.8){       ## ER cap (80%) 
+        catch <- run.size*0.8
+        HR.all <- catch/run.size }}
+    if(HCR == "rebuilding.cap"){
+      catch <- ifelse(run.size<=71000, 0, run.size-71000)
+      HR.all <- ifelse(run.size==0, 0, catch/run.size)
+      if(HR.all > 0.4){       ## lower ER cap (40%) 
+        catch <- run.size*0.4
+        HR.all <- catch/run.size }}
     if(HCR == "fixed.ER"){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
       HR.all <- ER}
+    if(HCR == "alt.rebuilding"){
+      if(run.size <= 19000) ER <- 0
+      if(run.size >= 95000) ER <- 0.4
+      if(run.size > 19000 & run.size < 95000){
+        dat <- data.frame(R=c(19000,95000), ER=c(0,0.4))
+        lin <- lm(ER ~ R, data=dat)
+        ER <- coef(lin)[1] + coef(lin)[2]*run.size
+      }
+      catch <- run.size*ER
+      HR.all <- catch/run.size
+    }
+
 
     
     HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary?
@@ -206,7 +238,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   # SMU-level Performance measures:
   #	1: avg annual escapement
   #	2: avg annual harvest
-  #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty)
+  #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty) (ER)
   # 4: % of years with no harvest
   # 5: % of yrs harv > 10k (basic needs)
   #	6: CV in harvest
@@ -227,23 +259,22 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
-  pms[,3] <- median(harvest_rates, na.rm = TRUE)
+  pms[,3] <- median(harvest_rates, na.rm = TRUE) # should NAs be removed?
   pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs)
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
   pms[,6] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
-  #"status" - how many CUs are in each zone IN THE FINAL YEAR? ##OPEN FOR ADJUSTMENTS! 
+  #"status" - how many CUs are in each zone IN THE FINAL YEAR?
   pms[,7] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
   pms[,8] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
   pms[,9] <- sum(S[ny,] > Smax)
   pms[,10] <- sum(S[ny,] ==0)
   
   
-  # Output
   # CU-level performance measures
   # 1: % yrs above LRP (20% Smsr/Smax)
   # 2: % yrs above Smsr/Smax
   
-  pms_cu <- matrix(NA,length(alpha),2)
+  pms_cu <- matrix(NA,length(beta),2)
   pms_cu[,1] <- colSums(S[pm.yr:ny,] > matrix(0.2*Smax, 21,9, byrow = T))/(ny - pm.yr +1)
   pms_cu[,2] <- colSums(S[pm.yr:ny,] > matrix(Smax, 21,9, byrow = T))/(ny - pm.yr +1)
   
