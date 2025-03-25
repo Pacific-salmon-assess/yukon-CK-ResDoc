@@ -5,7 +5,13 @@ After that, all subsequent sections will be turned into appendices. -->
 
 `r if(!knitr:::is_latex_output()) '# (APPENDIX) Appendix {-}'`
 
-# RUN_RECONSTRUCTION MODEL {#app:first-appendix}
+# GENETIC STOCK INFORMATION {#app:first-appendix}
+
+Biological information on Canadian origin Yukon Chinook has been collected annually from the fish wheels at White and Sheep rocks (scales; most years from 1985–2008) and the gillnet test fishery at Eagle (tissue samples; 2005–present). Samples have typically been taken over the annual upstream adult migration period, with the number of samples taken each day roughly proportional to daily passage (@connors_incorporating_2020). Genetic material has been recovered from 150-300 archived scale samples for most years 1985-2005, and since then 500-1500 tissue samples have been taken per year for genetic stock assignment. These samples have been used to genotype individual fish by microsatellite panel (1985-2016; @beacham2006estimation) or single nucleotide polymorphism (SNP) panel (2017-2019; @beacham2018population) and then assigned to one of the nine reporting groups (i.e., repunits or groupings of individual river collections that are able to be resolved genetically). The microsatellite genetic baseline used to assign fish was initially described in @beacham2006estimation, and was constructed by the Molecular Genetics Lab (MGL; DFO) into a version controlled baseline (Chinook, microsatellites, Yukon River v.1.0.0; Sutherland, pers. comm.). This benchmarked baseline consists of 4,713 Chinook salmon sampled at 29 unique spawning locations (or tributaries) throughout the Canadian portion of the Yukon River Basin (Table XX). To form the optimal groupings for the baseline, a genetic dendrogram was constructed, and collection sites grouped into repunits until the repunits all showed sufficient reliability in 100% simulations in rubias (Moran and Anderson, 2018). Simulations indicated that the average simulation accuracy within each repunit was greater than 75% for all repunits (Table XX).  
+
+ADD SOMETHING ABOUT BIG SALMON
+
+# RUN RECONSTRUCTION MODEL {#app:second-appendix}
 
 - general description of multi-population run-reconstruction model
 
@@ -21,7 +27,7 @@ After that, all subsequent sections will be turned into appendices. -->
 \clearpage
 
 
-# SPAWNER RECRUITMENT MODELS  {#app:second-appendix}
+# SPAWNER RECRUITMENT MODELS  {#app:third-appendix}
 
 - general description of multi-population state-space approach and why we chose it
 - acknowledge that approach is expected to yield less biased estimates of key population characteristic than traditional spawner-recruitment models that can arise due to errors-in-variables and time-series bias
@@ -144,7 +150,7 @@ Given widespread evidence for changes in salmon productivity over time (@refs), 
 where $\sigma_\alpha$ is the magnitude of process variation in productivity and where recruitment anomalies were no longer modeled as being auto-correlated but all other parameters in equation \@ref(eq:AR1-ricker) otherwise remained the same.
 
 ## ESCAPEMENT QUALITY
-The spawner-recruitment models described in the previous section assumed that demographic attributes of spawning escapement have not changed over time such that reproductive output is homogeneous among individuals and has been static over the past 40 years. However, changes in age, sex, and length-at-age of returning Chinook salmon, including in the Yukon [@lewis_changes_2015; @ohlberger_demographic_2018; @ohlberger_reproductive_2020], have been widely observed, suggesting concurrent declines in per capita reproductive output as smaller females carry disproportionately fewer eggs of a smaller mass compared to larger females (i.e., fecundity and total egg mass scale exponentially with female size) [@ohlberger_reproductive_2020]. While changes in age, sex, and length-at-age (aka “escapement quality”) are not typically considered when deriving spawner-recruitment based reference points and setting escapement goals, recent research on Chinook salmon in the Kuskokwim River of western Alaska suggests that failing to account for declines in escapement quality may result in underestimating the escapement needed to maximize long-term sustainable yield or recruitment [@staton_incorporating_2021]. In addition, simulation analyses suggest that accounting for the consequences of declining "escapement quality" in fishery management (via reference points) can reduce conservation risks relative to assessment frameworks that do not take demographic change into account [@ohlberger2025accounting].  
+The spawner-recruitment models described in the previous section assumed that demographic attributes of spawning escapement have not changed over time such that reproductive output is homogeneous among individuals and has been static over the past 40 years. However, changes in age, sex, and length-at-age of returning Chinook salmon, including in the Yukon [@lewis_changes_2015; @ohlberger_demographic_2018; @ohlberger_reproductive_2020], have been widely observed, suggesting concurrent declines in per capita reproductive output as smaller females carry disproportionately fewer eggs of a smaller mass compared to larger females (i.e., fecundity and total egg mass scale exponentially with female size) [@ohlberger_reproductive_2020]. While changes in age, sex, and length-at-age (aka “escapement quality”) are not typically considered when deriving spawner-recruitment based reference points and setting escapement goals, previous research on Chinook salmon in the Yukon and Kuskokwim River of western Alaska suggests that failing to account for declines in escapement quality may result in underestimating the escapement needed to maximize long-term sustainable yield or recruitment [@staton_incorporating_2021;@connors_estimates_2023]. In addition, simulation analyses suggest that accounting for the consequences of declining "escapement quality" in fishery management (via reference points) can reduce conservation risks relative to assessment frameworks that do not take demographic change into account [@ohlberger2025accounting].  
 
 To evaluate the potential consequences of changes in escapement quality over time (which we operationalized as total egg mass) we translated time trends in sex ratios, age composition, and size-at-age to annual estimates of total egg mass production. We chose to focus on total egg mass instead of eggs because it it tightly correlated with egg energy content [@ohlberger_reproductive_2020] and may be a better proxy for female reproductive output than egg number. Large females produce not only more but also larger eggs compared to small females [@ohlberger_reproductive_2020]. 
 
@@ -277,9 +283,9 @@ and calculated totals for harvest and spawning escapement by summing over ages a
 We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$, respectively.
 
 
-# WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:third-appendix}
+# WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:fourth-appendix}
 
-# COMPUTING ENVIRONMENT {#app:fourth-appendix}  
+# COMPUTING ENVIRONMENT {#app:fifth-appendix}  
 
 This document aims to be transparent and reproducible. 
 All data and code to reproduce the analysis in the report, and generate it, is available in [this Zenodo hosted](https://doi.org/10.5281/zenodo.13328248) [GitHub repository](https://github.com/Pacific-salmon-assess/FR-PK-ResDoc/tree/v1.0?tab=readme-ov-file)  

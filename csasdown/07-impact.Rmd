@@ -6,16 +6,46 @@
 
 
 ## CLOSED LOOP SIMULATION MODEL  
+We developed a simple closed loop forward simulation, conditioned on our estimates of historical spawner abundance, harvest, age composition and time-varying productivity (Figure  \@ref(fig:fig-schematic)). This model was then used to help light on expected biological and fishery consequences of current and alternative harvest management measures. The simulation model started in the last year for which we had empirical observations (2024) and projected the dynamics of individual Conservation Units forward in time. In each year of the simulation, the model (1) generated a forecast of aggregate returns (with empirically based forecast error), (2) applies a given harvest control rule (HCR; see ), with outcome uncertainty because management control is not perfect, and (3) allows remaining fish to spawn.  
+Details on model components and calculation of performance are provided below.   
 
-### BIOLOGICAL SUB-MODEL  
-- description of biological model, propagating uncertainty by taking samples from joint posterior distributions
+### OPERATING MODEL  
+The operating model was used to simulate future population trajectories for the nine CUs for which we were able to fit spawner-recruitment models. The operating model projected their population dynamics forward over 26 years (i.e., to 2050, approximately 4 generations), thereby generating a posterior predictive distribution of future states conditioned on the historical data. By simulating Canadian origin Yukon Chinook salmon dynamics in this manner, we ensured that predicted future spawner abundance and age structure were conditioned on the incomplete cohorts at the end of the data series (i.e., those cohorts from which one or more older age classes have not yet returned to spawn) and that uncertainties in the spawner-recruit relationships were propagated through time (i.e., by drawing from the posterior distributions of each estimated parameter and abundance state in each iteration of the simulation).
+
+Population dynamics were assumed to be driven by @ricker-1954 type spawner-recruitment relationships:
+\begin{equation}
+  \ln(R_i,y) = \ln(S_i,y) + \ln(\alpha_i) - \beta S_i,y + v_i,y
+  \label{eq:AR1-ricker-main}
+\end{equation}
+
+where $\alpha$ is productivity (intrinsic rate of growth and $\beta$ is the magnitude of within brood year ($y$) and Conservation Unit $i$ density-dependent effects. Inter-generational variation in survival, $\sigma_{i,y}$, was modeled as a multivariate normal vector:
+
+\begin{equation}
+  \sigma_{i,y} \sim \mathcal{MVN}\left(\mathbf{0}, \Sigma_R\right)
+  \label{eq:var-covar}
+\end{equation}
+
+where the root diagonal of the covariance matrix $\Sigma_R$ is the Conservation Unit specific inter-generational variation in survival and where correlation in the recruitment residual time series vectors $\boldsymbol{\varepsilon}_i$ and $\boldsymbol{\varepsilon}_k$ between Conservation Unit $i$ and $k$ ($\rho_{i,k}$) is captured in the off-diagonal covariance elements of $\Sigma_R$.
+
+Returns in year $t$, $N_{t,i}$, were then modeled as a function of the proportion of individuals that mature and return at each age: 
+\begin{equation}
+  N_{t,i} = \sum_{a=4}^{7} R_{t-a} p_{a-3}
+  \label{eq:totalreturn-main}
+\end{equation}
+
+where $p$ is the maturity schedule composed of four age (ages four through seven). In each year of the forward simulation, the number of spawners in Equ. \@ref(eq:AR1-ricker-main) was calculated as the total return (Equ. \@ref(eq:totalreturn-main)) minus aggregate harvest which was determined according to the harvest control rules described in the following section (). 
+
+In each iteration of the forward simulation (n = 500) the operating model was parameterized by taking a draw from the joint posterior distributions of the relevant parameters from the spawner-recruitment models with time-varying intrinsic productivity fit to each Conservation Unit (Equ. \@ref(eq:AR1-ricker)-\@ref(eq:tv-alpha)). 
+
 
 ### FISHERY SUB-MODEL
-- description of current and alternative harvest control rules and alternative fishery management measures explored (e.g., no fishing, interim aggregate escapement goal, rebuilding goal, exploitation rate caps based on CU overfishing risk, Basic Needs Allocation, etc.)
-- description of forecast error and justification
-- description of outcome uncertainty and justification
+In each year of the simulation total returns were assumed to be forecasted with error. This error was assumed to be lognormally distributed with a mean equal to the true run size and a standard deviation of 0.79 based on a retrospective assessment of the mid-point of preseason forecasts and true run size 2000-present [@JTC2025Report]. Forecasted returns were then used as an input into a given harvest control rule that specified a target exploitation rate given the expected run-size. Outcome uncertainty (i.e., deviations from targeted catch due to imperfect management control) was then applied to calculate realized catch, where outcome uncertainty was assumed to be equal to a CV of 10%.
+
+The specific harvest control rules considered are detailed in Table X and ranged from a no fishing scenario to illustrate expected recovery potential, to fixed exploitation rate rules intended to simply illustrate the expected impact of a range of harvest rates, to escapement goal type rules (with and without caps on maximum exploitation) that were intended to approximate a range of realistic harvest management strategies. Conservation Units were assumed to be equally vulnerable to harvest and harvest control rules were defined by a combination of a lower management reference point, an upper reference point and a maximum removal reference, all defined at the stock aggregate scale. When there is both a lower and upper reference point, harvest rates linearly increase from zero at spawner abundances below the lower reference point to the maximum removal reference at run sizes equal to the spawner abundances associated with the upper reference point. The maximum removal reference was never allowed to exceed 80% in any scenarios because this is the maximum estimated aggregate harvest rate to have been experienced by the stock (occurred in 1987; @JTC2025Report). 
 
 ### PERFORMANCE MEASURES
+We quantified the expected performance of the HCRs against biological and fishery objectives and associated quantitative performance measures (Table X). Biological objectives included...
+
 - description of performance measures (% CUs above lower and upper benchmarks, average annual catch, relative catch – BNA met?), why chosen (i.e., what objectives they represent), and how calculated [table: performance measure descriptions]
 
 ## CONSEQUENCES OF CURRENT AND ALTERNATIVE HARVEST MANAGEMENT MEASURES 
