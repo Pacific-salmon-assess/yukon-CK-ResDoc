@@ -59,6 +59,16 @@ CU_spwn[7,] <- CU_spwn[7,]-big_salmon_recon
 CU_spwn_upr[7,] <- CU_spwn_upr[7,]-big_salmon_recon
 CU_spwn_lwr[7,] <- CU_spwn_lwr[7,]-big_salmon_recon
 
+# estimate hatchery contribution from Whitehorse fishway, remove from Upper Yukon CU
+hatch_upper <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
+  filter(system == "whitehorse",
+         year > 1984) |>
+  mutate(hatch = estimate*hatch_contrib)
+
+CU_spwn[8,] <- CU_spwn[8,]-hatch_upper$hatch
+CU_spwn_upr[8,] <- CU_spwn_upr[8,]-hatch_upper$hatch
+CU_spwn_lwr[8,] <- CU_spwn_lwr[8,]-hatch_upper$hatch
+
 # turn spawners into long data frame
 CU_spwn_df <- as.data.frame(CU_spwn)
 CU_spwn_df$CU <- rownames(CU_spwn)
