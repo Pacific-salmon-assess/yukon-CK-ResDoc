@@ -392,7 +392,9 @@ aggregrate <- read.csv(here("analysis/data/raw/cdn-esc.csv")) |>
   select(year, CU, mean,lwr, upr)
 
 esc_plus <- esc |>
-  mutate(CU = stock)|>
+  mutate(CU = stock,
+         lwr = lower,
+         upr = upper)|>
   select(year, CU, mean,lwr, upr)
 
 esc_plus <- rbind(esc_plus, porcupine,aggregrate)
@@ -409,14 +411,19 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
 
 my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
-# trib vs RR spawner elationships ----
+# trib vs RR spawner relationships ----
 esc_join <- esc |>
   mutate(CU = stock) |>
   select(CU, year, mean, CU_f)
 
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU != "Porcupine") |>
-  unite(tributary, c("system", "type"))
+  mutate(
+    estimate = case_when(
+      system == "whitehorse" ~ estimate*(1-hatch_contrib),
+      .default = estimate)) |>
+  unite(tributary, c("system", "type")) |>
+  select(!hatch_contrib)
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
   drop_na()
