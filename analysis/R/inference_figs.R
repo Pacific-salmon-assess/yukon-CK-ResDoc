@@ -431,6 +431,7 @@ ggplot(trib_rr, aes(x = mean, y = estimate)) +
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
 
+
 # forward simulations --------------------------------------------------------------------
 
 # Use "standard" (non-TV) benchmarks
@@ -446,13 +447,13 @@ if(alpha_type == "TVA"){
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
     spwn.fwd <- TVA.spwn
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
-      pivot_longer(2:9, names_to = "metric") 
+      pivot_longer(-1, names_to = "metric") 
    } else if (alpha_type == "AR1"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
     spwn.fwd <- AR1.spwn 
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-       pivot_longer(2:9, names_to = "metric") 
+       pivot_longer(-1, names_to = "metric") 
 }
 
 
@@ -461,30 +462,48 @@ H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
 bench.par.table$CU_f <- factor(bench.par.table$CU, levels = CU_order)
 spwn.fwd$CU_f <- factor(spwn.fwd$CU, levels = CU_order)
 
-## Spawners projection, 3 scenarios
-ggplot(S.fwd) +
-  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
-              alpha = 0.2) +
-  geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
-              aes(ymin = S.25/1000, ymax = S.75/1000, 
-                  x= year), #offset to return year 
-              fill = "grey", color = "grey") +
-  geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
-            aes(y=S.50/1000, x= year), color = "black") + 
-  geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
-  geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
-             color = "forestgreen", lty = 2) +
-  geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
-             color = "darkred", lty = 2) +
-  facet_wrap(~CU_f, scales = "free_y") +
-  scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-  labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
-       y = "Spawners (000s)") +
-  theme_bw() +
-  theme(legend.position = "bottom") +
-  scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here(paste0("analysis/plots/S-fwd_", alpha_type, ".PNG")))
+## Spawners projection
+
+# make HCR groups so they can be visualized better
+HCR_grps <- list(base = c("no.fishing", "fixed.ER", "status.quo"),
+                 rebuilding = c("no.fishing",
+                                unique(S.fwd$HCR[
+                   grepl("*rebuilding*", S.fwd$HCR)])),
+                 status.quo = c("no.fishing", 
+        unique(S.fwd$HCR[grepl("*status.quo*", S.fwd$HCR)])))
+
+# next step is to make colours consistent
+HCR_cols <- c("#EC9602", "purple3", "black", "#C69305", "#EED307",  "#0F8A2E", "#80AA0C")
+names(HCR_cols) <- unique(S.fwd$HCR)
+                  
+for(i in 1:length(HCR_grps)) {
+  S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
+  ggplot() +
+    geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
+                alpha = 0.2) +
+    geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+                aes(ymin = S.25/1000, ymax = S.75/1000, 
+                    x= year), #offset to return year 
+                fill = "grey", color = "grey") +
+    geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
+              aes(y=S.50/1000, x= year), color = "black") + 
+    geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
+    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
+               color = "forestgreen", lty = 2) +
+    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
+               color = "darkred", lty = 2) +
+    facet_wrap(~CU_f, scales = "free_y") +
+    scale_x_continuous(expand = expansion(mult = c(0, .01))) +
+    labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
+         y = "Spawners (000s)") +
+    theme_bw() +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
+  
+  my.ggsave(here(paste("analysis/plots/S-fwd", alpha_type, names(HCR_grps[i]), "grp", ".PNG", sep="_")))
+}
+
 
 ## Harvest projection, 3 scenarios 
 ggplot(H.fwd) +
@@ -502,7 +521,7 @@ ggplot(H.fwd) +
        y = "Harvest (number caught)") +
   theme_bw() +
   theme(legend.position = "bottom") +
-  scale_color_viridis_d(aesthetics = c("fill", "color"))
+  scale_colour_manual(values=HCR_cols, aesthetics=c("fill", "colour"))
 
 my.ggsave(here(paste0("analysis/plots/H-fwd_", alpha_type, ".PNG")))
 
@@ -526,14 +545,15 @@ ggplot(S.fwd |>
   theme_sleek() +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative", alpha_type, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative_", alpha_type, ".PNG")))
 
 
 # Performance metrics
 perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
-ggplot(perf.plot, aes(x=HCR, y = value)) + 
+ggplot(perf.metrics, aes(x=factor(HCR, levels=unique(HCR)[c(3:5,1,6:7)]), y = value, fill=HCR)) + # or data=perf.plot
   geom_col() +
+  scale_fill_manual(values=HCR_cols) +
   facet_wrap(~metric, scales = "free_y") +
   theme_bw() +
   theme(legend.position = "bottom", 
@@ -545,10 +565,10 @@ my.ggsave(here(paste0("analysis/plots/perf_metrics_", alpha_type, ".PNG")))
 
 # Performance status
 perf.status <- perf.metrics |>
-  filter(!(metric %in% c("escapement", "ER", "harvest", "harv.stability"))) |>
-  mutate(status = factor(metric, levels = c("above.USR", "between.ref", "below.LSR", "extinct")))
+  filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
+  mutate(status = factor(metric, levels = c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")))
 
-ggplot(perf.status, aes(x = HCR, y= value, fill = status)) +
+ggplot(perf.status, aes(x = HCR, y = value, fill = status)) + 
   geom_col() +
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
   scale_y_continuous(breaks = c(2,4,6,8)) +
