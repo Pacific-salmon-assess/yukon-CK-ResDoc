@@ -371,8 +371,6 @@ ggplot(esc, aes(x = year, y = mean/1000)) +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~CU_f, ncol=3, scales = "free_y") +
-  geom_hline(data= bench_plot, aes(yintercept=upper/1000), lty=2, lwd=1,col="dark green") +
-  geom_hline(data= bench_plot, aes(yintercept=lower/1000), lty=2, lwd=1,col="red") +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
