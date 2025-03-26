@@ -1,10 +1,4 @@
 # IMPACT OF FISHERY MANAGEMENT MEASURES     {#sec:impact}
-
-- general description of closed-loop simulation model, and purpose (i.e., to shed light on expected biological and fishery consequences of current and alternative harvest management measures that could contribute to stock rebuilding)
-
-[figure: Illustration of closed loop simulation model including Operating Model, Management Procedures and performance metrics]
-
-
 ## CLOSED LOOP SIMULATION MODEL  
 We developed a simple closed loop forward simulation, conditioned on our estimates of historical spawner abundance, harvest, age composition and time-varying productivity (Figure  \@ref(fig:fig-schematic)). This model was then used to help light on expected biological and fishery consequences of current and alternative harvest management measures. The simulation model started in the last year for which we had empirical observations (2024) and projected the dynamics of individual Conservation Units forward in time. In each year of the simulation, the model (1) generated a forecast of aggregate returns (with empirically based forecast error), (2) applies a given harvest control rule (HCR; see ), with outcome uncertainty because management control is not perfect, and (3) allows remaining fish to spawn.  
 Details on model components and calculation of performance are provided below.   
@@ -44,7 +38,7 @@ In each year of the simulation total returns were assumed to be forecasted with 
 The specific harvest control rules considered are detailed in Table X and ranged from a no fishing scenario to illustrate expected recovery potential, to fixed exploitation rate rules intended to simply illustrate the expected impact of a range of harvest rates, to escapement goal type rules (with and without caps on maximum exploitation) that were intended to approximate a range of realistic harvest management strategies. Conservation Units were assumed to be equally vulnerable to harvest and harvest control rules were defined by a combination of a lower management reference point, an upper reference point and a maximum removal reference, all defined at the stock aggregate scale. When there is both a lower and upper reference point, harvest rates linearly increase from zero at spawner abundances below the lower reference point to the maximum removal reference at run sizes equal to the spawner abundances associated with the upper reference point. The maximum removal reference was never allowed to exceed 80% in any scenarios because this is the maximum estimated aggregate harvest rate to have been experienced by the stock (occurred in 1987; @JTC2025Report). 
 
 ### PERFORMANCE MEASURES
-We quantified the expected performance of the HCRs against biological and fishery objectives and associated quantitative performance measures (Table X). Biological objectives included...
+We quantified the expected performance of the HCRs against biological and fishery objectives and associated quantitative performance measures (Table \@ref(tab-perf-metrics-descriptions)). Biological objectives included...
 
 - description of performance measures (% CUs above lower and upper benchmarks, average annual catch, relative catch – BNA met?), why chosen (i.e., what objectives they represent), and how calculated [table: performance measure descriptions]
 

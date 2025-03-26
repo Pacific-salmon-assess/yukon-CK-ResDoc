@@ -13,6 +13,32 @@ knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
 \clearpage
 
 # TABLES  
+
+(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
+```{r tab-perf-metrics-descriptions, results = "asis"}
+df <- data.frame(Metric = c("% replicate simulations < LRP", "% replicate simulations > USR", "average annual catch", "catch stability (1/CV)", 
+                            "relative catch metric"), 
+                 Description = c("Probability the stock spawner abundance falls below the Limit Reference Point across replicate simulations and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated ",
+                                 "Probability the stock spawner abundance falls above the Upper Stock Reference Point across replicate simulations and years ",
+                                 "Average catch across replicate simulations and years",
+                                 "Stability in average catch across replicate simulations and years($\\mu_C$), where is $\\sigma_C$ the standard deviation in catch",
+                                 "Probability annual catch is greater than the average of the top 3 years of catch since 2000 ($C_{top}$), a semi-arbitrary indicator of a ‘good year’ "),
+                 Equation = c("$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t<S_{gen}} {t_2-t_1+1}$", 
+                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t>0.8S_{MSY}} {t_2-t_1+1}$", 
+                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_tC_t} {t_2-t_1+1}$", 
+                              "$\\cfrac{1}{\\tfrac{\\sigma_C}{\\mu_C}}$", 
+                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}C_t>C_{top}} {t_2-t_1+1}$"))
+df|>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-perf-metrics-descriptions)", 
+                     repeat_header = TRUE, 
+                     align = "llc")|>
+  kableExtra::column_spec(2, width = "6.5cm")
+```
+\clearpage
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
 ```{r ref-points, results = "asis"}
 priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)", 
