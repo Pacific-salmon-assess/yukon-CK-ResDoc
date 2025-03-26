@@ -582,6 +582,20 @@ ggplot(perf.status, aes(x = HCR, y = value, fill = status)) +
 
 my.ggsave(here(paste0("analysis/plots/perf_status_", alpha_type, ".PNG")))
 
+# covariance plots ----
 
+library(ggcorrplot)
+
+colnames(sig.R.samps) <- names(AR1.fits)
+sig.R.samps.order <- sig.R.samps[,c(4,5,)]
+Sig.R <- cov(sig.R.samps) 
+
+colnames(Sig.R) <- names(AR1.fits)
+rownames(Sig.R) <- names(AR1.fits)
+
+ggcorrplot(Sig.R, hc.order = TRUE, type = "lower",
+           outline.col = "white",
+           lab=TRUE)
+my.ggsave(here("analysis/plots/recruit-corr-matrix.PNG"))
 
 
