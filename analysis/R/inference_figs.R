@@ -587,15 +587,17 @@ my.ggsave(here(paste0("analysis/plots/perf_status_", alpha_type, ".PNG")))
 library(ggcorrplot)
 
 colnames(sig.R.samps) <- names(AR1.fits)
-sig.R.samps.order <- sig.R.samps[,c(4,5,)]
-Sig.R <- cov(sig.R.samps) 
+sig.R.samps.order <- sig.R.samps[,c(4,8,6,2,5,3,1,7,9)]
+Sig.R <- cov(sig.R.samps.order) 
 
-colnames(Sig.R) <- names(AR1.fits)
-rownames(Sig.R) <- names(AR1.fits)
+colnames(Sig.R) <- colnames(sig.R.samps.order)
+rownames(Sig.R) <- colnames(sig.R.samps.order)
 
 ggcorrplot(Sig.R, hc.order = TRUE, type = "lower",
            outline.col = "white",
            lab=TRUE)
 my.ggsave(here("analysis/plots/recruit-corr-matrix.PNG"))
 
-
+CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters")
