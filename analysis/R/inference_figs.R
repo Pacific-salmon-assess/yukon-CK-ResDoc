@@ -604,6 +604,7 @@ perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
   guides(fill=guide_legend(nrow=2, byrow=T)) +
   labs(title = "Forward simulation performance metrics", x="", y="") 
 
+
 my.ggsave(here(paste0("analysis/plots/perf_metrics_all_", alpha_type, ".PNG")))
 
 
