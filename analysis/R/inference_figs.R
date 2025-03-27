@@ -469,32 +469,33 @@ H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
 bench.par.table$CU_f <- factor(bench.par.table$CU, levels = CU_order)
 spwn.fwd$CU_f <- factor(spwn.fwd$CU, levels = CU_order)
 
-
-## Spawners projection
-
-# make HCR groups so they can be visualized better
-HCR_grps <- list(base = c("no.fishing", "fixed.ER", "status.quo"),
+# assign HCRs to groups
+HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  rebuilding = c("no.fishing",
                                 unique(S.fwd$HCR[
-                   grepl("*rebuilding*", S.fwd$HCR)])),
+                                  grepl("*rebuilding*", S.fwd$HCR)])),
                  status.quo = c("no.fishing", 
-        unique(S.fwd$HCR[grepl("*status.quo*", S.fwd$HCR)])))
+                                unique(S.fwd$HCR[grepl("*status.quo*", S.fwd$HCR)])),
+                 simple = c("no.fishing", "status.quo", "rebuilding"),
+                 fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 
 # next step is to make colours consistent
-HCR_cols <- c("#EC9602", "purple3", "black", "#C69305", "#EED307",  "#0F8A2E", "#80AA0C")
-names(HCR_cols) <- unique(S.fwd$HCR)
+HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
+names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] # this will break easily
+
+## Spawners projection
                   
-for(i in 1:length(HCR_grps)) {
+for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
   ggplot() +
-    geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
+    geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
-    geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
-                aes(ymin = S.25/1000, ymax = S.75/1000, 
-                    x= year), #offset to return year 
-                fill = "grey", color = "grey") +
-    geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
-              aes(y=S.50/1000, x= year), color = "black") + 
+    #geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+     #           aes(ymin = S.25/1000, ymax = S.75/1000, 
+      #              x= year) #offset to return year 
+       #         ) +
+    #geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
+     #         aes(y=S.50/1000, x= year), color = "black") + 
     geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
     geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
                color = "forestgreen", lty = 2) +
@@ -504,33 +505,37 @@ for(i in 1:length(HCR_grps)) {
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
     labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
          y = "Spawners (000s)") +
-    theme_bw() +
+    theme_sleek() +
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
   my.ggsave(here(paste("analysis/plots/S-fwd", alpha_type, names(HCR_grps[i]), "grp", ".PNG", sep="_")))
 }
 
+## Harvest projection
+for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
+  H.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
+    ggplot() +
+    geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
+                alpha = 0.2) +
+    #geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+    #           aes(ymin = S.25/1000, ymax = S.75/1000, 
+    #              x= year) #offset to return year 
+    #         ) +
+    #geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
+     #         aes(y=H.50/1000, x= year), color = "black") + 
+    geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
+    facet_wrap(~CU_f, scales = "free_y") +
+    scale_x_continuous(expand = expansion(mult = c(0, .01))) +
+    labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
+         y = "Harvest (000s)") +
+    theme_sleek() +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
+  
+  my.ggsave(here(paste("analysis/plots/H-fwd", alpha_type, names(HCR_grps[i]), "grp", ".PNG", sep="_")))
+}
 
-## Harvest projection, 3 scenarios 
-ggplot(H.fwd) +
-  geom_ribbon(aes(ymin = H.25, ymax = H.75, x = year, color = HCR, fill = HCR), 
-              alpha = 0.2) +
-  geom_ribbon(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
-              aes(ymin = H.25, ymax = H.75, x= year), #offset to return year 
-              fill = "grey", color = "grey") +
-  geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), ##Should line up?
-            aes(y=H.50, x= year), color = "black") + 
-  geom_line(aes(year, H.50, color = HCR), lwd=1) +
-  facet_wrap(~CU_f, scales = "free_y") +
-  scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-  labs(title = "Forward simulation harvest trajectory", 
-       y = "Harvest (number caught)") +
-  theme_bw() +
-  theme(legend.position = "bottom") +
-  scale_colour_manual(values=HCR_cols, aesthetics=c("fill", "colour"))
-
-my.ggsave(here(paste0("analysis/plots/H-fwd_", alpha_type, ".PNG")))
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
@@ -555,10 +560,42 @@ ggplot(S.fwd |>
 my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative_", alpha_type, ".PNG")))
 
 
-# Performance metrics
-perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
 
-ggplot(perf.metrics, aes(x=factor(HCR, levels=unique(HCR)[c(3:5,1,6:7)]), y = value, fill=HCR)) + # or data=perf.plot
+## Spawners vs ER trade-off
+
+spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
+  group_by(HCR, CU_f) %>% 
+  summarize(mean_spwn = mean(S.50)) %>%
+  mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>% 
+  ggplot() +
+  geom_point(aes(y=ER, x=mean_spwn/1000, col=CU_f), shape='circle', size=2, alpha=0.7) +
+  scale_colour_viridis_d() +
+  theme_sleek() +
+  theme(legend.position="none") +
+  labs(x="Spawners (x1000)", y="Exploitation Rate", col="Conservation Unit")
+
+harv_v_ER <- H.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
+  group_by(HCR, CU_f) %>% 
+  summarize(mean_harv = mean(H.50)) %>%
+  mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>% 
+  ggplot() +
+  geom_point(aes(y=ER, x=mean_harv/1000, col=CU_f), shape='circle', size=2, alpha=0.7) +
+  scale_colour_viridis_d() +
+  theme_sleek() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank()) +
+  labs(x="Harvest (x1000)", y="Exploitation Rate", col="Conservation Unit")
+
+cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1))
+
+my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs", alpha_type, ".PNG")))
+
+
+# Performance metrics - basic
+perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability", "pr.basic.needs", "pr.no.harv"))
+
+perf.plot %>% filter(HCR %in% HCR_grps[["simple"]]) %>%
+  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
   geom_col() +
   scale_fill_manual(values=HCR_cols) +
   facet_wrap(~metric, scales = "free_y") +
@@ -566,16 +603,19 @@ ggplot(perf.metrics, aes(x=factor(HCR, levels=unique(HCR)[c(3:5,1,6:7)]), y = va
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(), 
         legend.title = element_blank()) +
-  labs(title = "Forward simulaiton performance metrics") 
+  labs(title = "Forward simulation performance metrics") 
 
 my.ggsave(here(paste0("analysis/plots/perf_metrics_", alpha_type, ".PNG")))
+
 
 # Performance status
 perf.status <- perf.metrics |>
   filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
-  mutate(status = factor(metric, levels = c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")))
+  mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)), 
+    levels=c("above USR", "between ref", "below LSR", "extinct")))
 
-ggplot(perf.status, aes(x = HCR, y = value, fill = status)) + 
+perf.status %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
+  ggplot(aes(x = HCR, y = value, fill = status)) + 
   geom_col() +
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
   scale_y_continuous(breaks = c(2,4,6,8)) +
@@ -585,5 +625,18 @@ ggplot(perf.status, aes(x = HCR, y = value, fill = status)) +
 my.ggsave(here(paste0("analysis/plots/perf_status_", alpha_type, ".PNG")))
 
 
+# Performance status - Fixed ER
+
+perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
+  mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
+  ggplot(aes(x=value, y=factor(ER), fill=status)) +
+  geom_col() +
+  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
+  scale_x_continuous(breaks = c(2,4,6,8)) +
+  scale_y_discrete(breaks = seq(0,100,20)) +
+  labs(y = "Exploitation Rate", title = "CU status at the end of forward simulation", fill="") +
+  theme_bw()
+
+my.ggsave(here(paste0("analysis/plots/fixed_ER_status_", alpha_type, ".PNG")))
 
 
