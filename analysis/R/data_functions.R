@@ -198,19 +198,19 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
       if(HR.all > 0.4){       ## lower ER cap (40%) 
         catch <- run.size*0.4
         HR.all <- catch/run.size }}
-    if(HCR == "fixed.ER"){
+    if(grepl("fixed.ER", HCR)){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
       HR.all <- ER}
     if(HCR == "alt.rebuilding"){
-      if(run.size <= 19000) ER <- 0
-      if(run.size >= 95000) ER <- 0.4
+      if(run.size <= 19000) catch <- 0
+      if(run.size >= 95000) catch <- run.size*0.4
       if(run.size > 19000 & run.size < 95000){
         dat <- data.frame(R=c(19000,95000), ER=c(0,0.4))
         lin <- lm(ER ~ R, data=dat)
         ER <- coef(lin)[1] + coef(lin)[2]*run.size
+        catch <- run.size*ER
       }
-      catch <- run.size*ER
       HR.all <- catch/run.size
     }
 
