@@ -593,15 +593,16 @@ my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs", alpha_type, ".PNG")))
 perf.plot <- perf.metrics
 
 perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
-  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
+  ggplot(aes(x=factor(HCR, levels=HCRs[1:6]), y = value, fill=factor(HCR, levels=HCRs[1:6]))) + 
   geom_col() +
   scale_fill_manual(values=HCR_cols) +
   facet_wrap(~metric, scales = "free_y") +
-  theme_bw() +
+  theme_minimal() +
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(), 
         legend.title = element_blank()) +
-  labs(title = "Forward simulation performance metrics") 
+  guides(fill=guide_legend(nrow=2, byrow=T)) +
+  labs(title = "Forward simulation performance metrics", x="", y="") 
 
 my.ggsave(here(paste0("analysis/plots/perf_metrics_all_", alpha_type, ".PNG")))
 
