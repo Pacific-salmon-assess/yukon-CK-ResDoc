@@ -371,8 +371,6 @@ ggplot(esc, aes(x = year, y = mean/1000)) +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~CU_f, ncol=3, scales = "free_y") +
-  geom_hline(data= bench_plot, aes(yintercept=upper/1000), lty=2, lwd=1,col="dark green") +
-  geom_hline(data= bench_plot, aes(yintercept=lower/1000), lty=2, lwd=1,col="red") +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
 
@@ -639,4 +637,18 @@ perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
 
 my.ggsave(here(paste0("analysis/plots/fixed_ER_status_", alpha_type, ".PNG")))
 
+# covariance plots ----
 
+library(ggcorrplot)
+
+colnames(sig.R.samps) <- names(AR1.fits)
+sig.R.samps.order <- sig.R.samps[,c(4,8,6,2,5,3,1,7,9)]
+Sig.R <- cov(sig.R.samps.order) 
+
+colnames(Sig.R) <- colnames(sig.R.samps.order)
+rownames(Sig.R) <- colnames(sig.R.samps.order)
+
+ggcorrplot(Sig.R, hc.order = TRUE, type = "lower",
+           outline.col = "white",
+           lab=TRUE)
+my.ggsave(here("analysis/plots/recruit-corr-matrix.PNG"))
