@@ -75,7 +75,8 @@ for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-prese
 OU <- 0.1  ## could also base this off something else from fisheries management 
 
 # --- Create array to store outcomes -----------------------------------------------------
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap",  "fixed.ER", "alt.rebuilding")
+ER_seq <- seq(5, 100, 5) # how many fixed ERs to test?
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq))
 sim.outcomes <- NULL
 S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
@@ -94,10 +95,14 @@ for(i in 1:length(HCRs)){
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
     phi <- 0.75 # mean across CUs
-    ER <- 0.6
-    
+    if(grepl('fixed.ER', HCR)) {
+      ER <- as.numeric(gsub("\\D", "", HCR))/100
+      } else {ER <- NULL} # Set ER for fixed ER sims
+      
     out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,lst.resid,phi, ER)
+  
     
+
     sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states
@@ -105,9 +110,6 @@ for(i in 1:length(HCRs)){
     H.time <- rbind(H.time, cbind(out$H[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
                                   rep(j, ny-a_max+1)))
-    #if(anyNA(out$H[7:ny,])){
-     # stop(c("NA produced -- HCR: ", HCRs[i], ", sim: ", j)) }
-    
     
   }
 } # end of simulation loop
