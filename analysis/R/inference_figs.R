@@ -589,10 +589,10 @@ cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1))
 my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs", alpha_type, ".PNG")))
 
 
-# Performance metrics - basic
-perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability", "pr.basic.needs", "pr.no.harv"))
+# Performance metrics - ALL
+perf.plot <- perf.metrics
 
-perf.plot %>% filter(HCR %in% HCR_grps[["simple"]]) %>%
+perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
   ggplot(aes(x=HCR, y = value, fill=HCR)) + 
   geom_col() +
   scale_fill_manual(values=HCR_cols) +
@@ -603,7 +603,41 @@ perf.plot %>% filter(HCR %in% HCR_grps[["simple"]]) %>%
         legend.title = element_blank()) +
   labs(title = "Forward simulation performance metrics") 
 
-my.ggsave(here(paste0("analysis/plots/perf_metrics_", alpha_type, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/perf_metrics_all_", alpha_type, ".PNG")))
+
+
+# Performance metrics - basic
+perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
+
+perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
+  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
+  geom_col() +
+  scale_fill_manual(values=HCR_cols) +
+  facet_wrap(~metric, scales = "free_y", nrow=1) +
+  theme_bw() +
+  theme(legend.position = "bottom", 
+        axis.text.x = element_blank(), 
+        legend.title = element_blank()) +
+  labs(title = "Forward simulation performance metrics") 
+
+my.ggsave(here(paste0("analysis/plots/perf_metrics_basic_", alpha_type, ".PNG")))
+
+
+# Performance metrics - harvest
+perf.plot <- filter(perf.metrics, metric %in% c("harvest", "harv.stability", "pr.basic.needs", "pr.no.harvest"))
+
+perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
+  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
+  geom_col() +
+  scale_fill_manual(values=HCR_cols) +
+  facet_wrap(~metric, scales = "free_y", nrow=1) +
+  theme_bw() +
+  theme(legend.position = "bottom", 
+        axis.text.x = element_blank(), 
+        legend.title = element_blank()) +
+  labs(title = "Forward simulation harvest performance metrics") 
+
+my.ggsave(here(paste0("analysis/plots/perf_metrics_harv_", alpha_type, ".PNG")))
 
 
 # Performance status
