@@ -13,4 +13,10 @@
 
 
 ## KEY KNOWLEDGE GAPS AND AREAS OF POTENTIAL FUTURE WORK  
+Key assumptions:
+- equal vulnerability to fisheries
+- no natural mortality after passing border
+- age comps reasonably approximated
 
+Future work
+-  genetics of juvenile surveys and deeper dive 
