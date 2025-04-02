@@ -2,10 +2,10 @@
 
 out <- NULL
 
-for(j in HCRs[c(2:6,18)]){
+for(j in HCRs[2:6]){
   HCR = j
   
-  for(i in seq(1,500000, 500)) {
+  for(i in seq(1,500000, 1000)) {
     run.size = i
     
     if(is.na(run.size)==TRUE){run.size <- 0}
@@ -35,8 +35,8 @@ for(j in HCRs[c(2:6,18)]){
       if(HR.all > 0.4){       ## lower ER cap (40%) 
         catch <- run.size*0.4
         HR.all <- catch/run.size }}
-    if(grepl("fixed.ER.60", HCR)){
-      ER <- ifelse(run.size==0, 0, 0.6)
+    if(grepl("fixed.ER", HCR)){
+      ER <- ifelse(run.size==0, 0, as.numeric(gsub("\\D", "", HCR)))
       catch <- run.size*ER
       HR.all <- ER}
     if(HCR == "alt.rebuilding"){
@@ -58,14 +58,28 @@ for(j in HCRs[c(2:6,18)]){
   }
 }
 
+# Add fixed ER to out
+out_fixed_er <- data.frame(HCR="fixed.ER",
+                           run_size=rep(seq(1,500000, 1000), times=20),
+                           HR = rep(seq(0.05,1,0.1), each=20),
+                           ER = rep(seq(0.05,1,0.1), each=20),
+                           catch = NA) 
+out_plot <- bind_rows(out, out_fixed_er)
+
+# load historical run size info
+hist_run <- read.csv(here('analysis', 'data', 'raw', 'rr-table.csv'))
+hist_run <- hist_run %>% dplyr::summarize(lower = quantile(Total.run, 0.025), 
+                                          upper = quantile(Total.run, 0.975))
 
 # Visualize HCRs
 
-ggplot(out) + geom_line(aes(x=run_size/1000, y=HR, col=HCR), linewidth=0.75) +
-  facet_wrap(~factor(HCR, levels=HCRs[c(18,2:6)])) + theme_minimal() +
+ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75) +
+  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100), fill="grey70", alpha=0.2) +
+  facet_wrap(~factor(HCR, levels=unique(out$HCR)[c(3:5,1:2)])) + 
   scale_colour_manual(values=HCR_cols) +
-  labs(x="Run Size (thousands)", y="Harvest Rate", title="Harvest Control Rules") +
-  theme(legend.position = "none") +
-  lims(x=c(0,400), y=c(0,1))
+  labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
+  theme_minimal() + theme(legend.position = "none") 
+  lims(x=c(0,400)) +
+  scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
 
