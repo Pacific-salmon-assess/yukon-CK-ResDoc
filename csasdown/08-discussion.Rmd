@@ -20,3 +20,7 @@ Key assumptions:
 
 Future work
 -  genetics of juvenile surveys and deeper dive 
+porcupine ref points
+
+Assessment triggers:
+- enough data for porcupine
