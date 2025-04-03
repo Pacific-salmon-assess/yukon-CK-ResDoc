@@ -82,7 +82,8 @@ factors.df <- data.frame("Life stage" = c(rep("Spawner", length(factors_spwn)),
                              factors_juvenile, factors_adult),
                          "Description or hypothesis" = c(desc_spwn, desc_egg, 
                                                          desc_frysmolt, desc_juvenile,
-                                                         desc_adult)
+                                                         desc_adult),
+                         References = NA
                          )
 
 factors.df |>
