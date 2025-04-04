@@ -13,6 +13,69 @@ knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
 \clearpage
 
 # TABLES  
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
+
+```{r tab-factors-summary, results="asis"}
+# spawners
+factors_spwn <- c("Water temperature", "Discharge/flow levels",
+             "Ichthypohonus hoferi (pathogen)", "Thiamine deficiency complex (TDC)")
+desc_spwn <- c("Temperatures >18oC cause heat stress and impact spawning success",
+               "Low flow reduce spawning success via higher temperature, habitat fragmentation",
+               "Primarily infects maturing adults in the marine environment, potentially high mortality during spawning migration",
+               "Low thiamine in adults has transgenerational effects")
+
+  
+# egg  
+factors_egg <- c("Stream flow", "Winter stream temperature")
+desc_egg <- c("High flows scour streambeds, reducing egg survival ",
+              "Cold and/or long winters reduce incubation survival")
+
+# fry / smolt
+factors_frysmolt <- c("Aufeis (icing)", "Stream flow / precipitation", 
+                      "Ice out date", "Hydroelectric dam", "Placer mining")
+desc_frysmolt <- c("Reduced or halted streamflow from ice formations decreases fry survival",
+                   "High streamflow (high precipitation) may reduce foraging efficiency", 
+                   "Early ice-out allows earlier outmigration", 
+                   "Fry/smolts pass through dam, decreasing downstream survival",
+                   "Sediment deposition and suspension can decrease egg and fry survival")
+
+# juvenile
+factors_juvenile <- c("Sea surface temperature - winter", "Sea ice cover", "Predation")
+desc_juvenile <- c("Colder first winters result in less productivity", 
+                   "Productivity is lower in years when ice persists in the Bering Sea later",
+                   "Increase in apex predator abundance")
+
+
+factors_adult <- c("Pink salmon competition", "Prey quality")
+desc_adult <- c("Abundant pink salmon cause trophic cascades in the Bering Sea",
+                "Declining prey quality in the Eastern Bering Sea hypothesized to be the cause of thiamine deficiency in spawning adults")
+
+factors.df <- data.frame("Life stage" = c(rep("Spawner", length(factors_spwn)),
+                                        rep("Egg", length(factors_egg)),
+                                        rep("Fry / smolt", length(factors_frysmolt)),
+                                        rep("Juvenile", length(factors_juvenile)),
+                                        rep("Adult", length(factors_adult))
+                                        ),
+                         "Anthropogenic, ecosystem, or climate factor" = 
+                           c(factors_spwn, factors_egg, factors_frysmolt, 
+                             factors_juvenile, factors_adult),
+                         "Description or hypothesis" = c(desc_spwn, desc_egg, 
+                                                         desc_frysmolt, desc_juvenile,
+                                                         desc_adult),
+                         References = NA
+                         )
+
+factors.df |>
+  dplyr::mutate_all(function(x){gsub("\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-factors-summary)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "3cm")|>
+    kableExtra::column_spec(2, width = "3cm")|>
+    kableExtra::column_spec(3, width = "10cm")
+```
+\clearpage
 
 (ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
 ```{r tab-perf-metrics-descriptions, results = "asis"}
@@ -75,3 +138,4 @@ priors.df |>
     kableExtra::column_spec(3, width = "10cm")
 ```
 \clearpage
+
