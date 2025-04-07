@@ -438,7 +438,23 @@ ggplot(trib_rr, aes(x = mean, y = estimate)) +
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
 
+# trib trim series ----
+tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
+  mutate(
+    estimate = case_when(
+      system == "whitehorse" ~ estimate*(1-hatch_contrib),
+      .default = estimate)) |>
+  unite(tributary, c("system", "type")) |>
+  select(!hatch_contrib)
 
+ggplot(tribs.all, aes(x = year, y = estimate/1000)) + 
+  geom_line(lwd = 0.8) +
+  xlab("Year") +
+  ylab("Spawners (000s)") +
+  facet_wrap(~tributary, ncol=4, scales = "free_y") +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme_sleek()  
+my.ggsave(here("analysis/plots/trib-escape.PNG"))
 # forward simulations --------------------------------------------------------------------
 
 # Use "standard" (non-TV) benchmarks
