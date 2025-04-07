@@ -14,10 +14,15 @@
 
 ## KEY KNOWLEDGE GAPS AND AREAS OF POTENTIAL FUTURE WORK  
 Key assumptions:
+1. population dynamics:
 - equal vulnerability to fisheries
-- no natural mortality after passing border
+- no natural mortality after passing border: get stat on proportion of tagged fish from recent telemetry that made it past eagle and were detected on spawning grounds, as a rough estimate of potential en-route mortality in Canada. I know sample sizes are really small but it helps shed some modicum of light on the big assumption of the run-reconstructions models that border passage - CDN harvest = escapement
 - age comps reasonably approximated
+2. Management consequences
+- super simplified, points to recovery and rebuilding potential and framework for more exploration
 
+Reality check: 
+- make clear that IMEG model is probably closer to truth, but we needed to consider CUs and can treat out attempts to reconstruct as alternative hypotheses
 Future work
 -  genetics of juvenile surveys and deeper dive 
 porcupine ref points
