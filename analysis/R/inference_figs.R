@@ -204,6 +204,7 @@ TV.spwn$CU_f <- factor(TV.spwn$CU, levels = CU_order)
 TV.harv$CU_f <- factor(TV.harv$CU, levels = CU_order)
 brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = CU_order)
+esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 # write important tables to repo ---------------------------------------------------------
 bench.par.table.out <- bench.par.table |>
@@ -415,7 +416,8 @@ esc_join <- esc |>
   select(CU, year, mean, CU_f)
 
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
-  filter(CU != "Porcupine") |>
+  filter(CU != "Porcupine")|>
+  filter(system != "teslin") |>
   mutate(
     estimate = case_when(
       system == "whitehorse" ~ estimate*(1-hatch_contrib),
@@ -424,7 +426,7 @@ tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   select(!hatch_contrib)
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
-  drop_na()
+  drop_na() 
 
 ggplot(trib_rr, aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
