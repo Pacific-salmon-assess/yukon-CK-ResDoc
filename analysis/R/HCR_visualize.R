@@ -58,7 +58,7 @@ for(j in HCRs[2:6]){
   }
 }
 
-# Add fixed ER to out
+# Add fixed ER to out??
 out_fixed_er <- data.frame(HCR="fixed.ER",
                            run_size=rep(seq(1,500000, 1000), times=20),
                            HR = rep(seq(0.05,1,0.1), each=20),
@@ -78,7 +78,7 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75)
   facet_wrap(~factor(HCR, levels=unique(out$HCR)[c(3:5,1:2)])) + 
   scale_colour_manual(values=HCR_cols) +
   labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(legend.position = "none") 
+  theme_minimal() + theme(legend.position = "none") +
   lims(x=c(0,400)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
