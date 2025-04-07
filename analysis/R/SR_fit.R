@@ -28,22 +28,44 @@ if(refit == TRUE){
                       "Smax_p" = 0.75*max(sp_har1$spwn), #data for priors in semi_inform models, can tinker based on what assumed Smax is 
                       "Smax_p_sig" = 0.75*max(sp_har1$spwn))
     
-    AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
-                    data = stan.data,
-                    cores = 4,
-                    seed = 2,
-                    iter = 4000)
+    inits <- function(){
+      list(F_rw = 0.5,
+           sigma_tot = 0.5,
+           ln_alpha0 = 1.5,
+           alpha_dev = 0,
+           beta = 0.00015,
+           lnR = 4,#?
+           sigma_R0 = 0.25,
+           lnresid_0 = ,
+           mean_ln_R0 = 10,
+           U = 0.5,
+           prob = 0.5, #?
+           D_scale = 0.3,
+           g = 0 #? 
+          )
+      }
     
-    saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
-                          paste0(i, "_AR1.rds")))
+    #AR1.fit <- stan(file = here("analysis/Stan/SS-SR_AR1.stan"), 
+     #               data = stan.data,
+      #              cores = 4,
+       #             seed = 2,
+        #            iter = 4000)
+    
+    #saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
+     #                     paste0(i, "_AR1.rds")))
     
     TV.fit <- stan(file = here("analysis/Stan/SS-SR_TVA.stan"), 
                    data = stan.data,
                   cores = 4,
                   seed = 2,
-                  iter = 4000)
+                  #init = inits(),
+                  iter = 4000,
+                  control = list(adapt_delta = 0.999,
+                                 max_treedepth = 20))
     
     saveRDS(TV.fit, here("analysis/data/generated/model_fits/TVA/", 
                         paste0(i, "_TVA.rds")))
   }
 }
+
+
