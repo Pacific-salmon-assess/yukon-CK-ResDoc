@@ -455,6 +455,7 @@ ggplot(tribs.all, aes(x = year, y = estimate/1000)) +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()  
 my.ggsave(here("analysis/plots/trib-escape.PNG"))
+
 # forward simulations --------------------------------------------------------------------
 
 # Use "standard" (non-TV) benchmarks
