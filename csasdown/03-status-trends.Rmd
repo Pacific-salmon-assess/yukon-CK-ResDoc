@@ -4,7 +4,9 @@
 
 A detailed review of assessment projects for Yukon Chinook salmon is provided in @pestal_review_2022. This data review spanned assessment projects for Chinook salmon across the Yukon River Basin including mainstem passage (e.g., sonar, fishwheels, and mark-recapture projects), tributary spawning escapement (e.g., weir, tower, aerial, and sonar projects), harvest estimation, and associated biological sampling (e.g., genetics and age, sex, and length information for stock apportionment). 
 
-Briefly, the number of adult Chinook salmon migrating into the Canadian portion of the mainstem Yukon River has been estimated using a variety of methods over the past four decades. Fish wheels and a mark-recapture program were operated in several locations near the border (at White and Sheep rocks) from the early 1980s to the mid 2000s to estimate abundance and collect biological samples. In 2005, a sonar site and drift gillnet test fishery were established at Eagle, Alaska, to also estimate border passage and collect biological samples, and this assessment project has continued to present. Within the Canadian portion of the Yukon River spawning escapement has been enumerated a various tributaries using foot, aerial, and sonar based assessment methods (appendix figure X: tributary time series. Many of these assessment projects have changed methods over time and/or have been relatively short in duration. The number of adult Chinook salmon migrating into the Canadian portion of the Porcupine River has been estimated using sonar since 2014.
+Briefly, the number of adult Chinook salmon migrating into the Canadian portion of the mainstem Yukon River has been estimated using a variety of methods over the past four decades. Fish wheels and a mark-recapture program were operated in several locations near the border (at White and Sheep rocks) from the early 1980s to the mid 2000s to estimate abundance and collect biological samples. In 2005, a sonar site and drift gillnet test fishery were established at Eagle, Alaska, to also estimate border passage and collect biological samples, and this assessment project has continued to present. Within the Canadian portion of the Yukon River spawning escapement has been enumerated a various tributaries using foot, aerial, and sonar based assessment methods (appendix figure X: tributary time series; appendix table x: tributaries, corresponding CUs, time-series length?). Many of these assessment projects have changed methods over time and/or have been relatively short in duration. The number of adult Chinook salmon migrating into the Canadian portion of the Porcupine River has been estimated using sonar since 2014.
+
+Surface trawl surveys targeting juvenile Chinook in the northern Bering Sea have been used most years since 2003 to derive an estimate of the abundance of Yukon River salmon stocks (Canadian, middle Yukon, and lower Yukon) during their first summer at sea [@murphy2023]. These data have been used forecast adult returns [@JTC2025Report], understand juvenile Chinook marine ecology, and shed light on life stage specific drivers of survival [@howard2023; @cunningham2018]. However, because the juvenile surveys are unable to estimate contributions of individual CUs to overall abundance we did not explicitly incorporate these data in our analyses.      
 
 Harvest of Canadian origin Yukon Chinook salmon has historically occurred in commercial, subsistence, recreational, and Food Social and Ceremonial fisheries. In Alaska, harvest of Chinook salmon was historically apportioned to lower, middle and upper/Canadian stocks, by age, using scale pattern analysis. Since 2003 harvest of Yukon Chinook salmon in Alaska by age and stock of origin has been estimated using genetic methods. In Canada, harvests have been estimated from commercial landings, recreational catch cards, and from communal harvest information provided by individual First Nation Lands and Resources staff to DFO. 
 
@@ -47,24 +49,42 @@ We propose an Upper Stock Refence point equal to $S_{MSR}$ for the stock aggrega
 
 Lastly we propose a maximum Removal Reference point for the stock aggregate t hat is equal to the long-term average $U_{MSY}$ for the least the productive CUs. Adhering to this reference point would ensure that maximum allowable fishery removals, in mixed-CU mainstem fisheries in Alaska and the Yukon, are unlikely to overfish the least productive CUs in the system.
 
-All of the above reference points are proposed for the Yukon Chinook Salmon River SMU, and not the Porcupine SMU, or both SMUs combined. The reason for this is that there is very limited data for the Porcupine SMU (~10 observations of spawner abundance) which precluded us for characterizing it's dynbamics and/or estimating biological reference poitns for it.  
+All of the above reference points are proposed for the Yukon Chinook Salmon River SMU, and not the Porcupine SMU, or both SMUs combined. The reason for this is that there is very limited data for the Porcupine SMU (~10 observations of spawner abundance) which precluded us for characterizing it's dynamics and/or estimating biological reference points for it.  
 
 ## CONSERVATION UNIT STATUS AND TRENDS 
 
-- trends in escapement and harvest by CU (where possible)
-- SR relationships and leading parameters (productivity etc)
-- trends in productivity over time
+* trends in escapement 
+    * Just escapement or also harvest? 
+    * add some stats on % relative to long-term average
+    * **Figure: reconstructed escapement over time**
+    * **Figure: CU run-timing **
+    * **Appendix figure: tributary index vs CU reconstructions**
 
-- trends in demographics overall (b/c not CU specific data), 
+* Productivity, capacity, SR relationships 
+    * Variation in intrinsic productivity, capacity, evidence for density dependence
+    * Trends in productivity over time
+    * **Figure: SR relationships by CU for both spawner and egg mass based relationships**
+    * **Figure: Trends in productivity by CU**
+    * **Figure: Covariation in recruitment across CUs**
+    * **Appendix figure: SR relationships with observations by CU**
+    * **Appendix table: SR parameters and reference points by CU**
+
+* WSP status assessments
+    * Breif recap of WSP rapid status approach (methods and process)
+    * CU statuses based on WSP rapid status algorithm/assessment (Appendix C)
+
+* Escapement quality
+    * trends in age, size and sex
+    * consequences of explicitly accounting for demographic change on biological reference points
+    * **Figure: age comps and reproductive output**
+    * **Figure: Smsr posterior distributions for spawner and egg mass based SR models**
+    * **Appendix table: Smsy and Smsr reference points for egg mass model by CU**
+  
 
 impact of explicitly considering demographics in SR models and resulting benchmarks/status
 - CU statuses based on WSP rapid status algorithm/assessment (Appendix C) 
 
-[figure: posterior distribution of most recent generation abundance relative to CU benchmarks]
-[figure: escapement time series by CU]
-[figure: age composition [stacked barplot] over time and reproductive output (total eggs and total egg mass) over time; consider also reproducing length-fecundity plot from Ohlberger et al 2020]
-[figure: time-varying productivity by CU]
-[figure: map with CUs color coded based on WSP statuses?] 
+
 
 ## SMU STATUS, TRENDS, AND REFERENCE POINTS 
 
