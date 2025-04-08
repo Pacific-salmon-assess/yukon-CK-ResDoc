@@ -707,3 +707,25 @@ ggcorrplot(Sig.R, hc.order = TRUE, type = "lower",
            outline.col = "white",
            lab=TRUE)
 my.ggsave(here("analysis/plots/recruit-corr-matrix.PNG"))
+
+# SMU run and escapement ----
+
+# escapement plot all CUs plus aggregate ----
+
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada") 
+
+ggplot(SMU_RR) + 
+  geom_hline(yintercept = 19, col = "red", lty=2) +
+  geom_hline(yintercept = 158, col = "dark green", lty=2) +
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
+  ylab("Fish (000s)") +
+  xlab("Year") +
+  scale_color_manual(values=c('#999999','#E69F00')) +
+  scale_fill_manual(values=c('#999999', '#E69F00')) +
+  theme_sleek() +
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        plot.margin = margin(0.5,20,0.5,0.5))
+my.ggsave(here("analysis/plots/SMU-run-esc.PNG"))
