@@ -43,9 +43,11 @@ Other aggregate abundance based reference points can be defined for an SMU. A "l
 
 We used a CU-status based LRP to formally assess SMU status relative to the LRP per national guidance where CU statuses are based on applying the rapid status assessment framework for Pacific salmon under Canada's Wild Salmon Policy [@pestal2023state]; Appendix \@ref(app:fourth-appendix)]. 
 
-We propose a lower stock reference point of 20% of $S_{MSR}$ for the stock aggregate, when changes in demographics are explicitly taken into account [based on @connors_estimates_2023 this would be ~ 19,000 spawners]. To be consistent with the intent of the *Fisheries Act*, at aggregate returns below this reference point we propose that fishery removals be limited to the extent possible, while above the reference point removals can progressively be increased to the Removal Reference Point (the maximum removal rate when the Upper Stock reference point is met).
+We propose a lower stock reference point of 20% of $S_{MSR}$ for the stock aggregate, when changes in demographics are explicitly taken into account [~ 19,000 spawners based on @connors_estimates_2023]. To be consistent with the intent of the *Fisheries Act*, at aggregate returns below this reference point we propose that fishery removals be limited to the extent possible, while above the reference point removals can progressively be increased to the Removal Reference Point (the maximum removal rate when the Upper Stock reference point is met).
 
-We propose an Upper Stock Refence point equal to $S_{MSR}$ for the stock aggregate, when changes in demographics are taken into account [based on @connors_estimates_2023 this would be ~ 95,000 spawners] be used for the Stock Management Unit. This could be considered the aggregate spawner abundance at which socio-ecological objectives for the system are potentially maximized, and above which maximum allowable fishery removals could occur. We also propose that this also be used as the rebuilding target. 
+We propose an Upper Stock Reference point equal to $S_{MSR}$ for the stock aggregate, when changes in demographics are taken into account [~ 95,000 spawners based on @connors_estimates_2023] be used for the Stock Management Unit. This could be considered the aggregate spawner abundance at which socio-ecological objectives for the system are potentially maximized, and above which maximum allowable fishery removals could occur. We also propose that this also be used as the rebuilding target. 
+
+We propose that both the lower fishery reference point and Upper Stock Reference point be based on analyses of the Canadian-origin stock aggregate and not analyses of component CUs. We propose this because we consider these to be the most scientifically defensible estimate of stock aggregate dynamics, and hence reference points, because they are based on an integrated run-reconstruction and spawner-recruitment model fit to data from various assessment projects that estimate mainstem passage, harvests, tributary escapements, stock-proportions, and age-composition. In addition this model is used bilaterally under the Yukon River Agreement to derive annual estimates of total harvest, escapement and returns, by age, for Canadian-origin Yukon Chinook salmon. While this model does not explicitly take CU scale dynamics into account or consideration, the closed loop simulations undertaken in (Section \@ref(#sec:impact)) allow us to quantitatively evaluate the CU scale consequences of SMU reference points based on stock aggregrate analyses. 
 
 Lastly we propose a maximum Removal Reference point for the stock aggregate t hat is equal to the long-term average $U_{MSY}$ for the least the productive CUs. Adhering to this reference point would ensure that maximum allowable fishery removals, in mixed-CU mainstem fisheries in Alaska and the Yukon, are unlikely to overfish the least productive CUs in the system.
 
@@ -53,42 +55,41 @@ All of the above reference points are proposed for the Yukon Chinook Salmon Rive
 
 ## CONSERVATION UNIT STATUS AND TRENDS 
 
-* trends in escapement 
+* Trends in escapement 
     * Just escapement or also harvest? 
-    * add some stats on % relative to long-term average
-    * **Figure: reconstructed escapement over time**
-    * **Figure: CU run-timing **
-    * **Appendix figure: tributary index vs CU reconstructions**
+    * some stats on % relative to long-term average
+      * **Figure: reconstructed escapement over time**
+      * **Figure: CU run-timing **
+      * **Appendix figure: tributary index vs CU reconstructions**
 
 * Productivity, capacity, SR relationships 
     * Variation in intrinsic productivity, capacity, evidence for density dependence
     * Trends in productivity over time
-    * **Figure: SR relationships by CU for both spawner and egg mass based relationships**
-    * **Figure: Trends in productivity by CU**
-    * **Figure: Covariation in recruitment across CUs**
-    * **Appendix figure: SR relationships with observations by CU**
-    * **Appendix table: SR parameters and reference points by CU**
+      * **Figure: SR relationships by CU for both spawner and egg mass based relationships**
+      * **Figure: Trends in productivity by CU**
+      * **Figure: Covariation in recruitment across CUs**
+      * **Appendix figure: SR relationships with observations by CU**
+      * **Appendix table: SR parameters and reference points by CU**
 
 * WSP status assessments
-    * Breif recap of WSP rapid status approach (methods and process)
-    * CU statuses based on WSP rapid status algorithm/assessment (Appendix C)
+    * Brief recap of WSP rapid status approach (methods and process)
+    * CU statuses based on WSP rapid status algorithm/assessment \@ref(app:fourth-appendix)
 
 * Escapement quality
-    * trends in age, size and sex
+    * Trends in age, size and sex
     * consequences of explicitly accounting for demographic change on biological reference points
-    * **Figure: age comps and reproductive output**
-    * **Figure: Smsr posterior distributions for spawner and egg mass based SR models**
-    * **Appendix table: Smsy and Smsr reference points for egg mass model by CU**
-  
+      * **Figure: age comps and reproductive output**
+      * **Figure: Smsr posterior distributions for spawner and egg mass based SR models**
+      * **Appendix table: Smsy and Smsr reference points for egg mass model by CU**
 
-impact of explicitly considering demographics in SR models and resulting benchmarks/status
-- CU statuses based on WSP rapid status algorithm/assessment (Appendix C) 
+## SMU STATUS AND TRENDS
 
-
-
-## SMU STATUS, TRENDS, AND REFERENCE POINTS 
-
-- trends in escapement and harvest by SMU, emphasize magnitude of recent decline, % below long-term average, and steep reductions in harvest
-- status of SMU based on component CU WSP statuses
+* Trends in Yukon SMU run-size, escapement and harvest 
+    * Magnitude of recent decline, % below long-term average, and steep reductions in harvest
+    * Point out these reconstructions are based on updated fit of stock aggregate model described in (@connors_estimates_2023)
+      * **Figure: SMU spawner and run-size over time**
+* Status of SMU based on component CU WSP statuses
+    * Describe status of SMU based on CU-status based LRP
+    * *Do we want some sort of visual of CU status?*
 
 [figure: escapement and harvest time series for mainstem SMU]
