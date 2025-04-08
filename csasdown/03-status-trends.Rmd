@@ -86,10 +86,10 @@ All of the above reference points are proposed for the Yukon Chinook Salmon Rive
 
 * Trends in Yukon SMU run-size, escapement and harvest 
     * Magnitude of recent decline, % below long-term average, and steep reductions in harvest
-    * Point out these reconstructions are based on updated fit of stock aggregate model described in (@connors_estimates_2023)
+    * Point out these reconstructions are based on updated fit of stock aggregate model described in [@connors_estimates_2023]
       * **Figure: SMU spawner and run-size over time**
 * Status of SMU based on component CU WSP statuses
     * Describe status of SMU based on CU-status based LRP
     * *Do we want some sort of visual of CU status?*
 
-[figure: escapement and harvest time series for mainstem SMU]
+
