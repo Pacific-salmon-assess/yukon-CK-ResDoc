@@ -717,7 +717,7 @@ SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
 
 ggplot(SMU_RR) + 
   geom_hline(yintercept = 19, col = "red", lty=2) +
-  geom_hline(yintercept = 158, col = "dark green", lty=2) +
+  geom_hline(yintercept = 95, col = "dark green", lty=2) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
   ylab("Fish (000s)") +
