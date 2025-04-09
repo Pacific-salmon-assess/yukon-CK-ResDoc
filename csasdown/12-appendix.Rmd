@@ -20,7 +20,7 @@ We implemented the models using the Template Model Builder package (TMB; @kriste
 
 ## POPULATION DYNAMICS 
 
-For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xa). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xb 4.4). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb 4.5). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
 
 
 \begin{equation}
@@ -28,15 +28,33 @@ For each population, the daily proportion of salmon entering the model (i.e., cr
   \label{eq:arrival}
 \end{equation}
 
+where $\epsilon_{y}$ is a vector of nine normally distributed process errors with mean 0 and covariance $\sum$. The covariance matrix is constructed as $\sum=DCD$, where $D$ is a diagonal matrix with the variance of $\mu_s$ as the $ss$th element, and $C$ is a symmetric correlation matrix, i.e.:
 
-etc...
-## OBSERVATION MODEL 
+\begin{equation}
+     C_{i,j} = 
+      \begin{cases}
+         1 &\quad{i = j} \\
+         c_{i,j} &\quad{i \neq j} \\
+      \end{cases}
+  \label{eq:corr_arrival}
+\end{equation}
 
+where $c_{i,j}$ is the correlation between arrival timing deviations for CU $i$ and $j$. We constrained all off-diagonal elements of $C$ to have the same value, which assumes all stocks have equal correlation in arrival timing deviations.
+
+## OBSERVATION MODEL AND OBJECTIVE FUNCTION 
+Daily border passage counts were predicted by scaling the daily model-predicted passage by a gear-specific catchability factor (Table Xb 4.6). The fish wheel samples an unknown portion of the run, so fish wheel catchability was estimated. While catchability may vary across populations for a variety of reasons (i.e., bank orientation, run-timing, etc.), the data were not informative enough to estimate CU-specific catchability. In contrast, all passing fish were assumed to be observable by sonar, and so er fixed sonar catchability at 1. Similarly, the predicted run size index is assumed to represent the total run, so catchability to the run size index was fixed at 1 (Table Xb 4.7), and this run size index was taken from updated fit of the model described in @connors_estimates_2023. Population composition was predicted as the relative proportion of a population present on each day (Table Xb 4.8).
+
+Daily salmon counts were assumed to arise from negative-binomial ($NB$) distributions (Table Xb 4.11). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table Xb 4.9). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.02$ for the fish wheel counts in all years except for 2001, when dispersion was set to 2 to account for low perceived reliability of counts in that year.
+
+Conservation Unit composition data were fitted using a multinomial likelihood (Table Xb 4.12). For each year/day/gear combination, the observed number of Chinook by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_sn_s$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
+
+Total run size indices were assumed to arise from a lognormal distribution with standard deviation τ_y, which was equal to the product of the externally estimated CV (0.06) and the index (T4.13-T4.14).
+
+
+## MODEL FITTING AND DIAGNOSTICS 
 * make point that spawners was estimated as border passage minus CU harvest based on CDN Er
 * make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
 * make point hatchery fish were removed from upper Yukon CU
-
-## MODEL FITTING AND DIAGNOSTICS 
 
 \clearpage
 
