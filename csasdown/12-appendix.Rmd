@@ -20,28 +20,20 @@ We implemented the models using the Template Model Builder package (TMB; @kriste
 
 ## POPULATION DYNAMICS 
 
-For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $μ_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xa). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xa). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
 
-$$
-
-$\epsilon_{y}$
 
 \begin{equation}
-  \\mu_{y}=(\mu_{y-1})^{\epsilon_{y}}
+  \mu_{y}=(\mu_{y-1})^{\epsilon_{y}}
   \label{eq:arrival}
 \end{equation}
 
-	μ_y=μ_(y-1) exp (ε_y )       
-(Eqn. S1)
-where ε_y is a vector of nine normally distributed process errors with mean 0 and covariance Σ. The covariance matrix is constructed as Σ=DCD, where D is a diagonal matrix with the variance of μ_s as the ssth element, and C is a symmetric correlation matrix, i.e.,
-	C_ij={■(1&i=j@c_ij&i≠j)┤  	(Eqn. S2)
-where c_ij is the correlation between arrival timing deviations for population i and j (c_ij=c_ji ). We constrained all off-diagonal elements of C to have the same value, which assumes all stocks have equal correlation in arrival timing deviations.
 
-
+etc...
 ## OBSERVATION MODEL 
 
 * make point that spawners was estimated as border passage minus CU harvest based on CDN Er
-* make point we subtracted the Big Salmon sonar estimates from the Midle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
+* make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
 * make point hatchery fish were removed from upper Yukon CU
 
 ## MODEL FITTING AND DIAGNOSTICS 
