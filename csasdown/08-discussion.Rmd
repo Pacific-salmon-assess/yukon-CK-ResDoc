@@ -23,6 +23,7 @@ Key assumptions:
 
 Reality check: 
 - make clear that IMEG model is probably closer to truth, but we needed to consider CUs and can treat out attempts to reconstruct as alternative hypotheses
+
 Future work
 -  genetics of juvenile surveys and deeper dive 
 porcupine ref points

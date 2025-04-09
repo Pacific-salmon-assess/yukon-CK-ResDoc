@@ -223,6 +223,7 @@ write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
 
 # make key plots for pub -----------------------------------------------------------------
+
 # SR fits ---
 ggplot() +
   geom_abline(intercept = 0, slope = 1,col="dark grey") +
@@ -516,12 +517,6 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   ggplot() +
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
-    #geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
-     #           aes(ymin = S.25/1000, ymax = S.75/1000, 
-      #              x= year) #offset to return year 
-       #         ) +
-    #geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
-     #         aes(y=S.50/1000, x= year), color = "black") + 
     geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
     geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
                color = "forestgreen", lty = 2) +
@@ -545,12 +540,6 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     ggplot() +
     geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
-    #geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
-    #           aes(ymin = S.25/1000, ymax = S.75/1000, 
-    #              x= year) #offset to return year 
-    #         ) +
-    #geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), ##Should line up?
-     #         aes(y=H.50/1000, x= year), color = "black") + 
     geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
     facet_wrap(~CU_f, scales = "free_y") +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
@@ -703,3 +692,26 @@ my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
 
 
 } # end k loop
+
+
+# SMU run and escapement ----
+
+# escapement plot all CUs plus aggregate ----
+
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada") 
+
+ggplot(SMU_RR) + 
+  geom_hline(yintercept = 19, col = "red", lty=2) +
+  geom_hline(yintercept = 95, col = "dark green", lty=2) +
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
+  ylab("Fish (000s)") +
+  xlab("Year") +
+  scale_color_manual(values=c('#999999','#E69F00')) +
+  scale_fill_manual(values=c('#999999', '#E69F00')) +
+  theme_sleek() +
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        plot.margin = margin(0.5,20,0.5,0.5))
+my.ggsave(here("analysis/plots/SMU-run-esc.PNG"))

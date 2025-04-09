@@ -13,14 +13,28 @@ ADD SOMETHING ABOUT BIG SALMON
 
 # RUN RECONSTRUCTION MODEL {#app:second-appendix}
 
-- general description of multi-population run-reconstruction model
+We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table Xa and Xb, respectively.
+
+We implemented the models using the Template Model Builder package (TMB; @kristensen2016tmb). Standard errors of model parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+
 
 ## POPULATION DYNAMICS 
 
+For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xa). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+
+
+\begin{equation}
+  \mu_{y}=(\mu_{y-1})^{\epsilon_{y}}
+  \label{eq:arrival}
+\end{equation}
+
+
+etc...
 ## OBSERVATION MODEL 
 
-- make point that spawners was estimated as border passage minus CU harvest based on CDN Er
-- make point we subtracted the Big Salmon sonar estimates from the Midle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
+* make point that spawners was estimated as border passage minus CU harvest based on CDN Er
+* make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
+* make point hatchery fish were removed from upper Yukon CU
 
 ## MODEL FITTING AND DIAGNOSTICS 
 
@@ -29,10 +43,8 @@ ADD SOMETHING ABOUT BIG SALMON
 
 # SPAWNER RECRUITMENT MODELS  {#app:third-appendix}
 
-- general description of multi-population state-space approach and why we chose it
-- acknowledge that approach is expected to yield less biased estimates of key population characteristic than traditional spawner-recruitment models that can arise due to errors-in-variables and time-series bias
-
 To characterize Yukon Chinook salmon CU spawner-recruitment relationships we fit individual age-structured state-space spawner-recruitment models [@fleischman-etal-2013] to all available data for each CU (i.e., time series of estimated catch, spawner abundance and age composition).
+
 These sources of information, along with measures of observation variance, were externally derived from the multi-CU run-reconstructions described in Appendix \@ref(app:first-appendix) for spawner abundance and published estimates for catch and age composition [@connors_estimates_2023], updated through 2024.
 
 An alternative to the sequential modelling approach we took would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model. However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
@@ -40,6 +52,7 @@ An alternative to the sequential modelling approach we took would have been to i
 These models could have also been fit in a multi-population framework [@connors_incorporating_2020; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation which appear to be spuriously too high  and low, respectively, and which could lead to biases in other model parameters in manners that are difficult to predict [@staton-etal-2020].
 
 Because the same model was fitted to each CU, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual CUs
+
 We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each population separately.
 
 ## PROCESS MODEL
@@ -171,6 +184,7 @@ where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year sp
 - description of spawner-recruitment relationships [figure: spawner-recruitment relationships by CU]
 
 We fit the spawner-recruitment models in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. 
+
 We sampled from 4 chains with XXXX iterations each and discarded the first half as warm-up. 
 We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters.A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html).  
 
