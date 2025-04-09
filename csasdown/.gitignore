@@ -22,7 +22,6 @@ resdoc.tex
 *.knit.md
 *.log
 *.pdf
-*.png
 *.rda
 *.rds
 *.Rproj
