@@ -27,6 +27,7 @@ Reality check:
 Future work
 -  genetics of juvenile surveys and deeper dive 
 porcupine ref points
+- revisit baseline sample collection, CU delineation, measures of genetic distincness...
 
 Assessment triggers:
 - enough data for porcupine

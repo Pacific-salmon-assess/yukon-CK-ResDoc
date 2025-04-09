@@ -696,8 +696,6 @@ my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
 
 # SMU run and escapement ----
 
-# escapement plot all CUs plus aggregate ----
-
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
   filter(Stock == "Canada") 
 
@@ -715,3 +713,48 @@ ggplot(SMU_RR) +
         legend.title = element_blank(),
         plot.margin = margin(0.5,20,0.5,0.5))
 my.ggsave(here("analysis/plots/SMU-run-esc.PNG"))
+
+# CU run-reconstructions plot ----
+
+load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
+
+border <- read.csv(here("analysis/data/raw/border-passage.csv")) |>
+  filter(year>1984)
+
+par( mar=c(5,5,0,0) )
+
+#t <- !is.na(rpt$I_t)
+t <- rep(TRUE,rpt$nT)
+yr  <- rpt$years[t]
+I_t <- rpt$I_t[t]*1e-3/exp(rpt$lnqI_s[1])
+E_t <- colSums(exp(rpt$lnRunSize_st))[t]*1e-3
+sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
+ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
+
+png( file=here("analysis/plots/CU-RR.PNG"), width= 9, height = 5.562,units="in", res =700 )
+
+plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
+      ylab="Total border passage (1000s)", ylim=c(0,1.1*ymax) )
+grid()
+box()
+
+if( is.finite(rpt$sdrpt[1,5]) )
+{
+  Ese <- filter(rpt$sdrpt,par=="runSize_t")[t, ]
+  segments( x0=yr+0.2, y0=Ese$lCI*1e-3, y1=Ese$uCI*1e-3, col="grey70", lwd=2 )
+  segments( x0=yr, y0=border$lwr*1e-3, y1=border$upr*1e-3, col="black", lwd=2 )
+  
+}
+
+points( x=yr+0.2, y=E_t, pch=16, col="grey40" )
+points( x=yr, y=I_t, pch=0, lwd=1.5 )
+points( x=yr, y=sonarN_t, pch=1, lwd=1.5, col="black" )
+
+legend( x="bottomleft", bty="n",
+        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),
+        pch=c(NA,NA), lwd=c(1), col=c("grey70","black","black"), lty=c(1,1,1), cex=0.75 )
+legend( x="bottomleft", bty="n",
+        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),
+        pch=c(16,0,1), lwd=c(1.5,1.5), col=c("grey40","black","black"), lty=c(0,0,0), cex=0.75 )
+
+dev.off()
