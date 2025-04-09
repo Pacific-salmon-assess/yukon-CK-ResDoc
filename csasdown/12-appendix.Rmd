@@ -13,9 +13,30 @@ ADD SOMETHING ABOUT BIG SALMON
 
 # RUN RECONSTRUCTION MODEL {#app:second-appendix}
 
-- general description of multi-population run-reconstruction model
+We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table Xa and Xb, respectively.
+
+We implemented the models using the Template Model Builder package (TMB; @kristensen2016tmb). Standard errors of model parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+
 
 ## POPULATION DYNAMICS 
+
+For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $μ_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xa). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+
+$$
+
+$\epsilon_{y}$
+
+\begin{equation}
+  \\mu_{y}=(\mu_{y-1})^{\epsilon_{y}}
+  \label{eq:arrival}
+\end{equation}
+
+	μ_y=μ_(y-1) exp (ε_y )       
+(Eqn. S1)
+where ε_y is a vector of nine normally distributed process errors with mean 0 and covariance Σ. The covariance matrix is constructed as Σ=DCD, where D is a diagonal matrix with the variance of μ_s as the ssth element, and C is a symmetric correlation matrix, i.e.,
+	C_ij={■(1&i=j@c_ij&i≠j)┤  	(Eqn. S2)
+where c_ij is the correlation between arrival timing deviations for population i and j (c_ij=c_ji ). We constrained all off-diagonal elements of C to have the same value, which assumes all stocks have equal correlation in arrival timing deviations.
+
 
 ## OBSERVATION MODEL 
 
