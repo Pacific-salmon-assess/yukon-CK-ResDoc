@@ -2,6 +2,7 @@ library(here)
 library(tidyverse)
 library(gsl)
 library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
+library(ggcorrplot)
 
 source(here("analysis/R/data_functions.R"))
 
@@ -143,7 +144,9 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   
   AR1.resids <- rbind(AR1.resids, resids)
   
-  #time varying alpha --------------------------------------------------------------------
+  
+  
+  # TVA (time varying alpha) models ---------------------------------------------
   sub_pars_TVA <- rstan::extract(TVA.fits[[i]])
   
   a.yrs <- apply(exp(sub_pars_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
@@ -456,37 +459,42 @@ ggplot(tribs.all, aes(x = year, y = estimate/1000)) +
   theme_sleek()  
 my.ggsave(here("analysis/plots/trib-escape.PNG"))
 
-# forward simulations --------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Forward simulations 
+# ------------------------------------------------------------------------------
 
 # Use "standard" (non-TV) benchmarks
 bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
+# Generate plots for which set of fwd simulations?
+fit_type <- c("TVA", "AR1") # Can omit one to avoid re-generating figures
 
-# Use alpha from which models? TVA = Reference set, recent 5 years; AR1 = robustness set, all yrs
-#alpha_type = "TVA"
-alpha_type = "AR1"
-
-## Plots for TV alpha models - "Reference set" 
-if(alpha_type == "TVA"){
-    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_tv.csv"))
-    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_tv.csv"))
-    spwn.fwd <- TVA.spwn
-    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_tv.csv")) |>
-      pivot_longer(-1, names_to = "metric") 
-   } else if (alpha_type == "AR1"){
+for(k in fit_type) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
+  
+if(k == "TVA"){ 
+    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA.csv"))
+    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA.csv"))
+    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA.csv")) |>
+      pivot_longer(-c(1,12), names_to = "metric") %>%
+      pivot_wider(names_from=prob, values_from=value)
+    Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
+                      row.names = 1)
+   } else if (k == "AR1"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
-    spwn.fwd <- AR1.spwn 
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-       pivot_longer(-1, names_to = "metric") 
+      pivot_longer(-c(1,12), names_to = "metric") %>%
+      pivot_wider(names_from=prob, values_from=value)
+    Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
+                      row.names = 1)
 }
 
-
+# Variables as factors for plotting
 S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
 H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
 bench.par.table$CU_f <- factor(bench.par.table$CU, levels = CU_order)
-spwn.fwd$CU_f <- factor(spwn.fwd$CU, levels = CU_order)
 
-# assign HCRs to groups
+# assign HCRs to groups for subsetting harvest scenarios / HCRs
 HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  rebuilding = c("no.fishing",
                                 unique(S.fwd$HCR[
@@ -495,10 +503,11 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                                 unique(S.fwd$HCR[grepl("*status.quo*", S.fwd$HCR)])),
                  simple = c("no.fishing", "status.quo", "rebuilding"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
-
-# next step is to make colours consistent
+# colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
 names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] # this will break easily
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) # depends on ER_seq set in "fwd_sim.R"
+
 
 ## Spawners projection
                   
@@ -526,8 +535,9 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
-  my.ggsave(here(paste("analysis/plots/S-fwd", alpha_type, names(HCR_grps[i]), "grp", ".PNG", sep="_")))
+  my.ggsave(here(paste("analysis/plots/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
 }
+
 
 ## Harvest projection
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
@@ -550,7 +560,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
-  my.ggsave(here(paste("analysis/plots/H-fwd", alpha_type, names(HCR_grps[i]), "grp", ".PNG", sep="_")))
+  my.ggsave(here(paste("analysis/plots/H-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
 }
 
 
@@ -574,11 +584,47 @@ ggplot(S.fwd |>
   theme_sleek() +
   theme(legend.position = "bottom") +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative_", alpha_type, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative_", k, ".PNG")))
 
 
+# Performance metrics (all HCR excl. fixed ER, all PMs) 
 
-## Spawners vs ER trade-off
+perf.metrics %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>% 
+  ggplot(aes(x=factor(HCR, levels=HCRs[1:6]), y = median, fill=factor(HCR, levels=HCRs[1:6]))) + 
+  geom_col() +
+  geom_segment(aes(x=factor(HCR, levels=HCRs[1:6]),
+                   xend=factor(HCR, levels=HCRs[1:6]),
+                   y=q_25, yend=q_75), col="grey30") +
+  scale_fill_manual(values=HCR_cols) +
+  facet_wrap(~metric, scales = "free_y") +
+  theme_minimal() +
+  theme(legend.position = "bottom", 
+        axis.text.x = element_blank(), 
+        legend.title = element_blank()) +
+  guides(fill=guide_legend(nrow=2, byrow=T)) +
+  labs(title = "Forward simulation performance metrics", x="", y="") 
+
+my.ggsave(here(paste0("analysis/plots/perf_metrics_", k, ".PNG")))
+
+
+# Performance status
+perf.status <- perf.metrics |>
+  filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
+  mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)), 
+    levels=c("above USR", "between ref", "below LSR", "extinct")))
+
+perf.status %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
+  ggplot(aes(x = HCR, y = mean, fill = status)) + 
+  geom_col() +
+  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
+  scale_y_continuous(breaks = c(2,4,6,8)) +
+  labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
+  theme_bw()
+
+my.ggsave(here(paste0("analysis/plots/perf_status_", k, ".PNG")))
+
+
+## Fixed ER trade-off multipanel
 
 spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   group_by(HCR, CU_f) %>% 
@@ -586,7 +632,7 @@ spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>% 
   ggplot() +
   geom_point(aes(y=ER, x=mean_spwn/1000, col=CU_f), shape='circle', size=2, alpha=0.7) +
-  scale_colour_viridis_d() +
+  scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
   theme_sleek() +
   theme(legend.position="none") +
   labs(x="Spawners (x1000)", y="Exploitation Rate", col="Conservation Unit")
@@ -597,113 +643,63 @@ harv_v_ER <- H.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>% 
   ggplot() +
   geom_point(aes(y=ER, x=mean_harv/1000, col=CU_f), shape='circle', size=2, alpha=0.7) +
-  scale_colour_viridis_d() +
+  scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
   theme_sleek() +
   theme(axis.title.y = element_blank(),
         axis.text.y = element_blank()) +
   labs(x="Harvest (x1000)", y="Exploitation Rate", col="Conservation Unit")
 
-cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1))
-
-my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs", alpha_type, ".PNG")))
-
-
-# Performance metrics - ALL
-perf.plot <- perf.metrics
-
-perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
-  ggplot(aes(x=factor(HCR, levels=HCRs[1:6]), y = value, fill=factor(HCR, levels=HCRs[1:6]))) + 
-  geom_col() +
-  scale_fill_manual(values=HCR_cols) +
-  facet_wrap(~metric, scales = "free_y") +
-  theme_minimal() +
-  theme(legend.position = "bottom", 
-        axis.text.x = element_blank(), 
-        legend.title = element_blank()) +
-  guides(fill=guide_legend(nrow=2, byrow=T)) +
-  labs(title = "Forward simulation performance metrics", x="", y="") 
-
-
-my.ggsave(here(paste0("analysis/plots/perf_metrics_all_", alpha_type, ".PNG")))
-
-
-# Performance metrics - basic
-perf.plot <- filter(perf.metrics, metric %in% c("escapement", "ER", "harvest", "harv.stability"))
-
-perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
-  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
-  geom_col() +
-  scale_fill_manual(values=HCR_cols) +
-  facet_wrap(~metric, scales = "free_y", nrow=1) +
-  theme_bw() +
-  theme(legend.position = "bottom", 
-        axis.text.x = element_blank(), 
-        legend.title = element_blank()) +
-  labs(title = "Forward simulation performance metrics") 
-
-my.ggsave(here(paste0("analysis/plots/perf_metrics_basic_", alpha_type, ".PNG")))
-
-
-# Performance metrics - harvest
-perf.plot <- filter(perf.metrics, metric %in% c("harvest", "harv.stability", "pr.basic.needs", "pr.no.harvest"))
-
-perf.plot %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
-  ggplot(aes(x=HCR, y = value, fill=HCR)) + 
-  geom_col() +
-  scale_fill_manual(values=HCR_cols) +
-  facet_wrap(~metric, scales = "free_y", nrow=1) +
-  theme_bw() +
-  theme(legend.position = "bottom", 
-        axis.text.x = element_blank(), 
-        legend.title = element_blank()) +
-  labs(title = "Forward simulation harvest performance metrics") 
-
-my.ggsave(here(paste0("analysis/plots/perf_metrics_harv_", alpha_type, ".PNG")))
-
-
-# Performance status
-perf.status <- perf.metrics |>
-  filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
-  mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)), 
-    levels=c("above USR", "between ref", "below LSR", "extinct")))
-
-perf.status %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
-  ggplot(aes(x = HCR, y = value, fill = status)) + 
-  geom_col() +
-  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
-  scale_y_continuous(breaks = c(2,4,6,8)) +
-  labs(y = "Number of CUs", title = "CU status at the end of forward simulation") +
-  theme_bw()
-
-my.ggsave(here(paste0("analysis/plots/perf_status_", alpha_type, ".PNG")))
-
-
-# Performance status - Fixed ER
-
-perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
+status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
+  filter(ER != 100) %>% 
   ggplot(aes(x=value, y=factor(ER), fill=status)) +
   geom_col() +
+  geom_vline(data=data.frame(x=seq(1:9)), aes(xintercept=x), col="white", linewidth=0.05) +
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
   scale_x_continuous(breaks = c(2,4,6,8)) +
-  scale_y_discrete(breaks = seq(0,100,20)) +
-  labs(y = "Exploitation Rate", title = "CU status at the end of forward simulation", fill="") +
-  theme_bw()
+  scale_y_discrete(breaks = seq(0,90,20)) +
+  labs(y = "Exploitation Rate", fill="", x="Average # of CUs (over 1000 simulations)") +
+  theme_sleek() + 
+  theme(legend.margin = margin(l=35, r=20))
 
-my.ggsave(here(paste0("analysis/plots/fixed_ER_status_", alpha_type, ".PNG")))
+b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1))
+cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,.8))
 
-# covariance plots ----
+my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs_", k, ".PNG")))
 
-library(ggcorrplot)
 
-colnames(sig.R.samps) <- names(AR1.fits)
-sig.R.samps.order <- sig.R.samps[,c(4,8,6,2,5,3,1,7,9)]
-Sig.R <- cov(sig.R.samps.order) 
+# Visualize HCRs --
 
-colnames(Sig.R) <- colnames(sig.R.samps.order)
-rownames(Sig.R) <- colnames(sig.R.samps.order)
+out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
 
-ggcorrplot(Sig.R, hc.order = TRUE, type = "lower",
+# load historical run size info
+hist_run <- read.csv(here('analysis', 'data', 'raw', 'rr-table.csv'))
+hist_run <- hist_run %>% dplyr::summarize(lower = quantile(Total.run, 0.025), 
+                                          upper = quantile(Total.run, 0.975))
+
+
+ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75) +
+  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100), fill="grey70", alpha=0.2) +
+  facet_wrap(~factor(HCR, levels=unique(out$HCR)[c(3:5,1:2)])) + 
+  scale_colour_manual(values=HCR_cols) +
+  labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
+  theme_minimal() + theme(legend.position = "none") +
+  lims(x=c(0,400)) +
+  scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
+
+my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
+
+
+# covariance plots 
+
+Sig.R.order <- Sig.R[c(4,8,6,2,5,3,1,7,9),c(4,8,6,2,5,3,1,7,9)]
+
+ggcorrplot(Sig.R.order, hc.order = TRUE, type = "lower",
            outline.col = "white",
-           lab=TRUE)
-my.ggsave(here("analysis/plots/recruit-corr-matrix.PNG"))
+           lab=TRUE) + 
+  theme(axis.text.x = element_blank())
+
+my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
+
+
+} # end k loop
