@@ -160,7 +160,7 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
           prob=c("q_25","median","q_75","mean")
           )
 
-write.csv(sim.outcome.summary, here('analysis', 'data', 'generated', paste0('perf.metrics_', k, '.csv')), 
+write.csv(sim.outcome.summary, here('analysis', 'data', 'generated', paste0('perf_metrics_', k, '.csv')), 
           row.names = FALSE)
 
 colnames(S.time) <- c(names(fits), "HCR", "year", "sim")
