@@ -587,28 +587,6 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   my.ggsave(here(paste("analysis/plots/H-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
 }
 
-# alternative forward projection of spawners (shorter time frame, only two scenarios)
-ggplot(S.fwd |>
-         filter(HCR != "status.quo",
-                year < 2051)) +
-  geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color = HCR, fill = HCR), 
-              alpha = 0.2) +
-  geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-5), 
-              aes(ymin = S.25/1000, ymax = S.75/1000, 
-                  x= year), #offset to return year 
-              fill = "grey", color = "grey") +
-  geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-5), ##Should line up?
-            aes(y=S.50/1000, x= year), color = "black") + 
-  geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
-  facet_wrap(~CU_f, scales = "free_y") +
-  scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-  labs(x = "Year", 
-       y = "Spawners (000s)") +
-  theme_sleek() +
-  theme(legend.position = "bottom") +
-  scale_color_viridis_d(aesthetics = c("fill", "color"))
-my.ggsave(here(paste0("analysis/plots/S-fwd-bc-alternative_", k, ".PNG")))
-
 
 # Performance metrics (all HCR excl. fixed ER, all PMs) 
 
