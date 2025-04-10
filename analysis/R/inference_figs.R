@@ -60,8 +60,8 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   #SR relationship based on full posterior---
   spw <- seq(0,max(brood_t$S_upr),length.out=100)
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
-  bench <- matrix(NA,length(sub_pars$lnalpha),6,
-                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent")))
+  bench <- matrix(NA,length(sub_pars$lnalpha),8,
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent","Smsr.20","Smsr.40")))
 
   par <- matrix(NA,length(sub_pars$lnalpha),3,
                   dimnames = list(seq(1:length(sub_pars$lnalpha)), c("sample","ln_a","beta")))
@@ -79,6 +79,8 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
     bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #S recent - mean spawners in last generation 
+    bench[j,7] <- (1/b)*0.2 
+    bench[j,8] <- (1/b)*0.4 
     
     par[j,1] <- j
     par[j,2] <- ln_a
@@ -97,10 +99,10 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   
   par.posts <- rbind(par.posts, as.data.frame(par) |> mutate(CU = i))
   
-  bench.quant <- apply(bench[,1:6], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
+  bench.quant <- apply(bench[,1:8], 2, quantile, probs=c(0.1,0.5,0.9), na.rm=T) |>
     t()
   
-  mean <- apply(bench[,1:6],2,mean, na.rm=T) #get means of each
+  mean <- apply(bench[,1:8],2,mean, na.rm=T) #get means of each
   
   sub_benchmarks <- cbind(bench.quant, mean) |>
     as.data.frame() |>
@@ -442,7 +444,7 @@ ggplot(trib_rr, aes(x = mean, y = estimate)) +
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
 
-# trib trim series ----
+# trib time series ----
 tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   mutate(
     estimate = case_when(
@@ -451,16 +453,33 @@ tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   unite(tributary, c("system", "type")) |>
   select(!hatch_contrib)
 
+dat_text <- data.frame(
+  label = c("4 cylinders", "6 cylinders", "8 cylinders"),
+  cyl   = c(4, 6, 8)
+)
+dat_text <- tribs.all |>
+  group_by(tributary) |>
+  slice_head() |>
+  select(tributary, CU)
+
 ggplot(tribs.all, aes(x = year, y = estimate/1000)) + 
   geom_line(lwd = 0.8) +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~tributary, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
-  theme_sleek()  
+  theme_sleek()
+
 my.ggsave(here("analysis/plots/trib-escape.PNG"))
 
 
+  geom_text(
+    data    = dat_text,
+    mapping = aes(x = -Inf, y = -Inf, label = CU),
+    hjust   = 0,
+    vjust   = 0.1,
+    size=1
+  )
 # ------------------------------------------------------------------------------
 # Forward simulations 
 # ------------------------------------------------------------------------------
@@ -559,7 +578,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
     facet_wrap(~CU_f, scales = "free_y") +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-    labs(title = "Forward simulation harvest trajectory", 
+    labs(title = "Forward simulation spawner trajectory", 
          y = "Harvest (000s)") +
     theme_sleek() +
     theme(legend.position = "bottom") +
