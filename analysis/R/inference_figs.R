@@ -253,7 +253,7 @@ ggplot() +
         legend.title = element_text(size=7),
         legend.text = element_text(size=6))
 
-my.ggsave(here("analysis/plots/SR_fits.PNG"))
+my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
 
 # AR1 resids --- 
 ggplot(AR1.resids, aes(x=year, y = mid)) +
@@ -536,14 +536,14 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 
 ## Harvest projection
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
-  H.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
+  H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
     ggplot() +
     geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
     geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
     facet_wrap(~CU_f, scales = "free_y") +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-    labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
+    labs(title = "Forward simulation harvest trajectory", 
          y = "Harvest (000s)") +
     theme_sleek() +
     theme(legend.position = "bottom") +
@@ -641,7 +641,7 @@ harv_v_ER <- H.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
 status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
   filter(ER != 100) %>% 
-  ggplot(aes(x=value, y=factor(ER), fill=status)) +
+  ggplot(aes(x=mean, y=factor(ER), fill=status)) +
   geom_col() +
   geom_vline(data=data.frame(x=seq(1:9)), aes(xintercept=x), col="white", linewidth=0.05) +
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
