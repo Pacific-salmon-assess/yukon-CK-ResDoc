@@ -515,6 +515,14 @@ HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuildin
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
   ggplot() +
+    # Observations:
+    geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+                aes(ymin = S.25/1000, ymax = S.75/1000, 
+                    x= year), #offset to return year 
+                fill = "grey", color = "grey") +
+    geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+              aes(y=S.50/1000, x= year), color = "black") + 
+    # Projections: 
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
     geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
@@ -538,6 +546,14 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
     ggplot() +
+    # Observations:
+    geom_ribbon(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+                aes(ymin = H.25/1000, ymax = H.75/1000, 
+                    x= year), #offset to return year 
+                fill = "grey", color = "grey") +
+    geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+              aes(y=H.50/1000, x= year), color = "black") + 
+    # Projections:
     geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
     geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
@@ -551,7 +567,6 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   
   my.ggsave(here(paste("analysis/plots/H-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
 }
-
 
 # alternative forward projection of spawners (shorter time frame, only two scenarios)
 ggplot(S.fwd |>
