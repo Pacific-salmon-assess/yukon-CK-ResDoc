@@ -24,6 +24,7 @@ esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
 bench.par.table <- NULL #empty objects to rbind CU's outputs to 
 bench.posts <- NULL
 par.posts <- NULL
+par.posts.tva <- NULL
 SR.preds <- NULL
 AR1.spwn <- NULL
 brood.all <- NULL
@@ -150,7 +151,13 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   
   # TVA (time varying alpha) models ---------------------------------------------
   sub_pars_TVA <- rstan::extract(TVA.fits[[i]])
-  
+  par_TVA <- matrix(NA,length(sub_pars_TVA$beta),42,
+                    dimnames = list(seq(1:length(sub_pars_TVA$beta)),c("sample", seq(1:40),"beta")))
+  par_TVA[,1] <- seq(1:length(sub_pars_TVA$beta))
+  par_TVA[,c(2:41)] <- sub_pars_TVA$ln_alpha
+  par_TVA[,c(42)] <- sub_pars_TVA$beta
+  par.posts.tva <- rbind(par.posts.tva, as.data.frame(par_TVA) |> mutate(CU = i))
+
   a.yrs <- apply(exp(sub_pars_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
   a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
   
@@ -224,9 +231,13 @@ write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv
 
 write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
 
+write.csv(par.posts, here("analysis/data/generated/AR1_posteriors.csv"))
+
+write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
+
 # make key plots for pub -----------------------------------------------------------------
 
-# SR fits ---
+# SR fits ----
 ggplot() +
   geom_abline(intercept = 0, slope = 1,col="dark grey") +
   geom_ribbon(data = SR.preds, aes(x = Spawn/1000, ymin = Rec_lwr/1000, ymax = Rec_upr/1000),
@@ -257,7 +268,7 @@ ggplot() +
 
 my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
 
-# AR1 resids --- 
+# AR1 resids ---- 
 ggplot(AR1.resids, aes(x=year, y = mid)) +
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
@@ -273,7 +284,7 @@ ggplot(AR1.resids, aes(x=year, y = mid)) +
 
 my.ggsave(here("analysis/plots/AR1_resids.PNG"))
 
-# TV resids ---
+# TV resids ----
 ggplot(TV.resids, aes(x=year, y = mid)) +
   geom_ribbon(aes(ymin = lwr, ymax = upr),  fill = "darkgrey", alpha = 0.5) +
   geom_ribbon(aes(ymin = midlwr, ymax = midupr),  fill = "black", alpha=0.2) +
@@ -288,19 +299,18 @@ ggplot(TV.resids, aes(x=year, y = mid)) +
 
 my.ggsave(here("analysis/plots/TV_resids.PNG"))
 
-# TV alpha ---
+# TV alpha ----
 ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
   geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
   scale_color_viridis_d() +
   theme_sleek() +
   geom_hline(yintercept = 1, lty=2, col = "grey") +
-  labs(y = "Productivity (maximum R/S)", x = "Brood year", 
-       title = "Time-varying productivity")
+  labs(y = "Productivity (maximum R/S)", x = "Brood year")
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
 
-# TV SR fits --- 
+# TV SR fits ---- 
 ggplot() +
   geom_point(data = brood.all,
              aes(x = S_med/1000,
@@ -322,7 +332,7 @@ ggplot() +
 
 my.ggsave(here("analysis/plots/TV_SR_fits.PNG"))
 
-# "status" plots ---
+# "status" plots ----
 bench.long <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
@@ -480,14 +490,47 @@ my.ggsave(here("analysis/plots/trib-escape.PNG"))
     vjust   = 0.1,
     size=1
   )
-# ------------------------------------------------------------------------------
-# Forward simulations 
-# ------------------------------------------------------------------------------
+  
+  
+# Forward simulations ----
+
+# reference vs robustness productivity ----  
+AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
+TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
+  
+TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(24:34), names_to = "par") |>
+  select(CU, par, value) |>
+  mutate(scenario = "reference")       
+
+TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(35), names_to = "par") |>
+  select(CU, par, value) |>
+  mutate(scenario = "robustness")   
+
+AR.pp.rob <- AR1.par.posts |>
+  mutate(scenario = "stationary",
+         par= 1,
+         value = ln_a) |>
+  select(CU, par, value, scenario) 
+
+alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob)
+
+ggplot(alpha.posts |> filter(scenario != "stationary"), aes(value, fill = scenario, color = scenario)) +
+  geom_density(alpha = 0.3) +
+  facet_wrap(~CU, scales = "free_y") +
+  theme(legend.position = "bottom") +
+  theme_sleek() +
+  geom_vline(xintercept = 0, lty=2, col="grey") +
+  scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
+  labs(y = "", x = "ln(alpha)") 
+  
+my.ggsave(here("analysis/plots/OM-productivity-scenarios.PNG"))
 
 # Use "standard" (non-TV) benchmarks
 bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
+
 # Generate plots for which set of fwd simulations?
-fit_type <- c("TVA", "AR1") # Can omit one to avoid re-generating figures
+fit_type <- c("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
+fit_type <- c("TVA2") # Can omit one to avoid re-generating figures
 
 for(k in fit_type) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
   
@@ -495,15 +538,23 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA.csv")) |>
-      pivot_longer(-c(1,12), names_to = "metric") %>%
+      pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
                       row.names = 1)
+  } else if (k == "TVA2"){
+    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA2.csv"))
+    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA2.csv"))
+    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA2.csv")) |>
+      pivot_longer(-c(1,12), names_to = "metric") |>
+      pivot_wider(names_from=prob, values_from=value)
+    Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
+                    row.names = 1)
    } else if (k == "AR1"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-      pivot_longer(-c(1,12), names_to = "metric") %>%
+      pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
                       row.names = 1)
@@ -545,9 +596,9 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
                 alpha = 0.2) +
     geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
-    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = mean/1000), 
+    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = X50./1000), 
                color = "forestgreen", lty = 2) +
-    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (mean*0.2)/1000), 
+    geom_hline(data = filter(bench.par.table, bench.par=="Smsr"), aes(yintercept = (X50.*0.2)/1000), 
                color = "darkred", lty = 2) +
     facet_wrap(~CU_f, scales = "free_y") +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +

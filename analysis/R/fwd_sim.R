@@ -5,7 +5,7 @@ library(mvtnorm) #for rmvnorm() nested in the functions
 source(here("analysis/R/data_functions.R"))
 
 
-fit_type <- c("TVA", "AR1") # Can omit one to avoid re-simulating it
+fit_type <- c("TVA","TVA2", "AR1") # Can omit one to avoid re-simulating it
 set.seed(2)
 
 
@@ -34,17 +34,25 @@ for(k in fit_type){
 # Populate "samps" object ----------------------------------------------
 
   if(k=="AR1") fits = AR1.fits else
-    if(k == "TVA") fits = TVA.fits
+    if(k == "TVA") fits = TVA.fits else
+      if(k == "TVA2") fits = TVA.fits
 
 samps <- NULL
 pi.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits)))
 p.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits), 3))
 sig.R.samps <- NULL
-a_yrs = 10
+comp.brood <- nyrs-6 # remove incompletely observed brood years
+a_yrs = 10 # number of years to average productivity over for reference test
+rob.yr <- 35 # year(s) index for robustness test
 
 for(i in 1:length(names(fits))){ # loop over CUs
-  if(k=="TVA") alpha <- exp(apply(fits[[i]]$ln_alpha[, (nyrs-a_yrs):nyrs], 1, median))
-  else if(k=="AR1") alpha <- exp(fits[[i]]$lnalpha)
+  if(k=="TVA") {
+    alpha <- exp(apply(fits[[i]]$ln_alpha[, (comp.brood-a_yrs):comp.brood], 1, median))
+  } else if(k=="TVA2") {
+    alpha <- exp(fits[[i]]$ln_alpha[, rob.yr])
+  }else if(k=="AR1") {
+    alpha <- exp(fits[[i]]$lnalpha)
+  }
   sub_samps <- cbind(alpha,
                      fits[[i]]$beta,
                      filter(bench.posts, CU == unique(bench.posts$CU)[i])$Umsy,
