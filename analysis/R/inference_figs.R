@@ -79,7 +79,7 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
-    bench[j,6] <- mean(sub_pars$S[j, (nyrs-4):nyrs]) #S recent - mean spawners in last generation 
+    bench[j,6] <- mean(sub_pars$S[j, (nyrs-5):nyrs]) #S recent - mean spawners in last generation 
     bench[j,7] <- (1/b)*0.2 
     bench[j,8] <- (1/b)*0.4 
     
@@ -256,10 +256,9 @@ ggplot() +
   facet_wrap(~CU_f, scales = "free") +
   scale_colour_viridis_c(name = "Brood Year")+
   labs(x = "Spawners (000s)",
-       y = "Recruits (000s)", 
-       title = "Spawner-recruit fits") +
+       y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "top",
+  theme(legend.position = "right",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),
