@@ -79,7 +79,7 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
     bench[j,3] <- (1 - lambert_W0(exp(1 - ln_a))) #U_MSY
     bench[j,4] <- ln_a/b #S_eq
     bench[j,5] <- 1/b #S_msr 
-    bench[j,6] <- mean(sub_pars$S[j, (nyrs-5):nyrs]) #S recent - mean spawners in last generation 
+    bench[j,6] <- exp(mean(log(sub_pars$S[j, (nyrs-5):nyrs]))) #S recent - mean spawners in last generation 
     bench[j,7] <- (1/b)*0.2 
     bench[j,8] <- (1/b)*0.4 
     
@@ -332,26 +332,27 @@ ggplot() +
 my.ggsave(here("analysis/plots/TV_SR_fits.PNG"))
 
 # "status" plots ----
-bench.long <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, S.recent), names_to = "par") |>
-  select(-Umsy, - Seq) |>
+bench.long <- pivot_longer(bench.posts, cols = c(Smsr.20, Smsr.40, S.recent), names_to = "par") |>
+  select(-Smsy.80, - Smsr) |>
   arrange(CU, par, value) |>
   filter(value <= 10000) #hack to cut off fat tails to help with density visualization, also an IUCN cutoff... 
 
 ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
-  geom_vline(xintercept = 1.5) +
-  facet_wrap(~CU, scales = "free_y") +
+  geom_vline(xintercept = 1.5, lty=2) +
+  facet_wrap(~CU, scales = "free") +
   theme(legend.position = "bottom") +
-  scale_fill_manual(breaks = c("S.recent", "Sgen", "Smsy.80"),
+  scale_fill_manual(breaks = c("S.recent", "Smsr.20", "Smsr.40"),
                     values = c("black", "darkred", "forestgreen"), 
                     aesthetics = c("fill", "color"), 
-                    labels = c(expression(italic(S[recent])), expression(italic(S[gen])), 
-                               expression(italic(paste("80% ",S)[MSY])))) +
+                    labels = c(expression(italic(S[recent])), expression(italic(paste("20% ",S)[MSR])), 
+                               expression(italic(paste("40% ",S)[MSR])))) +
+  labs(x = "Spawners (000s)", y = "Posterior density") +
+  theme_sleek()   +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
-        legend.title=element_blank()) +
-  labs(x = "Spawners (000s)", y = "Posterior density", 
-       title = "Recent spawners relative to benchmarks and 1500 cutoff")
+        legend.title=element_blank())
+my.ggsave(here("analysis/plots/status.PNG"))
 
 # EXPERIMENTAL: benchmarks with Smsr ---
 bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>
@@ -361,14 +362,14 @@ bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.rec
 
 ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
-  geom_vline(xintercept = 1.5) +
+  geom_vline(xintercept = 1.5, lty=2) +
   facet_wrap(~CU, scales = "free_y") +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "right") +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
         legend.title=element_blank()) +
-  labs(x = "Spawners (000s)", y = "Posterior density", 
-       title = "Recent spawners relative to benchmarks and 1500 cutoff")
+  labs(x = "Spawners (000s)", y = "Posterior density") +
+  theme_sleek()  
 
 # escapement plot ----
 bench_plot <- bench.par.table |>
@@ -441,7 +442,8 @@ tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   select(!hatch_contrib)
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
-  drop_na() 
+  drop_na() |>
+  filter(! tributary %in% c("moreley_aerial", "nisutlin_sonar"))
 
 ggplot(trib_rr, aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
@@ -449,7 +451,7 @@ ggplot(trib_rr, aes(x = mean, y = estimate)) +
   xlab("CU spawners") +
   ylab("Tributary spawners") +
   theme_sleek() +
-  facet_wrap(~tributary, scales = "free") 
+  facet_wrap(~tributary, scales = "free",nrow = 3) 
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
 
@@ -792,6 +794,7 @@ I_t <- rpt$I_t[t]*1e-3/exp(rpt$lnqI_s[1])
 E_t <- colSums(exp(rpt$lnRunSize_st))[t]*1e-3
 sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
+fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
 
 png( file=here("analysis/plots/CU-RR.PNG"), width= 9, height = 5.562,units="in", res =700 )
 
@@ -811,6 +814,7 @@ if( is.finite(rpt$sdrpt[1,5]) )
 points( x=yr+0.2, y=E_t, pch=16, col="grey40" )
 points( x=yr, y=I_t, pch=0, lwd=1.5 )
 points( x=yr, y=sonarN_t, pch=1, lwd=1.5, col="black" )
+#points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
 
 legend( x="bottomleft", bty="n",
         legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),

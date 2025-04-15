@@ -348,6 +348,9 @@ year,estimate,system,type,CU,hatch_contrib,comments
 2012,,wolf,aerial,YukonR.Teslinheadwaters,,
 2020,11,wolf,aerial,YukonR.Teslinheadwaters,,
 2021,10,wolf,aerial,YukonR.Teslinheadwaters,,
+2022,25,wolf,aerial,YukonR.Teslinheadwaters,,
+2023,100,wolf,aerial,YukonR.Teslinheadwaters,,
+2024,109,wolf,aerial,YukonR.Teslinheadwaters,,
 1969,105,nisutlin,aerial,YukonR.Teslinheadwaters,,
 1970,615,nisutlin,aerial,YukonR.Teslinheadwaters,,
 1971,650,nisutlin,aerial,YukonR.Teslinheadwaters,,
@@ -392,24 +395,32 @@ year,estimate,system,type,CU,hatch_contrib,comments
 2019,22,nisutlin,aerial,YukonR.Teslinheadwaters,,
 2020,29,nisutlin,aerial,YukonR.Teslinheadwaters,,
 2021,23,nisutlin,aerial,YukonR.Teslinheadwaters,,
-2004,155,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2005,340,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2006,34,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2007,47,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2008,35,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2009,82,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2010,1,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2011,247,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2012,213,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2013,41,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2014,245,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2015,143,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2016,21,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2017,195,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2018,23,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2019,5,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2020,6,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2021,19,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2022,1,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2023,26,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
-2024,75,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predatio and survey timing
+2022,60,nisutlin,aerial,YukonR.Teslinheadwaters,,
+2023,146,nisutlin,aerial,YukonR.Teslinheadwaters,,
+2024,219,nisutlin,aerial,YukonR.Teslinheadwaters,,
+2004,155,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2005,340,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2006,34,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2007,47,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2008,35,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2009,82,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2010,1,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2011,247,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2012,213,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2013,41,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2014,245,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2015,143,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2016,21,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2017,195,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2018,23,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2019,5,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2020,6,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2021,19,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2022,1,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2023,26,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2024,75,michie,foot,UpperYukonR.,,estimates conisdered unreliable due to predation and survey timing
+2022,10,morley,aerial,YukonR.Teslinheadwaters,,
+2023,41,morley,aerial,YukonR.Teslinheadwaters,,
+2024,41,morley,aerial,YukonR.Teslinheadwaters,,
+2023,638,nisutlin,sonar,YukonR.Teslinheadwaters,,
+2024,610,nisutlin,sonar,YukonR.Teslinheadwaters,,
