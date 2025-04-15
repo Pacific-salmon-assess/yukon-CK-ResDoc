@@ -198,7 +198,7 @@ ggplot(bench_post, aes(value, fill = unit, color = unit)) +
   geom_vline(xintercept = 1.5) +
   facet_wrap(~CU, scales = "free_y") +
   theme_sleek()+
-  xlab(expression(S[MSY])) +
+  xlab(expression(S[MSR])) +
   ylab("") +
   theme(legend.position = "bottom",
         axis.ticks.y = element_blank(), 
