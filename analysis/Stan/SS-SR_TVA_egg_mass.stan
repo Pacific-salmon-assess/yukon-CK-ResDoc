@@ -117,7 +117,7 @@ transformed parameters{
 model{
   // Priors
   sigma_tot ~ gamma(2,1);
-  F_rw ~ beta(2,4);
+  F_rw ~ beta(2,5);
   ln_alpha0 ~ normal(-6,2);
   alpha_dev ~ std_normal();                    //standardized (z-scales) deviances
   //sigma_alpha ~ normal(0,1);
