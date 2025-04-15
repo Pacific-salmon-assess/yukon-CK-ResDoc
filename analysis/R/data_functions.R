@@ -102,7 +102,7 @@ process.iteration = function(samp) {
 }
 
 #------------------------------------------------------------------------------#
-# Multi-stock simulation function with alternative structural forms
+# Multi-stock simulation function with alternative structural forms 
 #------------------------------------------------------------------------------#
 # HCR <- which pre-determined HCR are we using
 # ny <- the number of years
@@ -201,7 +201,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     if(grepl("fixed.ER", HCR)){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
-      HR.all <- ER}
+      HR.all <- catch/run.size}
     if(HCR == "alt.rebuilding"){
       if(run.size <= 19000) catch <- 0
       if(run.size >= 158333) catch <- run.size*0.4
@@ -231,8 +231,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     v[i,] <- log(R[i,])-log(predR[i,])
     v[v[,]=='NaN'] <- 0
     
-    #browser(expr = {anyNA(H[i,])})
-  }
+  } # end years loop
   
   # Output
   # SMU-level Performance measures:
@@ -247,6 +246,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   # 9: number of CUs above USR at ""
   # 10: number of extinct pops 
 
+  #browser()
     pms <- matrix(NA,1,10) 
   
   # SMU level PMs 
@@ -254,12 +254,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   H[H[,] == 'NAN'] <- 0 # not sure if this is an appropriate fix
   Ntot[Ntot[,]=='NaN'] <- 0
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
+  harvest_rates[harvest_rates[,]=='NaN'] <- 0
   Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
-  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))
-  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
-  pms[,3] <- median(harvest_rates, na.rm = TRUE) # should NAs be removed?
+  pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) 
+  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# mismatch between sim loop years (8:ny) and pm years means mean harvest, harv rates, etc will be biased low
+  pms[,3] <- sum(harvest_rates)/(ny - pm.yr +1) #was median before
   pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs)
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
   pms[,6] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
@@ -328,7 +329,8 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
     for(i in seq(1,max_spwn, int)) {
       run.size = i
       
-      if(is.na(run.size)==TRUE){run.size <- 0}
+      # apply harvest control rules
+      if(is.na(run.size)){run.size <- 0}
       if(run.size > 999000) {run.size <- 1000000} 
       if(HCR == "no.fishing"){HR.all <- 0}
       if(HCR == "status.quo"){ 
@@ -356,9 +358,9 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
           catch <- run.size*0.4
           HR.all <- catch/run.size }}
       if(grepl("fixed.ER", HCR)){
-        ER <- ifelse(run.size==0, 0, as.numeric(gsub("\\D", "", HCR)))
+        if(run.size==0){ER <- 0}
         catch <- run.size*ER
-        HR.all <- ER}
+        HR.all <- catch/run.size}
       if(HCR == "alt.rebuilding"){
         if(run.size <= 19000) catch <- 0
         if(run.size >= 158333) catch <- run.size*0.4
