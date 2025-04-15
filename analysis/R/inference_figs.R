@@ -643,8 +643,9 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 # Performance metrics (all HCR excl. fixed ER, all PMs) 
 
 perf.metrics %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>% 
-  ggplot(aes(x=factor(HCR, levels=HCRs[1:6]), y = median, fill=factor(HCR, levels=HCRs[1:6]))) + 
-  geom_col() +
+  ggplot() + 
+  #geom_point(aes(x=factor(HCR, levels=HCRs[1:6]), y=mean), col="grey75", alpha=0.4) + #see means?
+  geom_col(aes(x=factor(HCR, levels=HCRs[1:6]), y = median, fill=factor(HCR, levels=HCRs[1:6]))) +
   geom_segment(aes(x=factor(HCR, levels=HCRs[1:6]),
                    xend=factor(HCR, levels=HCRs[1:6]),
                    y=q_25, yend=q_75), col="grey30") +
