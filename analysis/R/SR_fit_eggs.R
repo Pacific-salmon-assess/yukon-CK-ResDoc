@@ -46,7 +46,10 @@ for(i in unique(sp_har$CU)){
                    data = stan.data,
                    cores = 4,
                    seed = 2,
-                   iter = 2000)
+                   iter = 2000,
+                   control = list(adapt_delta = 0.999,
+                                  max_treedepth = 20))
+    
     
     saveRDS(TV.eggs.fit, here("analysis/data/generated/model_fits/TVA_egg_mass/", 
                          paste0(i, "_TVA_egg_mass.rds")))
