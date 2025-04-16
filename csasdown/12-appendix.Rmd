@@ -49,7 +49,9 @@ Daily salmon counts were assumed to arise from negative-binomial ($NB$) distribu
 
 Conservation Unit composition data were fitted using a multinomial likelihood (Table Xb 4.12). For each year/day/gear combination, the observed number of Chinook by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_sn_s$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
 
-Total run size indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was equal to the product of the externally estimated CV (INSERT PARAMETER) and the index (Table Xb 13-14).
+Total run size indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the run size index (Table Xb 13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table Xb 15).     
+
+In some years prior to the implementation of sonar monitoring, the fish wheel data was not informative enough to estimate run sizes for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale run sizes for each CU (Table Xb 16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate run size and was omitted from 2005 onward, after the introduction of sonar monitoring.
 
 
 ## MODEL FITTING AND DIAGNOSTICS 
