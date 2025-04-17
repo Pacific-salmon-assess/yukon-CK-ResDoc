@@ -123,7 +123,6 @@ process.iteration = function(samp) {
 process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
                    lst.resid, phi, ER){
 
-  #browser()
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -137,11 +136,11 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   R <- t(matrix(0,ns,ny))
   S <- R * (1-0)
   v <- R; v[,] <- 0
-  R[1:3,] <- Rec # BC: observed recruitment indexed by brood/spawning year 
+  R[1:3,] <- Rec # observed recruitment indexed by brood/spawning year 
   N <- array(0,dim=c(ny,4,ns))
   Ntot <- R; Ntot[,]<-0
   H <- Ntot; S <- Ntot
-  S[4:7,] <- Spw # why these years? BC: observed spawners to project recruitment from in next two chunks of code 
+  S[4:7,] <- Spw
   predR <- Ntot
   error <- matrix(NA, nrow=ny, ncol=4)
   
@@ -165,7 +164,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   # Loop through years of simulation	
   for(i in (7+1):ny){
-    N[i,1,] <- R[i-(4),] * mat[1] # Why doesn't offset match the block above? BC: not sure what you mean by "offset" but above we are populating return by age for partially observed recruitment events, adn then here it is for unobserved/fully simulated ones
+    N[i,1,] <- R[i-(4),] * mat[1] 
     N[i,2,] <- R[i-(5),] * mat[2]
     N[i,3,] <- R[i-(6),] * mat[3]
     N[i,4,] <- R[i-(7),] * mat[4]
@@ -175,7 +174,6 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     run.size.true <- sum(Ntot[i,])
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
-    if(run.size > 999000) {run.size <- 1000000} # why? BC: can remove
     if(HCR == "no.fishing"){HR.all <- 0}
     if(HCR == "status.quo"){ 
       catch <- ifelse(run.size<=42500, 0, run.size-42500)
@@ -224,7 +222,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     outcome_error <- (1+rnorm(1,0,OU))
     H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) 
     S_exp <- Ntot[i,]-H[i,]
-    S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs? add comment
+    S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
     error[i,1] <- HR.all*ifelse(outcome_error<0, 0, outcome_error); error[i,2] <- realized.HR; error[i,3] <- run.size; error[i,4] <- run.size.true
@@ -244,14 +242,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty) (ER)
   # 4: % of years with no harvest
   # 5: % of yrs harv > 10k (basic needs)
-  #	6: CV in harvest
-  # 7: number of CUs below LRP at end of sim
-  # 8: number of CUs between RPs " "
-  # 9: number of CUs above USR at ""
-  # 10: number of extinct pops 
+  # 6: number of CUs below LRP at end of sim
+  # 7: number of CUs between RPs " "
+  # 8: number of CUs above USR at ""
+  # 9: number of extinct pops 
 
   #browser()
-    pms <- matrix(NA,1,10) 
+    pms <- matrix(NA,1,9) 
   
   # SMU level PMs 
   S[S[,]=='NaN'] <- 0
@@ -267,12 +264,11 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   pms[,3] <- mean(harvest_rates) #was median before
   pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs) BC: with proposed changes this should be fine now
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
-  pms[,6] <- 1/(sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,]))
   #"status" - how many CUs are in each zone IN THE FINAL YEAR?
-  pms[,7] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
-  pms[,8] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
-  pms[,9] <- sum(S[ny,] > Smax)
-  pms[,10] <- sum(S[ny,] ==0)
+  pms[,6] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
+  pms[,7] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
+  pms[,8] <- sum(S[ny,] > Smax)
+  pms[,9] <- sum(S[ny,] ==0)
   
   
   # CU-level performance measures
