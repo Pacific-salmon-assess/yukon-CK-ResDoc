@@ -137,11 +137,11 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   R <- t(matrix(0,ns,ny))
   S <- R * (1-0)
   v <- R; v[,] <- 0
-  R[1:3,] <- Rec
+  R[1:3,] <- Rec # BC: observed recruitment indexed by brood/spawning year 
   N <- array(0,dim=c(ny,4,ns))
   Ntot <- R; Ntot[,]<-0
   H <- Ntot; S <- Ntot
-  S[4:7,] <- Spw # why these years?
+  S[4:7,] <- Spw # why these years? BC: observed spawners to project recruitment from in next two chunks of code 
   predR <- Ntot
   error <- matrix(NA, nrow=ny, ncol=4)
   
@@ -165,7 +165,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   # Loop through years of simulation	
   for(i in (7+1):ny){
-    N[i,1,] <- R[i-(4),] * mat[1] # Why doesn't offset match the block above?
+    N[i,1,] <- R[i-(4),] * mat[1] # Why doesn't offset match the block above? BC: not sure what you mean by "offset" but above we are populating return by age for partially observed recruitment events, adn then here it is for unobserved/fully simulated ones
     N[i,2,] <- R[i-(5),] * mat[2]
     N[i,3,] <- R[i-(6),] * mat[3]
     N[i,4,] <- R[i-(7),] * mat[4]
@@ -175,7 +175,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     run.size.true <- sum(Ntot[i,])
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
-    if(run.size > 999000) {run.size <- 1000000} # why?
+    if(run.size > 999000) {run.size <- 1000000} # why? BC: can remove
     if(HCR == "no.fishing"){HR.all <- 0}
     if(HCR == "status.quo"){ 
       catch <- ifelse(run.size<=42500, 0, run.size-42500)
@@ -219,7 +219,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
 
 
     
-    HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary?
+    HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary? BC: can remove
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
     outcome_error <- (1+rnorm(1,0,OU))
     H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) 
@@ -263,9 +263,9 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) 
-  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# mismatch between sim loop years (8:ny) and pm years means mean harvest, harv rates, etc will be biased low
+  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# mismatch between sim loop years (8:ny) and pm years means mean harvest, harv rates, etc will be biased low BC: only when pm.yr is < ny-7, with proposed changes to make ny 34 then pm.yr = 14:ny
   pms[,3] <- mean(harvest_rates) #was median before
-  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs)
+  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs) BC: with proposed changes this should be fine now
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
   pms[,6] <- 1/(sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,]))
   #"status" - how many CUs are in each zone IN THE FINAL YEAR?
