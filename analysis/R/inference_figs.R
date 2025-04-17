@@ -546,6 +546,7 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
                       row.names = 1)
+    spwn.obs = TV.spwn; harv.obs = TV.harv
   } else if (k == "TVA2"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA2.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA2.csv"))
@@ -554,6 +555,7 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
                     row.names = 1)
+    spwn.obs = TV.spwn; harv.obs = TV.harv
    } else if (k == "AR1"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
@@ -562,6 +564,8 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
                       row.names = 1)
+    spwn.obs = AR1.spwn; harv.obs = AR1.harv
+    
 }
 
 # Variables as factors for plotting
@@ -591,11 +595,11 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
   ggplot() +
     # Observations:
-    geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+    geom_ribbon(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
                 aes(ymin = S.25/1000, ymax = S.75/1000, 
                     x= year), #offset to return year 
                 fill = "grey", color = "grey") +
-    geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+    geom_line(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
               aes(y=S.50/1000, x= year), color = "black") + 
     # Projections: 
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
@@ -622,11 +626,11 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
     ggplot() +
     # Observations:
-    geom_ribbon(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+    geom_ribbon(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
                 aes(ymin = H.25/1000, ymax = H.75/1000, 
                     x= year), #offset to return year 
                 fill = "grey", color = "grey") +
-    geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+    geom_line(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
               aes(y=H.50/1000, x= year), color = "black") + 
     # Projections:
     geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
