@@ -578,8 +578,9 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 # colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
-names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] # this will break easily
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) # depends on ER_seq set in "fwd_sim.R"
+names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] 
+ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) 
 
 
 ## Spawners projection
@@ -730,15 +731,19 @@ out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
 # load historical run size info
 hist_run <- read.csv(here('analysis', 'data', 'raw', 'rr-table.csv'))
 hist_run <- hist_run %>% dplyr::summarize(lower = quantile(Total.run, 0.025), 
-                                          upper = quantile(Total.run, 0.975))
+                                          upper = quantile(Total.run, 0.975),
+                                          title = "95% historical run size")
 
 
 ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75) +
-  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100), fill="grey70", alpha=0.2) +
+  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100, fill=title), alpha=0.2) +
+  scale_colour_manual(values=HCR_cols, guide="none") +
+  scale_fill_manual(values="grey70", guide="legend") +
   facet_wrap(~factor(HCR, levels=unique(out$HCR)[c(3:5,1:2)])) + 
-  scale_colour_manual(values=HCR_cols) +
   labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(legend.position = "none") +
+  theme_minimal() + theme(legend.position=c(0.85,0.2),
+                          legend.title = element_blank(),
+                          legend.background = element_rect(colour ="grey35")) +
   lims(x=c(0,400)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
@@ -751,8 +756,7 @@ Sig.R.order <- Sig.R[c(4,8,6,2,5,3,1,7,9),c(4,8,6,2,5,3,1,7,9)]
 
 ggcorrplot(Sig.R.order, hc.order = TRUE, type = "lower",
            outline.col = "white",
-           lab=TRUE) + 
-  theme(axis.text.x = element_blank())
+           lab=TRUE) 
 
 my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
 
