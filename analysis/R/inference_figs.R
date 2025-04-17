@@ -16,6 +16,8 @@ TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"),
                               full.names = T), readRDS)
 names(TVA.fits) <- unique(sp_har$CU)
 
+load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata")) # RR model fit
+
 # escapement estimates ---
 esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
   mutate_at(2:6, as.numeric)
@@ -802,8 +804,6 @@ my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
 
 # CU run-reconstructions plot ----
 
-load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
-
 border <- read.csv(here("analysis/data/raw/border-passage.csv")) |>
   filter(year>1984)
 
@@ -846,3 +846,38 @@ legend( x="bottomleft", bty="n",
         pch=c(16,0,1), lwd=c(1.5,1.5), col=c("grey40","black","black"), lty=c(0,0,0), cex=0.75 )
 
 dev.off()
+
+# CU run-timing plot ----
+cols <- viridis(rpt$nS)
+
+x <- rpt$day_d 
+x_trunc <- x[x>=170 & x <=270]
+
+y_dpt <- rpt$rho_dst
+y_dp  <- apply( y_dpt, 1:2, mean )
+
+png( file=here("analysis/plots/CU-run-timing.PNG"), width= 9, height = 5.562,units="in", res =700 )
+
+par(mar=c(5,15,1,1),oma=c(0,0,0,0))
+
+plot( x=range(x_trunc), c(1,rpt$nS+1.5), type="n", axes=FALSE,
+      xlab="Ordinal date", ylab="" )
+axis( side=1 ) 
+axis( side=2, at=rpt$nS:1, labels=rpt$stocks, las=1, cex.axis=1 ) 
+for( p in 1:rpt$nS )
+{
+  y <- 1.5*(y_dp[ ,p]/max(y_dp[ ,p]))
+  polygon( x=c(x,rev(x)), y=rpt$nS-p+1+c(y,rep(0,length(x))),
+           border=NA, col=cols[p] )
+}
+dev.off()
+
+
+# escapement stats ----
+
+esc_summary <- esc |>
+  group_by(stock) |>
+  summarize(recent_spwn = mean(mean[34:40]),
+            change_spwn = 1-(recent_spwn/mean(mean))*100)
+
+            

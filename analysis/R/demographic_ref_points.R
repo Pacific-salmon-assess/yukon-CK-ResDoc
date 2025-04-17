@@ -2,6 +2,7 @@
 library(here)
 library(tidyverse)
 library(rstan)
+library(ggsidekick)
 
 source(here("analysis/R/data_functions.R"))
 
@@ -181,6 +182,7 @@ my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
   
   
 # source(inference_figs.R)
+bench.posts <- readRDS(here("analysis/data/generated/benchmark_posteriors.rds"))
 
 bench_eggs <- bench_AR1_eggslong|> filter(period =="recent") |>
   mutate(unit = "egg mass") |>

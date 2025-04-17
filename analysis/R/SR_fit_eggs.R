@@ -8,7 +8,7 @@ library(shinystan)
 #library(gsl) #for lambertw0() to calc U_MSY
 source(here("analysis/R/data_functions.R"))
 
-# fit AR1 models with eggs as measure of reproductive output --------------------------------------
+# fit AR1 models with egg mass as measure of reproductive output --------------------------------------
 for(i in unique(sp_har$CU)){
     
     sp_har1 <- filter(sp_har, CU == i) 
@@ -42,17 +42,17 @@ for(i in unique(sp_har$CU)){
     saveRDS(AR1.eggs.fit, here("analysis/data/generated/model_fits/AR1_egg_mass/", 
                           paste0(i, "_AR1_eggs.rds")))    
     
-    TV.eggs.fit <- stan(file = here("analysis/Stan/SS-SR_TVA_egg_mass.stan"), 
-                   data = stan.data,
-                   cores = 4,
-                   seed = 2,
-                   iter = 2000,
-                   control = list(adapt_delta = 0.999,
-                                  max_treedepth = 20))
+#    TV.eggs.fit <- stan(file = here("analysis/Stan/SS-SR_TVA_egg_mass.stan"), 
+#                   data = stan.data,
+#                   cores = 4,
+#                   seed = 2,
+#                   iter = 2000,
+#                   control = list(adapt_delta = 0.999,
+#                                  max_treedepth = 20))
     
     
-    saveRDS(TV.eggs.fit, here("analysis/data/generated/model_fits/TVA_egg_mass/", 
-                         paste0(i, "_TVA_egg_mass.rds")))
+#    saveRDS(TV.eggs.fit, here("analysis/data/generated/model_fits/TVA_egg_mass/", 
+#                         paste0(i, "_TVA_egg_mass.rds")))
     
     
 }
