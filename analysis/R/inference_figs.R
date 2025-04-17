@@ -446,7 +446,7 @@ tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
   drop_na() |>
-  filter(! tributary %in% c("moreley_aerial", "nisutlin_sonar"))
+  filter(! tributary %in% c("morley_aerial", "chandindu_weir","nisutlin_sonar", "pelly_aerial", "ross_aerial"))
 
 ggplot(trib_rr, aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
@@ -873,7 +873,10 @@ dev.off()
 
 esc_summary <- esc |>
   group_by(stock) |>
-  summarize(recent_spwn = mean(mean[34:40]),
-            change_spwn = 1-(recent_spwn/mean(mean))*100)
+  summarize(avg_spwn = mean(mean),
+            recent_spwn = mean(mean[34:40]),
+            change_spwn = (1-(recent_spwn/avg_spwn))*-100)
+
+mean(esc_summary$change_spwn)
 
             
