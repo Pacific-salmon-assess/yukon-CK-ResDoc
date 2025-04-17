@@ -33,9 +33,10 @@ for(k in fit_type){
 
 # Populate "samps" object ----------------------------------------------
 
-  if(k=="AR1") fits = AR1.fits else
-    if(k == "TVA") fits = TVA.fits else
-      if(k == "TVA2") fits = TVA.fits
+  if(k=="AR1") {
+    fits = AR1.fits} else if(k == "TVA") {
+      fits = TVA.fits} else if(k == "TVA2") {
+        fits = TVA.fits}
 
 samps <- NULL
 pi.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits)))
@@ -55,8 +56,8 @@ for(i in 1:length(names(fits))){ # loop over CUs
   }
   sub_samps <- cbind(alpha,
                      fits[[i]]$beta,
-                     filter(bench.posts, CU == unique(bench.posts$CU)[i])$Umsy,
-                     filter(bench.posts, CU == unique(bench.posts$CU)[i])$Smsy.80,
+                     filter(bench.posts, CU == names(fits)[i])$Umsy,
+                     filter(bench.posts, CU == names(fits[i]))$Smsy.80,
                      fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states 
                      fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states 
                      fits[[i]]$lnresid[,nRyrs]) #last resid
@@ -101,8 +102,8 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 1000 # number of Monte Carlo trials
-ny = 26 # number of years in forward simulation (through 2050)
+num.sims = 700 # number of Monte Carlo trials
+ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
 OU <- 0.1  ## could also base this off something else from fisheries management 
@@ -136,9 +137,9 @@ for(i in 1:length(HCRs)){
   
     
 
-    sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
+     sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
-                                  (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states
+                                  (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states #why start at yr 7, not 8? 
                                   rep(j, ny-a_max+1))) 
     H.time <- rbind(H.time, cbind(out$H[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
