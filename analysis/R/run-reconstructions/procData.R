@@ -215,3 +215,12 @@ processData <- function()
 	save(chinookYkData, file=here('analysis/data/chinookYkData.Rdata'))
 }
 
+gsi_summary <- gsi |>
+  group_by(year, CU.x) |>
+  summarize(sum_prob = sum(prob),
+            samples = n_distinct(sample_num)) |>
+  mutate(cu_percent = round(sum_prob/samples, 5)) |>
+  select(year, CU.x, cu_percent) |>
+  pivot_wider(names_from=CU.x, values_from=cu_percent)
+
+write.csv(gsi_summary, here("analysis/data/generated/CU-gsi-annual-summary.csv"), row.names = FALSE)

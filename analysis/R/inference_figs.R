@@ -3,7 +3,7 @@ library(tidyverse)
 library(gsl)
 library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
 library(ggcorrplot)
-
+library(ggpubr)
 source(here("analysis/R/data_functions.R"))
 
 # read in data ---------------------------------------------------------------------------
@@ -428,7 +428,8 @@ my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
 
 # trib vs RR spawner relationships ----
 esc_join <- esc |>
-  mutate(CU = stock) |>
+  mutate(CU = stock,
+         mean = mean/1000) |>
   select(CU, year, mean, CU_f)
 
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -448,7 +449,7 @@ trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
 ggplot(trib_rr, aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
-  xlab("CU spawners") +
+  xlab("CU spawners (000s") +
   ylab("Tributary spawners") +
   theme_sleek() +
   facet_wrap(~tributary, scales = "free",nrow = 3) 
@@ -493,7 +494,7 @@ my.ggsave(here("analysis/plots/trib-escape.PNG"))
   )
   
   
-# Forward simulations ----
+# forward simulations ----
 
 # reference vs robustness productivity ----  
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
@@ -764,7 +765,8 @@ my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
   filter(Stock == "Canada") 
 
-ggplot(SMU_RR) + 
+a<- ggplot(SMU_RR |>
+         filter(Counts != "Exploitation")) + 
   geom_hline(yintercept = 19, col = "red", lty=2) +
   geom_hline(yintercept = 95, col = "dark green", lty=2) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
@@ -777,7 +779,22 @@ ggplot(SMU_RR) +
   theme(legend.position = "top",
         legend.title = element_blank(),
         plot.margin = margin(0.5,20,0.5,0.5))
-my.ggsave(here("analysis/plots/SMU-run-esc.PNG"))
+
+b<- ggplot(SMU_RR |>
+             filter(Counts == "Exploitation")) + 
+  geom_hline(yintercept = 40, col = "red", lty=2) +
+  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), col = "grey", alpha=0.4) +
+  geom_line(aes(x = Year, y = Median50.), size = 1, col = "grey") + 
+  ylab("Harvest rate (%)") +
+  xlab("Year") +
+  theme_sleek() 
+
+ggarrange(a,b, 
+          ncol = 2, 
+          widths = c(1, 1),
+          heights = c(1,0.5))
+
+my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
 
 # CU run-reconstructions plot ----
 
