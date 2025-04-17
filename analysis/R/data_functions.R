@@ -122,6 +122,8 @@ process.iteration = function(samp) {
 
 process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
                    lst.resid, phi, ER){
+
+  #browser()
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
   OU <- OU
@@ -139,8 +141,9 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   N <- array(0,dim=c(ny,4,ns))
   Ntot <- R; Ntot[,]<-0
   H <- Ntot; S <- Ntot
-  S[4:7,] <- Spw
+  S[4:7,] <- Spw # why these years?
   predR <- Ntot
+  error <- matrix(NA, nrow=ny, ncol=4)
   
   # populate first few years with realized states
   R[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,]+(phi*lst.resid)+epi[4,])
@@ -162,7 +165,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   # Loop through years of simulation	
   for(i in (7+1):ny){
-    N[i,1,] <- R[i-(4),] * mat[1]
+    N[i,1,] <- R[i-(4),] * mat[1] # Why doesn't offset match the block above?
     N[i,2,] <- R[i-(5),] * mat[2]
     N[i,3,] <- R[i-(6),] * mat[3]
     N[i,4,] <- R[i-(7),] * mat[4]
@@ -172,7 +175,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     run.size.true <- sum(Ntot[i,])
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
-    if(run.size > 999000) {run.size <- 1000000} 
+    if(run.size > 999000) {run.size <- 1000000} # why?
     if(HCR == "no.fishing"){HR.all <- 0}
     if(HCR == "status.quo"){ 
       catch <- ifelse(run.size<=42500, 0, run.size-42500)
@@ -224,6 +227,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs? add comment
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
+    error[i,1] <- HR.all*ifelse(outcome_error<0, 0, outcome_error); error[i,2] <- realized.HR; error[i,3] <- run.size; error[i,4] <- run.size.true
     
     # predict recruitment
     R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,]) 
@@ -260,10 +264,10 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) 
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# mismatch between sim loop years (8:ny) and pm years means mean harvest, harv rates, etc will be biased low
-  pms[,3] <- sum(harvest_rates)/(ny - pm.yr +1) #was median before
+  pms[,3] <- mean(harvest_rates) #was median before
   pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs)
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
-  pms[,6] <- sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,])
+  pms[,6] <- 1/(sd(H[pm.yr:ny,])/mean(H[pm.yr:ny,]))
   #"status" - how many CUs are in each zone IN THE FINAL YEAR?
   pms[,7] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
   pms[,8] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
@@ -281,7 +285,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   
   
   
-  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms, PMs_cu=pms_cu)
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms, PMs_cu=pms_cu, error)
 }
 
 #------------------------------------------------------------------------------#
