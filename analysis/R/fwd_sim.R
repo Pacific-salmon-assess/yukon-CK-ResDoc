@@ -138,10 +138,10 @@ for(i in 1:length(HCRs)){
     
 
      sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
-    S.time <- rbind(S.time, cbind(out$S[8:ny,], rep(HCR, ny-a_max+1), 
+    S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max), #store trajectory while clipping out observed states
                                   rep(j, ny-a_max+1))) 
-    H.time <- rbind(H.time, cbind(out$H[8:ny,], rep(HCR, ny-a_max+1), 
+    H.time <- rbind(H.time, cbind(out$H[7:ny,], rep(HCR, ny-a_max+1), 
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
                                   rep(j, ny-a_max+1)))
     
