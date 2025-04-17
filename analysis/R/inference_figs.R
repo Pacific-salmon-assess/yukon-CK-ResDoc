@@ -446,7 +446,7 @@ tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
   drop_na() |>
-  filter(! tributary %in% c("moreley_aerial", "nisutlin_sonar"))
+  filter(! tributary %in% c("morley_aerial", "chandindu_weir","nisutlin_sonar", "pelly_aerial", "ross_aerial"))
 
 ggplot(trib_rr, aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
@@ -498,7 +498,7 @@ my.ggsave(here("analysis/plots/trib-escape.PNG"))
   
 # forward simulations ----
 
-# reference vs robustness productivity ----  
+## reference vs robustness productivity ----  
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
 TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
   
@@ -589,7 +589,7 @@ ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
 HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) 
 
 
-## Spawners projection
+## Spawners projection ----
                   
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
@@ -621,7 +621,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 }
 
 
-## Harvest projection
+## Harvest projection ----
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
     ggplot() +
@@ -648,7 +648,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 }
 
 
-# Performance metrics (all HCR excl. fixed ER, all PMs) 
+## performance metrics (all HCR excl. fixed ER, all PMs) ---- 
 
 perf.metrics %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>% 
   ggplot() + 
@@ -669,7 +669,7 @@ perf.metrics %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
 my.ggsave(here(paste0("analysis/plots/perf_metrics_", k, ".PNG")))
 
 
-# Performance status
+## performance status ----
 perf.status <- perf.metrics |>
   filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
   mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)), 
@@ -686,7 +686,7 @@ perf.status %>% filter(!(HCR %in% HCR_grps[["fixed"]])) %>%
 my.ggsave(here(paste0("analysis/plots/perf_status_", k, ".PNG")))
 
 
-## Fixed ER trade-off multipanel
+## fixed ER trade-off multipanel ----
 
 spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   group_by(HCR, CU_f) %>% 
@@ -730,7 +730,7 @@ cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,.8))
 my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs_", k, ".PNG")))
 
 
-# Visualize HCRs --
+## visualize HCRs ----
 
 out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
 
@@ -756,7 +756,7 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75)
 my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
 
 
-# covariance plots 
+## covariance plots ----
 
 Sig.R.order <- Sig.R[c(4,8,6,2,5,3,1,7,9),c(4,8,6,2,5,3,1,7,9)]
 
@@ -881,7 +881,10 @@ dev.off()
 
 esc_summary <- esc |>
   group_by(stock) |>
-  summarize(recent_spwn = mean(mean[34:40]),
-            change_spwn = 1-(recent_spwn/mean(mean))*100)
+  summarize(avg_spwn = mean(mean),
+            recent_spwn = mean(mean[34:40]),
+            change_spwn = (1-(recent_spwn/avg_spwn))*-100)
+
+mean(esc_summary$change_spwn)
 
             
