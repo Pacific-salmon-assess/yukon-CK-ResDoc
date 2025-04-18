@@ -168,7 +168,6 @@ brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 
   ggplot(bench_AR1_eggslong|> filter(period !="avg"), aes(value, fill = period, color = period)) +
     geom_density(alpha = 0.8, adjust = 4) +
-    geom_vline(xintercept = 1.5) +
     facet_wrap(~CU, scales = "free_y") +
     theme_sleek()+
     xlab("S[MSR]") +
@@ -197,7 +196,6 @@ bench_post <- rbind(bench_eggs, bench_body) |>
 
 ggplot(bench_post, aes(value, fill = unit, color = unit)) +
   geom_density(alpha = 0.8, adjust = 4) +
-  geom_vline(xintercept = 1.5) +
   facet_wrap(~CU, scales = "free_y") +
   theme_sleek()+
   xlab(expression(S[MSR])) +
@@ -218,7 +216,6 @@ summary_bench_AR1_eggs <- bench_post |>
 
 # SR fits ---
 ggplot() +
-  geom_abline(intercept = 0, slope = 1,col="dark grey") +
   geom_ribbon(data = ER.preds, aes(x = EM/1000, ymin = Rec_lwr/1000, ymax = Rec_upr/1000),
               fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
   geom_errorbar(data = brood.all, aes(x= EM_med/1000, y = R_med/1000, 
@@ -237,7 +234,7 @@ ggplot() +
   labs(x = "Egg mass (kgs)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "top",
+  theme(legend.position = "right",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),

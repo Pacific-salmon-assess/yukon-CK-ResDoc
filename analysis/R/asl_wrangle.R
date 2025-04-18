@@ -123,9 +123,11 @@ write.csv(female_length_comps_egg_mass, here("analysis/data/raw/female_length_co
 fem_len_comp <- read.csv(here("analysis/data/raw/female_length_comps.csv"))
 fem_age_comps <- read.csv(here("analysis/data/raw/female_age_comps.csv"))
 fem_egg_mass_comps <- read.csv(here("analysis/data/raw/female_length_comps_egg_mass.csv")) # female spawner eggs by age
+fem_egg_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")) # female spawner eggs by age
 
 reproOutputPerSpawner <- rowSums(fem_S_comps*fem_egg_mass_comps)
-reproOutput <- data.frame(cbind(seq(1985,2024),reproOutputPerSpawner))
+reproOutputPerSpawnerEggs <- rowSums(fem_S_comps*fem_egg_comps)
+reproOutput <- data.frame(cbind(seq(1985,2024),reproOutputPerSpawnerEggs))
 
 fem_age_comp <- fem_age_comps[,c(1,3:6)]%>%
   group_by(Sample.Year) %>%
@@ -189,11 +191,11 @@ c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
   theme(strip.text.x = element_text(size=8),
         plot.margin = margin(0.5,10,1,0.5))
 
-d <- ggplot(reproOutput, aes(x = V1, y = reproOutputPerSpawner)) +
+d <- ggplot(reproOutput, aes(x = V1, y = reproOutputPerSpawnerEggs)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
   xlab("Year") +
-  ylab("Average reproductive output \n (total egg mass per spawner)") +
+  ylab("Average reproductive output \n (total eggs per spawner)") +
   theme_sleek() +
   theme(plot.margin = margin(45,10,0.5,0.5))
 g <- ggarrange(b,c,a,d, 
