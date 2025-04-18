@@ -1,18 +1,21 @@
-# FIGURES  
+# FIGURES
 
-(ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017. 
+(ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
+
 ```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
+
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
 ```
 
 \clearpage
 
-# TABLES  
+# TABLES
+
 (ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
 
 ```{r tab-factors-summary, results="asis"}
@@ -66,18 +69,21 @@ factors.df <- data.frame("Life stage" = c(rep("Spawner", length(factors_spwn)),
                          )
 
 factors.df |>
-  dplyr::mutate_all(function(x){gsub("\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:tab-factors-summary)", 
                      repeat_header = TRUE) |>
-    kableExtra::column_spec(1, width = "3cm")|>
+    kableExtra::column_spec(1, width = "2cm")|>
     kableExtra::column_spec(2, width = "3cm")|>
-    kableExtra::column_spec(3, width = "10cm")
+    kableExtra::column_spec(3, width = "6.5cm")|>
+    kableExtra::column_spec(4, width = "5cm")
 ```
+
 \clearpage
 
 (ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
+
 ```{r tab-perf-metrics-descriptions, results = "asis"}
 df <- data.frame(Metric = c("% replicate simulations < LRP", "% replicate simulations > USR", "average annual catch", "catch stability (1/CV)", 
                             "relative catch metric"), 
@@ -101,8 +107,11 @@ df|>
                      align = "llc")|>
   kableExtra::column_spec(2, width = "6.5cm")
 ```
+
 \clearpage
+
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
+
 ```{r ref-points, results = "asis"}
 priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)", 
                                                "Upper Stock Reference Point (USR)", 
@@ -137,5 +146,5 @@ priors.df |>
     kableExtra::column_spec(2, width = "3cm")|>
     kableExtra::column_spec(3, width = "10cm")
 ```
-\clearpage
 
+\clearpage

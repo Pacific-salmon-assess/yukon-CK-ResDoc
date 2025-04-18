@@ -546,6 +546,7 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
                       row.names = 1)
+    spwn.obs = TV.spwn; harv.obs = TV.harv
   } else if (k == "TVA2"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA2.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA2.csv"))
@@ -554,6 +555,7 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
                     row.names = 1)
+    spwn.obs = TV.spwn; harv.obs = TV.harv
    } else if (k == "AR1"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
@@ -562,6 +564,8 @@ if(k == "TVA"){
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
                       row.names = 1)
+    spwn.obs = AR1.spwn; harv.obs = AR1.harv
+    
 }
 
 # Variables as factors for plotting
@@ -580,8 +584,9 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 # colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
-names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] # this will break easily
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) # depends on ER_seq set in "fwd_sim.R"
+names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] 
+ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq)) 
 
 
 ## Spawners projection ----
@@ -590,11 +595,11 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
   ggplot() +
     # Observations:
-    geom_ribbon(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+    geom_ribbon(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
                 aes(ymin = S.25/1000, ymax = S.75/1000, 
                     x= year), #offset to return year 
                 fill = "grey", color = "grey") +
-    geom_line(data = filter(TV.spwn, year >= max(TV.spwn$year)-7), 
+    geom_line(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
               aes(y=S.50/1000, x= year), color = "black") + 
     # Projections: 
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
@@ -621,11 +626,11 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
   H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
     ggplot() +
     # Observations:
-    geom_ribbon(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+    geom_ribbon(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
                 aes(ymin = H.25/1000, ymax = H.75/1000, 
                     x= year), #offset to return year 
                 fill = "grey", color = "grey") +
-    geom_line(data = filter(TV.harv, year >= max(TV.harv$year)-7), 
+    geom_line(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
               aes(y=H.50/1000, x= year), color = "black") + 
     # Projections:
     geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
@@ -732,15 +737,19 @@ out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
 # load historical run size info
 hist_run <- read.csv(here('analysis', 'data', 'raw', 'rr-table.csv'))
 hist_run <- hist_run %>% dplyr::summarize(lower = quantile(Total.run, 0.025), 
-                                          upper = quantile(Total.run, 0.975))
+                                          upper = quantile(Total.run, 0.975),
+                                          title = "95% historical run size")
 
 
 ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR), linewidth=0.75) +
-  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100), fill="grey70", alpha=0.2) +
+  geom_rect(data=hist_run, aes(xmin = lower/1000, xmax=upper/1000, ymin=0, ymax=100, fill=title), alpha=0.2) +
+  scale_colour_manual(values=HCR_cols, guide="none") +
+  scale_fill_manual(values="grey70", guide="legend") +
   facet_wrap(~factor(HCR, levels=unique(out$HCR)[c(3:5,1:2)])) + 
-  scale_colour_manual(values=HCR_cols) +
   labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(legend.position = "none") +
+  theme_minimal() + theme(legend.position=c(0.85,0.2),
+                          legend.title = element_blank(),
+                          legend.background = element_rect(colour ="grey35")) +
   lims(x=c(0,400)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
@@ -753,8 +762,7 @@ Sig.R.order <- Sig.R[c(4,8,6,2,5,3,1,7,9),c(4,8,6,2,5,3,1,7,9)]
 
 ggcorrplot(Sig.R.order, hc.order = TRUE, type = "lower",
            outline.col = "white",
-           lab=TRUE) + 
-  theme(axis.text.x = element_blank())
+           lab=TRUE) 
 
 my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
 
