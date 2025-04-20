@@ -245,9 +245,9 @@ my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
 # Demographic time-varying alpha (recruits/gram egg mass) relationships ----
 ggplot(a.yrs.all
        |> filter(brood_year < 2018), aes(color = CU)) +
-  geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
+  geom_line(aes(x = brood_year , y = mid*1000), lwd = 1.5) +
   scale_color_viridis_d() +
   theme_sleek() +
-  labs(y = "Productivity (maximum R/EM)", x = "Brood year")
+  labs(y = "Productivity (maximum R/EM[kg])", x = "Brood year")
 
 my.ggsave(here("analysis/plots/changing_demo_productivity.PNG"))
