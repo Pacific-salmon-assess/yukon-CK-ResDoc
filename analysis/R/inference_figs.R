@@ -542,7 +542,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA.csv")) |>
-      pivot_longer(-c(1,12), names_to = "metric") |>
+      pivot_longer(-c(1,11), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
                       row.names = 1)
@@ -551,7 +551,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA2.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA2.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA2.csv")) |>
-      pivot_longer(-c(1,12), names_to = "metric") |>
+      pivot_longer(-c(1,11), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
                     row.names = 1)
@@ -560,7 +560,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-      pivot_longer(-c(1,12), names_to = "metric") |>
+      pivot_longer(-c(1,11), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
                       row.names = 1)

@@ -148,7 +148,7 @@ for(i in 1:length(HCRs)){
   }
 } # end of simulation loop
 
-pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs", "harv.stability", "n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct")
+pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct")
 colnames(sim.outcomes) <- c("HCR", "sim", pms)
 qmean <- function(x){
   c(quantile(x, c(0.25, 0.5, 0.75), na.rm=T), mean(x, na.rm=T))
@@ -161,7 +161,6 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
           ER = qmean(ER), 
           pr.no.harv = qmean(pr.no.harv),
           pr.basic.needs = qmean(pr.basic.needs),
-          harv.stability = qmean(harv.stability), # how should NAs be treated? there should be NAs where harv=0 
           n.below.LSR = qmean(n.below.LSR), 
           n.between.ref = qmean(n.between.ref), 
           n.above.USR = qmean(n.above.USR), 
