@@ -156,6 +156,17 @@ CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",
 ER.preds$CU_f <- factor(ER.preds$CU, levels = CU_order)
 brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
 
+
+bench_egg_mass_long <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
+  group_by(CU,period, par) |>
+  summarize(median = quantile(value,probs=c(0.5),na.rm=T),
+            lower = quantile(value,probs=c(0.025),na.rm=T),
+            upper = quantile(value,probs=c(0.975),na.rm=T))
+
+write.csv(bench_egg_mass_long, here("analysis/data/generated/demographic_parameters.csv"), 
+          row.names = FALSE)
+
+
   summary_bench_AR1_eggs <- bench_AR1_eggs |>
     group_by(CU,period) |>
     summarize(upper.BM = median(0.8*Smsy, na.rm=T),
