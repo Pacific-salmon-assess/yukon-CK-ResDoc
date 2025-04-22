@@ -65,16 +65,6 @@ All CUs exhibited considerable inter-annual variation in reconstructed spawner a
 Reconstructed CU spawner abundances tended to correlate positively with tributary scale assessments of spawner abundance (Figure \@ref(fig:fig-trib-vs-CU-spawn)). Tributary assessments that indexed a larger fraction of the total CU and were higher precision methods (e.g., Tahkini and Klondike sonars, Tachun weir) tended to have the strongest positive correlations with reconstructed CU scale spawner abundances. One exception was the Whitehorse fishway that had little relationship with reconstructed spawner abundance for the Upper Yukon CU. 
 
 ### SPAWNER-RECRUITMENT RELATIONSHIPS
-
--   Productivity, capacity, SR relationships
-    -   Variation in intrinsic productivity, capacity, evidence for density dependence
-    -   Trends in productivity over time
-        -   **Figure: SR relationships by CU for both spawner and egg mass based relationships**
-        -   **Figure: Trends in productivity by CU**
-        -   **Figure: Covariation in recruitment across CUs**
-        -   **Figure: SR relationships with observations by CU**
-        -   **Table: SR parameters and reference points by CU**
-
 There is clear evidence of heterogeneity in intrinsic productivity and equilibrium abundance across CUs (Table \@ref(ref:pars-sr)). Estimates of intrinsic productivity ranged from 2.2 to 4.8 recruits-per-spawner and predicted equilibrium size ranged from from 3,900 to 18,400 spawners. These intrinsic productivities translate into harvest rates predicted to maximize long-term harvest (i.e., $U_{MSY}$) that range from ~35% to 61%. Most CUs showed some visual evidence of overcompensation with modestly declining recruitment at relatively high spawner abundances, and for many of the CUs the largest recruitment were observed in brood years with relatively low to moderate spawning abundances in the early part of the time series (1985–1995 brood years) (Figure \@ref(fig:fig-CU-SR)). Interannal variation in recruitment was positively correlated among CUs (mean pairwise correlation of ~0.5) and was strongest (weakest) for CUs that were geographically closest (furthest) from each other. There is evidence of time-trends in recruitment and productivity over time (Figure \@ref(fig:fig-prod-trends)) with productivity having been estimated to have declined by an average of 60% across CUs between the late 1980s and the early 2020s. 
 
 ### ESCAPEMENT QUALITY
@@ -85,6 +75,13 @@ When one takes into account the relationship between female size and fecundity [
 These changes result in modest differences in the inferred shape of the relationship between reproductive output (i.e., spawners vs. total egg mass) and recruitment (Figure \@ref(fig:fig-CU-EMR)). Estimated time-trends in intrinsic productivity were qualitatively very similar between the two alternative reproductive output - recruitment models (**Figure: Trends in productivity by CU and recruitment model**. This suggests that observed declines in the number of recruits produced per spawner over time are predominantly driven by processes influencing survival (e.g., environmental and ecosystem processes) and not due to demographic changes. 
 
 As a result of the observed declines in reproductive output, the spawner abundance expected to maximize recruitment ($S_{MSR}$), given recent (2015-2024) demographic characteristics, was estimated to be on average X% greater across all CUs than that estimated given historical (1985-1995) demographic characteristics (**Table of demographic reference points**). in contrast, $S_{MSR}$ given recent (2015-2024) demographic characteristics was estimated to be on average X% greater across all CUs when demographics change was not taken into account (Figure \@ref(fig:fig-demo-smsr)) but for several CUs estimates of $S_{MSR}$ corresponded to smaller spawner abundances when demographic change was explicitly accounted for (i.e., Big Salmon, Northern Yukon, Upper Yukon CUs). The reason why estimates were lower for some Cus may be due to subtly different shapes between the two alternative reproductive output (i.e., spawners vs. total egg mass) and recruitment relationships; CUs like Big Salmon and the Northern and Upper Yukon appeared to have more evidence for overcompensation and this could in turn result in estimates of the spawner abundance expected to maximize recruitment being lower as well. 
+
+## WILD SALMON POLICY RAPID STATUS ASSESSMENTS
+An assessment of CU biological statuses was carried out following the methods detailed in the Wild Salmon Policy (WSP) rapid status framework [@pestal2023state]. The key input into these assessments were reconstructed spawner abundances over time and corresponding biological reference points (Table \@ref(ref:pars-sr)), and data inputs and resulting statuses were reviewed thorough a series of meetings with subject matter experts. 
+
+Three CUs (Nordenskiold, Stewart, and White) were assessed as in the Red status zone due to spawner abundances over the most recent generation being below an absolute abundance lower threshold of 1,500 spawners. The Northern Yukon & Tributaries CU was assessed as in the Red status zone because spawner abundances over the most recent generation were below the lower biological reference point of 20%$S_{MSR}$. One additional CU, the Porcupine, was provisionally assessed as in the Red status zone due to a recent precipitous decline in spawner abundance, however the CU did not have sufficient data to meet minimum data standards (time series is too short <15 years with gaps) for formal application of the WSP rapid status approach. The WSP rapid status for other CUs in this SMU were assessed as in the Amber status zone. 
+
+
 
 -   WSP status assessments
     -   Brief recap of WSP rapid status approach (methods and process)
