@@ -534,7 +534,7 @@ bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
 
 # Generate plots for which set of fwd simulations?
 fit_type <- c("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
-fit_type <- c("TVA2") # Can omit one to avoid re-generating figures
+fit_type <- c("TVA", "TVA2") # Can omit one to avoid re-generating figures
 
 for(k in fit_type) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
   
