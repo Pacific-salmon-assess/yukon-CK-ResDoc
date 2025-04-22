@@ -36,6 +36,31 @@ knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 ```
 
+(ref:fig-CU-SR) Spawner recruitment relationships by CU.
+```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
+knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
+```
+
+(ref:fig-prod-trends) Trends in intrinsic productivity over time by CU.
+```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
+knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
+```
+
+(ref:fig-asl) Trends in asl over time.
+```{r fig-asl, fig.cap = "(ref:fig-asl)"}
+knitr::include_graphics(here::here("csasdown/figure/asl.png"))
+```
+
+(ref:fig-CU-EMR) Egg mass recruitment relationships by CU.
+```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
+knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
+```
+
+(ref:fig-demo-smsr) Egg mass recruitment relationships by CU.
+```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
+knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
+```
+
 \clearpage
 
 # TABLES
