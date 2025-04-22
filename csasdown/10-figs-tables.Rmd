@@ -1,15 +1,33 @@
 # FIGURES
 
 (ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
-
 ```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
-
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
+```
+
+(ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
+```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
+```
+
+(ref:fig-run-timing) Run-timing, at border, by CU.
+```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
+knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
+```
+
+(ref:fig-trib-vs-CU-spawn) Tributary assessment project vs. reconstructed spawner abundance over time.
+```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
+```
+
+(ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
+```{r fig-CU-spawn, fig.cap = "(ref:fig-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 ```
 
 \clearpage
