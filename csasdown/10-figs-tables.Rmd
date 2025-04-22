@@ -61,6 +61,15 @@ knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
 ```
 
+(ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU. 
+```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
+knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
+```
+
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River SMU. Thick lines are medians and shaded areas indicate 95% credible intervals. 
+```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
+knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
+```
 \clearpage
 
 # TABLES
