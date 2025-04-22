@@ -1,15 +1,64 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
 # FIGURES
 
 (ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
-
 ```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
-
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
+```
+
+(ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
+```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
+```
+
+(ref:fig-run-timing) Run-timing, at border, by CU.
+```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
+knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
+```
+
+(ref:fig-trib-vs-CU-spawn) Tributary assessment project vs. reconstructed spawner abundance over time.
+```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
+```
+
+(ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
+```{r fig-CU-spawn, fig.cap = "(ref:fig-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
+```
+
+(ref:fig-CU-SR) Spawner recruitment relationships by CU.
+```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
+knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
+```
+
+(ref:fig-prod-trends) Trends in intrinsic productivity over time by CU.
+```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
+knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
+```
+
+(ref:fig-asl) Trends in asl over time.
+```{r fig-asl, fig.cap = "(ref:fig-asl)"}
+knitr::include_graphics(here::here("csasdown/figure/asl.png"))
+```
+
+(ref:fig-CU-EMR) Egg mass recruitment relationships by CU.
+```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
+knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
+```
+
+(ref:fig-demo-smsr) Egg mass recruitment relationships by CU.
+```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
+knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
 ```
 
 \clearpage
@@ -154,4 +203,76 @@ priors.df |>
     kableExtra::column_spec(3, width = "10cm")
 ```
 
+
 \clearpage
+
+(ref:pars-ref-pts) Population (conservation unit) reference points.
+
+```{r pars-ref-pts, results = "asis"}
+bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
+
+bench.pars$CU <- gsub(".", " ", bench.pars$CU, fixed=TRUE)
+bench.pars$bench.par <- gsub(".", "", bench.pars$bench.par, fixed=TRUE)
+
+
+names(bench.pars) <- c("Conservation Unit",
+                       "Benchmark",
+                       "Mean", "Median",
+                       "Quantile 10", "Quantile 90", 
+                       "Effective Sample Size (Neff)",
+                       "Chain Mixing (Rhat)")
+bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
+
+bench.pars |> 
+  dplyr::filter(Benchmark %in% c("Sgen", "Smsr", "Smsr20", "Smsr40", "Smsy80")) |>
+  dplyr::arrange(`Conservation Unit`) |>
+  dplyr::select(1:6) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:pars-ref-pts)", 
+                     repeat_header = TRUE,
+                     align = "llc") |>
+  kableExtra::collapse_rows(columns=1)
+  
+
+```
+
+
+\clearpage
+
+(ref:pars-sr) Population (conservation unit) stock-recruit parameters.
+
+```{r pars-sr, results = "asis"}
+bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
+
+bench.pars$CU <- gsub(".", " ", bench.pars$CU, fixed=TRUE)
+bench.pars$bench.par <- gsub(".", "", bench.pars$bench.par, fixed=TRUE)
+
+
+names(bench.pars) <- c("Conservation Unit",
+                       "Parameter",
+                       "Mean", "Median",
+                       "Quantile 10", "Quantile 90", 
+                       "Effective Sample Size (Neff)",
+                       "Chain Mixing (Rhat)")
+bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
+
+bench.pars |> 
+  dplyr::filter(Parameter %in% c("alpha", "beta", "phi", "sigma")) |>
+  dplyr::arrange(`Conservation Unit`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:pars-ref-pts)", 
+                     repeat_header = TRUE,
+                     align = "llc") |>
+  kableExtra::collapse_rows(columns=1) |>
+  kableExtra::column_spec(1, width = "3cm") |>
+  kableExtra::column_spec(5:8, width = "2cm") |>
+  kableExtra::row_spec(1:108, align = "c")
+  
+
+```
