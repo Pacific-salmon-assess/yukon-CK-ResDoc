@@ -30,6 +30,7 @@ par.posts.tva <- NULL
 SR.preds <- NULL
 AR1.spwn <- NULL
 brood.all <- NULL
+brood.all.long <- NULL
 a.yrs.all <- NULL
 AR1.resids <- NULL
 TV.resids <- NULL
@@ -59,6 +60,17 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   brood_t <- mutate(brood_t, CU = i)
   
   brood.all <- rbind(brood.all, brood_t)
+  
+  spwn.quant.long <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs)]
+  rec.quant.long <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs]
+  
+  brood_t.long <- as.data.frame(cbind(sub_dat$year[1:nyrs],t(spwn.quant.long), rbind(t(rec.quant.long),matrix(NA,4,3)))) |>
+    round(2)
+  colnames(brood_t.long) <- c("BroodYear","S_lwr","S_med","S_upr","R_lwr","R_med","R_upr")
+  
+  brood_t.long <- mutate(brood_t.long, CU = i)
+  
+  brood.all.long <- rbind(brood.all.long, brood_t.long)
   
   #SR relationship based on full posterior---
   spw <- seq(0,max(brood_t$S_upr),length.out=100)
@@ -217,6 +229,7 @@ TV.resids$CU_f <- factor(TV.resids$CU, levels = CU_order)
 TV.spwn$CU_f <- factor(TV.spwn$CU, levels = CU_order)
 TV.harv$CU_f <- factor(TV.harv$CU, levels = CU_order)
 brood.all$CU_f <- factor(brood.all$CU, levels = CU_order)
+brood.all.long$CU_f <- factor(brood.all.long$CU, levels = CU_order)
 TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = CU_order)
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
@@ -237,7 +250,7 @@ write.csv(par.posts, here("analysis/data/generated/AR1_posteriors.csv"))
 
 write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
 
-write.csv(brood.all, here("analysis/data/generated/brood_table.csv"), 
+write.csv(brood.all.long, here("analysis/data/generated/brood_table_long.csv"), 
           row.names = FALSE)
 
 # make key plots for pub -----------------------------------------------------------------
