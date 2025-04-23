@@ -237,6 +237,9 @@ write.csv(par.posts, here("analysis/data/generated/AR1_posteriors.csv"))
 
 write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
 
+write.csv(brood.all, here("analysis/data/generated/brood_table.csv"), 
+          row.names = FALSE)
+
 # make key plots for pub -----------------------------------------------------------------
 
 # SR fits ----
