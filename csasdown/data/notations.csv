@@ -1,0 +1,70 @@
+﻿Symbol ,Description 
+Indices ,
+s,"Population, s=1,…,8 "
+y,"Year, y=1985,…,2016 "
+d,"Julian day, d=160,…,285 "
+g,"Gear type, 1=Sonar, 2=Fish Wheel "
+Data and inputs ,
+x_{sgyd},Observed stock composition by gear/year/day 
+E_{sgyd},Border passage counts by gear/year/day 
+I_y,Run size index from stock aggregate run-reconstruction (@connors_estimates_2023) 
+CV_y,Coefficient of variation around run size index 
+Parameters ,
+\widehat{R}_{sy},Annual run size by population 
+\widehat{\mu}_{sy},Mean Julian date of arrival by population/year 
+\sigma_s,Standard deviation around mean Julian date of arrival by stock 
+\varepsilon_{sy},Process error in arrival timing by stock/year 
+\Sigma,Process error covariance 
+q_g^{(E)},Daily counts catchability by gear 
+q^{(I)},Mark-recapture catchability 
+Latent variables ,
+N_{syd},Daily numbers arriving by population /year 
+\rho_{syd},Daily arrival proportions by population /year 
+\mu_{syd},Mean Julian date of arrival by population /year 
+\widehat{E}_{sgyd},Predicted daily counts by population /gear/year 
+\widehat{I}_{sy},Predicted run size index 
+p_{sgyd},Stock composition by gear/year/day 
+\tau_y,Standard deviation for log run size index 
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
+,
