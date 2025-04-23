@@ -11,6 +11,11 @@ output:
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
+(ref:map-gsi) Various assessment sites and genetics sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
+```{r fig-map-gsi, fig.cap = "(ref:map-gsi)"}
+knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
+```
+
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
@@ -73,6 +78,22 @@ knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 \clearpage
 
 # TABLES
+
+(ref:tab-cons-unit-smu) Stock management units for Canadian Yukon River Chinook (CK) salmon and their component conservation units, with CU contribution from 1985-2024.
+```{r tab-cons-unit-smu, results='asis'}
+smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
+smucutable
+
+```
+
+
+(ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
+```{r tab-CU-gsi-annual-summary, results='asis'}
+cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
+cugsitable
+
+```
+
 
 (ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
 
