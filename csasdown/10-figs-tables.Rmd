@@ -7,69 +7,97 @@ output:
 # FIGURES
 
 (ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
+
 ```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
+
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
 ```
 
 (ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
+
 ```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
 (ref:fig-run-timing) Run-timing, at border, by CU.
+
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
 
 (ref:fig-trib-vs-CU-spawn) Tributary assessment project vs. reconstructed spawner abundance over time.
+
 ```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```
 
 (ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
+
 ```{r fig-CU-spawn, fig.cap = "(ref:fig-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 ```
 
 (ref:fig-CU-SR) Spawner recruitment relationships by CU.
+
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
 (ref:fig-prod-trends) Trends in intrinsic productivity over time by CU.
+
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
 (ref:fig-asl) Trends in asl over time.
+
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```
 
 (ref:fig-CU-EMR) Egg mass recruitment relationships by CU.
+
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
 (ref:fig-demo-smsr) Egg mass recruitment relationships by CU.
+
 ```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
 knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU. 
+(ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU.
+
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 ```
 
-(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River SMU. Thick lines are medians and shaded areas indicate 95% credible intervals. 
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River SMU. Thick lines are medians and shaded areas indicate 95% credible intervals.
+
 ```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
+
+<!--- Enhancement figures --->
+
+(ref: fig-enhance-proj) Total Chinook releases from Whitehorse Rapids Fish Hatchery, McIntyre Creek Fish Incubation Facility, North Klondike River Hatchery, Mayo River Hatchery and various school program by release year and Conservation Unit (CU) of release. Note: Location of brood and release location, by CU, are the same in all cases except for 250,529 fry from the Upper Yukon raised at the McIntyre Cr facility and released in the Tatchun River (Middle Yukon R. and tribs) between 2006-2011.
+
+```{r fig-enhance-proj, fig.cap = "(ref:fig-enhance-proj)"}
+knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
+```
+
+(ref: fig-wh-fishway) Chinook returns to Whitehorse Rapids Fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and PBT results of broodstock, when available. PNI average (2019-2024) is 0.72. 
+
+```{r fig-wh-fishway, fig.cap = "(ref:fig-wh-fishway)"}
+knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
+```
+
 \clearpage
 
 # TABLES
@@ -212,7 +240,6 @@ priors.df |>
     kableExtra::column_spec(3, width = "10cm")
 ```
 
-
 \clearpage
 
 (ref:pars-ref-pts) Population (conservation unit) reference points.
@@ -247,7 +274,6 @@ bench.pars |>
   
 
 ```
-
 
 \clearpage
 
