@@ -307,7 +307,8 @@ ggplot(a.yrs.all
   scale_color_viridis_d() +
   theme_sleek() +
   geom_hline(yintercept = 1, lty=2, col = "grey") +
-  labs(y = "Productivity (maximum R/S)", x = "Brood year")
+  labs(y = "Productivity (maximum R/S)", x = "Brood year")+ 
+  guides(color=guide_legend(title="Conservation Unit"))
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
 
