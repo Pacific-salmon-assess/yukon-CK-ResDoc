@@ -887,4 +887,45 @@ esc_summary <- esc |>
 
 mean(esc_summary$change_spwn)
 
-            
+
+## Hatchery releases ----------------------------------------------------------
+rel_rep <- read.csv("./analysis/data/raw/yukon_releases.csv")
+
+yukn_rel <- rel_rep %>%
+  filter(Status != "Exclude") %>%
+  filter(STOCK_PROD_AREA_CODE == "YUKN") %>% #Exclude - not part of the Yukon watershed
+  filter(!is.na(REL_CU_INDEX)) %>%
+  mutate(REL_CU = paste(REL_CU_INDEX, REL_CU_NAME)) %>%
+  mutate(FACILITY_NAME = case_when(FACILITY_NAME == "Yukon River H" ~ "Whitehorse Rapids Fish H",
+                                   FACILITY_NAME == "McIntyre Creek H" ~ "McIntyre Creek Fish Incubation Facility",
+                                   FACILITY_NAME == "Klondike River, North H" ~ "North Klondike River H",
+                                   grepl("Schools", FACILITY_NAME) ~ "School Programs",
+                                   .default = FACILITY_NAME)) %>%
+  mutate(FACILITY_NAME = gsub(" H", " Hatchery", FACILITY_NAME)) %>%
+  group_by(RELEASE_YEAR,FACILITY_NAME, REL_CU) %>%
+  dplyr::summarise(TotalRelease = sum(TotalRelease, na.rm = TRUE),
+                   .groups = 'drop') %>%
+  arrange(REL_CU)
+
+breakV <- seq(min(yukn_rel$RELEASE_YEAR), max(yukn_rel$RELEASE_YEAR), by = 5) # breaks for fig
+
+ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease, fill = REL_CU))+
+  geom_bar(stat = "identity", width = 1,  colour= "black", linewidth = 0.1) +
+  facet_wrap(~FACILITY_NAME, ncol=2,
+             scales = "free_y") +
+  scale_x_continuous(name = "Release Year", breaks = breakV) +
+  scale_y_continuous(name = "Total Releases",
+                     labels=comma, 
+                     breaks=pretty_breaks(10)) +
+  scale_fill_viridis_d() + labs(fill="Conservation Unit of release", main="Note: Location of brood and release location, by CU, are the same in all cases except for 250,529 fry from the Upper Yukon raised at the McIntyre Cr facility and released in the Tatchun River (Middle Yukon R. and tribs) between 2006-2011.") +
+  theme_sleek() +
+  theme(legend.position = c(0.75, 0.2))
+
+my.ggsave(here("analysis/plots/hatch-bar.PNG"))
+
+
+fishway.r <- read.csv(here('analysis/data/raw/trib-spwn.csv'))
+
+
+
+
