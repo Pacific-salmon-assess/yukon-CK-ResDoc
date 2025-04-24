@@ -1,0 +1,22 @@
+Variable,Description
+"$H_{y,s,L}$","Total harvest in year $y$, stock $s$, location $L$"
+"$e_{y,s,i,f}$","Escapement in year $y$, stock $s$, tributary $i$, using method $j$"
+"$N_{y,s,L}$","Total run size  in year $y$, stock $s$, location $L$"
+"$U_{y,s,L}$","Fishing harvest rate in  year $y$, stock $s$, location $L$"
+"$E_{y,s,L}$","Total escapement in  year $y$, stock $s$, location $L$"
+$K_i$,Time-invariant fraction of total escapement in tributary $i$
+"$\sigma_{y,i,j}$","Observed log-normal standard deviation of tributary $i$ in year $y$, using method $j$"
+$\sigma_{(H)L}$,Time-invariant asserted log-normal standard deviation of the harvest in location $L$
+"$\sigma_{(N)y,s,L,j}$","Observed log-normal standard deviation of the total run in year $y$, stock $s$, location $L$, using method $j$"
+"$P_{(H)y,s,L}$","Observed harvest proportions of  stock $s$ in  year $y$, location $L$"
+"$P_{(R)y,s,L}$","Observed run proportions of  stock $s$ in  year $y$, location $L$"
+"$n_{(H)y,L}$","Effective samples size asserted for the harvest stock proportions likelihood in  year $y$, location $L$"
+"$n_{(R)y,L}$","Effective samples size asserted for the run stock proportions likelihood in  year $y$, location $L$"
+$R_y$,Total recruitment in year $y$
+"$p_{y,a}$","Proportion of fish spawned in brood year $y$ that matured at age $a$, where $a$ $\in$ 4:7"
+"$N_{y,a,s}^{SRA}$",Number of Chinook salmon that are predicted in the spawner-recruitment submodel to return to stock $s$ in year $y$ and age $a$
+"$p_{y,k,a}^{obs}$","Observed harvest age composition proportion for age $a$, in river section $k$ and year $y$"
+"$\tau_{y,a}^{age}$",Predicted run age ($a$) proportions for year $y$
+"$q+{y,a}$",Female sex ratio in spawner escapement in year $y$ and age $a$
+"$w_{j,y,a}$",Per capita reproductive output for metric $j$ in year $y$ and age $a$
+"$Z_{j,y}$",Total reproductive output for metric $j$ in year $y$
