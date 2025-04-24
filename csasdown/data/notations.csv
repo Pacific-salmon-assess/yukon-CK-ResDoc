@@ -1,13 +1,13 @@
-﻿Symbol ,Description 
+﻿Symbol,Description
 Indices ,
-s,"Population, s=1,…,8 "
-y,"Year, y=1985,…,2016 "
-d,"Julian day, d=160,…,285 "
-g,"Gear type, 1=Sonar, 2=Fish Wheel "
+s,"Population, s=1, $\ldots$ ,8"
+y,"Year, y=1985, $\ldots$ ,2016"
+d,"Julian day, d=160, $\ldots$ ,285"
+g,"Gear type, 1=Sonar, 2=Fish Wheel"
 Data and inputs ,
-x_{sgyd},Observed stock composition by gear/year/day 
+x_{sgyd},Observed stock composition by gear/year/day
 E_{sgyd},Border passage counts by gear/year/day 
-I_y,Run size index from stock aggregate run-reconstruction (@connors_estimates_2023) 
+I_y,"Run size index from stock aggregate run-reconstruction (Connors et al., 2023) "
 CV_y,Coefficient of variation around run size index 
 Parameters ,
 \widehat{R}_{sy},Annual run size by population 
@@ -25,46 +25,3 @@ N_{syd},Daily numbers arriving by population /year 
 \widehat{I}_{sy},Predicted run size index 
 p_{sgyd},Stock composition by gear/year/day 
 \tau_y,Standard deviation for log run size index 
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,
-,

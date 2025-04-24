@@ -15,7 +15,25 @@ To evaluate how accurate genetic assignments were we conducted a simulation anal
 
 We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table Xa and Xb, respectively.
 
-We implemented the models using the Template Model Builder package (TMB; @kristensen2016tmb). Standard errors of model parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+We implemented the models using the Template Model Builder package (TMB; @kristensen2016tmb). Standard errors of model parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.(Table \@ref(tab:tab-rr-params))
+
+
+(ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. 
+
+```{r tab-rr-params, results = "asis"}
+rr.params <- read.csv(here::here("csasdown/data/notations.csv"))
+rr.params$Symbol[c(2:5, 7:10, 12:18,20:26)] <- paste0("$",rr.params$Symbol[c(2:5, 7:10, 12:18,20:26)],"$")
+
+rr.params |> 
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+   csasdown::csas_table(format = "latex",
+                       caption = "(ref:tab-rr-params)", 
+                       repeat_header = TRUE)
+
+
+```
 
 
 ## POPULATION DYNAMICS 
