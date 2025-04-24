@@ -15,6 +15,7 @@ models*
 
 resdoc.Rmd
 resdoc.tex
+resdoc.upb
 
 *.aux
 *.jpg
