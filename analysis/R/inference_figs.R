@@ -76,7 +76,7 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   spw <- seq(0,max(brood_t$S_upr),length.out=100)
   SR.pred <- matrix(NA,length(spw), length(sub_pars$lnalpha))
   bench <- matrix(NA,length(sub_pars$lnalpha),8,
-                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy.80", "Umsy", "Seq", "Smsr", "S.recent","Smsr.20","Smsr.40")))
+                  dimnames = list(seq(1:length(sub_pars$lnalpha)), c("Sgen", "Smsy", "Umsy", "Seq", "Smsr", "S.recent","Smsr.20","Smsr.40")))
 
   par <- matrix(NA,length(sub_pars$lnalpha),3,
                   dimnames = list(seq(1:length(sub_pars$lnalpha)), c("sample","ln_a","beta")))
@@ -107,8 +107,6 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
     mutate(CU = i)
   
   SR.preds <- rbind(SR.preds, SR.pred)
-  
-  bench[,2] <- bench[,2]*0.8 #make it 80% Smsy
   
   bench.posts <- rbind(bench.posts, as.data.frame(bench) |> mutate(CU = i))
   
