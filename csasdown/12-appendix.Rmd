@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 <!-- The following code should appear at the beginning of the first appendix.
 After that, all subsequent sections will be turned into appendices. -->
 
@@ -41,6 +46,22 @@ rr.params |>
 ```
 
 
+
+(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.
+
+```{r tab-rr-eqns, results = "asis"}
+rr.eqns <- read.csv(here::here("csasdown/data/model-eqns.csv"))
+
+rr.eqns |> 
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+   csasdown::csas_table(format = "latex",
+                       caption = "(ref:tab-rr-eqns)", 
+                       repeat_header = TRUE)
+
+
+```
 
 ## POPULATION DYNAMICS 
 
@@ -91,20 +112,20 @@ In some years prior to the implementation of sonar monitoring, the fish wheel da
 # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_pdf.pdf
 
 
-table.in <- read_csv("data/Table_Variables.csv")
+table.in <- readr::read_csv("data/Table_Variables.csv")
 table.in[is.na(table.in)] <- ""
 
 
-table.in %>%   
-      #mutate_all(function(x){gsub("{", "\\\\{", x)}) %>% 
-         #mutate_all(function(x){gsub("}", "\\\\}", x)}) %>% 
-   mutate_all(function(x){gsub("&", "\\\\&", x)}) %>% 
-   mutate_all(function(x){gsub("%", "\\\\%", x)}) %>%
-   mutate_all(function(x){gsub("\\\\n","\n", x)}) %>%
-#   mutate_all(function(x){gsub("\\\\#","\#", x)}) %>%
-   csas_table(format = "latex", escape = FALSE, font_size = 10,align = c("l","l"),
-                  caption = "(ref:TabVariables)") %>%
-   kableExtra::row_spec(1:(dim(table.in)[1]-1), hline_after = TRUE) %>%
+table.in |>   
+      #mutate_all(function(x){gsub("{", "\\\\{", x)}) |> 
+         #mutate_all(function(x){gsub("}", "\\\\}", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+#   mutate_all(function(x){gsub("\\\\#","\#", x)}) |>
+   csasdown::csas_table(format = "latex", escape = FALSE, font_size = 10,align = c("l","l"),
+                  caption = "(ref:TabVariables)") |>
+   kableExtra::row_spec(1:(dim(table.in)[1]-1), hline_after = TRUE) |>
      kableExtra::column_spec(2, width = "40em")  
 
 ```
