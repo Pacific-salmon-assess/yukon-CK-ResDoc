@@ -52,8 +52,8 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   #latent states of spawners and recruits---
   spwn.quant <- apply(sub_pars$S, 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)]
   rec.quant <- apply(sub_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs]
-  
-  brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)],t(spwn.quant), t(rec.quant))) |>
+
+  brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)], t(spwn.quant), t(rec.quant))) |>
     round(2)
   colnames(brood_t) <- c("BroodYear","S_lwr","S_med","S_upr","R_lwr","R_med","R_upr")
   
@@ -904,4 +904,64 @@ esc_summary <- esc |>
 
 mean(esc_summary$change_spwn)
 
-            
+
+## Enhancement Figures ------------------------------------------------------
+
+# Hatchery releases 
+rel_rep <- read.csv("./analysis/data/raw/yukon_releases.csv")
+
+yukn_rel <- rel_rep %>%
+  filter(Status != "Exclude") %>%
+  filter(STOCK_PROD_AREA_CODE == "YUKN") %>% #Exclude - not part of the Yukon watershed
+  filter(!is.na(REL_CU_INDEX)) %>%
+  mutate(REL_CU = paste(REL_CU_INDEX, REL_CU_NAME)) %>%
+  mutate(FACILITY_NAME = case_when(FACILITY_NAME == "Yukon River H" ~ "Whitehorse Rapids Fish H",
+                                   FACILITY_NAME == "McIntyre Creek H" ~ "McIntyre Creek Fish Incubation Facility",
+                                   FACILITY_NAME == "Klondike River, North H" ~ "North Klondike River H",
+                                   grepl("Schools", FACILITY_NAME) ~ "School Programs",
+                                   .default = FACILITY_NAME)) %>%
+  mutate(FACILITY_NAME = gsub(" H", " Hatchery", FACILITY_NAME)) %>%
+  group_by(RELEASE_YEAR,FACILITY_NAME, REL_CU) %>%
+  dplyr::summarise(TotalRelease = sum(TotalRelease, na.rm = TRUE),
+                   .groups = 'drop') %>%
+  arrange(REL_CU)
+
+breakV <- seq(min(yukn_rel$RELEASE_YEAR), max(yukn_rel$RELEASE_YEAR), by = 5) # breaks for fig
+
+ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease, fill = REL_CU))+
+  geom_bar(stat = "identity", width = 1, colour="white", linewidth = 0.1) +
+  facet_wrap(~FACILITY_NAME, ncol=2,
+             scales = "free_y") +
+  scale_x_continuous(name = "Release Year", breaks = breakV) +
+  scale_y_continuous(name = "Total Releases") +
+  scale_fill_viridis_d() + labs(fill="Conservation Unit of release") +
+  theme_sleek() +
+  theme(legend.position = c(0.75, 0.2))
+
+my.ggsave(here("analysis/plots/hatch_bar.PNG"))
+my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
+
+
+
+## Proportion hatchery fish at whitehorse fishway 
+
+trib.spwn <- read.csv(here('analysis/data/raw/trib-spwn.csv'))
+wh.hatch <- trib.spwn[!is.na(trib.spwn$hatch_contrib),]
+
+wh.hatch <- wh.hatch %>% mutate(Hatchery = estimate*hatch_contrib,
+                    Wild = estimate*(1-hatch_contrib)) %>% 
+  pivot_longer(cols=9:10, names_to="Origin", values_to="Returns")
+
+ggplot(wh.hatch, aes(x=year)) + 
+  geom_bar(aes(y=Returns, fill=Origin), stat="identity") +
+  scale_y_continuous(sec.axis = sec_axis(~./4000, name="Proportion")) +
+  geom_line(aes(y=hatch_contrib*4000, col="Proportion hatchery-origin spawners"), linewidth=0.6, alpha=0.6) +
+  geom_line(aes(y=pni*4000, col="Proportionate natural \n influence (PNI)"), linewidth=0.6, alpha=0.6) +
+  scale_color_manual(name = "", values=c("Proportion hatchery-origin spawners" = "darkblue", "Proportionate natural \n influence (PNI)" = "darkred"), guide ="legend") +
+  scale_fill_manual(name = "Returns", values=c("Hatchery" = "pink2", "Wild" = "green4")) +
+  theme_sleek() + labs(x="Year" ) +
+  theme(axis.text.y.right = element_text(margin = margin(r=9)),
+        legend.position = c(0.2,0.8))
+my.ggsave(here("analysis/plots/hatch_prop.PNG"))
+my.ggsave(here("csasdown/figure/hatch_prop.PNG"))
+
