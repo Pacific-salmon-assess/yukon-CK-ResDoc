@@ -110,18 +110,48 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 (ref:tab-cons-unit-smu) Stock management units for Canadian Yukon River Chinook (CK) salmon and their component conservation units, with CU contribution from 1985-2024.
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
-smucutable
+names(smucutable) <- gsub("\\.", " ", names(smucutable))
+names(smucutable)[4] <- "Average Contribution (1984-2024)"
 
+
+smucutable |> 
+  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       escape = FALSE,
+                     caption = "(ref:tab-cons-unit-smu)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "3cm")|>
+    kableExtra::column_spec(2, width = "2cm")|>
+    kableExtra::column_spec(3, width = "4cm")|>
+    kableExtra::column_spec(4, width = "2cm")
 ```
 
+\clearpage
 
 (ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
 ```{r tab-CU-gsi-annual-summary, results='asis'}
+
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
-cugsitable
+names(cugsitable) <- gsub("\\.", " ", names(cugsitable))
+
+
+cugsitable |> 
+  dplyr::mutate_all(function(x){round(x, 3)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       escape = FALSE,
+                     caption = "(ref:tab-CU-gsi-annual-summary)", 
+                     repeat_header = TRUE) |>
+  kableExtra::column_spec(-1, width = "1.5cm")
+
 
 ```
 
+\clearpage
 
 (ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
 
@@ -166,20 +196,24 @@ desc_adult <- c("Abundant pink salmon cause trophic cascades in the Bering Sea",
 refs_adult <- c("Ruggerone et al. 2016; Cunningham et al. 2018", "Howard and von Biela 2023")
 
 # make whole table
-factors.df <- data.frame("Life stage" = c(rep("Spawner", length(factors_spwn)),
+factors.df <- data.frame("Life_stage" = c(rep("Spawner", length(factors_spwn)),
                                         rep("Egg", length(factors_egg)),
                                         rep("Fry / smolt", length(factors_frysmolt)),
                                         rep("Juvenile", length(factors_juvenile)),
                                         rep("Adult", length(factors_adult))
                                         ),
-                         "Anthropogenic, ecosystem, or climate factor" = 
+                         "Anthropogenic,_ecosystem,_or_climate_factor" = 
                            c(factors_spwn, factors_egg, factors_frysmolt, 
                              factors_juvenile, factors_adult),
-                         "Description or hypothesis" = c(desc_spwn, desc_egg, 
+                         "Description_or_hypothesis" = c(desc_spwn, desc_egg, 
                                                          desc_frysmolt, desc_juvenile,
                                                          desc_adult),
                          "References" = c(refs_spwn, refs_egg, refs_frysmolt, refs_juvenile, refs_adult)
                          )
+
+names(factors.df) <- gsub("_", " ", names(factors.df))
+names(factors.df) <- gsub(".", ",", names(factors.df), fixed = TRUE)
+
 
 factors.df |>
   dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
@@ -263,14 +297,10 @@ priors.df |>
 
 \clearpage
 
-(ref:pars-ref-pts) Population (conservation unit) reference points.
+(ref:pars-ref-pts) Population (conservation unit) reference points. Values are in thousands of fish.
 
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
-
-bench.pars$CU <- gsub(".", " ", bench.pars$CU, fixed=TRUE)
-bench.pars$bench.par <- gsub(".", "", bench.pars$bench.par, fixed=TRUE)
-
 
 names(bench.pars) <- c("Conservation Unit",
                        "Benchmark",
@@ -281,16 +311,18 @@ names(bench.pars) <- c("Conservation Unit",
 bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
-  dplyr::filter(Benchmark %in% c("Sgen", "Smsr", "Smsr20", "Smsr40", "Smsy80")) |>
+  dplyr::filter(Benchmark %in% c("Sgen", "Smsr", "Smsy", "Umsy")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(1:6) |>
+  dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:pars-ref-pts)", 
                      repeat_header = TRUE,
-                     align = "llc") |>
+                     align = "llc",
+                     booktabs = T) |>
   kableExtra::collapse_rows(columns=1)
   
 
@@ -332,3 +364,37 @@ bench.pars |>
   
 
 ```
+
+\clearpage
+
+(ref:demo-ref-pts) Population (conservation unit) reference points from demographic (egg mass) models. Values are in thousands of fish.
+
+```{r demo-ref-pts, results = "asis"}
+demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
+
+demo.pars <- dplyr::mutate(demo.pars, period = case_when(period == "avg" ~ "Average (all years)",
+                                                         period == "early" ~ "Early()",
+                                                         period == "recent" ~ "Recent()"))
+
+names(demo.pars) <- c("Conservation Unit",
+                       "Period",
+                       "Benchmark",
+                       "Median",
+                       "Lower Quantile", "Upper Quantile")
+
+demo.pars |> 
+  dplyr::arrange(`Conservation Unit`) |>
+  dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
+  dplyr::mutate_at(.vars=4:6, function(x){round((x/1000), 2)}) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:demo-ref-pts)", 
+                     repeat_header = TRUE,
+                     align = "llc") |>
+  kableExtra::collapse_rows(columns=1)
+  
+
+```
+
