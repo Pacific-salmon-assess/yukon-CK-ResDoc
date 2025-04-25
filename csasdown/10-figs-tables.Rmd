@@ -400,7 +400,6 @@ demo.pars |>
 
 
 \clearpage
-
 (ref:tab-ref-perf-measures) Performance measures from "reference set" simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
@@ -411,17 +410,18 @@ ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.cs
 
 fix_hcr <- unique(ref_case_pms$HCR)[grepl("^fixed.", unique(ref_case_pms$HCR))]
 ref_case_pms <- ref_case_pms |> 
-  dplyr::filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
-
+  dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
+  dplyr::rename(lower = q_25,
+                upper = q_75)
 
 ref_case_pms |> 
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
-                     caption = "(ref:tab-ref-perf-measures)", 
-                     repeat_header = TRUE,
-                     align = "llc")
+                       caption = "(ref:tab-ref-perf-measures)", 
+                       repeat_header = TRUE,
+                       align = "llc")
 
 ```
 
@@ -436,17 +436,18 @@ rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.c
 
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 rob_case_pms <- rob_case_pms |> 
-  dplyr::filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
-
+  dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
+  dplyr::rename(lower = q_25,
+                upper = q_75) 
 
 rob_case_pms |> 
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
-                     caption = "(ref:tab-rob-perf-measures)", 
-                     repeat_header = TRUE,
-                     align = "llc")
+                       caption = "(ref:tab-rob-perf-measures)", 
+                       repeat_header = TRUE,
+                       align = "llc")
 
 ```
 

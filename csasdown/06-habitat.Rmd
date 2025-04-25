@@ -1,9 +1,3 @@
----
-bibliography: bib/refs.bib
-output: pdf_document
----
-
-
 # HABITAT {#sec:HABITAT}
 ## FRESHWATER HABITAT CONDITIONS
 
