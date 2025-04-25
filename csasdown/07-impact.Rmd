@@ -10,22 +10,25 @@ Details on model components and calculation of performance are provided in the s
 
 The operating model was used to simulate future population trajectories for the nine CUs for which we were able to fit spawner-recruitment models. The operating model projected their population dynamics forward over 26 years (i.e., to 2050, approximately four Chinook generations), thereby generating a posterior predictive distribution of future states conditioned on the historical data. By simulating Canadian origin Yukon Chinook salmon dynamics in this manner, we ensured that predicted future spawner abundance and age structure were conditioned on the incomplete cohorts at the end of the data series (i.e., those cohorts from which one or more older age classes have not yet returned to spawn) and that uncertainties in the spawner-recruit relationships were propagated through time (i.e., by drawing from the posterior distributions of each estimated parameter and abundance state in each iteration of the simulation).
 
-Population dynamics were assumed to be driven by @ricker-1954 type spawner-recruitment relationships: \begin{equation}
+Population dynamics were assumed to be driven by @ricker-1954 type spawner-recruitment relationships: 
+
+\begin{equation}
   \ln(R_i,y) = \ln(S_i,y) + \ln(\alpha_i) - \beta S_i,y + v_i,y
   \label{eq:AR1-ricker-main}
 \end{equation}
 
 where $\alpha$ is productivity (intrinsic rate of growth and $\beta$ is the magnitude of within brood year ($y$) density-dependent effects for CU $i$. Inter-generational variation in survival, $\sigma_{i,y}$, was modeled as a multivariate normal vector:
 
-```{=tex}
 \begin{equation}
   \sigma_{i,y} \sim \mathcal{MVN}\left(\mathbf{0}, \Sigma_R\right)
   \label{eq:var-covar}
 \end{equation}
-```
+
 where the root diagonal of the covariance matrix $\Sigma_R$ is the CU specific inter-generational variation in survival and where correlation in the recruitment residual time series vectors $\boldsymbol{\varepsilon}_i$ and $\boldsymbol{\varepsilon}_k$ between CU $i$ and $k$ ($\rho_{i,k}$) is captured in the off-diagonal covariance elements of $\Sigma_R$.
 
-Returns in year $t$, $N_{t,i}$, were then modeled as a function of the proportion of individuals that mature and return at each age: \begin{equation}
+Returns in year $t$, $N_{t,i}$, were then modeled as a function of the proportion of individuals that mature and return at each age: 
+
+\begin{equation}
   N_{t,i} = \sum_{a=4}^{7} R_{t-a} p_{a-3}
   \label{eq:totalreturn-main}
 \end{equation}
