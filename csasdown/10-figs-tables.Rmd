@@ -372,9 +372,9 @@ bench.pars |>
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
 
-demo.pars <- dplyr::mutate(demo.pars, period = case_when(period == "avg" ~ "Average (all years)",
-                                                         period == "early" ~ "Early()",
-                                                         period == "recent" ~ "Recent()"))
+demo.pars <- dplyr::mutate(demo.pars, period = dplyr::case_when(period == "avg" ~ "Average (all years)",
+                                                               period == "early" ~ "Early()",
+                                                               period == "recent" ~ "Recent()"))
 
 names(demo.pars) <- c("Conservation Unit",
                        "Period",
@@ -406,12 +406,12 @@ demo.pars |>
 ```{r tab-ref-perf-measures, results = "asis"}
 
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
-  pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
-  pivot_wider(values_from="value", names_from="prob")
+  tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
+  tidyr::pivot_wider(values_from="value", names_from="prob")
 
 fix_hcr <- unique(ref_case_pms$HCR)[grepl("^fixed.", unique(ref_case_pms$HCR))]
 ref_case_pms <- ref_case_pms |> 
-  filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
+  dplyr::filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
 
 
 ref_case_pms |> 
@@ -431,12 +431,12 @@ ref_case_pms |>
 
 ```{r tab-rob-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.csv"))|>
-  pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
-  pivot_wider(values_from="value", names_from="prob")
+  tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
+  tidyr::pivot_wider(values_from="value", names_from="prob")
 
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 rob_case_pms <- rob_case_pms |> 
-  filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
+  dplyr::filter(!(HCR %in% fix_hcr))  # filter out fixed harvest 
 
 
 rob_case_pms |> 
