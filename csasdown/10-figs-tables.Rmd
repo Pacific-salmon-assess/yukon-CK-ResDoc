@@ -97,7 +97,7 @@ knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 ```
 
-(ref: fig-wh-fishway) Chinook returns to Whitehorse Rapids Fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and PBT results of broodstock, when available. PNI average (2019-2024) is 0.72. 
+(ref: fig-wh-fishway) Chinook returns to Whitehorse Rapids Fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and PBT results of broodstock, when available. PNI average (2019-2024) is 0.72.
 
 ```{r fig-wh-fishway, fig.cap = "(ref:fig-wh-fishway)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
