@@ -1,5 +1,6 @@
 ---
 bibliography: bib/refs.bib
+output: pdf_document
 ---
 # INTRODUCTION {#sec:introduction}
 
