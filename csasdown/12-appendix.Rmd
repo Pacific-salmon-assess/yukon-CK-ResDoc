@@ -75,8 +75,8 @@ rr.params |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-params)", 
-                       repeat_header = TRUE)
-
+                       repeat_header = TRUE) |>
+  kableExtra::column_spec(1, width = "4cm")
 
 ```
 
@@ -93,7 +93,8 @@ rr.eqns |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-eqns)", 
-                       repeat_header = TRUE)
+                       repeat_header = TRUE)|>
+  kableExtra::column_spec(1, width = "5cm")
 
 
 ```
@@ -139,31 +140,6 @@ In some years prior to the implementation of sonar monitoring, the fish wheel da
 * make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
 * make point hatchery fish were removed from upper Yukon CU
 
-(ref:TabVariables) Variables in the run reconstruction (RR) submodel. Stock (s) is lower Yukon (l), middle Yukon (m), or Canada (c). Location (L) is downriver from Pilot Station (d), Pilot Station (pl), upriver from Pilot Station (u), the U.S./Canada border (b), or Canada (c). Method (j) references various assessment methods in use at locations and tributaries throughout the Yukon River drainage. Methods may change over time and more than one method may be used at a location. 
-
-```{r TabVariables, echo = FALSE, results = "asis"}
-
-# This is just na example, some helpful tipds here:
-# https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_pdf.pdf
-
-
-table.in <- readr::read_csv("data/Table_Variables.csv")
-table.in[is.na(table.in)] <- ""
-
-
-table.in |>   
-      #mutate_all(function(x){gsub("{", "\\\\{", x)}) |> 
-         #mutate_all(function(x){gsub("}", "\\\\}", x)}) |> 
-   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-#   mutate_all(function(x){gsub("\\\\#","\#", x)}) |>
-   csasdown::csas_table(format = "latex", escape = FALSE, font_size = 10,align = c("l","l"),
-                  caption = "(ref:TabVariables)") |>
-   kableExtra::row_spec(1:(dim(table.in)[1]-1), hline_after = TRUE) |>
-     kableExtra::column_spec(2, width = "40em")  
-
-```
 \clearpage
 
 
