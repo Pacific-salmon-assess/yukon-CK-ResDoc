@@ -76,7 +76,8 @@ rr.params |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-params)", 
                        repeat_header = TRUE) |>
-  kableExtra::column_spec(1, width = "4cm")
+  kableExtra::column_spec(1, width = "4cm")|>
+  kableExtra::column_spec(1, width = "8cm")
 
 ```
 
