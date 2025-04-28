@@ -95,7 +95,9 @@ rr.eqns |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-eqns)", 
                        repeat_header = TRUE)|>
-  kableExtra::column_spec(1, width = "5cm")
+  kableExtra::column_spec(1, width = "5cm")|>
+  kableExtra::column_spec(1, width = "8cm")
+
 
 
 ```
