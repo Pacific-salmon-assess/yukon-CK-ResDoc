@@ -55,7 +55,7 @@ Fishery related performance measures included the proportion of years when no ha
 
 ## CONSEQUENCES OF CURRENT AND ALTERNATIVE HARVEST MANAGEMENT MEASURES
 
-no fishing: CUs above USR and LRP
+In the abscence of fishing no fishing: CUs above USR and LRP
 
 clear tradeoff between fishing and risk: aggregrate harvest maximized at X, but with risk of y
 
@@ -67,7 +67,15 @@ adding cap to moratorium or status quo did...
 
 PA compliant allowed for more fishing but..
 
-Under a "no fishing" scenario, median spawner abundances exceeded the upper stock reference ($S_{MSR}$) by 2050 for three CUs: Middle Yukon and tribs., Nordenskiold, and Yukon R. Teslin Headwaters. Under the "status quo" harvest control rule (harvest allowed after 42500 spawners), spawner abundances were ~50% lower consistently, and hovered near the LSR for one CU (Northern YK). The modified status quo HCR with a 40% exploitation rate cap was an intermediate. Under two "moratorium" scenarios, where harvest is allowed only after 71,000 spawners, most CUs were between reference points from 2030-2050 (Teslin and Middle YK were at USR). The "alternative" harvest control rule, which allowed harvest at lower run sizes (19000) but increased exploitation rates slowly to a maximum of 40%, resulted in similar spawner trajectories to the moratorium scenarios. In most cases, spawners increased to 2030 and remained relatively stable thereafter. 
+Under a "no fishing" scenario, median spawner abundances were projected to exceed CU specific lower reference points for all CUs by 2050, and four CUs were projected to exceed their upper reference points over the same time period: Middle Yukon and tribs., Nordenskiold, XXXX and Yukon R. Teslin Headwaters (**PERFORMANCE MEASURES FIGURE AND TABLE**). 
+
+Simulations across a range of fixed harvest rates highlight a clear tradeoff between mixed-stock fishery harvests and risks to component CUs. Aggregate harvests are projected to be maximized at mixed-stock harvest rates of ~50%, and dominated by harvest from the Middle Yukon and Teslin headwaters CUs, but this comes at the cost of three least productive CUs being below their lower biological reference point and hence at an elevated level of extinction risk. 
+
+The current moratorium on fishing (unless run-sizes exceed 71,000) was projected to allow for some population growth and hence opportunities for harvest. Specifically, annual harvest rates averaged 15%, and harvest was projected to be ~10,000 fish on average per year though this was highly variable from year to year and only 30% of years were expected to result in First Nations Basic Needs Allocation being met. Under this scenario median spawner abundances were projected to exceed CU specific lower reference points for all CUs, and three CUs were projected to exceed their upper reference points.
+
+The "status quo" harvest control rule (i.e., interim management escapement goal of 42,500) 
+
+Under the "status quo" harvest control rule (harvest allowed after 42500 spawners), spawner abundances were ~50% lower consistently, and hovered near the LSR for one CU (Northern YK). The modified status quo HCR with a 40% exploitation rate cap was an intermediate. Under two "moratorium" scenarios, where harvest is allowed only after 71,000 spawners, most CUs were between reference points from 2030-2050 (Teslin and Middle YK were at USR). The "alternative" harvest control rule, which allowed harvest at lower run sizes (19000) but increased exploitation rates slowly to a maximum of 40%, resulted in similar spawner trajectories to the moratorium scenarios. In most cases, spawners increased to 2030 and remained relatively stable thereafter. 
 
 The projected total harvest varied among harvest control rules, with the "status quo" HCR allowing for the most harvest overall and the "moratorium with cap" allowing for the least. Median annual harvest in the status quo scenario was ~ 17000 fish, and ~8000 in the moratorium with cap. The proportion of years where the basic needs allocation was met was highest for the status quo scenario with 40% exploitation rate cap, at just under 60%. In this scenario, ~30% of years did not allow for harvest. The alternative HCR, which allowed harvest at the lowest run sizes, had the lowest proportion of no-harvest years (~15%) while maintaining the second-highest total escapement. 
 
