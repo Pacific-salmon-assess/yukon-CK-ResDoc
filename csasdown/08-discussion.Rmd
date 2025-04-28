@@ -2,6 +2,18 @@
 
 ## SUMMARY OF KEY FINDINGS 
 
+In this report we describe the current understanding on Canadian origin Yukon Chinook salmon stock structure and distribution, stock assessment history, and analyses that combine genetic stock identification of archived scale and tissue samples with  run-reconstruction models to estimate migration timing and annual return abundance for none Conservation Units (CUs). We then characterized CU scale population dynamics and estimates biological reference points by fitting age-structured, state-space spawner (or egg mass) recruitment models to estimated spawner abundances, harvest, and age composition. 
+
+Variation among CUs in run timing results in an average return migration that is about two times longer (~70 days) than the average across the individual CUs (~35 days). Declines in female Chinook salmon age at maturity, and to a lesser extent the proportion of females in the spawning population, have resulted in a marked decline in average reproductive output per spawner (~ 35% from the late 1980s to the early 2020s). Concurrent with these declines have been declines in productivity which have averaged 60% across CUs between the late 1980s and the early 2020s
+
+Across CUs spawner abundances in the most recent generation (2018-2024) were on average 37% lower than their long-term average (1985-2024).Three CUs (Nordenskiold, Stewart, and White) were assessed as in the Wild Salmon Policy Red status zone due to spawner abundances over the most recent generation being below an absolute abundance lower threshold of 1,500 spawners. The Northern Yukon & Tributaries CU was assessed as in the Red status zone because spawner abundances over the most recent generation were below it's lower biological reference point. One additional CU, the Porcupine, was provisionally assessed as in the Red status zone due to a recent precipitous decline in spawner abundance, however, the CU had a relatively short time series of observations. The remaining CUs were assessed as in the Amber status zone. 
+
+At the SMU scale the system experienced a ~65% decline in aggregate run-size between 1985-1995 and 2014-2024. Because multiple CUs were assessed with Red statuses the SMU is below it's CU-status based Limit Reference Point. Aggregate spawner abundances over the most recent generation (6 years) averaged 25,852 which is slightly above a proposed lower fishery reference point of 19,000 and well below the proposed upper stock reference point of 95,000. The harvest rate over this same time period averaged 16%. 
+
+The past decade has seen a considerable amount of research into anthropogenic, ecosystem, and climate factors that may have contributed to the recent and long-term declines in body size and productivity of Canadian-origin Yukon Chinook salmon.
+
+
+
 - proposed reference points (LRP, USR, RR), SMU status; emphasize LRP is based on CU status but Lower Management Reference Point can be aggregate abundance based 
 
 - recap performance of current and alternative harvest control rules, as well as rebuilding actions
