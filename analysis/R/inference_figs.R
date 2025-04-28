@@ -29,10 +29,11 @@ par.posts <- NULL
 par.posts.tva <- NULL
 SR.preds <- NULL
 AR1.spwn <- NULL
+AR1.harv <- NULL
+AR1.resids <- NULL
 brood.all <- NULL
 brood.all.long <- NULL
 a.yrs.all <- NULL
-AR1.resids <- NULL
 TV.resids <- NULL
 TV.SR.preds <- NULL
 TV.spwn <- NULL
@@ -46,6 +47,10 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   sub_pars <- rstan::extract(AR1.fits[[i]])
   
   AR1.spwn <- rbind(AR1.spwn, bind_cols(t(apply(sub_pars$S, 2, quantile, c(0.25, .5, .75))),
+                                        unique(sub_dat$year),
+                                        i))
+
+  AR1.harv <- rbind(AR1.harv, bind_cols(t(apply(sub_pars$H, 2, quantile, c(0.25, .5, .75))),
                                         unique(sub_dat$year),
                                         i))
   
@@ -211,8 +216,9 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
 
 
 colnames(SR.preds) <- c("Spawn", "Rec_lwr","Rec_med","Rec_upr", "CU")
-colnames(AR1.spwn) <- c("S.25", "S.50", "S.75", "year", "CU")
 colnames(AR1.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
+colnames(AR1.spwn) <- c("S.25", "S.50", "S.75", "year", "CU")
+colnames(AR1.harv) <- c("H.25", "H.50", "H.75", "year", "CU")
 colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
 colnames(TV.harv) <- c("H.25", "H.50", "H.75", "CU", "year")
@@ -222,7 +228,9 @@ CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",
               "UpperYukonR.","YukonR.Teslinheadwaters")
 
 SR.preds$CU_f <- factor(SR.preds$CU, levels = CU_order)
+AR1.spwn$CU_f <- factor(AR1.spwn$CU, levels = CU_order)
 AR1.resids$CU_f <- factor(AR1.resids$CU, levels = CU_order)
+AR1.harv$CU_f <- factor(AR1.harv$CU, levels = CU_order)
 TV.resids$CU_f <- factor(TV.resids$CU, levels = CU_order)
 TV.spwn$CU_f <- factor(TV.spwn$CU, levels = CU_order)
 TV.harv$CU_f <- factor(TV.harv$CU, levels = CU_order)
@@ -549,7 +557,6 @@ bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
 
 # Generate plots for which set of fwd simulations?
 fit_type <- c("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
-fit_type <- c("TVA", "TVA2") # Can omit one to avoid re-generating figures
 
 for(k in fit_type) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
   

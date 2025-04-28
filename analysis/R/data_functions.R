@@ -111,6 +111,7 @@ process.iteration = function(samp) {
 # mat <- maturation schedule
 # alpha <- sub-stock productivity (NOT in log space)
 # beta <- sub-stock density dependence 
+# Smax <- Smax calculated externally (or other benchmark)
 # pm.yr <- year of simulation that pms start to be calculated over
 # for.error <- forecast error (lognormal SD)
 # OU <- outcome uncertainty (CV)
@@ -120,7 +121,7 @@ process.iteration = function(samp) {
 # phi <- expected correlation in recruitment deviation from one year to next
 # ER <- fixed exploitation rate (illustrative)
 
-process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
+process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec,Spw,
                    lst.resid, phi, ER){
 
   ns <- length(alpha) #number of sub-stocks
@@ -172,6 +173,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
     
     # apply harvest control rules
     run.size.true <- sum(Ntot[i,])
+    if(is.na(run.size.true)){run.size.true <- 0}
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
     if(HCR == "no.fishing"){HR.all <- 0}
@@ -187,13 +189,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
       if(HR.all > 0.4){       ## Lower ER cap (40%) 
         catch <- run.size*0.4
         HR.all <- catch/run.size }}
-    if(HCR == "rebuilding"){
+    if(HCR == "moratorium"){
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
       if(HR.all > 0.8){       ## ER cap (80%) 
         catch <- run.size*0.8
         HR.all <- catch/run.size }}
-    if(HCR == "rebuilding.cap"){
+    if(HCR == "moratorium.cap"){
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
       if(HR.all > 0.4){       ## lower ER cap (40%) 
@@ -203,7 +205,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
       HR.all <- catch/run.size}
-    if(HCR == "alt.rebuilding"){
+    if(HCR == "alternative"){
       if(run.size <= 19000) catch <- 0
       if(run.size >= 158333) catch <- run.size*0.4
       if(run.size > 19000 & run.size < 158333){
@@ -256,15 +258,16 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,
   Ntot[Ntot[,]=='NaN'] <- 0
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
   harvest_rates[harvest_rates[,]=='NaN'] <- 0
-  Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)  
+  #Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)
+  Smax <- Smax
   ln.alpha <- log(m.alpha)
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1)) 
-  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))# mismatch between sim loop years (8:ny) and pm years means mean harvest, harv rates, etc will be biased low BC: only when pm.yr is < ny-7, with proposed changes to make ny 34 then pm.yr = 14:ny
+  pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,3] <- mean(harvest_rates) #was median before
-  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) # Use pm.yr:ny here? (i.e. omit first 6 yrs) BC: with proposed changes this should be fine now
+  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1) 
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
-  #"status" - how many CUs are in each zone IN THE FINAL YEAR?
+  #"status" - how many CUs are in each zone IN THE FINAL YEAR? 
   pms[,6] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
   pms[,7] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
   pms[,8] <- sum(S[ny,] > Smax)
@@ -345,13 +348,13 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
         if(HR.all > 0.4){       ## Lower ER cap (40%) 
           catch <- run.size*0.4
           HR.all <- catch/run.size }}
-      if(HCR == "rebuilding"){
+      if(HCR == "moratorium"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.8){       ## ER cap (80%) 
           catch <- run.size*0.8
           HR.all <- catch/run.size }}
-      if(HCR == "rebuilding.cap"){
+      if(HCR == "moratorium.cap"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.4){       ## lower ER cap (40%) 
@@ -361,7 +364,7 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
         if(run.size==0){ER <- 0}
         catch <- run.size*ER
         HR.all <- catch/run.size}
-      if(HCR == "alt.rebuilding"){
+      if(HCR == "alternative"){
         if(run.size <= 19000) catch <- 0
         if(run.size >= 158333) catch <- run.size*0.4
         if(run.size > 19000 & run.size < 158333){

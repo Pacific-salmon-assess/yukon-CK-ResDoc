@@ -24,8 +24,8 @@ names(AR1.fits) <- unique(sp_har$CU)
 AR1.fits <- lapply(AR1.fits, rstan::extract)
 
 # Load benchmarks
-bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds"))
-
+#bench.posts <- read_rds(here("analysis/data/generated/benchmark_posteriors.rds"))
+demo.bench.posts <- read.csv(here("analysis/data/generated/demographic_parameters.csv")) |> select(1:4) |> pivot_wider(values_from= "median", names_from = "par") |> filter(period == "recent")
 
 
 ## Loop over TVA and AR1 fit types to create a 'samps' object for each
@@ -56,15 +56,15 @@ for(i in 1:length(names(fits))){ # loop over CUs
   }
   sub_samps <- cbind(alpha,
                      fits[[i]]$beta,
-                     filter(bench.posts, CU == names(fits)[i])$Umsy,
-                     filter(bench.posts, CU == names(fits[i]))$Smsy.80,
+                     #filter(bench.posts, CU == names(fits)[i])$Umsy,
+                     #filter(bench.posts, CU == names(fits[i]))$Smsy.80,
                      fits[[i]]$S[,(nyrs-A+1):nyrs], #last 4 spawner states 
                      fits[[i]]$R[,(nRyrs-A+2):nRyrs], #last 3 rec states 
                      fits[[i]]$lnresid[,nRyrs]) #last resid
   colnames(sub_samps) <- c(paste0("alpha_", i), 
                            paste0("beta_", i),
-                           paste0("Umsy_", i),
-                           paste0("Smsy_", i), 
+                           #paste0("Umsy_", i),
+                           #paste0("Smsy_", i), 
                            paste0("S_", (nyrs-A+1):nyrs, "_", i), 
                            paste0("R_", (nRyrs-A+2):nRyrs, "_", i), 
                            paste0("last_resid_", i))
@@ -102,7 +102,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 700 # number of Monte Carlo trials
+num.sims = 50 # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
@@ -110,7 +110,7 @@ OU <- 0.1  ## could also base this off something else from fisheries management
 
 # --- Create array to store outcomes --------------------------------------
 ER_seq <- seq(5, 100, 5) # how many fixed ERs to test?
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "rebuilding", "rebuilding.cap", "alt.rebuilding", paste0("fixed.ER.", ER_seq))
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "moratorium", "moratorium.cap", "alternative", paste0("fixed.ER.", ER_seq))
 sim.outcomes <- NULL
 S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
@@ -118,6 +118,7 @@ H.time <- NULL
 # -- Simulation loop -------------------------------------------------------
 
 for(i in 1:length(HCRs)){
+  print(HCRs[i])
   for(j in 1:num.sims){
     HCR <- HCRs[i]
     draw <- sample(nrow(samps),1)
@@ -129,11 +130,12 @@ for(i in 1:length(HCRs)){
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
     phi <- 0.75 # mean across CUs
+    Smax <- filter(demo.bench.posts, CU == names(fits[i]))$Smsr
     if(grepl('fixed.ER', HCR)) {
       ER <- as.numeric(gsub("\\D", "", HCR))/100
       } else {ER <- NULL} # Set ER for fixed ER sims
       
-    out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,pm.yr,for.error,OU,Rec,Spw,lst.resid,phi, ER)
+    out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,Smax, pm.yr,for.error,OU,Rec,Spw,lst.resid,phi, ER)
   
     
 
