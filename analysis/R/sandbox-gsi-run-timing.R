@@ -38,7 +38,7 @@ bc <- border_passage %>%
   as.data.frame()
 
 gsi %>% 
-  group_by(year, sample_num) %>%
+  group_by(year, fish) %>%
   filter(prob == max(prob)) %>% 
   ungroup() %>%
   group_by(year) %>%
@@ -68,6 +68,14 @@ gsi2 <- gsi %>%
   distinct(year, year_count, julian, julian_prop,julian_prop2) %>%
   as.data.frame()
 
+gsi_count <- gsi |>
+  group_by(year, fish) |>
+  filter(prob == max(prob)) |>
+  ungroup() |>
+  group_by(year) |>
+  summarize(year_count = n()) 
+  
+  
 g <- ggplot() +
   geom_vline(xintercept=c(180,210,240), color="light grey",lwd=0.25,lty=2) +
   geom_bar(data = bc, aes(x=as.numeric(julian), y=prop2),stat = "identity") +
@@ -87,13 +95,11 @@ g <- ggplot() +
         panel.spacing.y=unit(0.3, "lines"),
         panel.grid.minor = element_blank(),
         panel.grid.major = element_blank(),
-        strip.background = element_blank())
-
-# this needs to call an object "a" that is sample size by year
-  geom_text(data = a, 
+        strip.background = element_blank()) +
+  geom_text(data = gsi_count, 
             mapping = aes(x = 237, y = -0.5, label = year_count, hjust = 1, vjust = 2),
-            size=3, color = "red")
+            size=3)
 
-jpeg("04_figures/figures/figureS1.jpeg", width = 6, height = 8, units = "in", res = 600)
+png(here("analysis/plots/gsi-run-samples.PNG"), width = 6, height = 8, units = "in", res = 600)
 print(g)
 dev.off()
