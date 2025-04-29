@@ -103,12 +103,6 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 ```
 
-(ref: fig-om-scenarios) Operating Model scenarios.
-
-```{r fig-om-scenarios, fig.cap = "(ref:fig-om-scenarios)"}
-knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
-```
-
 
 \clearpage
 
