@@ -5,7 +5,7 @@ library(mvtnorm) #for rmvnorm() nested in the functions
 source(here("analysis/R/data_functions.R"))
 
 
-fit_type <- c("TVA","TVA2", "AR1") # Can omit one to avoid re-simulating it
+fit_type <- c("TVA","TVA2")#, "AR1") # Can omit one to avoid re-simulating it
 set.seed(2)
 
 

@@ -249,7 +249,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   # 8: number of CUs above USR at ""
   # 9: number of extinct pops 
 
-  browser()
+  #browser()
   pms <- matrix(NA,1,9) 
   
   # SMU level PMs 
