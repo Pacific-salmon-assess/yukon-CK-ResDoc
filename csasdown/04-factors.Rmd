@@ -2,7 +2,7 @@
 bibliography: bib/refs.bib
 ---
 
-# ANTHROPOGENIC, ECOSYSTEM AND CLIMATE FACTORS AFFECTING THE STOCK {#sec:factors}
+# ANTHROPOGENIC, ECOSYSTEM, AND CLIMATE FACTORS AFFECTING THE STOCK {#sec:factors}
 
 The past decade has seen a considerable amount of research into anthropogenic, ecosystem, and climate factors that may have contributed to the recent and long-term declines in body size and productivity of Canadian-origin Yukon Chinook salmon. These factors are hypothesized to act across multiple life stages and ecosystems utilized by Yukon Chinook salmon (Table \@ref(tab:tab-factors-summary)). This section briefly summarizes what is currently known about factors affecting the stock by life stage, but is not an exhaustive review.
 

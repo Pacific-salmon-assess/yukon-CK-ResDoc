@@ -1,4 +1,4 @@
-# STOCK STATUS AND TRENDS
+# STOCK STATUS AND TRENDS {#sec:status-trends}
 
 ## DATA SOURCES
 
