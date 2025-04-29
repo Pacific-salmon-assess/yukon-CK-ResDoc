@@ -1,10 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
-
-
 # FIGURES
 
 (ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
@@ -13,10 +6,16 @@ output:
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
-(ref:fig-map-gsi) Various assessment sites and genetics sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
+(ref:fig-map-gsi) Genetic sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
 ```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
+
+(ref:fig-map-assess) Assessment sites in the Canadian portion of the Yukon River watershed. Eagle sonar is operated jointly by ADFG and DFO.
+```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
+knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
+```
+
 
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
 
@@ -112,6 +111,36 @@ knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.pn
 
 
 \clearpage
+
+<!--- 07-Impact figures --->
+
+(ref:fig-prod-scenarios) Alternative productivity scenarios assessed in the closed-loop simulation model. Under the reference scenario, the 10-year average of recent $\alpha$ (year-year) are used to project the system forward in time. Under the robustness scenario, the most recent $\alpha$ (year) is used.
+```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
+knitr::include_graphics(here::here("analysis/plots/OM-productivity-scenarios.png"))
+```
+
+(ref:fig-hcrs) Illustration of harvest control rules considered in analysis of impacts of fishery management measures. We considered the rule used prior to the transboundary moratorium agreement (status quo) and a variation of it that allows only a 40% exploitation rate (status quo cap), as well as the current rule under the transboundary moratorium agreement and the same variation (moratorium and moratorium cap), as well as an alternative form of harvest control rule. The x-axis range of the plot corresponds approximately to the historical range of run sizes.
+
+```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
+knitr::include_graphics(here::here("analysis/plots/HCR_visualize.png"))
+```
+
+\clearpage
+
+(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 simulated fishery scenarios. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations.
+
+```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
+knitr::include_graphics(here::here("analysis/plots/perf_metrics_status_TVA.png"))
+```
+
+\clearpage
+
+(ref:fig-ER-tradeoff-ref) Performance of a range of fixed exploitation rates in the 'reference' projected fishery scenario. (a) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations. (b) Mean spawners by CU under a range of exploitation rates, over all years of simulation (2025-2050).
+
+```{r fig-ER-tradeoff-ref, fig.cap = "(ref:fig-ER-tradeoff-ref)"}
+knitr::include_graphics(here::here("analysis/plots/fixed_ER_tradeoffs_TVA.png"))
+```
+
 
 # TABLES
 
