@@ -4,12 +4,12 @@
 
 (ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
 
-```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
+```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-map-gsi) Various assessment sites and genetics sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
-```{r fig-map-gsi, fig.cap = "(ref:map-gsi)"}
+```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
