@@ -231,6 +231,7 @@ CU_prettynames <- c("Northern Yukon R. and tribs.", "White and tribs.", "Stewart
                     "Upper Yukon R.","Yukon R. Teslin Headwaters")
 CU_name_lookup <- data.frame(CU_f = CU_order, CU_pretty = CU_prettynames)
 
+  
 SR.preds$CU_f <- factor(SR.preds$CU, levels = CU_order)
 AR1.spwn$CU_f <- factor(AR1.spwn$CU, levels = CU_order)
 AR1.resids$CU_f <- factor(AR1.resids$CU, levels = CU_order)
@@ -601,6 +602,9 @@ H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
 demo.bench$CU_f <- factor(demo.bench$CU, levels = CU_order)
 
 # assign HCRs to groups for subsetting harvest scenarios / HCRs
+ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
+HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "moratorium", "moratorium.cap", "alternative", paste0("fixed.ER.", ER_seq)) 
+
 HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  rebuilding = c("no.fishing", "moratorium", "moratorium.cap", "alternative"),
                  status.quo = c("no.fishing", 
@@ -609,15 +613,14 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 # colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
-names(HCR_cols) <- unique(S.fwd$HCR)[c(1, 14, 22:26)] 
-ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "moratorium", "moratorium.cap", "alternative", paste0("fixed.ER.", ER_seq)) 
+names(HCR_cols) <- c("Alternative", "Fixed er 60", "Moratorium", "Moratorium cap", "No fishing", "Status quo", "Status quo cap") 
 
 
 ## Spawners projection ----
                   
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
-  S.fwd %>% filter(HCR %in% HCR_grps[[i]]) %>%
+  S.fwd |> filter(HCR %in% HCR_grps[[i]]) |>
+  mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
   ggplot() +
     # Observations:
     geom_ribbon(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
@@ -627,17 +630,16 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     geom_line(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
               aes(y=S.50/1000, x= year), color = "black") + 
     # Projections: 
-    geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR, fill = HCR), 
+    geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR_name, fill = HCR_name), 
                 alpha = 0.2) +
-    geom_line(aes(year, S.50/1000, color = HCR), lwd=1) +
+    geom_line(aes(year, S.50/1000, color = HCR_name), lwd=1) +
     geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = median/1000), 
                color = "forestgreen", lty = 2) +
     geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = (median*0.2)/1000), 
                color = "darkred", lty = 2) +
-    facet_wrap(~CU_f, scales = "free_y") +
+    facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-    labs(title = "Forward simulation spawner trajectory with Smsr (green) and 20% Smsr (red)", 
-         y = "Spawners (000s)") +
+    labs(y = "Spawners (000s)", x="Year", col="", fill="") +
     theme_sleek() +
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
@@ -648,7 +650,8 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 
 ## Harvest projection ----
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
-  H.fwd %>% filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") %>%
+  H.fwd |> filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") |>
+    mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
     ggplot() +
     # Observations:
     geom_ribbon(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
@@ -658,13 +661,12 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     geom_line(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
               aes(y=H.50/1000, x= year), color = "black") + 
     # Projections:
-    geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR, fill = HCR), 
+    geom_ribbon(aes(ymin = H.25/1000, ymax = H.75/1000, x = year, color=HCR_name, fill = HCR_name), 
                 alpha = 0.2) +
-    geom_line(aes(year, H.50/1000, color = HCR), lwd=1) +
-    facet_wrap(~CU_f, scales = "free_y") +
+    geom_line(aes(year, H.50/1000, color = HCR_name), lwd=1) +
+    facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
-    labs(title = "Forward simulation spawner trajectory", 
-         y = "Harvest (000s)") +
+    labs(y = "Harvest (000s)", col="", fill="") +
     theme_sleek() +
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
@@ -677,7 +679,6 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 #metrics
 perf.metrics <- perf.metrics |> mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
   mutate(HCR_name = factor(HCR_name, levels=unique(HCR_name)[c(24:26,22:23,1,2:21)]))
-names(HCR_cols) <- c("Alternative", "Fixed er 60", "Moratorium", "Moratorium cap", "No fishing", "Status quo", "Status quo cap") 
 
 pm_plot <- perf.metrics |> 
   filter(!(HCR %in% HCR_grps[["fixed"]])) |> 

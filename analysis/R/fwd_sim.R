@@ -102,7 +102,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 50 # number of Monte Carlo trials
+num.sims = 1000 # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
@@ -118,7 +118,6 @@ H.time <- NULL
 # -- Simulation loop -------------------------------------------------------
 
 for(i in 1:length(HCRs)){
-  print(HCRs[i])
   for(j in 1:num.sims){
     HCR <- HCRs[i]
     draw <- sample(nrow(samps),1)
@@ -130,7 +129,7 @@ for(i in 1:length(HCRs)){
     Spw <- process.iteration(samps[draw,])$S
     lst.resid <- process.iteration(samps[draw,])$last_resid
     phi <- 0.75 # mean across CUs
-    Smax <- filter(demo.bench.posts, CU == names(fits[i]))$Smsr
+    Smax <- demo.bench.posts$Smsr
     if(grepl('fixed.ER', HCR)) {
       ER <- as.numeric(gsub("\\D", "", HCR))/100
       } else {ER <- NULL} # Set ER for fixed ER sims
@@ -138,6 +137,8 @@ for(i in 1:length(HCRs)){
     out <- process(HCR,ny,vcov.matrix,mat,alpha,beta,Smax, pm.yr,for.error,OU,Rec,Spw,lst.resid,phi, ER)
   
     
+    if(anyNA(out$S) | any(is.nan(out$S[,]))) { print("Stop: NA/NAN spawners produced")}
+    if(anyNA(out$H) | any(is.nan(out$H[,]))) { print("Stop: NA/NAN harvest produced")}
 
      sim.outcomes <- rbind(sim.outcomes, cbind(rep(HCR, nrow(out$PMs)), rep(j, nrow(out$PMs)), out$PMs))
     S.time <- rbind(S.time, cbind(out$S[7:ny,], rep(HCR, ny-a_max+1), 
@@ -153,7 +154,7 @@ for(i in 1:length(HCRs)){
 pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct")
 colnames(sim.outcomes) <- c("HCR", "sim", pms)
 qmean <- function(x){
-  c(quantile(x, c(0.25, 0.5, 0.75), na.rm=T), mean(x, na.rm=T))
+  c(quantile(x, c(0.25, 0.5, 0.75)), mean(x))
 }
 sim.outcome.summary <- as.data.frame(sim.outcomes) |>
   mutate_at(2:ncol(sim.outcomes), as.numeric) |>
@@ -199,8 +200,8 @@ write.csv(S.fwd.summmary, here('analysis', 'data', 'generated', 'simulations',
 H.fwd.summmary <- H.time |>
   group_by(HCR, CU, year) |>
   summarise(H.50 = median(Harvest), 
-            H.25 = quantile(Harvest, 0.25, na.rm = T), 
-            H.75 = quantile(Harvest, 0.75, na.rm = T))
+            H.25 = quantile(Harvest), 
+            H.75 = quantile(Harvest))
 write.csv(H.fwd.summmary, here('analysis', 'data', 'generated', 'simulations', 
                                paste0('H_fwd_', k, '.csv')),  row.names = FALSE)
 

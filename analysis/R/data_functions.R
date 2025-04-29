@@ -149,13 +149,13 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   R[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,]+(phi*lst.resid)+epi[4,])
   predR[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,])
   v[4,] <- log(R[4,])-log(predR[4,])
-  v[v[,]=='NaN'] <- 0
+  v[is.nan(v[,])] <- 0
   
   for(i in 5:7){
     R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,])
     predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
     v[i,] <- log(R[i,])-log(predR[i,])
-    v[v[,]=='NaN'] <- 0	
+    v[is.nan(v[,])] <- 0	
   }
   
   N[4:7,1,] <- R[4:7-(3),] * mat[1]
@@ -233,7 +233,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
     R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,]) 
     predR[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,])
     v[i,] <- log(R[i,])-log(predR[i,])
-    v[v[,]=='NaN'] <- 0
+    v[is.nan(v[,])] <- 0
     
   } # end years loop
   
@@ -249,15 +249,15 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   # 8: number of CUs above USR at ""
   # 9: number of extinct pops 
 
-  #browser()
-    pms <- matrix(NA,1,9) 
+  browser()
+  pms <- matrix(NA,1,9) 
   
   # SMU level PMs 
-  S[S[,]=='NaN'] <- 0
-  H[H[,] == 'NAN'] <- 0 # not sure if this is an appropriate fix
-  Ntot[Ntot[,]=='NaN'] <- 0
+  S[is.nan(S[,])] <- 0
+  H[is.nan(H[,])] <- 0
+  Ntot[is.nan(Ntot[,])] <- 0
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
-  harvest_rates[harvest_rates[,]=='NaN'] <- 0
+  harvest_rates[is.nan(harvest_rates[,])] <- 0
   #Smax <- round((m.alpha/m.beta)/m.alpha,digits=0)
   Smax <- Smax
   ln.alpha <- log(m.alpha)
@@ -386,6 +386,15 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
 }
 
 
-
+# -- Labeller function for CU names
+CU_labeller <- as_labeller(c("NorthernYukonR.andtribs." = "Northern Yukon R. and tribs.",
+               "Whiteandtribs." = "White and tribs.",
+               "Stewart" = "Stewart",
+               "MiddleYukonR.andtribs." = "Middle Yukon R. and tribs.",
+               "Pelly" = "Pelly", 
+               "Nordenskiold" = "Nordenskiold", 
+               "Big.Salmon" = "Big Salmon",
+               "UpperYukonR." = "Upper Yukon R.",
+               "YukonR.Teslinheadwaters" = "Yukon R. Teslin Headwaters"))
 
 
