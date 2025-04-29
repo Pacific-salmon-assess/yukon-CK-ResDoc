@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 
 
 # FIGURES
@@ -302,8 +307,8 @@ names(bench.pars) <- c("Conservation Unit",
                        "Benchmark",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
-                       "Effective Sample Size (Neff)",
-                       "Chain Mixing (Rhat)")
+                       "Effective Sample Size ($N_{\\text{eff}}$)",
+                       "Chain Mixing ($\\widehat{R}$)")
 bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
@@ -339,8 +344,8 @@ names(bench.pars) <- c("Conservation Unit",
                        "Parameter",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
-                       "Effective Sample Size (Neff)",
-                       "Chain Mixing (Rhat)")
+                       "Effective Sample Size ($N_{\\text{eff}}$)",
+                       "Chain Mixing ($\\widehat{R}$)")
 bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
 
 bench.pars |> 
