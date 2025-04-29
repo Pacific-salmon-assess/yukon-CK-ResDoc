@@ -4,16 +4,17 @@ output:
   html_document: default
 ---
 
+
 # FIGURES
 
-(ref:map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
+(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
 
-```{r fig-map-spawn, fig.cap = "(ref:map-spawn)"}
+```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
-(ref:map-gsi) Various assessment sites and genetics sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
-```{r fig-map-gsi, fig.cap = "(ref:map-gsi)"}
+(ref:fig-map-gsi) Various assessment sites and genetics sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
+```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
@@ -275,13 +276,13 @@ priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)",
                                      "Conservation Unit", 
                                      "Conservation Unit",
                                      "Stock Management Unit or Conservation Unit"),
-                           Definition = c("CU-status based, meaning that whether an SMU is above or below its LRP depends on whether any component CUs are below their lower biological benchmark (in the ‘red’ Wild Salmon Policy status zone). This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs. However, it is difficult to operationalize this type of LRP for fisheries management and so there may also be a “lower stock reference point” that is abundance based.",
-                                          "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives.",
+                           Definition = c("CU-status based; an SMU is below its LRP when one or more component CUs are in the WSP Red status zone. This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs [@dfo2022limit; @holt2023guidelines]. However, it is difficult to operationalize this type of LRP for fisheries management, and so for management purposes an LRP-Lower may also be required. ",
+                                          "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives. ",
                                           "The maximum acceptable harvest rate the SMU can be subject to; is typically set to be less than or equal to the removal rate associated with maximum sustainable yield ($U_{MSY}$).", 
                                           "Aggregate SMU spawner abundance below which all fishery removals should be limited to the maximum extent possible and below which there is a high risk of serious and irreversible harm to the stock. This type of reference point is helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized.", 
-                                          "Differentiates amber and red Wild Salmon Policy status zones. When it can be estimated $S_{GEN}$ is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions. Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”.",
-                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80%$S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU”",
-                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest."))
+                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated SGEN is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions [@holtEvaluationBenchmarksConservation2009]. Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
+                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80% $S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU” [@WSP2005].",
+                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest [@liller2022]."))
 
 priors.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -306,8 +307,8 @@ names(bench.pars) <- c("Conservation Unit",
                        "Benchmark",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
-                       "Effective Sample Size (Neff)",
-                       "Chain Mixing (Rhat)")
+                       "Effective Sample Size ($N_{\\text{eff}}$)",
+                       "Chain Mixing ($\\widehat{R}$)")
 bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
@@ -343,8 +344,8 @@ names(bench.pars) <- c("Conservation Unit",
                        "Parameter",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
-                       "Effective Sample Size (Neff)",
-                       "Chain Mixing (Rhat)")
+                       "Effective Sample Size ($N_{\\text{eff}}$)",
+                       "Chain Mixing ($\\widehat{R}$)")
 bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
 
 bench.pars |> 
