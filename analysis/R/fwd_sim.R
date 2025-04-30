@@ -200,8 +200,8 @@ write.csv(S.fwd.summmary, here('analysis', 'data', 'generated', 'simulations',
 H.fwd.summmary <- H.time |>
   group_by(HCR, CU, year) |>
   summarise(H.50 = median(Harvest), 
-            H.25 = quantile(Harvest), 
-            H.75 = quantile(Harvest))
+            H.25 = quantile(Harvest, 0.25), 
+            H.75 = quantile(Harvest, 0.75))
 write.csv(H.fwd.summmary, here('analysis', 'data', 'generated', 'simulations', 
                                paste0('H_fwd_', k, '.csv')),  row.names = FALSE)
 
