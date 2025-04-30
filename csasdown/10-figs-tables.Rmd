@@ -270,18 +270,27 @@ factors.df |>
 (ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
-df <- data.frame(Metric = c("% replicate simulations < LRP", "% replicate simulations > USR", "average annual catch", "catch stability (1/CV)", 
-                            "relative catch metric"), 
-                 Description = c("Probability the stock spawner abundance falls below the Limit Reference Point across replicate simulations and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated ",
-                                 "Probability the stock spawner abundance falls above the Upper Stock Reference Point across replicate simulations and years ",
-                                 "Average catch across replicate simulations and years",
-                                 "Stability in average catch across replicate simulations and years($\\mu_C$), where is $\\sigma_C$ the standard deviation in catch",
-                                 "Probability annual catch is greater than the average of the top 3 years of catch since 2000 ($C_{top}$), a semi-arbitrary indicator of a ‘good year’ "),
-                 Equation = c("$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t<S_{gen}} {t_2-t_1+1}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t>0.8S_{MSY}} {t_2-t_1+1}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_tC_t} {t_2-t_1+1}$", 
-                              "$\\cfrac{1}{\\tfrac{\\sigma_C}{\\mu_C}}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}C_t>C_{top}} {t_2-t_1+1}$"))
+df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
+                            "Number of CUs above their upper biological reference point", 
+                            "Average annual aggregrate spawning escapement", 
+                            "Average annual harvest", 
+                            "Average annual harvest rate", 
+                            "Proportion of years with no harvest", 
+                            "Proportion of years Basic Needs Allocation met"), 
+                 Description = c("Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological refernece point, defined as 20% of the spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (20%$S_{MSR,em_{2014-2024}}$)",
+                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
+                                  "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
+                                  "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
+                                  "Average annual harvest rate ($U$) for stock aggregrate across replicate simulation and years", 
+                                  "Proportion of years across replicate simulation and years with no harvest", 
+                                  "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
+                 Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\sum_i S_{i,t=2050}>S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_{\\substack{t_1\\\\t_2}}U_{t}}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}=0}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}>BNA}{t_2-t_1+1}$"))
 df|>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
@@ -290,6 +299,7 @@ df|>
                      caption = "(ref:tab-perf-metrics-descriptions)", 
                      repeat_header = TRUE, 
                      align = "llc")|>
+  kableExtra::column_spec(1, width = "3.5cm")|>
   kableExtra::column_spec(2, width = "6.5cm")
 ```
 

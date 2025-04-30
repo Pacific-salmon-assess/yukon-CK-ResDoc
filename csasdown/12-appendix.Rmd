@@ -263,7 +263,7 @@ These age composition by return year estimates were assumed to be observed with 
 
 ## TIME-VARYING PRODUCTIVITY
 
-Given widespread evidence for changes in salmon productivity over time (@refs), and interest in understanding the evidence for changing productivity in Yukon Chinook, we also fit a version of the model described in Equ. \@ref(eq:AR1-ricker)-\@ref(eq:obs-harvest) with time-varying intrinsic productivity. Specifically, we allowed the $\alpha$ parameter to evolve through time as a random walk, yielding time-varying estimates of productivity: 
+Given widespread evidence for changes in salmon productivity over time [@peterman2012widespread; @dorner2018spatial; @malick2016regional], and interest in understanding the evidence for changing productivity in Yukon Chinook, we also fit a version of the model described in Equ. \@ref(eq:AR1-ricker)-\@ref(eq:obs-harvest) with time-varying intrinsic productivity. Specifically, we allowed the $\alpha$ parameter to evolve through time as a random walk, yielding time-varying estimates of productivity: 
 
 \begin{equation}
   \begin{aligned}
