@@ -223,11 +223,15 @@ colnames(TV.resids) <- c("year","lwr","midlwr","mid","midupr","upr", "CU")
 colnames(TV.spwn) <- c("S.25", "S.50", "S.75", "CU", "year")
 colnames(TV.harv) <- c("H.25", "H.50", "H.75", "CU", "year")
 
-CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
-              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", 
+CU_order <- c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
               "UpperYukonR.","YukonR.Teslinheadwaters")
-CU_prettynames <- c("Northern Yukon R. and tribs.", "White and tribs.", "Stewart",  
-                    "Middle Yukon R. and tribs.","Pelly", "Nordenskiold", "Big Salmon", 
+CU_prettynames <- c("Northern Yukon R. and tribs.", 
+                    "White and tribs.", "Stewart",  
+                    "Middle Yukon R. and tribs.","Pelly",
+                    "Nordenskiold", "Big Salmon", 
                     "Upper Yukon R.","Yukon R. Teslin Headwaters")
 CU_name_lookup <- data.frame(CU_f = CU_order, CU_pretty = CU_prettynames)
 
@@ -363,7 +367,6 @@ my.ggsave(here("analysis/plots/TV_SR_fits.PNG"))
 
 # "status" plots ----
 bench.long <- pivot_longer(bench.posts, cols = c(Smsr.20, Smsr.40, S.recent), names_to = "par") |>
-  select(-Smsy.80, - Smsr) |>
   arrange(CU, par, value) |>
   filter(value <= 10000) #hack to cut off fat tails to help with density visualization, also an IUCN cutoff... 
 
@@ -385,7 +388,7 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
 my.ggsave(here("analysis/plots/status.PNG"))
 
 # EXPERIMENTAL: benchmarks with Smsr ---
-bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy.80, Smsr, S.recent), names_to = "par") |>
+bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy, Smsr, S.recent), names_to = "par") |>
   select(-Umsy, - Seq) |>
   arrange(CU, par, value) |>
   filter(value <= 15000) #hack to cut big tails of observations, worth looking without this line
@@ -562,7 +565,7 @@ my.ggsave(here("analysis/plots/OM-productivity-scenarios.PNG"))
 demo.bench <- read.csv(here("analysis/data/generated/demographic_parameters.csv"))
 
 # Generate plots for which set of fwd simulations?
-fit_type <- c("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
+fit_type <- c("TVA", "TVA2")#, "AR1") # Can omit one to avoid re-generating figures
 
 for(k in fit_type) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
   
@@ -633,10 +636,11 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     geom_ribbon(aes(ymin = S.25/1000, ymax = S.75/1000, x = year, color=HCR_name, fill = HCR_name), 
                 alpha = 0.2) +
     geom_line(aes(year, S.50/1000, color = HCR_name), lwd=1) +
+    # Benchmarks:
     geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = median/1000), 
                color = "forestgreen", lty = 2) +
-    geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = (median*0.2)/1000), 
-               color = "darkred", lty = 2) +
+    geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = 
+                             (median*0.2)/1000), color = "darkred", lty = 2) +
     facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
     labs(y = "Spawners (000s)", x="Year", col="", fill="") +
