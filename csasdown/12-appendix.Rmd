@@ -34,7 +34,7 @@ gsi_tribs <- read.csv(here::here("csasdown/data/gsi_tribs.csv"), stringsAsFactor
 
 
 footnotes <- c("Samples from the Big Salmon river and Teslin river (below Teslin lake) are both assigned to the Middle Yukon River CU for the purposes of this analysis because they cannot be reliably differentiated from other baseline sampling locations in the Middle Yukon River CU",
-"Holtby and Ciruna 2008")
+"Holtby and Ciruna 2007")
 
 gsi_tribs <- gsi_tribs |> 
               dplyr::mutate(Tribname = stringr::str_to_title(gsub("_", " ", Tribname))) |>
