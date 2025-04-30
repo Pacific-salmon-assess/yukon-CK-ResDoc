@@ -328,7 +328,7 @@ priors.df |>
 
 \clearpage
 
-(ref:pars-ref-pts) Population (conservation unit) reference points. Values are in thousands of fish.
+(ref:pars-ref-pts) Conservation Unit biological reference points. Values are in thousands of fish.
 
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -361,7 +361,7 @@ bench.pars |>
 
 \clearpage
 
-(ref:pars-sr) Population (conservation unit) stock-recruit parameters.
+(ref:pars-sr) Conservation Unit stock-recruit parameters.
 
 ```{r pars-sr, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -429,8 +429,34 @@ demo.pars |>
 
 ```
 
+\clearpage
+(ref:hcrs) Definitions of alternative fishery management measures (Harvest Control Rules) considered.
+
+```{r hcrs, results = "asis"}
+HCR.df <- data.frame(HarvestControlRule = c("Moratorium", 
+                                               "Status quo (Interim Management Escapement Goal)", 
+                                               "Moratorium w/ harvest cap", 
+                                               "Status quo w/ harvest cap", 
+                                               "Precationary Approach alternative"), 
+                        Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish", 
+                                     "Interim Management Escapement goal that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal", 
+                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit", 
+                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit",
+                                     "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework: no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000]"))
+
+HCR.df |>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:hcrs)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "3cm")|>
+    kableExtra::column_spec(2, width = "10cm")
+```
 
 \clearpage
+
 (ref:tab-ref-perf-measures) Performance measures from "reference set" simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
