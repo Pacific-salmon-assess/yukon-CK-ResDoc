@@ -353,8 +353,16 @@ priors.df |>
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
 
+bench.pars <- bench.pars |> 
+  dplyr::mutate_at(3:6, function(x){round(x/1000, 2)}) |>
+  dplyr::mutate(value=paste0(X50., " (", X10., ",", X90., ")")) |>
+  dplyr::relocate(value, .after=bench.par) |>
+  dplyr::mutate(Rhat = format(round(Rhat, 4)))
+
+
 names(bench.pars) <- c("Conservation Unit",
                        "Benchmark",
+                       "Median (80$^{\\text{th}}$ percentile)",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
@@ -363,12 +371,11 @@ bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
 bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
 bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
 bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
-bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
   dplyr::filter(Benchmark %in% c("$S_{\\text{gen}}$", "$S_{\\text{msr}}$", "$S_{\\text{msy}}$", "$U_{\\text{msy}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
-  dplyr::select(1:6) |>
+  dplyr::select(c(1:3)) |>
   dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
@@ -393,9 +400,16 @@ bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv')
 bench.pars$CU <- gsub(".", " ", bench.pars$CU, fixed=TRUE)
 bench.pars$bench.par <- gsub(".", "", bench.pars$bench.par, fixed=TRUE)
 
+bench.pars <- bench.pars |> 
+  dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
+  dplyr::mutate(value=paste0(X50., " (", X10., ",", X90., ")")) |>
+  dplyr::relocate(value, .after=bench.par) |>
+  dplyr::mutate(Rhat = format(round(Rhat, 4)))
+  
 
 names(bench.pars) <- c("Conservation Unit",
                        "Parameter",
+                       "Median (80$^{\\text{th}}$ percentile)",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
@@ -404,21 +418,22 @@ bench.pars$Parameter[bench.pars$Parameter == "alpha"]<- "$\\alpha$"
 bench.pars$Parameter[bench.pars$Parameter == "beta"]<- "$\\beta$"
 bench.pars$Parameter[bench.pars$Parameter == "phi"]<- "$\\phi$"
 bench.pars$Parameter[bench.pars$Parameter == "sigma"]<- "$\\sigma$"
-bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
 
 bench.pars |> 
+  dplyr::select(c(1:3,8:9)) |>
   dplyr::filter(Parameter %in% c("$\\alpha$", "$\\beta$", "$\\phi$", "$\\sigma$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
-                     caption = "(ref:pars-ref-pts)", 
+                     caption = "(ref:pars-sr)", 
                      repeat_header = TRUE,
                      align = "llc") |>
   kableExtra::collapse_rows(columns=1, latex_hline = "major") |>
-  kableExtra::column_spec(1, width = "3cm") |>
-  kableExtra::column_spec(5:8, width = "2cm") |>
+  kableExtra::column_spec(1, width = "4cm") |>
+  kableExtra::column_spec(3, width = "3cm") |>
+  kableExtra::column_spec(4:5, width = "2cm") |>
   kableExtra::row_spec(1:108, align = "c")
   
 
@@ -427,29 +442,33 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) Population (conservation unit) reference points from demographic (egg mass) models. Values are in thousands of fish.
+(ref:demo-ref-pts) Population (conservation unit) reference points from demographic (egg mass) models. Values are in thousands of fish. ! CHECK if these are 50th percentiles or other quantity!!
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
 
-demo.pars <- dplyr::mutate(demo.pars, period = dplyr::case_when(period == "avg" ~ "Average (all years)",
-                                                               period == "early" ~ "Early()",
-                                                               period == "recent" ~ "Recent()"))
+demo.pars <- demo.pars |> 
+  dplyr::mutate(period = dplyr::case_when(period == "avg" ~ "Average (all years)",
+                                          period == "early" ~ "Early (1985-1989)",
+                                          period == "recent" ~ "Recent (2019-2024)")) |>
+  mutate_at(4:6, function(x){round(x/1000, 2)}) |>
+  dplyr::mutate(`Median (50$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")"))
 
-names(demo.pars) <- c("Conservation Unit",
-                       "Period",
-                       "Benchmark",
-                       "Median",
-                       "Lower Quantile", "Upper Quantile")
+names(demo.pars)[1:6] <- c("Conservation Unit",
+                           "Period",
+                           "Benchmark",
+                           "Median",
+                           "Lower Quantile", "Upper Quantile")
 demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
 demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
 demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
 demo.pars$Benchmark[demo.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
 
 demo.pars |> 
+  dplyr::select(c(1:3,7)) |>
+  dplyr::relocate(Benchmark, .after=`Conservation Unit`) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
-  dplyr::mutate_at(.vars=4:6, function(x){round((x/1000), 2)}) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
@@ -457,8 +476,9 @@ demo.pars |>
                      caption = "(ref:demo-ref-pts)", 
                      repeat_header = TRUE,
                      align = "llc") |>
-  kableExtra::collapse_rows(columns=1, latex_hline = "major")
-  
+  kableExtra::collapse_rows(columns=1, latex_hline = "major") |>
+  kableExtra::collapse_rows(columns=3, latex_hline = "major")
+
 
 ```
 
@@ -491,19 +511,29 @@ HCR.df |>
 
 \clearpage
 \begin{landscapepage}
-(ref:tab-ref-perf-measures) Performance measures from "reference set" simulations.
+(ref:tab-ref-perf-measures) Performance measures from "reference set" simulations, where productivity returns to its 10-year average. Escapement and harvest values are in thousands of fish.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
   tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
+perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
 fix_hcr <- unique(ref_case_pms$HCR)[grepl("^fixed.", unique(ref_case_pms$HCR))]
+
+ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6] <- ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
+
 ref_case_pms <- ref_case_pms |> 
+  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |>
+  dplyr::select(-metric) |>
+  dplyr::relocate(Metric, .after="HCR") |>
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
-  dplyr::rename(lower = q_25,
-                upper = q_75)
+  dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
+  dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
+  dplyr::select(c(1:2,6:7))
+
+names(ref_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
 
 ref_case_pms |> 
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -518,18 +548,29 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Performance measures from "robustness set" simulations.
+(ref:tab-rob-perf-measures) Performance measures from "robustness set" simulations, where productivity remains at 2024 levels. Escapement and harvest values are in thousands of fish.
+
 
 ```{r tab-rob-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.csv"))|>
   tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
+perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
+
+rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
+
 rob_case_pms <- rob_case_pms |> 
+  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |>
+  dplyr::select(-metric) |>
+  dplyr::relocate(Metric, .after="HCR") |>
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
-  dplyr::rename(lower = q_25,
-                upper = q_75) 
+  dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
+  dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
+  dplyr::select(c(1:2,6:7))
+
+names(rob_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
 
 rob_case_pms |> 
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -538,7 +579,7 @@ rob_case_pms |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rob-perf-measures)", 
                        repeat_header = TRUE,
-                       align = "llc")|>
+                       align = "llc") |>
 kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 
