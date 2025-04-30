@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # FIGURES
 
 (ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
@@ -339,10 +344,14 @@ names(bench.pars) <- c("Conservation Unit",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
+bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
 bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
-  dplyr::filter(Benchmark %in% c("Sgen", "Smsr", "Smsy", "Umsy")) |>
+  dplyr::filter(Benchmark %in% c("$S_{\\text{gen}}$", "$S_{\\text{msr}}$", "$S_{\\text{msy}}$", "$U_{\\text{msy}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(1:6) |>
   dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
@@ -376,10 +385,14 @@ names(bench.pars) <- c("Conservation Unit",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
+bench.pars$Parameter[bench.pars$Parameter == "alpha"]<- "$\\alpha$"
+bench.pars$Parameter[bench.pars$Parameter == "beta"]<- "$\\beta$"
+bench.pars$Parameter[bench.pars$Parameter == "phi"]<- "$\\phi$"
+bench.pars$Parameter[bench.pars$Parameter == "sigma"]<- "$\\sigma$"
 bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
 
 bench.pars |> 
-  dplyr::filter(Parameter %in% c("alpha", "beta", "phi", "sigma")) |>
+  dplyr::filter(Parameter %in% c("$\\alpha$", "$\\beta$", "$\\phi$", "$\\sigma$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
