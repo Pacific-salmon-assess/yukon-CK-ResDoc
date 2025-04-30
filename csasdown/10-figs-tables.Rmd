@@ -141,6 +141,14 @@ knitr::include_graphics(here::here("analysis/plots/fixed_ER_tradeoffs_TVA.png"))
 ```
 
 \clearpage
+
+(ref:fig-projections) Projections.
+
+```{r fig-projections, fig.cap = "(ref:fig-projections)"}
+knitr::include_graphics(here::here("analysis/plots/S-fwd_simple_grp_TVA.png"))
+```
+
+\clearpage
 # TABLES
 
 (ref:tab-cons-unit-smu) Stock management units for Canadian Yukon River Chinook (CK) salmon and their component conservation units, with CU contribution from 1985-2024.
