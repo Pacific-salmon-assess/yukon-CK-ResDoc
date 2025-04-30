@@ -11,7 +11,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Assessment sites in the Canadian portion of the Yukon River watershed. Eagle sonar is operated jointly by ADFG and DFO.
+(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Several smaller-scale assessment projects and aerial surveys exist that are not included.
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
