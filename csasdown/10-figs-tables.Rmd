@@ -166,6 +166,7 @@ smucutable |>
 
 \clearpage
 
+\begin{landscapepage}
 (ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
 ```{r tab-CU-gsi-annual-summary, results='asis'}
 
@@ -186,6 +187,7 @@ cugsitable |>
 
 
 ```
+\end{landscapepage}
 
 \clearpage
 
@@ -333,7 +335,7 @@ priors.df |>
 ```
 
 \clearpage
-
+\begin{landscapepage}
 (ref:pars-ref-pts) Conservation Unit biological reference points. Values are in thousands of fish.
 
 ```{r pars-ref-pts, results = "asis"}
@@ -369,8 +371,8 @@ bench.pars |>
 
 ```
 
-\clearpage
 
+\clearpage
 (ref:pars-sr) Conservation Unit stock-recruit parameters.
 
 ```{r pars-sr, results = "asis"}
@@ -401,7 +403,8 @@ bench.pars |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:pars-ref-pts)", 
                      repeat_header = TRUE,
-                     align = "llc") |>
+                     align = "llc", 
+                     lanscape = TRUE) |>
   kableExtra::collapse_rows(columns=1, latex_hline = "major") |>
   kableExtra::column_spec(1, width = "3cm") |>
   kableExtra::column_spec(5:8, width = "2cm") |>
@@ -409,6 +412,7 @@ bench.pars |>
   
 
 ```
+\end{landscapepage}
 
 \clearpage
 
@@ -447,6 +451,7 @@ demo.pars |>
 
 ```
 
+
 \clearpage
 (ref:hcrs) Definitions of alternative fishery management measures (Harvest Control Rules) considered.
 
@@ -474,7 +479,7 @@ HCR.df |>
 ```
 
 \clearpage
-
+\begin{landscapepage}
 (ref:tab-ref-perf-measures) Performance measures from "reference set" simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
@@ -502,7 +507,6 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-
 (ref:tab-rob-perf-measures) Performance measures from "robustness set" simulations.
 
 ```{r tab-rob-perf-measures, results = "asis"}
@@ -528,4 +532,4 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 
 ```
-
+\end{landscapepage}
