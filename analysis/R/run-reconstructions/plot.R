@@ -129,9 +129,9 @@ plotCompFits <- function( rpt, d=16:100, folder="." )
 
 plotFitI <- function( rpt, folder="." )
 {
-  dims <- list( c(3,4), c(4,6) )
-  hei <- c(6,8)
-  wid <- c(8,11)
+  dims <- list( c(5,4), c(6,4) )
+  hei <- c(8,10)
+  wid <- c(6,7)
   ylab <- c("Abundance (1000s)","Relative abundance")
 
   lims <- list( c(18,76), c(15,111) )
@@ -139,9 +139,9 @@ plotFitI <- function( rpt, folder="." )
   z <- 0
   for( g in 1:rpt$nG )
   {
-    pdf( file=paste(folder,"/indexFitsg",g,".pdf",sep=""),
-         height=hei[g], width=wid[g] )
-    par( mfrow=dims[[g]], mar=c(2,2,1,1), oma=c(0,3,0,0) )
+    png( file=paste(folder,"/indexFitsg",g,".png",sep=""),
+         height=hei[g], width=wid[g] ,units="in", res=600)
+    par( mfrow=dims[[g]], mar=c(2,2,1,1), oma=c(3,3,0,0) )
     for( t in 1:rpt$nT )
     {
       I_d <- 1e-3*rpt$E_dtg[ ,t,g]
@@ -150,7 +150,7 @@ plotFitI <- function( rpt, folder="." )
       {
         plot( x=rpt$day_d, y=I_d, xlim=rpt$day_d[lims[[g]]],
               ylim=c(0,1.1*max(I_d,E_d,na.rm=1)),
-              las=1, xlab="", ylab="" )
+              las=1, xlab="", ylab="",cex=0.8 )
         grid()
         box()
         lines( x=rpt$day_d, y=E_d, lwd=2 )
@@ -160,6 +160,8 @@ plotFitI <- function( rpt, folder="." )
 
     mtext( side=2, outer=TRUE, line=1,
            text=ylab[g] )
+    mtext( side=1, outer=TRUE, line=1,
+           text="Day of year" )    
     dev.off()
   } # next g
 }
