@@ -17,6 +17,12 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
 
+(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Several smaller-scale assessment projects and aerial surveys exist that are not included.
+```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
+knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
+```
+
+
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
 
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
