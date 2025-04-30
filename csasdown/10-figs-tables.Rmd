@@ -261,7 +261,8 @@ factors.df |>
     kableExtra::column_spec(1, width = "2cm")|>
     kableExtra::column_spec(2, width = "3cm")|>
     kableExtra::column_spec(3, width = "6.5cm")|>
-    kableExtra::column_spec(4, width = "5cm")
+    kableExtra::column_spec(4, width = "5cm") |>
+    kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
@@ -363,7 +364,7 @@ bench.pars |>
                      repeat_header = TRUE,
                      align = "llc",
                      booktabs = T) |>
-  kableExtra::collapse_rows(columns=1)
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
   
 
 ```
@@ -401,7 +402,7 @@ bench.pars |>
                      caption = "(ref:pars-ref-pts)", 
                      repeat_header = TRUE,
                      align = "llc") |>
-  kableExtra::collapse_rows(columns=1) |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major") |>
   kableExtra::column_spec(1, width = "3cm") |>
   kableExtra::column_spec(5:8, width = "2cm") |>
   kableExtra::row_spec(1:108, align = "c")
@@ -425,6 +426,10 @@ names(demo.pars) <- c("Conservation Unit",
                        "Benchmark",
                        "Median",
                        "Lower Quantile", "Upper Quantile")
+demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
 
 demo.pars |> 
   dplyr::arrange(`Conservation Unit`) |>
@@ -437,7 +442,7 @@ demo.pars |>
                      caption = "(ref:demo-ref-pts)", 
                      repeat_header = TRUE,
                      align = "llc") |>
-  kableExtra::collapse_rows(columns=1)
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
   
 
 ```
@@ -491,7 +496,8 @@ ref_case_pms |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-ref-perf-measures)", 
                        repeat_header = TRUE,
-                       align = "llc")
+                       align = "llc") |>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 ```
 
@@ -517,7 +523,9 @@ rob_case_pms |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rob-perf-measures)", 
                        repeat_header = TRUE,
-                       align = "llc")
+                       align = "llc")|>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
 
 ```
 
