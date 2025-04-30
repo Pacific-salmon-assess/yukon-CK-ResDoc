@@ -90,7 +90,7 @@ rr.params |>
 ```
 
 
-
+\begin{landscapepage}
 (ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.
 
 ```{r tab-rr-eqns, results = "asis"}
@@ -109,6 +109,7 @@ rr.eqns |>
 
 
 ```
+\end{landscapepage}
 
 ## POPULATION DYNAMICS 
 
