@@ -174,30 +174,23 @@ smucutable |>
 ```
 
 \clearpage
-
-\begin{landscapepage}
 (ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
-```{r tab-CU-gsi-annual-summary, results='asis'}
+```{r tab-CU-gsi-annual-summary, results="asis"}
 
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
-names(cugsitable) <- gsub("\\.", " ", names(cugsitable))
+names(cugsitable) <- gsub(".", " ", names(cugsitable), fixed=T)
 
 
 cugsitable |> 
   dplyr::mutate_all(function(x){round(x, 3)}) |>
-  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   csasdown::csas_table(format = "latex",
                        escape = FALSE,
-                     caption = "(ref:tab-CU-gsi-annual-summary)", 
-                     repeat_header = TRUE) |>
+                       caption = "(ref:tab-CU-gsi-annual-summary)", 
+                       repeat_header = TRUE) |>
   kableExtra::column_spec(-1, width = "1.5cm")
 
 
 ```
-\end{landscapepage}
-
 \clearpage
 
 (ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
