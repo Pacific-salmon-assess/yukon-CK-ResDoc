@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # FIGURES
 
 (ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
@@ -103,6 +108,7 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 ```
 
+
 \clearpage
 
 <!--- 07-Impact figures --->
@@ -134,7 +140,15 @@ knitr::include_graphics(here::here("analysis/plots/perf_metrics_status_TVA.png")
 knitr::include_graphics(here::here("analysis/plots/fixed_ER_tradeoffs_TVA.png"))
 ```
 
+\clearpage
 
+(ref:fig-projections) Projections.
+
+```{r fig-projections, fig.cap = "(ref:fig-projections)"}
+knitr::include_graphics(here::here("analysis/plots/S-fwd_simple_grp_TVA.png"))
+```
+
+\clearpage
 # TABLES
 
 (ref:tab-cons-unit-smu) Stock management units for Canadian Yukon River Chinook (CK) salmon and their component conservation units, with CU contribution from 1985-2024.
@@ -160,6 +174,7 @@ smucutable |>
 
 \clearpage
 
+\begin{landscapepage}
 (ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
 ```{r tab-CU-gsi-annual-summary, results='asis'}
 
@@ -180,6 +195,7 @@ cugsitable |>
 
 
 ```
+\end{landscapepage}
 
 \clearpage
 
@@ -255,7 +271,8 @@ factors.df |>
     kableExtra::column_spec(1, width = "2cm")|>
     kableExtra::column_spec(2, width = "3cm")|>
     kableExtra::column_spec(3, width = "6.5cm")|>
-    kableExtra::column_spec(4, width = "5cm")
+    kableExtra::column_spec(4, width = "5cm") |>
+    kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
@@ -263,18 +280,27 @@ factors.df |>
 (ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
-df <- data.frame(Metric = c("% replicate simulations < LRP", "% replicate simulations > USR", "average annual catch", "catch stability (1/CV)", 
-                            "relative catch metric"), 
-                 Description = c("Probability the stock spawner abundance falls below the Limit Reference Point across replicate simulations and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated ",
-                                 "Probability the stock spawner abundance falls above the Upper Stock Reference Point across replicate simulations and years ",
-                                 "Average catch across replicate simulations and years",
-                                 "Stability in average catch across replicate simulations and years($\\mu_C$), where is $\\sigma_C$ the standard deviation in catch",
-                                 "Probability annual catch is greater than the average of the top 3 years of catch since 2000 ($C_{top}$), a semi-arbitrary indicator of a ‘good year’ "),
-                 Equation = c("$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t<S_{gen}} {t_2-t_1+1}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_t>0.8S_{MSY}} {t_2-t_1+1}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}S_tC_t} {t_2-t_1+1}$", 
-                              "$\\cfrac{1}{\\tfrac{\\sigma_C}{\\mu_C}}$", 
-                              "$\\frac{\\sum_{\\substack{n_{rep}\\\\s\n=1}}\\sum_{\\substack{t_1\\\\s\t_2}}C_t>C_{top}} {t_2-t_1+1}$"))
+df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
+                            "Number of CUs above their upper biological reference point", 
+                            "Average annual aggregrate spawning escapement", 
+                            "Average annual harvest", 
+                            "Average annual harvest rate", 
+                            "Proportion of years with no harvest", 
+                            "Proportion of years Basic Needs Allocation met"), 
+                 Description = c("Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological refernece point, defined as 20% of the spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (20%$S_{MSR,em_{2014-2024}}$)",
+                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
+                                  "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
+                                  "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
+                                  "Average annual harvest rate ($U$) for stock aggregrate across replicate simulation and years", 
+                                  "Proportion of years across replicate simulation and years with no harvest", 
+                                  "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
+                 Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\sum_i S_{i,t=2050}>S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_{\\substack{t_1\\\\t_2}}U_{t}}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}=0}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}>BNA}{t_2-t_1+1}$"))
 df|>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
@@ -283,6 +309,7 @@ df|>
                      caption = "(ref:tab-perf-metrics-descriptions)", 
                      repeat_header = TRUE, 
                      align = "llc")|>
+  kableExtra::column_spec(1, width = "3.5cm")|>
   kableExtra::column_spec(2, width = "6.5cm")
 ```
 
@@ -305,13 +332,13 @@ priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)",
                                      "Conservation Unit", 
                                      "Conservation Unit",
                                      "Stock Management Unit or Conservation Unit"),
-                           Definition = c("CU-status based; an SMU is below its LRP when one or more component CUs are in the WSP Red status zone. This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs [@dfo2022limit; @holt2023guidelines]. However, it is difficult to operationalize this type of LRP for fisheries management, and so for management purposes an LRP-Lower may also be required. ",
+                           Definition = c("CU-status based; an SMU is below its LRP when one or more component CUs are in the WSP Red status zone. This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs (DFO 2022; Holt et al. 2023a). However, it is difficult to operationalize this type of LRP for fisheries management, and so for management purposes an LRP-Lower may also be required. ",
                                           "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives. ",
                                           "The maximum acceptable harvest rate the SMU can be subject to; is typically set to be less than or equal to the removal rate associated with maximum sustainable yield ($U_{MSY}$).", 
                                           "Aggregate SMU spawner abundance below which all fishery removals should be limited to the maximum extent possible and below which there is a high risk of serious and irreversible harm to the stock. This type of reference point is helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized.", 
-                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated SGEN is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions [@holtEvaluationBenchmarksConservation2009]. Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
-                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80% $S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU” [@WSP2005].",
-                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest [@liller2022]."))
+                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated SGEN is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions (Holt 2009). Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
+                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80% $S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU” (DFO 2005).",
+                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest (Liller and Savereide 2022)."))
 
 priors.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -326,8 +353,8 @@ priors.df |>
 ```
 
 \clearpage
-
-(ref:pars-ref-pts) Population (conservation unit) reference points. Values are in thousands of fish.
+\begin{landscapepage}
+(ref:pars-ref-pts) Conservation Unit biological reference points. Values are in thousands of fish.
 
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -338,10 +365,14 @@ names(bench.pars) <- c("Conservation Unit",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
+bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
 bench.pars[,3:6] <- round(bench.pars[,3:6]/1000, 2)
 
 bench.pars |> 
-  dplyr::filter(Benchmark %in% c("Sgen", "Smsr", "Smsy", "Umsy")) |>
+  dplyr::filter(Benchmark %in% c("$S_{\\text{gen}}$", "$S_{\\text{msr}}$", "$S_{\\text{msy}}$", "$U_{\\text{msy}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(1:6) |>
   dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
@@ -353,14 +384,14 @@ bench.pars |>
                      repeat_header = TRUE,
                      align = "llc",
                      booktabs = T) |>
-  kableExtra::collapse_rows(columns=1)
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
   
 
 ```
 
-\clearpage
 
-(ref:pars-sr) Population (conservation unit) stock-recruit parameters.
+\clearpage
+(ref:pars-sr) Conservation Unit stock-recruit parameters.
 
 ```{r pars-sr, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -375,10 +406,14 @@ names(bench.pars) <- c("Conservation Unit",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
+bench.pars$Parameter[bench.pars$Parameter == "alpha"]<- "$\\alpha$"
+bench.pars$Parameter[bench.pars$Parameter == "beta"]<- "$\\beta$"
+bench.pars$Parameter[bench.pars$Parameter == "phi"]<- "$\\phi$"
+bench.pars$Parameter[bench.pars$Parameter == "sigma"]<- "$\\sigma$"
 bench.pars[,3:8] <- round(bench.pars[,3:8], 2)
 
 bench.pars |> 
-  dplyr::filter(Parameter %in% c("alpha", "beta", "phi", "sigma")) |>
+  dplyr::filter(Parameter %in% c("$\\alpha$", "$\\beta$", "$\\phi$", "$\\sigma$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
@@ -386,14 +421,16 @@ bench.pars |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:pars-ref-pts)", 
                      repeat_header = TRUE,
-                     align = "llc") |>
-  kableExtra::collapse_rows(columns=1) |>
+                     align = "llc", 
+                     lanscape = TRUE) |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major") |>
   kableExtra::column_spec(1, width = "3cm") |>
   kableExtra::column_spec(5:8, width = "2cm") |>
   kableExtra::row_spec(1:108, align = "c")
   
 
 ```
+\end{landscapepage}
 
 \clearpage
 
@@ -411,6 +448,10 @@ names(demo.pars) <- c("Conservation Unit",
                        "Benchmark",
                        "Median",
                        "Lower Quantile", "Upper Quantile")
+demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
 
 demo.pars |> 
   dplyr::arrange(`Conservation Unit`) |>
@@ -423,13 +464,40 @@ demo.pars |>
                      caption = "(ref:demo-ref-pts)", 
                      repeat_header = TRUE,
                      align = "llc") |>
-  kableExtra::collapse_rows(columns=1)
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
   
 
 ```
 
 
 \clearpage
+(ref:hcrs) Definitions of alternative fishery management measures (Harvest Control Rules) considered.
+
+```{r hcrs, results = "asis"}
+HCR.df <- data.frame(HarvestControlRule = c("Moratorium", 
+                                               "IMEG", 
+                                               "Moratorium w/ harvest cap", 
+                                               "IMEG w/ harvest cap", 
+                                               "Precationary Approach alternative"), 
+                        Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish", 
+                                     "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal", 
+                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit", 
+                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit",
+                                     "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000]"))
+
+HCR.df |>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:hcrs)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "4cm")|>
+    kableExtra::column_spec(2, width = "10cm")
+```
+
+\clearpage
+\begin{landscapepage}
 (ref:tab-ref-perf-measures) Performance measures from "reference set" simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
@@ -451,12 +519,12 @@ ref_case_pms |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-ref-perf-measures)", 
                        repeat_header = TRUE,
-                       align = "llc")
+                       align = "llc") |>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 ```
 
 \clearpage
-
 (ref:tab-rob-perf-measures) Performance measures from "robustness set" simulations.
 
 ```{r tab-rob-perf-measures, results = "asis"}
@@ -477,7 +545,9 @@ rob_case_pms |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rob-perf-measures)", 
                        repeat_header = TRUE,
-                       align = "llc")
+                       align = "llc")|>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
 
 ```
-
+\end{landscapepage}

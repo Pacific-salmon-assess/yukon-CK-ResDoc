@@ -916,7 +916,7 @@ dev.off()
 
 esc_summary <- esc |>
   group_by(stock) |>
-  summarize(avg_spwn = mean(mean),
+  summarize(avg_spwn = mean(mean[1:33]),
             recent_spwn = mean(mean[34:40]),
             change_spwn = (1-(recent_spwn/avg_spwn))*-100)
 
