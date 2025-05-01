@@ -54,23 +54,24 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
-(ref:fig-prod-trends) Trends in intrinsic productivity over time by CU.
+(ref:fig-prod-trends) Trends in intrinsic productivity (ricker $\alpha$ parameter; maximum recruits per spawner) over time by CU as predicted by time-varying productivity models.
 
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Trends in asl over time.
+(ref:fig-asl) Age, sex, and length trends in Canadian-origin Yukon River Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners ! DEFINE MEFL?!, c) proportion of returning spawners in each age class over time, d) Average reproductive output of female spawners (eggs per female spawner).
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```
 
-(ref:fig-CU-EMR) Egg mass recruitment relationships by CU.
+(ref:fig-CU-EMR) Predicted egg mass-recruitment relationships by CU (black lines) with uncertainty (80% credible intervals; shaded areas). Points are data inputs to egg mass models 
 
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
+
 
 (ref:fig-em-vs-spw-sr-TVA) Scaled time trends in recruits-per-reproductive unit across alternative SR models.
 
@@ -79,10 +80,10 @@ knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
 
-(ref:fig-demo-smsr) Egg mass vs spawner based ref points by CU.
+(ref:fig-demo-smsr) Biological benchmarks (S$_{MSR}$) as calculated from egg mass-recruit models (yellow) and spawner-recruit models (purple).
 
 ```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
-knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
+knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare.png"))
 ```
 
 (ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU.
@@ -112,13 +113,13 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 
 (ref:fig-prod-scenarios) Alternative productivity scenarios assessed in the closed-loop simulation model. Under the reference scenario, the 10-year average of recent $\alpha$ (year-year) are used to project the system forward in time. Under the robustness scenario, the most recent $\alpha$ (year) is used.
 ```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
-knitr::include_graphics(here::here("analysis/plots/OM-productivity-scenarios.png"))
+knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
 
 (ref:fig-hcrs) Illustration of harvest control rules considered in analysis of impacts of fishery management measures. We considered the rule used prior to the transboundary moratorium agreement (status quo) and a variation of it that allows only a 40% exploitation rate (status quo cap), as well as the current rule under the transboundary moratorium agreement and the same variation (moratorium and moratorium cap), as well as an alternative form of harvest control rule. The x-axis range of the plot corresponds approximately to the historical range of run sizes.
 
 ```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
-knitr::include_graphics(here::here("analysis/plots/HCR_visualize.png"))
+knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
 ```
 
 \clearpage
@@ -126,7 +127,7 @@ knitr::include_graphics(here::here("analysis/plots/HCR_visualize.png"))
 (ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 simulated fishery scenarios. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
-knitr::include_graphics(here::here("analysis/plots/perf_metrics_status_TVA.png"))
+knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
 ```
 
 \clearpage
@@ -134,15 +135,15 @@ knitr::include_graphics(here::here("analysis/plots/perf_metrics_status_TVA.png")
 (ref:fig-ER-tradeoff-ref) Performance of a range of fixed exploitation rates in the 'reference' projected fishery scenario. (a) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations. (b) Mean spawners by CU under a range of exploitation rates, over all years of simulation (2025-2050).
 
 ```{r fig-ER-tradeoff-ref, fig.cap = "(ref:fig-ER-tradeoff-ref)"}
-knitr::include_graphics(here::here("analysis/plots/fixed_ER_tradeoffs_TVA.png"))
+knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png"))
 ```
 
 \clearpage
 
-(ref:fig-projections) Projections.
+(ref:fig-projections) Projected spawners over time from closed-loop simulation models conditioned on the reference (10-year $\alpha$) scenario. Three of six harvest control rules are shown.
 
 ```{r fig-projections, fig.cap = "(ref:fig-projections)"}
-knitr::include_graphics(here::here("analysis/plots/S-fwd_simple_grp_TVA.png"))
+knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
 ```
 
 \clearpage

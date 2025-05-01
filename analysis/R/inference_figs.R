@@ -234,7 +234,8 @@ CU_prettynames <- c("Northern Yukon R. and tribs.",
                     "Middle Yukon R. and tribs.","Pelly",
                     "Nordenskiold", "Big Salmon", 
                     "Upper Yukon R.","Yukon R. Teslin Headwaters")
-CU_name_lookup <- data.frame(CU_f = CU_order, CU_pretty = CU_prettynames)
+CU_name_lookup <- data.frame(CU_f = factor(CU_order, levels=CU_order), 
+                             CU_pretty = factor(CU_prettynames, levels=CU_prettynames))
 
   
 SR.preds$CU_f <- factor(SR.preds$CU, levels = CU_order)
@@ -290,7 +291,7 @@ ggplot() +
                  color=BroodYear),
              size = 1.5) +
   geom_line(data = SR.preds, aes(x = Spawn/1000, y = Rec_med/1000)) +
-  facet_wrap(~CU_f, scales = "free") +
+  facet_wrap(~CU_f, scales = "free", labeller=CU_labeller) +
   scale_colour_viridis_c(name = "Brood Year")+
   labs(x = "Spawners (000s)",
        y = "Recruits (000s)") +
@@ -303,6 +304,8 @@ ggplot() +
         legend.text = element_text(size=6))
 
 my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
+my.ggsave(here("csasdown/figure/SR_fits_AR1.PNG"))
+
 
 # AR1 resids ---- 
 ggplot(AR1.resids, aes(x=year, y = mid)) +
@@ -336,16 +339,20 @@ ggplot(TV.resids, aes(x=year, y = mid)) +
 my.ggsave(here("analysis/plots/TV_resids.PNG"))
 
 # TV alpha ----
-ggplot(a.yrs.all
-       |> filter(brood_year < 2018), aes(color = CU)) +
+a.yrs.all |> 
+  filter(brood_year < 2018) |>
+  left_join(CU_name_lookup, by=c("CU"= "CU_f")) |>
+  ggplot(aes(color = CU_pretty)) +
   geom_line(aes(x = brood_year , y = mid), lwd = 1.5) +
   scale_color_viridis_d() +
   theme_sleek() +
   geom_hline(yintercept = 1, lty=2, col = "grey") +
-  labs(y = "Productivity (maximum R/S)", x = "Brood year")+ 
+  labs(y ="Productivity (\U03B1)", x = "Brood year")+ 
   guides(color=guide_legend(title="Conservation Unit"))
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
+my.ggsave(here("csasdown/figure/changing_productivity.PNG"))
+
 
 # TV SR fits ---- 
 ggplot() +
@@ -419,14 +426,18 @@ bench_plot <- bench.par.table |>
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 bench_plot$CU_f <- factor(bench_plot$stock, levels = CU_order)
 
-ggplot(esc, aes(x = year, y = mean/1000)) + 
+esc |>
+  left_join(CU_name_lookup, by="CU_f") |>
+  ggplot(aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
   geom_line(lwd = 1.1) +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~CU_f, ncol=3, scales = "free_y") +
+  facet_wrap(~CU_pretty, ncol=3, scales = "free_y") +
   theme_sleek()  
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
+my.ggsave(here("csasdown/figure/cu-escape.PNG"))
+
 
 # escapement plot all CUs plus aggregate ----
 porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -480,18 +491,24 @@ tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   select(!hatch_contrib)
 
 trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
-  drop_na() |>
+  drop_na(c("mean", "estimate")) |>
   filter(! tributary %in% c("morley_aerial", "chandindu_weir","nisutlin_sonar", "pelly_aerial", "ross_aerial"))
 
-ggplot(trib_rr, aes(x = mean, y = estimate)) +
+trib_rr |> 
+  mutate(tribs_name = gsub("creek", " Creek", 
+                           gsub("salmon", " Salmon", 
+                                gsub("_", " ", str_to_sentence(tributary))))) |>
+  ggplot(aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
   xlab("CU spawners (000s") +
   ylab("Tributary spawners") +
   theme_sleek() +
-  facet_wrap(~tributary, scales = "free",nrow = 3) 
+  facet_wrap(~tribs_name, scales = "free",nrow = 3) 
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
+my.ggsave(here("csasdown/figure/RR-vs-trib-spawners.PNG"))
+
 
 # trib time series ----
 tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -508,16 +525,20 @@ dat_text <- tribs.all |>
   slice_head() |>
   select(tributary, CU)
 
-ggplot(tribs.all, aes(x = year, y = estimate/1000)) + 
+tribs.all |>
+  mutate(tribs_name = gsub("salmon", " Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
+  ggplot(aes(x = year, y = estimate/1000)) + 
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tributary, ncol=4, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=3, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()
 
-my.ggsave(here("analysis/plots/trib-escape.PNG"),height = 8, dpi= 180 )
+my.ggsave(here("analysis/plots/trib-escape.PNG"))
+my.ggsave(here("csasdown/figure/trib-escape.PNG"))
 
+  
 # forward simulations ----
 
 ## reference vs robustness productivity ----  
@@ -540,16 +561,21 @@ AR.pp.rob <- AR1.par.posts |>
 
 alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob)
 
-ggplot(alpha.posts |> filter(scenario != "stationary"), aes(value, fill = scenario, color = scenario)) +
+alpha.posts |> filter(scenario != "stationary") |>
+  mutate(CU_f = factor(CU, levels=CU_order)) |>
+  mutate(scenario = str_to_sentence(scenario)) |>
+  ggplot(aes(value, fill = scenario, color = scenario)) +
   geom_density(alpha = 0.3) +
-  facet_wrap(~CU, scales = "free_y") +
-  theme(legend.position = "bottom") +
+  facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
   theme_sleek() +
+  theme(legend.position = "bottom") +
   geom_vline(xintercept = 0, lty=2, col="grey") +
   scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
-  labs(y = "", x = "ln(alpha)") 
+  labs(y = "", x = expression(Log(alpha)), fill="Productivity Scenario", color="Productivity Scenario") 
   
 my.ggsave(here("analysis/plots/OM-productivity-scenarios.PNG"))
+my.ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"))
+
 
 # Use demographic benchmarks
 #bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
@@ -640,6 +666,9 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
   my.ggsave(here(paste("analysis/plots/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
+  if(names(HCR_grps[i]=="simple" && k=="TVA")){
+    my.ggsave(here(paste("csasdown/figure/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
+  }
 }
 
 
@@ -715,7 +744,10 @@ status_plot <- perf.status |>
   theme_bw()
 
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto")
+
 my.ggsave(here(paste0("analysis/plots/perf_metrics_status_", k, ".PNG")))
+my.ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")))
+
 
 
 ## fixed ER trade-off multipanel ----
@@ -761,25 +793,25 @@ b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1), labe
 cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,.8), labels=c(NULL,"a"))
 
 my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs_", k, ".PNG")))
+my.ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")))
 
 
 ## visualize HCRs ----
 
 out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
-out$HCR_names <- rep(names(HCR_cols)[c(6:7,3:4,1)], each=400)
+out$HCR_names <- rep(names(HCR_cols)[c(6:7,4:5,1)], each=400)
 
 ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_names), linewidth=0.75) +
   scale_colour_manual(values=HCR_cols, guide="none") +
   scale_fill_manual(values="grey70", guide="legend") +
   facet_wrap(~HCR_names) + 
-  labs(x="Run Size (thousands)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(legend.position=c(0.85,0.2),
-                          legend.title = element_blank(),
-                          legend.background = element_rect(colour ="grey35")) +
+  labs(x="Run Size (000s)", y="Harvest Rate (%)") +
+  theme_minimal() + theme(strip.text = element_text(size=12)) +
   lims(x=c(0,200)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
 my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
+my.ggsave(here("csasdown/figure/HCR_visualize.PNG"))
 
 
 ## covariance plots ----
@@ -803,7 +835,7 @@ SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
 
 a<- ggplot(SMU_RR |>
          filter(Counts != "Exploitation")) + 
-  geom_hline(yintercept = 19, col = "red", lty=2) +
+  geom_hline(yintercept = 19, col = "darkred", lty=2) +
   geom_hline(yintercept = 95, col = "dark green", lty=2) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
@@ -812,25 +844,25 @@ a<- ggplot(SMU_RR |>
   scale_color_manual(values=c('#999999','#E69F00')) +
   scale_fill_manual(values=c('#999999', '#E69F00')) +
   theme_sleek() +
-  theme(legend.position = "top",
+  theme(legend.position = c(0.75,0.85),
         legend.title = element_blank(),
         plot.margin = margin(0.5,20,0.5,0.5))
 
 b<- ggplot(SMU_RR |>
              filter(Counts == "Exploitation")) + 
-  geom_hline(yintercept = 40, col = "red", lty=2) +
-  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), col = "grey", alpha=0.4) +
-  geom_line(aes(x = Year, y = Median50.), size = 1, col = "grey") + 
+  geom_hline(yintercept = 40, col = "darkred", lty=2) +
+  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), fill="darkblue", col="darkblue", alpha=0.4) +
+  geom_line(aes(x = Year, y = Median50.), size = 1, col = "darkblue") + 
   ylab("Harvest rate (%)") +
   xlab("Year") +
-  theme_sleek() 
+  theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5))
+ 
+cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
-ggarrange(a,b, 
-          ncol = 2, 
-          widths = c(1, 1),
-          heights = c(1,0.5))
 
 my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
+my.ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 13, height = 6)
+
 
 # CU run-reconstructions plot ----
 
@@ -888,12 +920,14 @@ y_dp  <- apply( y_dpt, 1:2, mean )
 
 png( file=here("analysis/plots/CU-run-timing.PNG"), width= 9, height = 5.562,units="in", res =700 )
 
-par(mar=c(5,15,1,1),oma=c(0,0,0,0))
+par(mar=c(5,15,1,1),oma=c(0,0,0,0),
+    col.lab = "grey40")
 
 plot( x=range(x_trunc), c(1,rpt$nS+1.5), type="n", axes=FALSE,
       xlab="Ordinal date", ylab="" )
-axis( side=1 ) 
-axis( side=2, at=rpt$nS:1, labels=rpt$stocks, las=1, cex.axis=1 ) 
+axis( side=1 , col="grey40", col.axis="grey40") 
+axis( side=2, at=rpt$nS:1, labels=CU_name_lookup$CU_pretty[match(rpt$stocks, CU_name_lookup$CU_f)], 
+      las=1, cex.axis=1, col="grey40", col.axis="grey40" ) 
 for( p in 1:rpt$nS )
 {
   y <- 1.5*(y_dp[ ,p]/max(y_dp[ ,p]))
@@ -942,7 +976,7 @@ ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease/1000, fill = REL_CU))+
   facet_wrap(~FACILITY_NAME, ncol=2,
              scales = "free_y") +
   scale_x_continuous(name = "Release Year", breaks = breakV) +
-  scale_y_continuous(name = "Total Releases (thousands)") +
+  scale_y_continuous(name = "Total Releases (000s)") +
   scale_fill_viridis_d() + labs(fill="Conservation Unit of release") +
   theme_sleek() +
   theme(legend.position = c(0.75, 0.15))

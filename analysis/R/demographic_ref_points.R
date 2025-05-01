@@ -137,14 +137,14 @@ for(i in unique(sp_har$CU)){
   bench_AR1_eggs <- rbind(bench_AR1_eggs, bench_early, bench_avg, bench_recent)
   
   #time varying alpha --------------------------------------------------------------------
-  sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
+  #sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
   
-  a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
-  a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
+  #a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
+  #a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
   
-  colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
+  #colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
   
-  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
+  #a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
 }
 
 colnames(ER.preds) <- c("EM", "Rec_lwr","Rec_med","Rec_upr", "CU")
@@ -180,18 +180,21 @@ write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
     mutate(upper.bm = value)|>
     filter(value <= 35000)
 
-  ggplot(bench_AR1_eggslong|> filter(period !="avg"), aes(value, fill = period, color = period)) +
+  
+  bench_AR1_eggslong|> filter(period !="avg") |>
+    mutate(period=str_to_sentence(period)) |>
+    ggplot(aes(value, fill = period, color = period)) +
     geom_density(alpha = 0.8, adjust = 4) +
-    facet_wrap(~CU, scales = "free_y") +
+    facet_wrap(~CU, scales = "free_y", labeller=CU_labeller) +
     theme_sleek()+
-    xlab("S[MSR]") +
-    ylab("") +
+    xlab(expression(S[MSR])) +
+    labs(y="", fill="Period", color="Period") +
     theme(legend.position = "bottom",
           axis.ticks.y = element_blank(), 
           axis.text.y = element_blank()) +
     scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
+my.ggsave(here("analysis/plots/demo_bench_compare_spawn-vs-recent.PNG"))
   
   
 # source(inference_figs.R)
@@ -208,18 +211,21 @@ bench_body <- pivot_longer(bench.posts, cols = c(Smsr), names_to = "par") |>
 bench_post <- rbind(bench_eggs, bench_body) |>
   filter(value <= 35000)
 
-ggplot(bench_post, aes(value, fill = unit, color = unit)) +
+bench_post |> mutate(unit=str_to_sentence(unit)) |>
+  ggplot(aes(value, fill = unit, color = unit)) +
   geom_density(alpha = 0.8, adjust = 4) +
-  facet_wrap(~CU, scales = "free_y") +
+  facet_wrap(~CU, scales = "free_y", labeller=CU_labeller) +
   theme_sleek()+
   xlab(expression(S[MSR])) +
-  ylab("") +
+  labs(y="", fill="Period", color="Period") +
   theme(legend.position = "bottom",
         axis.ticks.y = element_blank(), 
         axis.text.y = element_blank()) +
   scale_color_viridis_d(aesthetics = c("fill", "color"))
 
-my.ggsave(here("analysis/plots/demo_bench_compare_spawn-vs-recent.PNG"))
+my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
+my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"))
+
 
 summary_bench_AR1_eggs <- bench_post |>
   group_by(CU,unit) |>
@@ -243,7 +249,7 @@ ggplot() +
                  color=BroodYear),
              size = 1.5) +
   geom_line(data = ER.preds, aes(x = EM/1000, y = Rec_med/1000)) +
-  facet_wrap(~CU_f, scales = "free") +
+  facet_wrap(~CU_f, scales = "free", labeller=CU_labeller) +
   scale_colour_viridis_c(name = "Brood Year")+
   labs(x = "Egg mass (kgs)",
        y = "Recruits (000s)") +
