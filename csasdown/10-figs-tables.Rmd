@@ -72,7 +72,14 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-demo-smsr) Egg mass recruitment relationships by CU.
+(ref:fig-em-vs-spw-sr-TVA) Scaled time trends in recruits-per-reproductive unit across alternative SR models.
+
+```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
+knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
+```
+
+
+(ref:fig-demo-smsr) Egg mass vs spawner based ref points by CU.
 
 ```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
 knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare_spawn-vs-recent.png"))
