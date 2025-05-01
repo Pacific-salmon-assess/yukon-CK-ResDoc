@@ -63,7 +63,7 @@ footnotes
 
 We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table \@ref(tab:tab-rr-params) and \@ref(tab:tab-rr-eqns), respectively.
 
-(ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. **Needs to be updated**
+(ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. 
 
 ```{r tab-rr-params, results = "asis"}
 rr.params <- read.csv(here::here("csasdown/data/notations.csv"))
@@ -83,7 +83,7 @@ rr.params |>
 
 
 \begin{landscapepage}
-(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.**Needs to be updated**
+(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.
 
 ```{r tab-rr-eqns, results = "asis"}
 rr.eqns <- read.csv(here::here("csasdown/data/model-eqns.csv"))
@@ -270,7 +270,7 @@ Observed spawner abundance ($S_{obs,y}$) was therefore assumed to be log-normall
   \label{eq:get-sigm}
 \end{equation}
 
-Direct estimates of harvest by CU do not exist because most harvest occurs in highly mixed-stock fisheries in the mainstem of the Yukon River and this harvest has never been apportioned back to CUs. Harvest observations ($H_{obs,y}$) were therefore approximated based on the stock aggregate harvest rate ($U_{obs,y}$; [@connors_estimates_2023) and CU specific spawner abundance:
+Direct estimates of harvest by CU do not exist because most harvest occurs in highly mixed-stock fisheries in the mainstem of the Yukon River and this harvest has never been apportioned back to CUs. Harvest observations ($H_{obs,y}$) were therefore approximated based on the stock aggregate harvest rate [$U_{obs,y}$, @connors_estimates_2023] and CU specific spawner abundance:
 
 \begin{equation}
   H_{obs,y} = S_{obs,y}(1-U_{obs,y})^{-1}U_{obs,y}
@@ -371,7 +371,7 @@ We calculated biological reference points for each MCMC sample and then summariz
 where $W$ is the Lambert function [@scheuerellExplicitSolutionCalculating2016], and $\alpha$ and $\beta$ are intrinsic productivity and the magnitude of within stock density dependence, respectively. We chose to apply this exact solution for $S_{MSY}$ instead of the commonly applied @hilborn1985simplified approximation because the approximation only holds for $0 <ln(\alpha) \leq3$ such that infrequent, but large, posterior samples of $\alpha$ can result in biased estimates of the posterior distribution of $S_{MSY}$. 
  
 
-The spawner abundance expected to result in the stock rebuilding to $S_{MSY}$ in one generation in the absence of fishing ($S_{gen}$; [@holtEvaluationBenchmarksConservation2009]), often used as a lower biological benchmarks for CUs under the Wild Salmon Policy, was solved numerically according to: 
+The spawner abundance expected to result in the stock rebuilding to $S_{MSY}$ in one generation in the absence of fishing [$S_{gen}$, @holtEvaluationBenchmarksConservation2009], often used as a lower biological benchmarks for CUs under the Wild Salmon Policy, was solved numerically according to: 
 
 \begin{equation}
   S_{MSY} = S_{gen}\alpha e^{-\beta S_{gen}}
