@@ -4,6 +4,7 @@ library(gsl)
 library(ggsidekick) #for theme_sleek() - doesn't work with some vs of R, hence the comment
 library(ggcorrplot)
 library(ggpubr)
+library(viridis)
 source(here("analysis/R/data_functions.R"))
 
 # read in data ---------------------------------------------------------------------------
@@ -606,25 +607,25 @@ demo.bench$CU_f <- factor(demo.bench$CU, levels = CU_order)
 
 # assign HCRs to groups for subsetting harvest scenarios / HCRs
 ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "moratorium", "moratorium.cap", "alternative", paste0("fixed.ER.", ER_seq)) 
-
-HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "status.quo"),
-                 rebuilding = c("no.fishing", "moratorium", "moratorium.cap", "alternative"),
-                 status.quo = c("no.fishing", 
-                                unique(S.fwd$HCR[grepl("*status.quo*", S.fwd$HCR)])),
-                 simple = c("no.fishing", "status.quo", "moratorium"),
+HCRs <- c("no.fishing", "IMEG", "IMEG.cap", "moratorium", "moratorium.cap", "PA.alternative", paste0("fixed.ER.", ER_seq)) 
+HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
+                 moratorium = c("no.fishing", "moratorium", "moratorium.cap", "PA.alternative"),
+                 IMEG = c("no.fishing", 
+                                unique(S.fwd$HCR[grepl("*IMEG*", S.fwd$HCR)])),
+                 simple = c("no.fishing", "IMEG", "moratorium"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 # colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
-names(HCR_cols) <- c("Alternative", "Fixed er 60", "Moratorium", "Moratorium cap", "No fishing", "Status quo", "Status quo cap") 
+names(HCR_cols) <- c("PA Alternative", "Fixed ER 60", "No fishing", "Moratorium", "Moratorium cap", "IMEG", "IMEG cap")
+HCR_lookup <- data.frame(HCR=c(HCRs[1:6], "fixed.ER.60"), HCR_name = names(HCR_cols)[c(3,6:7,4:5,1:2)])
 
 
 ## Spawners projection ----
                   
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   S.fwd |> filter(HCR %in% HCR_grps[[i]]) |>
-  mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
-  ggplot() +
+    left_join(HCR_lookup, by="HCR") |>
+    ggplot() +
     # Observations:
     geom_ribbon(data = filter(spwn.obs, year >= max(spwn.obs$year)-7), 
                 aes(ymin = S.25/1000, ymax = S.75/1000, 
@@ -655,7 +656,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 ## Harvest projection ----
 for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
   H.fwd |> filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") |>
-    mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
+    left_join(HCR_lookup, by="HCR") |>
     ggplot() +
     # Observations:
     geom_ribbon(data = filter(harv.obs, year >= max(harv.obs$year)-7), 
@@ -681,8 +682,8 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 
 ## -- performance metrics and status multipanel (all HCR excl. fixed ER, all PMs) ---- 
 #metrics
-perf.metrics <- perf.metrics |> mutate(HCR_name = gsub(".", " ", str_to_sentence(HCR), fixed=T)) |>
-  mutate(HCR_name = factor(HCR_name, levels=unique(HCR_name)[c(24:26,22:23,1,2:21)]))
+perf.metrics <- perf.metrics |> left_join(HCR_lookup, by="HCR") |>
+  mutate(HCR_name = factor(HCR_name, levels=unique(HCR_name)[c(8,1:2,6:7,3:4)]))
 
 pm_plot <- perf.metrics |> 
   filter(!(HCR %in% HCR_grps[["fixed"]])) |> 
@@ -946,15 +947,15 @@ yukn_rel <- rel_rep %>%
 
 breakV <- seq(min(yukn_rel$RELEASE_YEAR), max(yukn_rel$RELEASE_YEAR), by = 5) # breaks for fig
 
-ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease, fill = REL_CU))+
+ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease/1000, fill = REL_CU))+
   geom_bar(stat = "identity", width = 1, colour="white", linewidth = 0.1) +
   facet_wrap(~FACILITY_NAME, ncol=2,
              scales = "free_y") +
   scale_x_continuous(name = "Release Year", breaks = breakV) +
-  scale_y_continuous(name = "Total Releases") +
+  scale_y_continuous(name = "Total Releases (thousands)") +
   scale_fill_viridis_d() + labs(fill="Conservation Unit of release") +
   theme_sleek() +
-  theme(legend.position = c(0.75, 0.2))
+  theme(legend.position = c(0.75, 0.15))
 
 my.ggsave(here("analysis/plots/hatch_bar.PNG"))
 my.ggsave(here("csasdown/figure/hatch_bar.PNG"))

@@ -110,7 +110,7 @@ OU <- 0.1  ## could also base this off something else from fisheries management
 
 # --- Create array to store outcomes --------------------------------------
 ER_seq <- seq(5, 100, 5) # how many fixed ERs to test?
-HCRs <- c("no.fishing", "status.quo", "status.quo.cap", "moratorium", "moratorium.cap", "alternative", paste0("fixed.ER.", ER_seq))
+HCRs <- c("no.fishing", "IMEG", "IMEG.cap", "moratorium", "moratorium.cap", "PA.alternative", paste0("fixed.ER.", ER_seq))
 sim.outcomes <- NULL
 S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
