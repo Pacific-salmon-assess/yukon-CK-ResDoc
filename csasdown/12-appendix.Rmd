@@ -1,8 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 <!-- The following code should appear at the beginning of the first appendix.
 After that, all subsequent sections will be turned into appendices. -->
 
@@ -12,9 +7,9 @@ After that, all subsequent sections will be turned into appendices. -->
 
 # GENETIC STOCK INFORMATION {#app:first-appendix}
 
-Biological information on Canadian origin Yukon Chinook has been collected annually from the fish wheels at White and Sheep rocks (scales; most years from 1985–2008) and the gillnet test fishery at Eagle (tissue samples; 2005–present). Samples have typically been taken over the annual upstream adult migration period, with the number of samples taken each day roughly proportional to daily passage [@connors_incorporating_2020]. Genetic material has been recovered from 150-300 archived scale samples for most years 1985-2005, and since then 500-1500 tissue samples have been taken per year for genetic stock assignment. These samples have been used to genotype individual fish by microsatellite panel (1985-2016; @beacham2006estimation) or single nucleotide polymorphism (SNP) panel (2017-2019; @beacham2018population) and then assigned to one of eight Conservation Units (CUs). These CU grouping differ slightly from the grouping reported in annual Yukon River Panel Joint Technical Committee reports [@JTC2025Report]. This benchmarked baseline consists of 4,713 Chinook salmon sampled at 29 unique spawning locations (or tributaries) throughout the Canadian portion of the Yukon River Basin (Table XX). 
+Biological information on Canadian origin Yukon Chinook has been collected annually from the fish wheels at White and Sheep rocks (scales; most years from 1985–2008) and the gillnet test fishery at Eagle (tissue samples; 2005–present). Samples have typically been taken over the annual upstream adult migration period, with the number of samples taken each day roughly proportional to daily passage (Figure \@ref(fig:fig-gsi-samples)) [@connors_incorporating_2020]. Genetic material has been recovered from 150-300 archived scale samples for most years 1985-2005, and since then 500-1500 tissue samples have been taken per year for genetic stock assignment. These samples have been used to genotype individual fish by microsatellite panel [1985-2016; @beacham2006estimation] or single nucleotide polymorphism (SNP) panel (2017-2019; @beacham2018population) and then assigned to one of eight Conservation Units (CUs). These CU grouping differ slightly from the grouping reported in annual Yukon River Panel Joint Technical Committee reports [@JTC2025Report]. This benchmarked baseline consists of 4,713 Chinook salmon sampled at 29 unique spawning locations (or tributaries) throughout the Canadian portion of the Yukon River Basin (Table \@ref(tab:tab-gsi-tribs)). 
 
-To evaluate how accurate genetic assignments were we conducted a simulation analysis on the baseline samples (i.e., samples of known origin) in rubias [@moran2019bayesian]. Simulations indicated that the average simulation accuracy within each CU was greater than 75%, and typically greater than 95%, for all CUs using the microsatellite baseline and similar for the SNP baseline with the exception of the Chandindu, Earn, and Nisling rivers which had poorer assignment accuracies (Table XX). Given then variable uncertainty in genetic stock assignments uncovered by these simulations we ensured the run-reconstruction model (Appendix \@ref(app:second-appendix)) fit to these data to derive annual estimates of CU border passage explicitly took uncertainty in genetic stock assignments into account. Genetic samples from the Big Salmon and Teslin (below Teslin lake) tributaries could not reliably differentiated from baseline sampling locations in the Middle Yukon River CU. As a result they were grouped with the Middle Yukon River CU for the purposes of our genetic analyses.(Table \@ref(tab:tab-gsi-tribs))
+To evaluate how accurate genetic assignments were we conducted a simulation analysis on the baseline samples (i.e., samples of known origin) in rubias [@moran2019bayesian]. Simulations indicated that the average simulation accuracy within each CU was greater than 75%, and typically greater than 95%, for all CUs using the microsatellite baseline and similar for the SNP baseline with the exception of the Chandindu, Earn, and Nisling rivers which had poorer assignment accuracies (Table \@ref(tab:tab-gsi-tribs)). Given then variable uncertainty in genetic stock assignments uncovered by these simulations we ensured the run-reconstruction model (Appendix \@ref(app:second-appendix)) fit to these data to derive annual estimates of CU border passage explicitly took uncertainty in genetic stock assignments into account. Genetic samples from the Big Salmon and Teslin (below Teslin lake) tributaries could not reliably differentiated from baseline sampling locations in the Middle Yukon River CU. As a result they were grouped with the Middle Yukon River CU for the purposes of our genetic analyses.
 
 \clearpage
 (ref:fig-gsi-samples) Daily estimates of Chinook salmon border passage (grey bars) and scales or tissues sampled (red bars) from the run to determine genetic stock identification (GSI). Each bar is relative to the maximum for a given year with GSI samples inverted to allow for visualization of samples relative to border passage. The number of GSI samples in each year is in the bottom right of each panel. Note that scale samples were unavailable for 1988-1990, and 1998. For reference, in a non-leap year 29 June, 29 July and 28 August are equivalent to the 180th, 210th and 240th day of the year, respectively (dashed grey bars).
@@ -66,12 +61,9 @@ footnotes
 
 # RUN RECONSTRUCTION MODEL {#app:second-appendix}
 
-We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table Xa and Xb, respectively.
+We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-population run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and has been adapted and fit to updated data through 2024. We separately modelled the dynamics of the nine Chinook salmon Conservation Units (CUs), indexed by $s$. Annual, population-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled catchability to two fishing “gears” (index by $g$): fish wheels and sonar, which have been used to derive annual aggregate border passage estimates (fish wheel mark-recapture from 1985-2008; sonar from 2005-2024). Model notation and equations are listed in Table \@ref(tab:tab-rr-params) and \@ref(tab:tab-rr-eqns), respectively.
 
-We implemented the models using the Template Model Builder package (TMB; @kristensen2016tmb). Standard errors of model parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.(Table \@ref(tab:tab-rr-params))
-
-
-(ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. 
+(ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. **Needs to be updated**
 
 ```{r tab-rr-params, results = "asis"}
 rr.params <- read.csv(here::here("csasdown/data/notations.csv"))
@@ -91,7 +83,7 @@ rr.params |>
 
 
 \begin{landscapepage}
-(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.
+(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.**Needs to be updated**
 
 ```{r tab-rr-eqns, results = "asis"}
 rr.eqns <- read.csv(here::here("csasdown/data/model-eqns.csv"))
@@ -113,7 +105,7 @@ rr.eqns |>
 
 ## POPULATION DYNAMICS 
 
-For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table Xb 4.4). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table Xb 4.5). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table \@ref(tab:tab-rr-eqns) 4.4). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table \@ref(tab:tab-rr-eqns) 4.5). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
 
 
 \begin{equation}
@@ -136,29 +128,51 @@ where $c_{i,j}$ is the correlation between arrival timing deviations for CU $i$ 
 
 ## OBSERVATION MODEL AND OBJECTIVE FUNCTION 
 
-Daily border passage counts were predicted by scaling the daily model-predicted passage by a gear-specific catchability factor (Table Xb 4.6). The fish wheel samples an unknown portion of the run, so fish wheel catchability was estimated. While catchability may vary across populations for a variety of reasons (i.e., bank orientation, run-timing, etc.), the data were not informative enough to estimate CU-specific catchability. In contrast, all passing fish were assumed to be observable by sonar, and so er fixed sonar catchability at 1. Similarly, the predicted run size index is assumed to represent the total run, so catchability to the run size index was fixed at 1 (Table Xb 4.7), and this run size index was taken from updated fit of the model described in @connors_estimates_2023. Population composition was predicted as the relative proportion of a population present on each day (Table Xb 4.8).
+Daily border passage counts were predicted by scaling the daily model-predicted passage by a gear-specific catchability factor (Table \@ref(tab:tab-rr-eqns) 4.6). The fish wheel samples an unknown portion of the run, so fish wheel catchability was estimated. While catchability may vary across populations for a variety of reasons (i.e., bank orientation, run-timing, etc.), the data were not informative enough to estimate CU-specific catchability. In contrast, all passing fish were assumed to be observable by sonar, and so er fixed sonar catchability at 1. Similarly, the predicted run size index was assumed to represent the total run, so catchability to the run size index was fixed at 1 (Table \@ref(tab:tab-rr-eqns) 4.7), and this run size index was taken from an updated fit of the model described in @connors_estimates_2023. Population composition was predicted as the relative proportion of a population present on each day (Table \@ref(tab:tab-rr-eqns) 4.8).
 
-Daily salmon counts were assumed to arise from negative-binomial ($NB$) distributions (Table Xb 4.11). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table Xb 4.9). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.02$ for the fish wheel counts in all years except for 2001, when dispersion was set to 2 to account for low perceived reliability of counts in that year.
+Daily salmon counts were assumed to arise from negative-binomial ($NB$) distributions (Table \@ref(tab:tab-rr-eqns) 4.11). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table \@ref(tab:tab-rr-eqns) 4.9). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.02$ for the fish wheel counts in all years except for 2001, when dispersion was set to 2 to account for low perceived reliability of counts in that year.
 
-Conservation Unit composition data were fitted using a multinomial likelihood (Table Xb 4.12). For each year/day/gear combination, the observed number of Chinook by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_sn_s$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
+Conservation Unit composition data were fitted using a multinomial likelihood (Table \@ref(tab:tab-rr-eqns) 4.12). For each year/day/gear combination, the observed number of Chinook by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_sn_s$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
 
-Total run size indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the run size index (Table Xb 13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table Xb 15).     
+Total run size indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the run size index (Table \@ref(tab:tab-rr-eqns) 13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table \@ref(tab:tab-rr-eqns) 15).     
 
-In some years prior to the implementation of sonar monitoring, the fish wheel data was not informative enough to estimate run sizes for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale run sizes for each CU (Table Xb 16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate run size and was omitted from 2005 onward, after the introduction of sonar monitoring.
+In some years prior to the implementation of sonar monitoring, the fish wheel data was not informative enough to estimate run sizes for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale run sizes for each CU (Table \@ref(tab:tab-rr-eqns) 16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate run size and was omitted from 2005 onward, after the introduction of sonar monitoring.
 
+## MODEL FITTING AND ESTIMATES OF SPAWNER ABUNDANCE 
 
-## MODEL FITTING AND DIAGNOSTICS 
+We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
 
-We fit the run-reconstruction model using Template Model Builder (TMB; Kristensen et al. 2016) in R (R Core Team 2024). Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+The model tended to fit the sonar count data well (Figure \@ref(fig:fig-eagle-RR-fits)) and in contrast, model fits to the fish wheel count for 1985-2007 were more variable, which was expected due to the relatively imprecise nature of the fish wheel data (Figure \@ref(fig:fig-fw-RR-fits)). In years when sonar and fish wheel counts overlapped (2005-2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fish wheel data. 
 
-The model tended to fit the sonar count data well with similar fits for daily abundance estimates from 2005-2024 (). In contrast, model fits to the fish wheel count for 1985-2007 were more variable, which was expected due to the relatively imprecise nature of the fish wheel data (). In years when sonar and fish wheel counts overlapped (2005-2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fish wheel data. 
+In the pre-sonar years the model attempted to simultaneously fit to the fish wheel relative abundance indices and the mark-recapture based absolute run size indices so the model tended to generate estimates of total border passage that were somewhere in between (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the mark-recapture index had essentially no effect on model estimates, and the model fit perfectly to the sonar based estimates of total border passage 2005-2024.
 
-In the pre-sonar years the model simultaneously fit to the fish wheel relative abundance indices and the mark-recapture based absolute abundance indices so the model tended to generate estimates of total border passage that were somewhere in between ().The mark-recapture index tended to stabilize border passage estimates when other data were relatively uninformative (e.g., 2001), but had less influence in other years. As reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the mark-recapture index had essentially no effect on model estimates
+The run-reconstruction model estimated border passage and so estimates of spawner abundance were derived by subtracting the inferred harvest of each CU by fisheries that occurred upstream in the mainstem of the Yukon River from estimated border passage. To do this we assumed all CUs were equally vulnerable to Canadian fisheries and calculated spawner abundance as $S_{i,y}=\widehat{R}_{i,y}(1-U_{CDN,y})$ where $\widehat{R}_{i,y}$ is border passage for CU $i$ in year $y$ and $U_{CDN,y}$ is the aggregate harvest rate from Canadian fisheries as estimated by @connors_estimates_2023.
 
-* make point that spawners was estimated as border passage minus CU harvest based on CDN Er
-* make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
-* make point hatchery fish were removed from upper Yukon CU
+For the Big Salmon CU, which cannot be reliably differentiated with genetics from the Middle Mainstem CU, but which has had a sonar assessment project in operation since 2005, we inferred spawner abundance as a constant proportion of the reconstructed spawner abundance from the Middle Mainstem CU. This proportion was based on those years where there was data from the sonar assessment project (i.e, 2005 to present with exception of 2022). The resulting time series of Big Salmon spawner abundance was then removed for the entire time series from the Middle Mainstem CU.
 
+For the Upper Yukon CU we removed the estimated contribution of hatchery fish based on the count of hatchery fish at the Whitehorse Fishway. 
+
+\clearpage
+(ref:fig-eagle-RR-fits) Fits of the run-reconstruction model (lines) to daily sonar counts at Eagle (circles).
+
+```{r fig-eagle-RR-fits, fig.cap = "(ref:fig-eagle-RR-fits)"}
+knitr::include_graphics(here::here("csasdown/figure/indexFitsg1.png"))
+```
+
+\clearpage
+(ref:fig-fw-RR-fits) Fits of the run-reconstruction model (lines) to daily fish wheel counts (circles).
+
+```{r fig-fw-RR-fits, fig.cap = "(ref:fig-fw-RR-fits)"}
+knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
+```
+
+\clearpage
+
+(ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fish wheels after accounting for selectivity (open square), fishwheel counts (open green triangle) and the Eagle sonar (open red circle).
+
+```{r fig-run-RR-fits, fig.cap = "(ref:fig-run-RR-fits)"}
+knitr::include_graphics(here::here("csasdown/figure/totalRunSize.png"))
+```
 \clearpage
 
 
@@ -306,12 +320,12 @@ where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year sp
 
 We fit the spawner-recruitment models in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. 
 
-We sampled from 4 chains with XXXX iterations each and discarded the first half as warm-up. 
+We sampled from 4 chains with 4000 iterations each and discarded the first half as warm-up. 
 We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters.A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html).  
 
 Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
-(ref:tab-priors) Prior probability distributions for parameters.NEEDS TO BE UPDATED WITH ALL PRIORS
+(ref:tab-priors) Prior probability distributions for parameters.**NEEDS TO BE UPDATED WITH ALL PRIORS**
 ```{r tab-priors, results = "asis"}
 priors.df <- data.frame(Parameter = c("$ln(\\alpha)$", 
                                       "$ln(\\beta)$", 
