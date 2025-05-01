@@ -3,7 +3,7 @@ Population Dynamics,
 (TB.2.1) Estimated Parameters,"$\Theta = \left\{ \hat{R}_{sy},\ \hat{\mu}_s,\ \sigma_s,\ \varepsilon_{sy},\ \sum,\ q_{E,s,g},\ q_{I,s},\ \tau \right\}$"
 "(TB.2.2) Arrival timing, y=1","$\mu_{i,1} = \widehat{\mu}_i$"
 "(TB.2.3) Arrival timing, y>1","$\mu_{i,y} = \mu_{i,y-1}\exp(\varepsilon_{i,y-1})$"
-(TB.2.4) Daily arrival proportions,$\rho_{syd}= \frac{exp(-0.5(d\;-\;\mu_{s,y})^2\sigma_s^{-2})}{\sum_k exp(-0.5(k\;-\;\mu_{s,y})^2 \sigma_s^{-2}}$
+(TB.2.4) Daily arrival proportions,$\rho_{syd}= \frac{exp(-0.5(d\;-\;\mu_{sy})^2\sigma_s^{-2})}{\sum_k exp(-0.5(k\;-\;\mu_{sy})^2 \sigma_s^{-2}}$
 (TB.2.5) Daily arrivals (numbers),$N_{iyd} = \widehat{R}_{iy}\rho_{iyd}$
 Model predictions,
 (TB.2.6) Predicted daily counts,$\widehat{E}_{igyd}=q_g^{(E)}N_{iyd}$
