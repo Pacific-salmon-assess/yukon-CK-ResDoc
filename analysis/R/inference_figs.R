@@ -496,38 +496,25 @@ tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
     estimate = case_when(
       system == "whitehorse" ~ estimate*(1-hatch_contrib),
       .default = estimate)) |>
-  unite(tributary, c("system", "type")) |>
+  unite(tributary, c("system_alt", "type"), sep = "-") |>
   select(!hatch_contrib)
 
-dat_text <- data.frame(
-  label = c("4 cylinders", "6 cylinders", "8 cylinders"),
-  cyl   = c(4, 6, 8)
-)
+
 dat_text <- tribs.all |>
   group_by(tributary) |>
   slice_head() |>
   select(tributary, CU)
 
 ggplot(tribs.all, aes(x = year, y = estimate/1000)) + 
-  geom_line(lwd = 0.8) +
+  geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~tributary, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()
 
-my.ggsave(here("analysis/plots/trib-escape.PNG"))
+my.ggsave(here("analysis/plots/trib-escape.PNG"),height = 8, dpi= 180 )
 
-
-  geom_text(
-    data    = dat_text,
-    mapping = aes(x = -Inf, y = -Inf, label = CU),
-    hjust   = 0,
-    vjust   = 0.1,
-    size=1
-  )
-  
-  
 # forward simulations ----
 
 ## reference vs robustness productivity ----  
