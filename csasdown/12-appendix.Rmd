@@ -148,6 +148,13 @@ In some years prior to the implementation of sonar monitoring, the fish wheel da
 
 
 ## MODEL FITTING AND DIAGNOSTICS 
+
+We fit the run-reconstruction model using Template Model Builder (TMB; Kristensen et al. 2016) in R (R Core Team 2024). Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+
+The model tended to fit the sonar count data well with similar fits for daily abundance estimates from 2005-2024 (). In contrast, model fits to the fish wheel count for 1985-2007 were more variable, which was expected due to the relatively imprecise nature of the fish wheel data (). In years when sonar and fish wheel counts overlapped (2005-2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fish wheel data. 
+
+In the pre-sonar years the model simultaneously fit to the fish wheel relative abundance indices and the mark-recapture based absolute abundance indices so the model tended to generate estimates of total border passage that were somewhere in between ().The mark-recapture index tended to stabilize border passage estimates when other data were relatively uninformative (e.g., 2001), but had less influence in other years. As reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the mark-recapture index had essentially no effect on model estimates
+
 * make point that spawners was estimated as border passage minus CU harvest based on CDN Er
 * make point we subtracted the Big Salmon sonar estimates from the Middle Yukon CK73 escapement time series in years when there are big salmon sonar estimates and otherwise subtracted average proportional contribution of Big Salmon for years where there is not.And vice-versa for Big Salmon CU
 * make point hatchery fish were removed from upper Yukon CU

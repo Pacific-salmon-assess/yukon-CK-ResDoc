@@ -230,19 +230,21 @@ plotFitIMulti <- function( rptFiles=c("mod1test4/rpt.Rdata",
 
 plotTotalRunSize <- function( rpt, folder="." )
 {
-  pdf( file=paste(folder,"/totalRunSize.pdf",sep=""), height=5, width=7 )
-
-  par( mar=c(3,5,1,1) )
-
-  #t <- !is.na(rpt$I_t)
+  png( file=paste(folder,"/totalRunSize.png",sep=""), height=5, width=7, units="in", res=600)
+  
+  par( mar=c(5,5,1,1) )
+  
   t <- rep(TRUE,rpt$nT)
   yr  <- rpt$years[t]
   I_t <- rpt$I_t[t]*1e-3/exp(rpt$lnqI_s[1])
   E_t <- colSums(exp(rpt$lnRunSize_st))[t]*1e-3
   sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
   ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
-
-  plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="",
+  
+  # Fish wheel
+  fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
+  
+  plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
         ylab="Total border passage (1000s)", ylim=c(0,1.1*ymax) )
   grid()
   box()
@@ -256,14 +258,15 @@ plotTotalRunSize <- function( rpt, folder="." )
   points( x=yr, y=E_t, pch=16, col="grey40" )
   points( x=yr, y=I_t, pch=0, lwd=1.5 )
   points( x=yr, y=sonarN_t, pch=1, lwd=1.5, col="red" )
-
+  points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
+  
   legend( x="bottomleft", bty="n",
-          legend=c("Run reconstruction estimates","Mark-recapture estimates","Sonar counts"),
-          pch=c(NA,NA), lwd=c(0,4), col=c("grey70","black","red"), lty=c(1,0,0) )
+          legend=c("Run reconstruction estimates","Mark-recapture estimates","Fish wheel counts","Sonar counts"),
+          pch=c(NA,NA,NA,NA), lwd=c(4,0,0,0), col=c("grey70","black","green","red"), lty=c(1,0,0,0), cex=0.8)
   legend( x="bottomleft", bty="n",
-          legend=c("Run reconstruction estimates","Mark-recapture estimates","Sonar counts"),
-          pch=c(16,0,1), lwd=c(1.5,1.5), col=c("grey40","black","red"), lty=c(0,0,0) )
-
+          legend=c("Run reconstruction estimates","Mark-recapture estimates","Fish wheel counts","Sonar counts"),
+          pch=c(16,0,2,1), lwd=c(1.5,1.5), col=c("grey40","black","green","red"), lty=c(0,0,0,0), cex=0.8 )
+  
   dev.off()
 }
 
