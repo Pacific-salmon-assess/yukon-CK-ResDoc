@@ -981,11 +981,20 @@ em.TVA <- read.csv(here('analysis/data/generated/demographic_TVA.csv'))
 
 TVA <- rbind(sp.TVA,em.TVA) |>
   group_by(model, CU) |>
-  mutate(scale_prod = scale(mid)[,1])
+  mutate(scale_prod = scale(mid)[,1],
+         model.type = case_when(
+                        model == "spw" ~ "Spawners",
+                        model == "em" ~ "Egg mass"
+         )) 
+  
 
 ggplot(TVA
-       |> filter(brood_year < 2018), aes(fill = model)) +
+       |> filter(brood_year < 2018), aes(col = model.type)) +
   geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
   facet_wrap(~CU, scales = "free",nrow = 3) +
   theme_sleek() +
-  labs(y = "scaled productivity index", x = "Brood year")
+  labs(y = "scaled productivity index", x = "Brood year") +
+  scale_color_viridis_d(end=0.9) +
+  labs(color = "SR model ")
+
+my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
