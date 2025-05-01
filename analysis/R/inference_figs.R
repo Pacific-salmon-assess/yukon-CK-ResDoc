@@ -269,6 +269,9 @@ write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
 write.csv(brood.all.long, here("analysis/data/generated/brood_table_long.csv"), 
           row.names = FALSE)
 
+a.yrs.all$model<-"spw"
+write.csv(a.yrs.all, here("analysis/data/generated/spw_TVA.csv"), 
+          row.names = FALSE)
 # make key plots for pub -----------------------------------------------------------------
 
 # SR fits ----
@@ -911,9 +914,9 @@ esc_summary <- esc |>
 mean(esc_summary$change_spwn)
 
 
-## Enhancement Figures ------------------------------------------------------
+# enhancement Figures ------------------------------------------------------
 
-# Hatchery releases 
+## hatchery releases ---- 
 rel_rep <- read.csv("./analysis/data/raw/yukon_releases.csv")
 
 yukn_rel <- rel_rep %>%
@@ -949,7 +952,7 @@ my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
 
 
 
-## Proportion hatchery fish at whitehorse fishway 
+## proportion hatchery fish at whitehorse fishway ---- 
 
 trib.spwn <- read.csv(here('analysis/data/raw/trib-spwn.csv'))
 wh.hatch <- trib.spwn[!is.na(trib.spwn$hatch_contrib),]
@@ -971,3 +974,18 @@ ggplot(wh.hatch, aes(x=year)) +
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
 my.ggsave(here("csasdown/figure/hatch_prop.PNG"))
 
+
+# time-varying productivity SR-EMR ----
+sp.TVA <- read.csv(here('analysis/data/generated/spw_TVA.csv'))
+em.TVA <- read.csv(here('analysis/data/generated/demographic_TVA.csv'))
+
+TVA <- rbind(sp.TVA,em.TVA) |>
+  group_by(model, CU) |>
+  mutate(scale_prod = scale(mid)[,1])
+
+ggplot(TVA
+       |> filter(brood_year < 2018), aes(fill = model)) +
+  geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
+  facet_wrap(~CU, scales = "free",nrow = 3) +
+  theme_sleek() +
+  labs(y = "scaled productivity index", x = "Brood year")

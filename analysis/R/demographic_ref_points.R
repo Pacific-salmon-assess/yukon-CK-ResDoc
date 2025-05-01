@@ -166,6 +166,9 @@ bench_egg_mass_long <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_
 write.csv(bench_egg_mass_long, here("analysis/data/generated/demographic_parameters.csv"), 
           row.names = FALSE)
 
+a.yrs.all$model<-"em"
+write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"), 
+          row.names = FALSE)
 
   summary_bench_AR1_eggs <- bench_AR1_eggs |>
     group_by(CU,period) |>
