@@ -270,6 +270,9 @@ write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
 write.csv(brood.all.long, here("analysis/data/generated/brood_table_long.csv"), 
           row.names = FALSE)
 
+a.yrs.all$model<-"spw"
+write.csv(a.yrs.all, here("analysis/data/generated/spw_TVA.csv"), 
+          row.names = FALSE)
 # make key plots for pub -----------------------------------------------------------------
 
 # SR fits ----
@@ -513,39 +516,28 @@ tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
     estimate = case_when(
       system == "whitehorse" ~ estimate*(1-hatch_contrib),
       .default = estimate)) |>
-  unite(tributary, c("system", "type")) |>
+  unite(tributary, c("system_alt", "type"), sep = "-") |>
   select(!hatch_contrib)
 
-dat_text <- data.frame(
-  label = c("4 cylinders", "6 cylinders", "8 cylinders"),
-  cyl   = c(4, 6, 8)
-)
+
 dat_text <- tribs.all |>
   group_by(tributary) |>
   slice_head() |>
   select(tributary, CU)
 
 tribs.all |>
-  mutate(tribs_name = gsub("salmon", " Salmon", gsub("_", " ", str_to_sentence(tributary)))) |>
+  mutate(tribs_name = gsub("salmon", " Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
   ggplot(aes(x = year, y = estimate/1000)) + 
-  geom_line(lwd = 0.8) +
+  geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=3, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()
 
 my.ggsave(here("analysis/plots/trib-escape.PNG"))
 my.ggsave(here("csasdown/figure/trib-escape.PNG"))
 
-  geom_text(
-    data    = dat_text,
-    mapping = aes(x = -Inf, y = -Inf, label = CU),
-    hjust   = 0,
-    vjust   = 0.1,
-    size=1
-  )
-  
   
 # forward simulations ----
 
@@ -956,9 +948,9 @@ esc_summary <- esc |>
 mean(esc_summary$change_spwn)
 
 
-## Enhancement Figures ------------------------------------------------------
+# enhancement Figures ------------------------------------------------------
 
-# Hatchery releases 
+## hatchery releases ---- 
 rel_rep <- read.csv("./analysis/data/raw/yukon_releases.csv")
 
 yukn_rel <- rel_rep %>%
@@ -994,7 +986,7 @@ my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
 
 
 
-## Proportion hatchery fish at whitehorse fishway 
+## proportion hatchery fish at whitehorse fishway ---- 
 
 trib.spwn <- read.csv(here('analysis/data/raw/trib-spwn.csv'))
 wh.hatch <- trib.spwn[!is.na(trib.spwn$hatch_contrib),]
@@ -1016,3 +1008,27 @@ ggplot(wh.hatch, aes(x=year)) +
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
 my.ggsave(here("csasdown/figure/hatch_prop.PNG"))
 
+
+# time-varying productivity SR-EMR ----
+sp.TVA <- read.csv(here('analysis/data/generated/spw_TVA.csv'))
+em.TVA <- read.csv(here('analysis/data/generated/demographic_TVA.csv'))
+
+TVA <- rbind(sp.TVA,em.TVA) |>
+  group_by(model, CU) |>
+  mutate(scale_prod = scale(mid)[,1],
+         model.type = case_when(
+                        model == "spw" ~ "Spawners",
+                        model == "em" ~ "Egg mass"
+         )) 
+  
+
+ggplot(TVA
+       |> filter(brood_year < 2018), aes(col = model.type)) +
+  geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
+  facet_wrap(~CU, scales = "free",nrow = 3) +
+  theme_sleek() +
+  labs(y = "scaled productivity index", x = "Brood year") +
+  scale_color_viridis_d(end=0.9) +
+  labs(color = "SR model ")
+
+my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))

@@ -21,7 +21,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
 
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
-knitr::include_graphics(here::here("csasdown/figure/fwd-sim-schematic.png"))
+knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 ```
 
 (ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
@@ -71,6 +71,14 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
+
+
+(ref:fig-em-vs-spw-sr-TVA) Scaled time trends in recruits-per-reproductive unit across alternative SR models.
+
+```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
+knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
+```
+
 
 (ref:fig-demo-smsr) Biological benchmarks (S$_{MSR}$) as calculated from egg mass-recruit models (yellow) and spawner-recruit models (purple).
 
