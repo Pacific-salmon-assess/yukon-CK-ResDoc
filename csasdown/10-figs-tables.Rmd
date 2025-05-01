@@ -21,7 +21,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 (ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
 
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
-knitr::include_graphics(here::here("csasdown/figure/sim-schematic.pdf"))
+knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 ```
 
 (ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
