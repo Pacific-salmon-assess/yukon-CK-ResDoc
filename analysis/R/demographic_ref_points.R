@@ -218,10 +218,12 @@ bench_post |> mutate(unit=str_to_sentence(unit)) |>
   theme_sleek()+
   xlab(expression(S[MSR])) +
   labs(y="", fill="Period", color="Period") +
-  theme(legend.position = "bottom",
+  theme(legend.position = "right",
         axis.ticks.y = element_blank(), 
         axis.text.y = element_blank()) +
-  scale_color_viridis_d(aesthetics = c("fill", "color"))
+  scale_color_viridis_d(aesthetics = c("fill", "color"))+
+  labs(color = "Reproductive measure",
+       fill = "Reproductive measure")
 
 my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
 my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"))

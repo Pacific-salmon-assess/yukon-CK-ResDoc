@@ -18,12 +18,6 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
 
 
-(ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
-
-```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
-knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
-```
-
 (ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
 
 ```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
@@ -80,7 +74,7 @@ knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
 
-(ref:fig-demo-smsr) Biological benchmarks (S$_{MSR}$) as calculated from egg mass-recruit models (yellow) and spawner-recruit models (purple).
+(ref:fig-demo-smsr) Biological benchmarks (S$_{MSR}$) as calculated from egg mass-recruit models (purple) and spawner-recruit models (yellow).
 
 ```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
 knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare.png"))
@@ -110,6 +104,11 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 ```
 
+(ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
+
+```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
+knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
+```
 
 (ref:fig-prod-scenarios) Alternative productivity scenarios assessed in the closed-loop simulation model. Under the reference scenario, the 10-year average of recent $\alpha$ (year-year) are used to project the system forward in time. Under the robustness scenario, the most recent $\alpha$ (year) is used.
 ```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
@@ -121,13 +120,12 @@ knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.pn
 ```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
 knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
 ```
-
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 simulated fishery scenarios. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations.
+(ref:fig-projections) Projected spawners over time from closed-loop simulation models conditioned on the reference (10-year $\alpha$) scenario. Three of six harvest control rules are shown.
 
-```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
-knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
+```{r fig-projections, fig.cap = "(ref:fig-projections)"}
+knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
 ```
 
 \clearpage
@@ -140,13 +138,15 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-projections) Projected spawners over time from closed-loop simulation models conditioned on the reference (10-year $\alpha$) scenario. Three of six harvest control rules are shown.
+(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 simulated fishery scenarios. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations.
 
-```{r fig-projections, fig.cap = "(ref:fig-projections)"}
-knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
+```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
+knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
 ```
 
 \clearpage
+
+
 
 # TABLES
 
@@ -468,7 +468,7 @@ demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters
 
 demo.pars <- demo.pars |> 
   dplyr::mutate(period = dplyr::case_when(period == "avg" ~ "Average (all years)",
-                                          period == "early" ~ "Early (1985-1989)",
+                                          period == "early" ~ "Early (1985-1990)",
                                           period == "recent" ~ "Recent (2019-2024)")) |>
   mutate_at(4:6, function(x){round(x/1000, 2)}) |>
   dplyr::mutate(`Median (95$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")"))
