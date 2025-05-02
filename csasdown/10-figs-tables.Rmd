@@ -12,7 +12,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
 
-(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Several smaller-scale assessment projects and aerial surveys exist that are not included.
+(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Full list of assessment projects is in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
@@ -306,24 +306,24 @@ df|>
 ```
 
 \clearpage
-
 (ref:assess-proponents) Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries. 
 ```{r assess-proponents, results = "asis"}
 
-assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv"))
+assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
 names(assess_tbl) <- gsub(".", " ", names(assess_tbl), fixed=TRUE)
 
-
-assess_tbl |> drop_na() |> 
+assess_tbl |> 
+  mutate_at(c(2,5), function(x){str_to_sentence(x)}) |>
+  drop_na() |> 
+  
   csasdown::csas_table(format = "latex",
                        caption = "(ref:assess-proponents)",
                        repeat_header = TRUE,
                        align = "llc") |>
-  kableExtra::add_footnote(label=c("* Tatchun Creek assessements were conducted from 1970-2000 using foot surveys, aerial surveys or weir")) |>
-  kableExtra::column_spec(2, width = "3cm")
-
+  kableExtra::column_spec(2, width = "2cm") |>
+  kableExtra::column_spec(3, width = "4cm") |>
+  kableExtra::footnote(general=c("*Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries"))
 ```
-
 \clearpage
 
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
@@ -364,7 +364,6 @@ priors.df |>
 ```
 
 \clearpage
-\begin{landscapepage}
 (ref:pars-ref-pts) Conservation Unit biological reference points. Values are in thousands of fish (except $U_{MSY}$).
 
 ```{r pars-ref-pts, results = "asis"}
@@ -457,7 +456,6 @@ bench.pars |>
   
 
 ```
-\end{landscapepage}
 
 \clearpage
 
