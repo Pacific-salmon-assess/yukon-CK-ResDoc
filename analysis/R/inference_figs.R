@@ -531,12 +531,12 @@ tribs.all |>
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=3, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()
 
-my.ggsave(here("analysis/plots/trib-escape.PNG"))
-my.ggsave(here("csasdown/figure/trib-escape.PNG"))
+my.ggsave(here("analysis/plots/trib-escape.PNG"), height = 10, dpi= 180)
+my.ggsave(here("csasdown/figure/trib-escape.PNG"), height = 10, dpi= 180)
 
   
 # forward simulations ----

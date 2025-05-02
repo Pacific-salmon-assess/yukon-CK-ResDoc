@@ -66,7 +66,7 @@ for(i in unique(sp_har$CU)){
   for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     beta <- sub_AR1_eggs_pars$beta[j]
-    year_index = c(1:5)  
+    year_index = c(1:6)  
     #year_index = c(1:40)  
     #year_index = c(30:40)  
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
