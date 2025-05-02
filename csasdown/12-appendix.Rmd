@@ -318,36 +318,44 @@ where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year sp
 We fit the spawner-recruitment models in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. 
 
 We sampled from 4 chains with 4000 iterations each and discarded the first half as warm-up. 
-We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters.A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html).  
+We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html).  
 
 Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
-(ref:tab-priors) Prior probability distributions for parameters.**NEEDS TO BE UPDATED WITH ALL PRIORS**
+(ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters.
 ```{r tab-priors, results = "asis"}
 priors.df <- data.frame(Parameter = c("$ln(\\alpha)$", 
-                                      "$ln(\\beta)$", 
+                                      "$\\beta$", 
                                       "$\\phi$", 
                                       "$\\sigma_R$", 
                                       "$ln(R_0)$", 
-                                      "$\\sigma_{R_0}$"), 
+                                      "$\\sigma_{R_0}$",
+                                      "$\\pi$",
+                                      "$D$"), 
                         Prior = c("$\\sim N(1,2)$", 
                                   "$\\sim N(0,1)$", 
                                   "$\\sim U(-1,1)$", 
-                                  "$\\sim N(1,2)$", 
+                                  "$\\sim N(0,2)$", 
                                   "$\\sim N(0,20)$", 
-                                  "$\\sim Inv-Gamma(2,1)$"),
+                                  "$\\sim Inv-Gamma(2,1)$",
+                                  "$\\sim Dir(0.25,0.25,0.25,0.25)$",
+                                  "$\\sim Beta(1,1)$"),
                         Bounds= c("$[0,\\inf]$",
                                   "$[0,\\inf]$", 
                                   "$[-1,1]$", 
                                   "$[0,\\inf]$",
                                   "$[0,\\inf]$", 
-                                  "$[0,\\inf]$"),
+                                  "$[0,\\inf]$",
+                                  "",
+                                  ""),
                         Description = c("Natural log of intrinsic rate of growth.",
 "Magnitude of within brood-year density-dependence",
 "Lag-one correlation in interannual variation in survival.", 
 "White noise process standard deviation in survival.", 
 "Natural log of unobserved recruitment in the first year of process model.",
-"Standard deviation in unobserved recruitment in the first year of process model." ))
+"Standard deviation in unobserved recruitment in the first year of process model.",
+"Mean maturation-at-age probability for ages 4:7.",
+"Dispersion parameter that governs variability in maturation-at-age probabilities across cohorts."))
 
 priors.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
