@@ -218,9 +218,11 @@ bench_post |> mutate(unit=str_to_sentence(unit)) |>
   theme_sleek()+
   xlab(expression(S[MSR])) +
   labs(y="", fill="Period", color="Period") +
-  theme(legend.position = "right",
+  theme(legend.position = "bottom",
         axis.ticks.y = element_blank(), 
-        axis.text.y = element_blank()) +
+        axis.text.y = element_blank(),
+        strip.text = element_text(size=11),
+        axis.title = element_text(size=13)) +
   scale_color_viridis_d(aesthetics = c("fill", "color"))+
   labs(color = "Reproductive measure",
        fill = "Reproductive measure")
@@ -256,13 +258,15 @@ ggplot() +
   labs(x = "Egg mass (kgs)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "right",
+  theme(legend.position = "bottom",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=7),
-        legend.text = element_text(size=6))
+        legend.title = element_text(size=10),
+        legend.text = element_text(size=9, angle=-45, hjust=-0.05),
+        strip.text = element_text(size=11))
 my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
+ggsave(here("csasdown/figure/EM-R_fits.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 
 # Demographic time-varying alpha (recruits/gram egg mass) relationships ----
 ggplot(a.yrs.all

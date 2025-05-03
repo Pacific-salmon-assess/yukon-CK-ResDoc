@@ -292,19 +292,20 @@ ggplot() +
              size = 1.5) +
   geom_line(data = SR.preds, aes(x = Spawn/1000, y = Rec_med/1000)) +
   facet_wrap(~CU_f, scales = "free", labeller=CU_labeller) +
-  scale_colour_viridis_c(name = "Brood Year")+
+  scale_colour_viridis_c(name = "Brood Year \n \n")+
   labs(x = "Spawners (000s)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "right",
+  theme(legend.position = "bottom",
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=7),
-        legend.text = element_text(size=6))
+        legend.title = element_text(size=10),
+        legend.text = element_text(size=9, angle=-45, hjust=-0.05)
+        )
 
 my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
-my.ggsave(here("csasdown/figure/SR_fits_AR1.PNG"))
+ggsave(here("csasdown/figure/SR_fits_AR1.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 
 
 # AR1 resids ---- 
@@ -348,10 +349,15 @@ a.yrs.all |>
   theme_sleek() +
   geom_hline(yintercept = 1, lty=2, col = "grey") +
   labs(y ="Productivity (\U03B1)", x = "Brood year")+ 
-  guides(color=guide_legend(title="Conservation Unit"))
+  guides(color=guide_legend(title="Conservation Unit")) +
+  theme(legend.position = c(0.75,0.7),
+        plot.margin = margin(60,60,10,60),
+        legend.text = element_text(size=8),
+        axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
-my.ggsave(here("csasdown/figure/changing_productivity.PNG"))
+ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 500*2, 
+       width = 600*2, units="px", dpi=200)
 
 
 # TV SR fits ---- 
@@ -430,13 +436,16 @@ esc |>
   left_join(CU_name_lookup, by="CU_f") |>
   ggplot(aes(x = year, y = mean/1000)) + 
   geom_ribbon(aes(ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
-  geom_line(lwd = 1.1) +
+  geom_line(lwd = 1.1, col="grey30") +
   xlab("Year") +
   ylab("Spawners (000s)") +
   facet_wrap(~CU_pretty, ncol=3, scales = "free_y") +
-  theme_sleek()  
+  theme_sleek() +
+  theme(strip.text = element_text(size=10))
+
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
-my.ggsave(here("csasdown/figure/cu-escape.PNG"))
+ggsave(here("csasdown/figure/cu-escape.PNG"), width=777*2, height=400*2, units="px",
+       dpi=240)
 
 
 # escapement plot all CUs plus aggregate ----
@@ -501,14 +510,15 @@ trib_rr |>
   ggplot(aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
-  xlab("CU spawners (000s") +
+  xlab("CU spawners (000s)") +
   ylab("Tributary spawners") +
   theme_sleek() +
-  facet_wrap(~tribs_name, scales = "free",nrow = 3) 
+  facet_wrap(~tribs_name, scales = "free", ncol = 4) +
+  theme(axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
-my.ggsave(here("csasdown/figure/RR-vs-trib-spawners.PNG"))
-
+ggsave(here("csasdown/figure/RR-vs-trib-spawners.PNG"), width=777*2, height=800*2, units="px",
+       dpi=240)
 
 # trib time series ----
 tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -533,10 +543,13 @@ tribs.all |>
   ylab("Spawners (000s)") +
   facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
-  theme_sleek()
+  theme_sleek() + 
+  theme(axis.title = element_text(size=12),
+        strip.text = element_text(size=8))
 
 my.ggsave(here("analysis/plots/trib-escape.PNG"), height = 10, dpi= 180)
-my.ggsave(here("csasdown/figure/trib-escape.PNG"), height = 10, dpi= 180)
+ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2, 
+       width=700*2, units="px", dpi= 240)
 
   
 # forward simulations ----
@@ -574,7 +587,8 @@ alpha.posts |> filter(scenario != "stationary") |>
   labs(y = "", x = expression(Log(alpha)), fill="Productivity Scenario", color="Productivity Scenario") 
   
 my.ggsave(here("analysis/plots/OM-productivity-scenarios.PNG"))
-my.ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"))
+ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"), height=600*2, width=777*2, 
+       units = "px", dpi=240)
 
 
 # Use demographic benchmarks
@@ -662,12 +676,16 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
     labs(y = "Spawners (000s)", x="Year", col="", fill="") +
     theme_sleek() +
-    theme(legend.position = "bottom") +
+    theme(legend.position = "bottom",
+          strip.text = element_text(size=10),
+          legend.text = element_text(size=10),
+          axis.title = element_text(size=12)) +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
   my.ggsave(here(paste("analysis/plots/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
-  if(names(HCR_grps[i]=="simple" && k=="TVA")){
-    my.ggsave(here(paste("csasdown/figure/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
+  if(names(HCR_grps[i])=="simple" && k=="TVA"){
+    ggsave(here(paste("csasdown/figure/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")),
+           height=600*2, width=777*2, units="px", dpi=240)
   }
 }
 
@@ -743,10 +761,11 @@ status_plot <- perf.status |>
   labs(x="Harvest control rule", y = "Number of CUs", fill="Status") +
   theme_bw()
 
-cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto")
+cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
 
 my.ggsave(here(paste0("analysis/plots/perf_metrics_status_", k, ".PNG")))
-my.ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")))
+ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")), height=600*2, 
+       width=800*2, units="px", dpi=240)
 
 
 
@@ -760,7 +779,8 @@ spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   geom_point(aes(y=ER, x=mean_spwn/1000, col=CU_f), shape='circle', size=2, alpha=0.7) +
   scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
   theme_sleek() +
-  theme(legend.position="none") +
+  theme(legend.position="none",
+        axis.title = element_text(size=12)) +
   labs(x="Spawners (x1000)", y="Exploitation Rate", col="Conservation Unit")
 
 harv_v_ER <- H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
@@ -773,7 +793,9 @@ harv_v_ER <- H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
   scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
   theme_sleek() +
   theme(axis.title.y = element_blank(),
-        axis.text.y = element_blank()) +
+        axis.text.y = element_blank(),
+        legend.text = element_text(size=10),
+        axis.title = element_text(size=12)) +
   labs(x="Harvest (x1000)", y="Exploitation Rate", col="Conservation Unit")
 
 status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
@@ -787,13 +809,16 @@ status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   scale_y_discrete(breaks = seq(0,90,20)) +
   labs(y = "Exploitation Rate", fill="", x="Average # of CUs (over 1000 simulations)") +
   theme_sleek() + 
-  theme(legend.margin = margin(l=35, r=20))
+  theme(legend.margin = margin(l=20, r=20),
+        legend.text = element_text(size=10),
+        axis.title = element_text(size=12))
 
-b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.75,1), labels=c("b","c"), label_x = c(0,0.03))
-cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,.8), labels=c(NULL,"a"))
+b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.55,1), labels=c("b","c"), label_x = c(0,-0.015))
+cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,1), labels=c(NULL,"a"))
 
 my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs_", k, ".PNG")))
-my.ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")))
+ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")), height=600*2, 
+       width=800*2, units="px", dpi=240)
 
 
 ## visualize HCRs ----
@@ -806,7 +831,8 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_names), linewidth
   scale_fill_manual(values="grey70", guide="legend") +
   facet_wrap(~HCR_names) + 
   labs(x="Run Size (000s)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(strip.text = element_text(size=12)) +
+  theme_minimal() + theme(strip.text = element_text(size=11),
+                          axis.title = element_text(size=12)) +
   lims(x=c(0,200)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
@@ -846,6 +872,8 @@ a<- ggplot(SMU_RR |>
   theme_sleek() +
   theme(legend.position = c(0.75,0.85),
         legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12),
         plot.margin = margin(0.5,20,0.5,0.5))
 
 b<- ggplot(SMU_RR |>
@@ -855,13 +883,15 @@ b<- ggplot(SMU_RR |>
   geom_line(aes(x = Year, y = Median50.), size = 1, col = "darkblue") + 
   ylab("Harvest rate (%)") +
   xlab("Year") +
-  theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5))
+  theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5),
+                        axis.title = element_text(size=12))
  
 cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
 
 my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
-my.ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 13, height = 6)
+ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 900*2, height = 350*2, 
+       units="px", dpi=240)
 
 
 # CU run-reconstructions plot ----
@@ -979,7 +1009,9 @@ ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease/1000, fill = REL_CU))+
   scale_y_continuous(name = "Total Releases (000s)") +
   scale_fill_viridis_d() + labs(fill="Conservation Unit of release") +
   theme_sleek() +
-  theme(legend.position = c(0.75, 0.15))
+  theme(legend.position = c(0.75, 0.15),
+        strip.text = element_text(size=11),
+        axis.title = element_text(size=13))
 
 my.ggsave(here("analysis/plots/hatch_bar.PNG"))
 my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
@@ -993,20 +1025,25 @@ wh.hatch <- trib.spwn[!is.na(trib.spwn$hatch_contrib),]
 
 wh.hatch <- wh.hatch %>% mutate(Hatchery = estimate*hatch_contrib,
                     Wild = estimate*(1-hatch_contrib)) %>% 
-  pivot_longer(cols=9:10, names_to="Origin", values_to="Returns")
+  pivot_longer(cols=c("Hatchery", "Wild"), names_to="Origin", values_to="Returns")
 
 ggplot(wh.hatch, aes(x=year)) + 
   geom_bar(aes(y=Returns, fill=Origin), stat="identity") +
   scale_y_continuous(sec.axis = sec_axis(~./4000, name="Proportion")) +
-  geom_line(aes(y=hatch_contrib*4000, col="Proportion hatchery-origin spawners"), linewidth=0.6, alpha=0.6) +
-  geom_line(aes(y=pni*4000, col="Proportionate natural \n influence (PNI)"), linewidth=0.6, alpha=0.6) +
-  scale_color_manual(name = "", values=c("Proportion hatchery-origin spawners" = "darkblue", "Proportionate natural \n influence (PNI)" = "darkred"), guide ="legend") +
+  geom_line(aes(y=hatch_contrib*4000, col="\n Proportion hatchery-origin \n spawners"), linewidth=0.6, alpha=0.6) +
+  geom_line(aes(y=pni*4000, col="\n Proportionate natural \n influence (PNI)"), linewidth=0.6, alpha=0.6) +
+  scale_color_manual(name = "", values=c("\n Proportion hatchery-origin \n spawners" = "darkblue", "\n Proportionate natural \n influence (PNI)" = "darkred"), guide ="legend") +
   scale_fill_manual(name = "Returns", values=c("Hatchery" = "pink2", "Wild" = "green4")) +
   theme_sleek() + labs(x="Year" ) +
   theme(axis.text.y.right = element_text(margin = margin(r=9)),
-        legend.position = c(0.2,0.8))
+        legend.position = c(0.27,0.75),
+        legend.text = element_text(size=11),
+        legend.title = element_text(size=11),
+        axis.title = element_text(size=13))
+
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
-my.ggsave(here("csasdown/figure/hatch_prop.PNG"))
+ggsave(here("csasdown/figure/hatch_prop.PNG"), width=777*2, height=600*2, dpi=240,
+       units="px")
 
 
 # time-varying productivity SR-EMR ----
