@@ -232,11 +232,11 @@ bench_post <- rbind(bench_eggs, bench_body) |>
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.55, "cm"),
         legend.title = element_text(size=10, vjust=3),
-        legend.text = element_text(size=8.5, angle=0, hjust=0)
-  )
+        legend.text = element_text(size=8.5, angle=0, hjust=0),
+        strip.text = element_text(size=10))
 
 my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
-my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"), height=8, width=9)
+my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"), height=7.20, width=8.10)
 
 
 summary_bench_AR1_eggs <- bench_post |>
@@ -271,8 +271,9 @@ ggplot() +
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.25, "cm"),
         legend.title = element_text(size=7, vjust=3),
-        legend.text = element_text(size=6, angle=0, hjust=0)
-  )
+        legend.text = element_text(size=6, angle=0, hjust=0),
+        strip.text = element_text(size=10))
+
 my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
 ggsave(here("csasdown/figure/EM-R_fits.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 
