@@ -189,6 +189,35 @@ cugsitable |>
 
 
 ```
+
+\clearpage
+\begin{landscapepage}
+(ref:assess-proponents) Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries. 
+
+```{r assess-proponents, results = "asis"}
+
+assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
+names(assess_tbl) <- gsub(".", " ", names(assess_tbl), fixed=TRUE)
+
+assess_tbl |> 
+  mutate_at(c(2,5), function(x){str_to_sentence(x)}) |>
+  drop_na() |> 
+  
+  csasdown::csas_table(format = "latex",
+                       caption = "(ref:assess-proponents)",
+                       repeat_header = TRUE,
+                       align = "llc") |>
+  kableExtra::column_spec(1, width = "3cm") |>
+  kableExtra::column_spec(2, width = "3cm") |>
+  kableExtra::column_spec(3, width = "7cm") |>
+  kableExtra::column_spec(4, width = "3cm") |>
+  kableExtra::column_spec(5, width = "2cm") |>
+  kableExtra::column_spec(6, width = "3cm")|>
+  kableExtra::footnote(general=c("*Project provides in-season information on returning spawners"))
+```
+\end{landscapepage}
+
+
 \clearpage
 
 (ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
@@ -306,30 +335,6 @@ df|>
 ```
 
 \clearpage
-\begin{landscapepage}
-(ref:assess-proponents) Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries. 
-
-```{r assess-proponents, results = "asis"}
-
-assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
-names(assess_tbl) <- gsub(".", " ", names(assess_tbl), fixed=TRUE)
-
-assess_tbl |> 
-  mutate_at(c(2,5), function(x){str_to_sentence(x)}) |>
-  drop_na() |> 
-  
-  csasdown::csas_table(format = "latex",
-                       caption = "(ref:assess-proponents)",
-                       repeat_header = TRUE,
-                       align = "llc") |>
-  kableExtra::column_spec(1, width = "3cm") |>
-  kableExtra::column_spec(2, width = "3cm") |>
-  kableExtra::column_spec(3, width = "7cm") |>
-  kableExtra::column_spec(4, width = "3cm") |>
-  kableExtra::column_spec(5, width = "2cm") |>
-  kableExtra::column_spec(6, width = "3cm")
-```
-\end{landscapepage}
 
 
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
