@@ -1,6 +1,6 @@
 # FIGURES
 
-(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown_catalog_2017.
+(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown2017.
 
 ```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
@@ -11,12 +11,10 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-
 (ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Full list of assessment projects is in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
-
 
 (ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
 
@@ -24,16 +22,16 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
-(ref:fig-run-timing) Run-timing, at border, by CU.
-
-```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
-knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
-```
-
 (ref:fig-trib-vs-CU-spawn) Tributary assessment project vs. reconstructed spawner abundance over time.
 
 ```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
+```
+
+(ref:fig-run-timing) Run-timing, at border, by CU.
+
+```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
+knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
 
 (ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
