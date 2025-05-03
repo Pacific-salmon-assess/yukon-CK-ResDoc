@@ -11,7 +11,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. Full list of assessment projects is in Table \@ref(tab:assess-proponents).
+(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. A full list of assessment projects is in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
@@ -395,13 +395,13 @@ names(bench.pars) <- c("Conservation Unit",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
-bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{msy}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{GEN}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{MSR}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{MSY}}$"
+bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{MSY}}$"
 
 bench.pars |> 
-  dplyr::filter(Benchmark %in% c("$S_{\\text{gen}}$", "$S_{\\text{msr}}$", "$S_{\\text{msy}}$", "$U_{\\text{msy}}$")) |>
+  dplyr::filter(Benchmark %in% c("$S_{\\text{GEN}}$", "$S_{\\text{MSR}}$", "$S_{\\text{MSY}}$", "$U_{\\text{msy}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(c(1:3)) |>
   dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
@@ -469,7 +469,7 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) Population (conservation unit) reference points from demographic (egg mass) models. Values are in thousands of fish.
+(ref:demo-ref-pts) conservation Unit reference points from demographic (egg mass) models. Values are in thousands of fish.
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
@@ -479,16 +479,16 @@ demo.pars <- demo.pars |>
                                           period == "early" ~ "Early (1985-1990)",
                                           period == "recent" ~ "Recent (2019-2024)")) |>
   mutate_at(4:6, function(x){round(x/1000, 2)}) |>
-  dplyr::mutate(`Median (95$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")"))
+  dplyr::mutate(`Median (80$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")"))
 
 names(demo.pars)[1:6] <- c("Conservation Unit",
                            "Period",
                            "Benchmark",
                            "Median",
                            "Lower Quantile", "Upper Quantile")
-demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{gen}}$"
-demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{msr}}$"
-demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{msy}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{GEN}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{MSR}}$"
+demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{MSY}}$"
 
 demo.pars |> 
   dplyr::select(c(1:3,7)) |>
