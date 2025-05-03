@@ -301,8 +301,8 @@ ggplot() +
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.25, "cm"),
         legend.title = element_text(size=7, vjust=3),
-        legend.text = element_text(size=6, angle=0, hjust=0)
-        )
+        legend.text = element_text(size=6, angle=0, hjust=0),
+        strip.text = element_text(size=10))
 
 my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
 ggsave(here("csasdown/figure/SR_fits_AR1.PNG"), height=800*2, width=900*2, units="px", dpi=240)
@@ -525,7 +525,7 @@ tribs.all <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
     estimate = case_when(
       system == "whitehorse" ~ estimate*(1-hatch_contrib),
       .default = estimate)) |>
-  unite(tributary, c("system_alt", "type"), sep = "-") |>
+  unite(tributary, c("system_alt", "type"), sep = " ") |>
   select(!hatch_contrib)
 
 
@@ -535,7 +535,7 @@ dat_text <- tribs.all |>
   select(tributary, CU)
 
 tribs.all |>
-  mutate(tribs_name = gsub("salmon", " Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
+  mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
   ggplot(aes(x = year, y = estimate/1000)) + 
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
@@ -548,7 +548,7 @@ tribs.all |>
 
 my.ggsave(here("analysis/plots/trib-escape.PNG"), height = 10, dpi= 180)
 ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2, 
-       width=700*2, units="px", dpi= 240)
+       width=720*2, units="px", dpi= 240)
 
   
 # forward simulations ----
@@ -677,14 +677,13 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     theme_sleek() +
     theme(legend.position = "bottom",
           strip.text = element_text(size=10),
-          legend.text = element_text(size=10),
-          axis.title = element_text(size=12)) +
+          legend.text = element_text(size=10)) +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
   my.ggsave(here(paste("analysis/plots/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
   if(names(HCR_grps[i])=="simple" && k=="TVA"){
     ggsave(here(paste("csasdown/figure/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")),
-           height=600*2, width=777*2, units="px", dpi=240)
+           height=650*2, width=810*2, units="px", dpi=240)
   }
 }
 
@@ -764,7 +763,7 @@ cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(
 
 my.ggsave(here(paste0("analysis/plots/perf_metrics_status_", k, ".PNG")))
 ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")), height=900*2, 
-       width=800*2, units="px", dpi=240)
+       width=800*2, units="px", dpi=240,bg = "white")
 
 
 
@@ -1063,9 +1062,9 @@ TVA$CU_f <- factor(TVA$CU, levels = CU_order)
 ggplot(TVA
        |> filter(brood_year < 2018), aes(col = model.type)) +
   geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
-  facet_wrap(~CU_f, scales = "free",nrow = 3) +
+  facet_wrap(~CU_f, scales = "free_y",nrow = 3) +
   theme_sleek() +
-  labs(y = "scaled productivity index", x = "Brood year") +
+  labs(y = "Scaled productivity index", x = "Brood year") +
   scale_color_viridis_d(end=0.9) +
   labs(color = "SR model ") +
   theme(legend.position = c(0.92,0.925),
@@ -1073,7 +1072,8 @@ ggplot(TVA
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.55, "cm"),
         legend.title = element_text(size=10, vjust=3),
-        legend.text = element_text(size=8.5, angle=0, hjust=0))
+        legend.text = element_text(size=8.5, angle=0, hjust=0),
+        strip.text = element_text(size=10))
 
 my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
-my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=8, width=9)
+my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=7.60, width=8.55)
