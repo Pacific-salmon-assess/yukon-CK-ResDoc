@@ -113,7 +113,7 @@ model{
   mean_ln_R0 ~ normal(0,20);
   sigma_R0 ~ gamma(2,1); 
   prob ~ beta(1,1);
-  D_scale ~ beta(1,1);
+  D_scale ~ Beta(1,1);
 
   // Likelihoods
   // Gamma variates for each year and age class which are used to determine age at maturity proportions
