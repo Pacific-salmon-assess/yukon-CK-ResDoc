@@ -8,11 +8,10 @@ author: |
   Hannah Hunter^3^,
   Dylan Glaser^4^,
   Jessica Gill^3^,
-  Steven Rossi^5^, 
-  Carolyn Churchland^3^, and
-  Cheyenne Bradley^2^
+  Steven Rossi^5^, and 
+  Carolyn Churchland^3
 
-author_list: "Connors, B.M., O'Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., Churchland, C., and Bradley, C."
+author_list: "Connors, B.M., O'Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C."
 address: |
   ^1^Institute of Ocean Sciences\
      Fisheries and Oceans Canada, 9860 W. Saanich Road\

@@ -292,16 +292,16 @@ ggplot() +
              size = 1.5) +
   geom_line(data = SR.preds, aes(x = Spawn/1000, y = Rec_med/1000)) +
   facet_wrap(~CU_f, scales = "free", labeller=CU_labeller) +
-  scale_colour_viridis_c(name = "Brood Year \n \n")+
+  scale_colour_viridis_c(name = "Brood Year")+
   labs(x = "Spawners (000s)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "bottom",
+  theme(legend.position = c(0.94,0.925),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=10),
-        legend.text = element_text(size=9, angle=-45, hjust=-0.05)
+        legend.key.size = unit(0.25, "cm"),
+        legend.title = element_text(size=7, vjust=3),
+        legend.text = element_text(size=6, angle=0, hjust=0)
         )
 
 my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
@@ -350,14 +350,14 @@ a.yrs.all |>
   geom_hline(yintercept = 1, lty=2, col = "grey") +
   labs(y ="Productivity (\U03B1)", x = "Brood year")+ 
   guides(color=guide_legend(title="Conservation Unit")) +
-  theme(legend.position = c(0.75,0.7),
+  theme(legend.position = c(0.75,0.75),
         plot.margin = margin(60,60,10,60),
-        legend.text = element_text(size=8),
-        axis.title = element_text(size=12))
+        legend.text = element_text(size=7),
+        axis.title = element_text(size=8))
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
-ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 500*2, 
-       width = 600*2, units="px", dpi=200)
+ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 550*2, 
+       width = 700*2, units="px", dpi=200)
 
 
 # TV SR fits ---- 
@@ -444,9 +444,8 @@ esc |>
   theme(strip.text = element_text(size=10))
 
 my.ggsave(here("analysis/plots/cu-escape.PNG"))
-ggsave(here("csasdown/figure/cu-escape.PNG"), width=777*2, height=400*2, units="px",
+ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
-
 
 # escapement plot all CUs plus aggregate ----
 porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -764,7 +763,7 @@ status_plot <- perf.status |>
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
 
 my.ggsave(here(paste0("analysis/plots/perf_metrics_status_", k, ".PNG")))
-ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")), height=600*2, 
+ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")), height=900*2, 
        width=800*2, units="px", dpi=240)
 
 
@@ -890,7 +889,7 @@ cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
 
 my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
-ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 900*2, height = 350*2, 
+ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 9750*2, height = 350*2, 
        units="px", dpi=240)
 
 
@@ -1057,15 +1056,24 @@ TVA <- rbind(sp.TVA,em.TVA) |>
                         model == "spw" ~ "Spawners",
                         model == "em" ~ "Egg mass"
          )) 
-  
+
+TVA$CU_f <- factor(TVA$CU, levels = CU_order)
+
 
 ggplot(TVA
        |> filter(brood_year < 2018), aes(col = model.type)) +
   geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
-  facet_wrap(~CU, scales = "free",nrow = 3) +
+  facet_wrap(~CU_f, scales = "free",nrow = 3) +
   theme_sleek() +
   labs(y = "scaled productivity index", x = "Brood year") +
   scale_color_viridis_d(end=0.9) +
-  labs(color = "SR model ")
+  labs(color = "SR model ") +
+  theme(legend.position = c(0.92,0.925),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.key.size = unit(0.55, "cm"),
+        legend.title = element_text(size=10, vjust=3),
+        legend.text = element_text(size=8.5, angle=0, hjust=0))
 
 my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
+my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=8, width=9)

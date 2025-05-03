@@ -205,6 +205,8 @@ g <- ggarrange(b,c,a,d,
 
 g
 my.ggsave(here("analysis/plots/asl.PNG"))
+ggsave(here("csasdown/figure/asl.PNG"), height = 550*2, 
+       width = 700*2, units="px", dpi=200)
 
 
 # calculate total egg and egg mass time series for Jim M

@@ -439,6 +439,8 @@ We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize 
 
 # WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:fourth-appendix}
 
+See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID STATUS SUMMARY: YUKON CHINOOK and PORCUPINE CHINOOK STOCK MANAGEMENT UNITS" 
+
 # COMPUTING ENVIRONMENT {#app:fifth-appendix}  
 
 This document aims to be transparent and reproducible. 

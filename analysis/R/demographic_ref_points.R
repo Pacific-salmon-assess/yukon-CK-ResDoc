@@ -137,14 +137,14 @@ for(i in unique(sp_har$CU)){
   bench_AR1_eggs <- rbind(bench_AR1_eggs, bench_early, bench_avg, bench_recent)
   
   #time varying alpha --------------------------------------------------------------------
-  #sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
+  sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
   
-  #a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
-  #a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
+  a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
+  a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
   
-  #colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
+  colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
   
-  #a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
+  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
 }
 
 colnames(ER.preds) <- c("EM", "Rec_lwr","Rec_med","Rec_upr", "CU")
@@ -209,10 +209,11 @@ bench_body <- pivot_longer(bench.posts, cols = c(Smsr), names_to = "par") |>
   select(unit, CU, par, value)
 
 bench_post <- rbind(bench_eggs, bench_body) |>
-  filter(value <= 35000)
+  filter(value <= 35000)|> 
+  mutate(unit=str_to_sentence(unit))
 
-bench_post |> mutate(unit=str_to_sentence(unit)) |>
-  ggplot(aes(value, fill = unit, color = unit)) +
+
+  ggplot(bench_post,aes(value, fill = unit, color = unit)) +
   geom_density(alpha = 0.8, adjust = 4) +
   facet_wrap(~CU, scales = "free_y", labeller=CU_labeller) +
   theme_sleek()+
@@ -225,10 +226,17 @@ bench_post |> mutate(unit=str_to_sentence(unit)) |>
         axis.title = element_text(size=13)) +
   scale_color_viridis_d(aesthetics = c("fill", "color"))+
   labs(color = "Reproductive measure",
-       fill = "Reproductive measure")
+       fill = "Reproductive measure")+
+  theme(legend.position = c(0.88,0.925),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.key.size = unit(0.55, "cm"),
+        legend.title = element_text(size=10, vjust=3),
+        legend.text = element_text(size=8.5, angle=0, hjust=0)
+  )
 
 my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
-my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"))
+my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"), height=8, width=9)
 
 
 summary_bench_AR1_eggs <- bench_post |>
@@ -258,13 +266,13 @@ ggplot() +
   labs(x = "Egg mass (kgs)",
        y = "Recruits (000s)") +
   theme_sleek()+
-  theme(legend.position = "bottom",
+  theme(legend.position = c(0.94,0.925),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        legend.key.size = unit(0.4, "cm"),
-        legend.title = element_text(size=10),
-        legend.text = element_text(size=9, angle=-45, hjust=-0.05),
-        strip.text = element_text(size=11))
+        legend.key.size = unit(0.25, "cm"),
+        legend.title = element_text(size=7, vjust=3),
+        legend.text = element_text(size=6, angle=0, hjust=0)
+  )
 my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
 ggsave(here("csasdown/figure/EM-R_fits.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 

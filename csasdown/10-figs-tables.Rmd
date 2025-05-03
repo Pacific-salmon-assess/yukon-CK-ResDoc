@@ -33,6 +33,7 @@ knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
+\clearpage
 
 (ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
 
