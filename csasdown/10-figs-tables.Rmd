@@ -306,7 +306,9 @@ df|>
 ```
 
 \clearpage
+\begin{landscapepage}
 (ref:assess-proponents) Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries. 
+
 ```{r assess-proponents, results = "asis"}
 
 assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
@@ -320,11 +322,15 @@ assess_tbl |>
                        caption = "(ref:assess-proponents)",
                        repeat_header = TRUE,
                        align = "llc") |>
-  kableExtra::column_spec(2, width = "2cm") |>
-  kableExtra::column_spec(3, width = "4cm") |>
-  kableExtra::footnote(general=c("*Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries"))
+  kableExtra::column_spec(1, width = "3cm") |>
+  kableExtra::column_spec(2, width = "3cm") |>
+  kableExtra::column_spec(3, width = "7cm") |>
+  kableExtra::column_spec(4, width = "3cm") |>
+  kableExtra::column_spec(5, width = "2cm") |>
+  kableExtra::column_spec(6, width = "3cm")
 ```
-\clearpage
+\end{landscapepage}
+
 
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
 

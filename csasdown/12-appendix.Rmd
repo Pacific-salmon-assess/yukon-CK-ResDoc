@@ -322,7 +322,7 @@ We assessed chain convergence visually via trace plots and by ensuring that $\ha
 
 Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
-(ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters.
+(ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters.Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
 ```{r tab-priors, results = "asis"}
 priors.df <- data.frame(Parameter = c("$ln(\\alpha)$", 
                                       "$\\beta$", 
