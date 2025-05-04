@@ -129,7 +129,7 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 simulated fishery scenarios. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations.
+(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over replicate simulations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
