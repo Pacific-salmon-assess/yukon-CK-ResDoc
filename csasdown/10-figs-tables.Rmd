@@ -214,84 +214,6 @@ assess_tbl |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
-
-```{r tab-factors-summary, results="asis"}
-# spawners
-factors_spwn <- c("Water temperature", "Discharge/flow levels",
-             "Ichthypohonus hoferi (pathogen)", "Thiamine deficiency complex (TDC)")
-desc_spwn <- c("Temperatures >18C cause heat stress and impact spawning success",
-               "Low flow reduce spawning success via higher temperature, habitat fragmentation",
-               "Primarily infects maturing adults in the marine environment, potentially high mortality during spawning migration",
-               "Low thiamine in adults has transgenerational effects")
-refs_spwn <- c("Feddern et al. 2024; Murdoch et al. 2024", "Howard and von Biela 2023; Neuswanger et al. 2015", "Carroll and Liller 2023; Murphy et al. 2023; 2024; Kocan et al. 2004", "Larson and Howard 2019; Howard and von Biela 2023")
-
-  
-# egg  
-factors_egg <- c("Stream flow", "Winter stream temperature")
-desc_egg <- c("High flows scour streambeds, reducing egg survival ",
-              "Cold and/or long winters reduce incubation survival")
-refs_egg <- c("Feddern et al. 2024", "Murdoch et al. 2020; 2024")
-
-# fry / smolt
-factors_frysmolt <- c("Aufeis (icing)", "Stream flow / precipitation", 
-                      "Ice out date", "Hydroelectric dam", "Placer mining")
-desc_frysmolt <- c("Reduced or halted streamflow from ice formations decreases fry survival",
-                   "High streamflow (high precipitation) may reduce foraging efficiency", 
-                   "Early ice-out allows earlier outmigration", 
-                   "Fry/smolts pass through dam, decreasing downstream survival",
-                   "Sediment deposition and suspension can decrease egg and fry survival")
-refs_frysmolt <- c("von Finster et al. 2025; in press", "Murdoch et al. 2024; Feddern et al. 2024", "Murdoch et al. 2024; Cunningham et al. 2018; Feddern et al. 2024", "Twardek et al. 2023b","Jensen et al. 2009; von Finster et al. in press")
-
-# juvenile
-factors_juvenile <- c("Sea surface temperature - winter", "Sea ice cover", "Predation")
-desc_juvenile <- c("Colder first winters result in less productivity", 
-                   "Productivity is lower in years when ice persists in the Bering Sea later",
-                   "Increase in apex predator abundance")
-refs_juvenile <- c("Feddern et al. 2024", "Feddern et al. 2024; Murdoch et al. 2024", "Ohlberger et al. 2019")
-
-# adults
-factors_adult <- c("Pink salmon competition", "Prey quality")
-desc_adult <- c("Abundant pink salmon cause trophic cascades in the Bering Sea",
-                "Declining prey quality in the Eastern Bering Sea hypothesized to be the cause of thiamine deficiency in spawning adults")
-refs_adult <- c("Ruggerone et al. 2016; Cunningham et al. 2018", "Howard and von Biela 2023")
-
-# make whole table
-factors.df <- data.frame("Life_stage" = c(rep("Spawner", length(factors_spwn)),
-                                        rep("Egg", length(factors_egg)),
-                                        rep("Fry / smolt", length(factors_frysmolt)),
-                                        rep("Juvenile", length(factors_juvenile)),
-                                        rep("Adult", length(factors_adult))
-                                        ),
-                         "Anthropogenic,_ecosystem,_or_climate_factor" = 
-                           c(factors_spwn, factors_egg, factors_frysmolt, 
-                             factors_juvenile, factors_adult),
-                         "Description_or_hypothesis" = c(desc_spwn, desc_egg, 
-                                                         desc_frysmolt, desc_juvenile,
-                                                         desc_adult),
-                         "References" = c(refs_spwn, refs_egg, refs_frysmolt, refs_juvenile, refs_adult)
-                         )
-
-names(factors.df) <- gsub("_", " ", names(factors.df))
-names(factors.df) <- gsub(".", ",", names(factors.df), fixed = TRUE)
-
-
-factors.df |>
-  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                       escape = FALSE,
-                     caption = "(ref:tab-factors-summary)", 
-                     repeat_header = TRUE) |>
-    kableExtra::column_spec(1, width = "2cm")|>
-    kableExtra::column_spec(2, width = "3cm")|>
-    kableExtra::column_spec(3, width = "6.5cm")|>
-    kableExtra::column_spec(4, width = "5cm") |>
-    kableExtra::collapse_rows(columns=1, latex_hline = "major")
-```
-
-\clearpage
-
 (ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
@@ -501,6 +423,84 @@ demo.pars |>
 
 ```
 
+\clearpage
+
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
+
+```{r tab-factors-summary, results="asis"}
+# spawners
+factors_spwn <- c("Water temperature", "Discharge/flow levels",
+             "Ichthypohonus hoferi (pathogen)", "Thiamine deficiency complex (TDC)")
+desc_spwn <- c("Temperatures >18C cause heat stress and impact spawning success",
+               "Low flow reduce spawning success via higher temperature, habitat fragmentation",
+               "Primarily infects maturing adults in the marine environment, potentially high mortality during spawning migration",
+               "Low thiamine in adults has transgenerational effects")
+refs_spwn <- c("Feddern et al. 2024; Murdoch et al. 2024", "Howard and von Biela 2023; Neuswanger et al. 2015", "Carroll and Liller 2023; Murphy et al. 2023; 2024; Kocan et al. 2004", "Larson and Howard 2019; Howard and von Biela 2023")
+
+  
+# egg  
+factors_egg <- c("Stream flow", "Winter stream temperature")
+desc_egg <- c("High flows scour streambeds, reducing egg survival ",
+              "Cold and/or long winters reduce incubation survival")
+refs_egg <- c("Feddern et al. 2024", "Murdoch et al. 2020; 2024")
+
+# fry / smolt
+factors_frysmolt <- c("Aufeis (icing)", "Stream flow / precipitation", 
+                      "Ice out date", "Hydroelectric dam", "Placer mining")
+desc_frysmolt <- c("Reduced or halted streamflow from ice formations decreases fry survival",
+                   "High streamflow (high precipitation) may reduce foraging efficiency", 
+                   "Early ice-out allows earlier outmigration", 
+                   "Fry/smolts pass through dam, decreasing downstream survival",
+                   "Sediment deposition and suspension can decrease egg and fry survival")
+refs_frysmolt <- c("von Finster et al. 2025; in press", "Murdoch et al. 2024; Feddern et al. 2024", "Murdoch et al. 2024; Cunningham et al. 2018; Feddern et al. 2024", "Twardek et al. 2023b","Jensen et al. 2009; von Finster et al. in press")
+
+# juvenile
+factors_juvenile <- c("Sea surface temperature - winter", "Sea ice cover", "Predation")
+desc_juvenile <- c("Colder first winters result in less productivity", 
+                   "Productivity is lower in years when ice persists in the Bering Sea later",
+                   "Increase in apex predator abundance")
+refs_juvenile <- c("Feddern et al. 2024", "Feddern et al. 2024; Murdoch et al. 2024", "Ohlberger et al. 2019")
+
+# adults
+factors_adult <- c("Pink salmon competition", "Prey quality")
+desc_adult <- c("Abundant pink salmon cause trophic cascades in the Bering Sea",
+                "Declining prey quality in the Eastern Bering Sea hypothesized to be the cause of thiamine deficiency in spawning adults")
+refs_adult <- c("Ruggerone et al. 2016; Cunningham et al. 2018", "Howard and von Biela 2023")
+
+# make whole table
+factors.df <- data.frame("Life_stage" = c(rep("Spawner", length(factors_spwn)),
+                                        rep("Egg", length(factors_egg)),
+                                        rep("Fry / smolt", length(factors_frysmolt)),
+                                        rep("Juvenile", length(factors_juvenile)),
+                                        rep("Adult", length(factors_adult))
+                                        ),
+                         "Anthropogenic,_ecosystem,_or_climate_factor" = 
+                           c(factors_spwn, factors_egg, factors_frysmolt, 
+                             factors_juvenile, factors_adult),
+                         "Description_or_hypothesis" = c(desc_spwn, desc_egg, 
+                                                         desc_frysmolt, desc_juvenile,
+                                                         desc_adult),
+                         "References" = c(refs_spwn, refs_egg, refs_frysmolt, refs_juvenile, refs_adult)
+                         )
+
+names(factors.df) <- gsub("_", " ", names(factors.df))
+names(factors.df) <- gsub(".", ",", names(factors.df), fixed = TRUE)
+
+
+factors.df |>
+  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       escape = FALSE,
+                     caption = "(ref:tab-factors-summary)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "2cm")|>
+    kableExtra::column_spec(2, width = "3cm")|>
+    kableExtra::column_spec(3, width = "6.5cm")|>
+    kableExtra::column_spec(4, width = "5cm") |>
+    kableExtra::collapse_rows(columns=1, latex_hline = "major")
+```
+
 
 \clearpage
 (ref:hcrs) Definitions of alternative fishery management measures (Harvest Control Rules) considered.
@@ -514,7 +514,7 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                         Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish", 
                                      "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal", 
                                      "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit", 
-                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit",
+                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~40%)",
                                      "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000]"))
 
 HCR.df |>

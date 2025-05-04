@@ -136,7 +136,7 @@ Conservation Unit composition data were fitted using a multinomial likelihood (T
 
 Total run size indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the run size index (Table \@ref(tab:tab-rr-eqns).13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table \@ref(tab:tab-rr-eqns).15).     
 
-In some years prior to the implementation of sonar monitoring, the fish wheel data was not informative enough to estimate run sizes for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale run sizes for each CU (Table \@ref(tab:tab-rr-eqns).16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate run size and was omitted from 2005 onward, after the introduction of sonar monitoring.
+In some years prior to the implementation of sonar monitoring, the fish wheel data was not informative enough to estimate run sizes for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale run sizes for each CU (Table \@ref(tab:tab-rr-eqns).16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate run size and was omitted from 2005 onward, after the introduction of sonar assessment of border passage.
 
 ## MODEL FITTING AND ESTIMATES OF SPAWNER ABUNDANCE 
 
@@ -146,7 +146,7 @@ The model tended to fit the sonar count data well (Figure \@ref(fig:fig-eagle-RR
 
 In the pre-sonar years the model attempted to simultaneously fit to the fish wheel relative abundance indices and the mark-recapture based absolute run size indices so the model tended to generate estimates of total border passage that were somewhere in between (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the mark-recapture index had essentially no effect on model estimates, and the model fit perfectly to the sonar based estimates of total border passage 2005-2024.
 
-The run-reconstruction model estimated border passage and so estimates of spawner abundance were derived by subtracting the inferred harvest of each CU by fisheries that occurred upstream in the mainstem of the Yukon River from estimated border passage. To do this we assumed all CUs were equally vulnerable to Canadian fisheries and calculated spawner abundance as $S_{i,y}=\widehat{R}_{i,y}(1-U_{CDN,y})$ where $\widehat{R}_{i,y}$ is border passage for CU $i$ in year $y$ and $U_{CDN,y}$ is the aggregate harvest rate from Canadian fisheries as estimated by @connors_estimates_2023.
+The run-reconstruction model estimated border passage and so estimates of spawner abundance were derived by subtracting the inferred harvest of each CU by fisheries that occurred upstream in the mainstem of the Yukon River from estimated border passage. To do this we assumed all CUs were historically equally vulnerable to Canadian fisheries and calculated spawner abundance as $S_{i,y}=\widehat{R}_{i,y}(1-U_{CDN,y})$ where $\widehat{R}_{i,y}$ is border passage for CU $i$ in year $y$ and $U_{CDN,y}$ is the aggregate harvest rate from Canadian fisheries as estimated by @connors_estimates_2023.
 
 For the Big Salmon CU, which cannot be reliably differentiated with genetics from the Middle Mainstem CU, but which has had a sonar assessment project in operation since 2005, we inferred spawner abundance as a constant proportion of the reconstructed spawner abundance from the Middle Mainstem CU. This proportion was based on those years where there was data from the sonar assessment project (i.e, 2005 to present with exception of 2022). The resulting time series of Big Salmon spawner abundance was then removed for the entire time series from the Middle Mainstem CU.
 
@@ -186,9 +186,7 @@ An alternative to the sequential modelling approach we took would have been to i
 
 These models could have also been fit in a multi-population framework [@connors_incorporating_2020; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation which appear to be spuriously too high  and low, respectively, and which could lead to biases in other model parameters in manners that are difficult to predict [@staton-etal-2020].
 
-Because the same model was fitted to each CU, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual CUs
-
-We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each population separately.
+Because the same model was fitted to each CU, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual CUs. We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each CU separately.
 
 ## PROCESS MODEL
 
