@@ -736,7 +736,7 @@ pm_plot <- perf.metrics |>
                    y=q_25, yend=q_75), col="grey30") +
   scale_fill_manual(values=HCR_cols) +
   facet_wrap(~metric_name, scales = "free_y", nrow=4) +
-  theme_minimal() +
+  theme_sleek() +
   scale_y_continuous() +
   theme(legend.position = c(0.8,0.15), 
         axis.text.x = element_blank(), 
@@ -757,7 +757,7 @@ status_plot <- perf.status |>
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
   scale_y_continuous(breaks = c(2,4,6,8)) +
   labs(x="Harvest control rule", y = "Number of CUs", fill="Status") +
-  theme_bw()
+  theme_sleek()
 
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
 
@@ -779,7 +779,7 @@ spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   theme_sleek() +
   theme(legend.position="none",
         axis.title = element_text(size=12)) +
-  labs(x="Spawners (x1000)", y="Exploitation Rate", col="Conservation Unit")
+  labs(x="Spawners (000s)", y="Exploitation rate", col="Conservation Unit")
 
 harv_v_ER <- H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
   group_by(HCR, CU_f) |> 
@@ -794,7 +794,7 @@ harv_v_ER <- H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
         axis.text.y = element_blank(),
         legend.text = element_text(size=10),
         axis.title = element_text(size=12)) +
-  labs(x="Harvest (x1000)", y="Exploitation Rate", col="Conservation Unit")
+  labs(x="Harvest (000s)", y="Exploitation rate", col="Conservation Unit")
 
 status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
@@ -820,9 +820,10 @@ ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")), height=60
 
 
 ## visualize HCRs ----
-
+HCR_order <- c("Moratorium", "IMEG", "Moratorium cap", "IMEG cap", "PA Alternative")
 out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
 out$HCR_names <- rep(names(HCR_cols)[c(6:7,4:5,1)], each=400)
+out$HCR_names_f <- factor(out$HCR_names, levels = HCR_order)
 
 ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_names), linewidth=0.75) +
   scale_colour_manual(values=HCR_cols, guide="none") +

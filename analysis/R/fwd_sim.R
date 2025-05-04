@@ -102,7 +102,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 500 # number of Monte Carlo trials
+num.sims = 1000 # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
