@@ -829,13 +829,14 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_names), linewidth
   scale_fill_manual(values="grey70", guide="legend") +
   facet_wrap(~HCR_names) + 
   labs(x="Run Size (000s)", y="Harvest Rate (%)") +
-  theme_minimal() + theme(strip.text = element_text(size=11),
-                          axis.title = element_text(size=12)) +
+  theme_minimal() + theme(strip.text = element_text(size=10),
+                          axis.title = element_text(size=10)) +
   lims(x=c(0,200)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
 my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
-my.ggsave(here("csasdown/figure/HCR_visualize.PNG"))
+my.ggsave(here("csasdown/figure/HCR_visualize.PNG"), height=4, 
+          width=6)
 
 
 ## covariance plots ----
@@ -1034,13 +1035,14 @@ ggplot(wh.hatch, aes(x=year)) +
   scale_fill_manual(name = "Returns", values=c("Hatchery" = "pink2", "Wild" = "green4")) +
   theme_sleek() + labs(x="Year" ) +
   theme(axis.text.y.right = element_text(margin = margin(r=9)),
-        legend.position = c(0.27,0.75),
-        legend.text = element_text(size=11),
-        legend.title = element_text(size=11),
-        axis.title = element_text(size=13))
+        legend.position = c(0.27,0.7),
+        legend.text = element_text(size=7),
+        legend.title = element_text(size=7),
+        axis.title = element_text(size=10),
+        legend.spacing.y = unit(0.2, "cm"))
 
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
-ggsave(here("csasdown/figure/hatch_prop.PNG"), width=777*2, height=600*2, dpi=240,
+ggsave(here("csasdown/figure/hatch_prop.PNG"), width=700*2, height=400*2, dpi=240,
        units="px")
 
 
@@ -1070,10 +1072,10 @@ ggplot(TVA
   theme(legend.position = c(0.92,0.925),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
-        legend.key.size = unit(0.55, "cm"),
-        legend.title = element_text(size=10, vjust=3),
+        legend.key.size = unit(0.35, "cm"),
+        legend.title = element_text(size=10),
         legend.text = element_text(size=8.5, angle=0, hjust=0),
         strip.text = element_text(size=10))
 
 my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
-my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=7.60, width=8.55)
+my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=6.60, width=7.55)

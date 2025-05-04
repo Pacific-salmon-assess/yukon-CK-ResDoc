@@ -1,4 +1,4 @@
-# STOCK STRUCTURE, BIOLOGY AND DISTRIBUTION {#sec:stock}
+# STOCK STRUCTURE, BIOLOGY, AND DISTRIBUTION {#sec:stock}
 
 Chinook salmon that spawn within the Canadian portion of the Yukon River basin make up two Stock Management Units [SMU, @dfo2024yukonifmp], the Yukon River Chinook Salmon SMU and Porcupine Chinook Salmon SMU. These SMUs are comprised of twelve Conservation Units [CUs, Table \@ref(tab:tab-cons-unit-smu), @holtbyConservationUnitsPacific2007; @holtby2011] which are are groups of salmon that are considered genetically and ecologically unique [@holtbyConservationUnitsPacific2007] under Canada’s Wild Salmon Policy [@WSP2005]. Nine CUs are from watersheds draining into the mainstem of the Yukon River and three from the Porcupine River that joins the Yukon River mainstem in Alaska. On average, the annual proportion of the total return of Chinook salmon to the Yukon River that are Canadian origin is 42% and has historically varied from 31%-54% [@JTC2025Report]. These Chinook salmon spawn in 15 major and 91 minor spawning locations throughout the Canadian portion of the watershed [Figure \@ref(fig:fig-map-spawn), @brown2017].
 

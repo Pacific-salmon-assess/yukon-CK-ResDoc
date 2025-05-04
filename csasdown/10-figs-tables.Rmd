@@ -65,18 +65,10 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-
 (ref:fig-em-vs-spw-sr-TVA) Scaled time trends in recruits-per-reproductive unit across alternative SR models.
 
 ```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
-```
-
-
-(ref:fig-demo-smsr) Biological benchmarks (S$_{MSR}$) as calculated from egg mass-recruit models (purple) and spawner-recruit models (yellow).
-
-```{r fig-demo-smsr, fig.cap = "(ref:fig-demo-smsr)"}
-knitr::include_graphics(here::here("csasdown/figure/demo_bench_compare.png"))
 ```
 
 (ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU.
@@ -154,6 +146,8 @@ knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
 names(smucutable)[4] <- "Average Contribution (1984-2024)"
+names(smucutable)[3] <- "Conservation Unit"
+names(smucutable)[2] <- "Conservation Unit ID"
 
 
 smucutable |> 
@@ -197,6 +191,7 @@ cugsitable |>
 
 assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
 names(assess_tbl) <- gsub(".", " ", names(assess_tbl), fixed=TRUE)
+names(assess_tbl)[4] <- "Conservation Unit"
 
 assess_tbl |> 
   mutate_at(c(2,5), function(x){str_to_sentence(x)}) |>
@@ -212,7 +207,7 @@ assess_tbl |>
   kableExtra::column_spec(4, width = "3cm") |>
   kableExtra::column_spec(5, width = "2cm") |>
   kableExtra::column_spec(6, width = "3cm")|>
-  kableExtra::footnote(general=c("*Project provides in-season information on returning spawners"))
+  kableExtra::footnote(general=c("*Project provides in-season information on returning spawners."))
 ```
 \end{landscapepage}
 
@@ -357,7 +352,7 @@ priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)",
                                           "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives. ",
                                           "The maximum acceptable harvest rate the SMU can be subject to; is typically set to be less than or equal to the removal rate associated with maximum sustainable yield ($U_{MSY}$).", 
                                           "Aggregate SMU spawner abundance below which all fishery removals should be limited to the maximum extent possible and below which there is a high risk of serious and irreversible harm to the stock. This type of reference point is helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized.", 
-                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated SGEN is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions (Holt 2009). Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
+                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated $S_{GEN}$ is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions (Holt 2009). Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
                                           "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80% $S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU” (DFO 2005).",
                                           "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest (Liller and Savereide 2022)."))
 
