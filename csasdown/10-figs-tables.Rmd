@@ -354,7 +354,7 @@ bench.pars |>
 
 
 \clearpage
-(ref:pars-sr) Estimates of key spawner-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. 
+(ref:pars-sr) Estimates of key spawner-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table.
 
 ```{r pars-sr, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))

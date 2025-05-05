@@ -258,6 +258,8 @@ bench.par.table.out <- bench.par.table |>
   mutate_at(3:7, ~round(.,5)) |> 
   arrange(bench.par, CU)
 
+bench.par.table.out[82:90,3:6] <- bench.par.table.out[82:90,3:6]*10000 # makes beta on scale of 10k so not crazu sig. digits in tables
+
 write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"), 
           row.names = FALSE)
 
