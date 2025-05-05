@@ -22,7 +22,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
-(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents)
+(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents).
 
 ```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
@@ -101,19 +101,19 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 ```
 
-(ref:fig-prod-scenarios) Alternative productivity scenarios assessed in the closed-loop simulation model. Under the reference scenario, the 10-year average of recent $\alpha$ (year-year) are used to project the system forward in time. Under the robustness scenario, the most recent $\alpha$ (year) is used.
+(ref:fig-prod-scenarios) Alternative operating model productivity scenarios considered in the closed-loop simulations including the reference (base case) scenario, the 10-year average of recent $\alpha$ (2007-2017 brood years), and robustness scenario, the most recent $\alpha$ (2017 brood year).
 ```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
 knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
 
-(ref:fig-hcrs) Illustration of harvest control rules considered in analysis of impacts of fishery management measures. We considered the rule used prior to the transboundary moratorium agreement (status quo) and a variation of it that allows only a 40% exploitation rate (status quo cap), as well as the current rule under the transboundary moratorium agreement and the same variation (moratorium and moratorium cap), as well as an alternative form of harvest control rule. The x-axis range of the plot corresponds approximately to the historical range of run sizes.
+(ref:fig-hcrs) Illustration of the suite of harvest control rules considered in the closed-loop simulations. See Table \@ref(tab:hcrs) for description of each harvest control rule. The x-axis range in the plot corresponds approximately to the historical range of Canadian-origin Yukon Chinook salmon run sizes.
 
 ```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
 knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
 ```
 \clearpage
 
-(ref:fig-projections) Projected spawners over time from closed-loop simulation models conditioned on the reference (10-year $\alpha$) scenario. Three of six harvest control rules are shown.
+(ref:fig-projections) Projected spawner abundance over time (median and 50th percentiles) by Conservation Unit under three alternative fishery management measures, and the reference (base case) operating model productivity scenario. The last 6 years of observed spawners are shown prior to projections. Red and green dashed lines correspond to proposed lower and upper biological reference points for each CU (20%$S_{MSR}$ and $S_{MSR}$, respectively) based on analyses that explicitly took demographic characteristics into account. 
 
 ```{r fig-projections, fig.cap = "(ref:fig-projections)"}
 knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
@@ -121,7 +121,7 @@ knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
 
 \clearpage
 
-(ref:fig-ER-tradeoff-ref) Performance of a range of fixed exploitation rates in the 'reference' projected fishery scenario. (a) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over 1000 iterations. (b) Mean spawners by CU under a range of exploitation rates, over all years of simulation (2025-2050).
+(ref:fig-ER-tradeoff-ref) Projected consequences of a range of fixed exploitation rates from the closed loop simulations under the 'reference' (base case) operating model scenario. (a) Mean number of Conservation Units that fall above, below, and between their reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over 1000 iterations. (b) Mean spawner abundance and (c) mean harvest, by Conservation Units, over all simulation years (2025-2050).
 
 ```{r fig-ER-tradeoff-ref, fig.cap = "(ref:fig-ER-tradeoff-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png"))
@@ -129,7 +129,7 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules in the 'reference' projected fishery scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of CUs that fall above, below, and between stock reference points (20% $S_{MSR}$ and $S_{MSR}$) in the final simulated year (2050), over replicate simulations.
+(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
@@ -141,7 +141,7 @@ knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"
 
 # TABLES
 
-(ref:tab-cons-unit-smu) Stock management units for Canadian Yukon River Chinook (CK) salmon and their component conservation units, with CU contribution from 1985-2024.
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on genetics is also shown. 
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
@@ -165,7 +165,7 @@ smucutable |>
 ```
 
 \clearpage
-(ref:tab-CU-gsi-annual-summary) Annual proportion of conservation unit contribution, based on raw genetic stock identification assignments. Note that this accounts for GSI assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration).
+(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from Alaska into the Yukon Territory for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
 ```{r tab-CU-gsi-annual-summary, results="asis"}
 
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
@@ -185,7 +185,7 @@ cugsitable |>
 
 \clearpage
 \begin{landscapepage}
-(ref:assess-proponents) Assessment projects which provide in-season fisheries data on Chinook salmon returns to Canadian Yukon River and tributaries. 
+(ref:assess-proponents) Chinook salmon adult assessment projects in the Canadian portion of the Yukon River basin.  
 
 ```{r assess-proponents, results = "asis"}
 
@@ -214,7 +214,7 @@ assess_tbl |>
 
 \clearpage
 
-(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures used in the closed-loop simulations to assess HCR performance.
+(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performacne of alternative fishery management measures.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
 df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
@@ -291,7 +291,7 @@ priors.df |>
 ```
 
 \clearpage
-(ref:pars-ref-pts) Conservation Unit biological reference points. Values are in thousands of fish (except $U_{MSY}$).
+(ref:pars-ref-pts) Estimates of biological reference points by Conservation Unit. Values are in thousands of fish (except $U_{MSY}$).
 
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -354,7 +354,7 @@ bench.pars |>
 
 
 \clearpage
-(ref:pars-sr) Conservation Unit stock-recruit parameters.
+(ref:pars-sr) Estimates of key spawner-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. 
 
 ```{r pars-sr, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -417,7 +417,7 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) Conservation Unit reference points from demographic (egg mass) models. Values are in thousands of fish.
+(ref:demo-ref-pts) Biological reference points based on estimated egg mass-recruitment relationships by Conservation Unit. Values are in thousands of fish, and shown are reference points assuming different age, size and sex composition observed in the first six years of time series ("Early"), last six years of time series ("Recent"), or averaged over all years .
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
@@ -469,7 +469,7 @@ demo.pars |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting the stock.
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Canadian-origin Yukon Chinook salmon.
 
 ```{r tab-factors-summary, results="asis"}
 # spawners
@@ -548,7 +548,7 @@ factors.df |>
 
 
 \clearpage
-(ref:hcrs) Definitions of alternative fishery management measures (Harvest Control Rules) considered.
+(ref:hcrs) Descriptions of the alternative fishery management measures (aka Harvest Control Rules) considered in the closed loop simulations.
 
 ```{r hcrs, results = "asis"}
 HCR.df <- data.frame(HarvestControlRule = c("Moratorium", 
@@ -561,6 +561,8 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                                      "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit \n", 
                                      "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~40%) \n",
                                      "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000] \n"))
+
+colnames(HCR.df)[1] <- "Harvest Control Rule"
 
 HCR.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -575,7 +577,7 @@ HCR.df |>
 
 \clearpage
 \begin{landscapepage}
-(ref:tab-ref-perf-measures) Performance measures from "reference set" simulations, where productivity returns to its 10-year average. Escapement and harvest values are in thousands of fish.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the reference (base case) productivity operating model scenario.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
@@ -600,7 +602,7 @@ ref_case_pms <- ref_case_pms |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
   dplyr::select(c("HCR_name", "Metric", "mean", "value"))
 
-names(ref_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
+names(ref_case_pms) <- c("Harvest Control Rule", "Performance measure", "Mean", "Median (50$^{\\text{th}}$ percentiles)")
 
 ref_case_pms |> 
   dplyr::arrange(factor(`Harvest Control Rule`, levels=HCR_lookup$HCR_name)) |>
@@ -616,7 +618,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Performance measures from "robustness set" simulations, where productivity remains at 2024 levels. Escapement and harvest values are in thousands of fish.
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the robustness (worst case) productivity operating model scenario.
 
 
 ```{r tab-rob-perf-measures, results = "asis"}
@@ -641,7 +643,7 @@ rob_case_pms <- rob_case_pms |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
   dplyr::select(c("HCR_name", "Metric", "mean", "value"))
 
-names(rob_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
+names(rob_case_pms) <- c("Harvest Control Rule", "Performance measure", "Mean", "Median (50$^{\\text{th}}$ percentiles)")
 
 rob_case_pms |> 
   dplyr::arrange(factor(`Harvest Control Rule`, levels=HCR_lookup$HCR_name)) |>
