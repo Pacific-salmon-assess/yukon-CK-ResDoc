@@ -296,32 +296,49 @@ priors.df |>
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
 
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
+
 bench.pars[bench.pars$bench.par != "Umsy", 3:6] <- bench.pars[bench.pars$bench.par != "Umsy", 3:6]/1000
 
 bench.pars <- bench.pars |> 
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(X50., " (", X10., ",", X90., ")")) |>
   dplyr::relocate(value, .after=bench.par) |>
-  dplyr::mutate(Rhat = format(round(Rhat, 4)))
+  dplyr::mutate(Rhat = format(round(Rhat, 4))) |>
+  dplyr::left_join(CU_name_lookup, by="CU") |>
+  dplyr::relocate(CU_pretty, .before=bench.par) |>
+  dplyr::select(-CU)
 
+
+
+bench.pars$bench.par[bench.pars$bench.par == "Sgen"]<- "$S_{\\text{GEN}}$"
+bench.pars$bench.par[bench.pars$bench.par == "Smsr"]<- "$S_{\\text{MSR}}$"
+bench.pars$bench.par[bench.pars$bench.par == "Smsy"]<- "$S_{\\text{MSY}}$"
+bench.pars$bench.par[bench.pars$bench.par == "Umsy"]<- "$U_{\\text{MSY}}$"
 
 names(bench.pars) <- c("Conservation Unit",
-                       "Benchmark",
+                       "Reference Point",
                        "Median (80$^{\\text{th}}$ percentile)",
                        "Mean", "Median",
                        "Quantile 10", "Quantile 90", 
                        "Effective Sample Size ($N_{\\text{eff}}$)",
                        "Chain Mixing ($\\widehat{R}$)")
-bench.pars$Benchmark[bench.pars$Benchmark == "Sgen"]<- "$S_{\\text{GEN}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Smsr"]<- "$S_{\\text{MSR}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Smsy"]<- "$S_{\\text{MSY}}$"
-bench.pars$Benchmark[bench.pars$Benchmark == "Umsy"]<- "$U_{\\text{MSY}}$"
 
 bench.pars |> 
-  dplyr::filter(Benchmark %in% c("$S_{\\text{GEN}}$", "$S_{\\text{MSR}}$", "$S_{\\text{MSY}}$", "$U_{\\text{msy}}$")) |>
+  dplyr::filter(`Reference Point` %in% c("$S_{\\text{GEN}}$", "$S_{\\text{MSR}}$", "$S_{\\text{MSY}}$", "$U_{\\text{msy}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(c(1:3)) |>
-  dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
@@ -342,14 +359,28 @@ bench.pars |>
 ```{r pars-sr, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
 
-bench.pars$CU <- gsub(".", " ", bench.pars$CU, fixed=TRUE)
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
 bench.pars$bench.par <- gsub(".", "", bench.pars$bench.par, fixed=TRUE)
 
 bench.pars <- bench.pars |> 
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(X50., " (", X10., ",", X90., ")")) |>
   dplyr::relocate(value, .after=bench.par) |>
-  dplyr::mutate(Rhat = format(round(Rhat, 4)))
+  dplyr::mutate(Rhat = format(round(Rhat, 4))) |>
+  dplyr::left_join(CU_name_lookup, by="CU") |>
+  dplyr::relocate(CU_pretty, .before=bench.par) |>
+  dplyr::select(-CU)
+
   
 
 names(bench.pars) <- c("Conservation Unit",
@@ -386,32 +417,45 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) conservation Unit reference points from demographic (egg mass) models. Values are in thousands of fish.
+(ref:demo-ref-pts) Conservation Unit reference points from demographic (egg mass) models. Values are in thousands of fish.
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
 
 demo.pars <- demo.pars |> 
   dplyr::mutate(period = dplyr::case_when(period == "avg" ~ "Average (all years)",
                                           period == "early" ~ "Early (1985-1990)",
                                           period == "recent" ~ "Recent (2019-2024)")) |>
   mutate_at(4:6, function(x){round(x/1000, 2)}) |>
-  dplyr::mutate(`Median (80$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")"))
+  dplyr::mutate(`Median (80$^{\\text{th}}$ percentile)` = paste0(median, " (", lower, ",", upper, ")")) |>
+  dplyr::left_join(CU_name_lookup, by="CU") |>
+  dplyr::relocate(CU_pretty, .before=period) |>
+  dplyr::select(-CU)
+
+demo.pars$par[demo.pars$par == "Sgen"]<- "$S_{\\text{GEN}}$"
+demo.pars$par[demo.pars$par == "Smsr"]<- "$S_{\\text{MSR}}$"
+demo.pars$par[demo.pars$par == "Smsy"]<- "$S_{\\text{MSY}}$"
 
 names(demo.pars)[1:6] <- c("Conservation Unit",
                            "Period",
-                           "Benchmark",
+                           "Reference Point",
                            "Median",
                            "Lower Quantile", "Upper Quantile")
-demo.pars$Benchmark[demo.pars$Benchmark == "Sgen"]<- "$S_{\\text{GEN}}$"
-demo.pars$Benchmark[demo.pars$Benchmark == "Smsr"]<- "$S_{\\text{MSR}}$"
-demo.pars$Benchmark[demo.pars$Benchmark == "Smsy"]<- "$S_{\\text{MSY}}$"
-
 demo.pars |> 
   dplyr::select(c(1:3,7)) |>
-  dplyr::relocate(Benchmark, .after=`Conservation Unit`) |>
+  dplyr::relocate(`Reference Point`, .after=`Conservation Unit`) |>
   dplyr::arrange(`Conservation Unit`) |>
-  dplyr::mutate_at(.vars=1:2, function(x){gsub("\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
@@ -493,7 +537,8 @@ factors.df |>
   csasdown::csas_table(format = "latex",
                        escape = FALSE,
                      caption = "(ref:tab-factors-summary)", 
-                     repeat_header = TRUE) |>
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "2cm")|>
     kableExtra::column_spec(2, width = "3cm")|>
     kableExtra::column_spec(3, width = "6.5cm")|>
@@ -510,12 +555,12 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                                                "IMEG", 
                                                "Moratorium w/ harvest cap", 
                                                "IMEG w/ harvest cap", 
-                                               "Precationary Approach alternative"), 
-                        Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish", 
-                                     "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal", 
-                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit", 
-                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~40%)",
-                                     "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000]"))
+                                               "Precationary Approach (PA) alternative"), 
+                        Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish \n", 
+                                     "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal \n", 
+                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit \n", 
+                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~40%) \n",
+                                     "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point [19,000] with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point [95,000] \n"))
 
 HCR.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -533,28 +578,32 @@ HCR.df |>
 (ref:tab-ref-perf-measures) Performance measures from "reference set" simulations, where productivity returns to its 10-year average. Escapement and harvest values are in thousands of fish.
 
 ```{r tab-ref-perf-measures, results = "asis"}
-
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
   tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
 perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
+
+HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
+                                 "IMEG.cap", "PA.alternative"),
+                         HCR_name = c("No fishing", "Moratorium", "IMEG", "Moratorium cap",
+                                        "IMEG cap", "PA Alternative"))
 fix_hcr <- unique(ref_case_pms$HCR)[grepl("^fixed.", unique(ref_case_pms$HCR))]
 
 ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6] <- ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 ref_case_pms <- ref_case_pms |> 
-  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |>
-  dplyr::select(-metric) |>
-  dplyr::relocate(Metric, .after="HCR") |>
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
+  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |> # join metric names
+  dplyr::left_join(HCR_lookup, by="HCR") |>
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
-  dplyr::select(c(1:2,6:7))
+  dplyr::select(c("HCR_name", "Metric", "mean", "value"))
 
 names(ref_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
 
 ref_case_pms |> 
+  dplyr::arrange(factor(`Harvest Control Rule`, levels=HCR_lookup$HCR_name)) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
@@ -576,22 +625,26 @@ rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.c
   tidyr::pivot_wider(values_from="value", names_from="prob")
 perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
+HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
+                                 "IMEG.cap", "PA.alternative"),
+                         HCR_name = c("No fishing", "Moratorium", "IMEG", "Moratorium cap",
+                                        "IMEG cap", "PA Alternative"))
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 
 rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 rob_case_pms <- rob_case_pms |> 
-  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |>
-  dplyr::select(-metric) |>
-  dplyr::relocate(Metric, .after="HCR") |>
-  dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
+ dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
+  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |> # join metric names
+  dplyr::left_join(HCR_lookup, by="HCR") |>
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
-  dplyr::select(c(1:2,6:7))
+  dplyr::select(c("HCR_name", "Metric", "mean", "value"))
 
 names(rob_case_pms) <- c("Harvest Control Rule", "Metric", "Mean", "Median (50$^{\\text{th}}$ percentile)")
 
 rob_case_pms |> 
+  dplyr::arrange(factor(`Harvest Control Rule`, levels=HCR_lookup$HCR_name)) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
