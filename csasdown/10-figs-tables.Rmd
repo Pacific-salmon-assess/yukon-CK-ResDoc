@@ -83,13 +83,13 @@ knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
 
-(ref:fig-enhance-proj) Total Chinook releases from Whitehorse Rapids Fish Hatchery, McIntyre Creek Fish Incubation Facility, North Klondike River Hatchery, Mayo River Hatchery and various school program by release year and Conservation Unit (CU) of release. Note: Location of brood and release location, by CU, are the same in all cases except for 250,529 fry from the Upper Yukon raised at the McIntyre Cr facility and released in the Tatchun River (Middle Yukon R. and tribs) between 2006-2011.
+(ref:fig-enhance-proj) Total Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 250,529 fry from the Upper Yukon raised at the McIntyre Cr facility and released in the Tatchun River (Middle Yukon River and tributaries Conservation Unit) between 2006-2011.
 
 ```{r fig-enhance-proj, fig.cap = "(ref:fig-enhance-proj)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 ```
 
-(ref:fig-wh-fishway) Chinook returns to Whitehorse Rapids Fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and PBT results of broodstock, when available. PNI average (2019-2024) is 0.72.
+(ref:fig-wh-fishway) Chinook returns to Whitehorse Rapids fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and Parentage Based Tagging (PBT) results of broodstock, when available. 
 
 ```{r fig-wh-fishway, fig.cap = "(ref:fig-wh-fishway)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
