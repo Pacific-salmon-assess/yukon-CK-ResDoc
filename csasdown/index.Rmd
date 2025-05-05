@@ -18,8 +18,8 @@ address: |
      Sidney, British Columbia, V8L 5T5, Canada\
   \smallskip
   ^2^Yukon Rivers and Transboundary Area\
-     Fisheries and Oceans Canada, 419 Range Road\
-     Whitehorse, Yukon Territory, Y0A 0A2, Canada\
+     Fisheries and Oceans Canada, 101-419 Range Road\
+     Whitehorse, Yukon, Y1A 3V1, Canada\
   \smallskip
   ^3^Regional Headquarters (Pacific)\
      Fisheries and Oceans Canada, 200-401 Burrard Street\
