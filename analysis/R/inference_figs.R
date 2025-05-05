@@ -1035,17 +1035,17 @@ wh.hatch <- wh.hatch %>% mutate(Hatchery = estimate*hatch_contrib,
 ggplot(wh.hatch, aes(x=year)) + 
   geom_bar(aes(y=Returns, fill=Origin), stat="identity") +
   scale_y_continuous(sec.axis = sec_axis(~./4000, name="Proportion")) +
-  geom_line(aes(y=hatch_contrib*4000, col="\n Proportion hatchery-origin \n spawners"), linewidth=0.6, alpha=0.6) +
-  geom_line(aes(y=pni*4000, col="\n Proportionate natural \n influence (PNI)"), linewidth=0.6, alpha=0.6) +
-  scale_color_manual(name = "", values=c("\n Proportion hatchery-origin \n spawners" = "darkblue", "\n Proportionate natural \n influence (PNI)" = "darkred"), guide ="legend") +
+  geom_line(aes(y=hatch_contrib*4000, col="Proportion hatchery-origin \nspawners"), linewidth=0.6, alpha=0.6) +
+  geom_line(aes(y=pni*4000, col="Proportionate natural \ninfluence (PNI)"), linewidth=0.6, alpha=0.6) +
+  scale_color_manual(name = "", values=c("Proportion hatchery-origin \nspawners" = "darkblue", "Proportionate natural \ninfluence (PNI)" = "darkred"), guide ="legend") +
   scale_fill_manual(name = "Returns", values=c("Hatchery" = "pink2", "Wild" = "green4")) +
   theme_sleek() + labs(x="Year" ) +
   theme(axis.text.y.right = element_text(margin = margin(r=9)),
         legend.position = c(0.27,0.7),
-        legend.text = element_text(size=7),
-        legend.title = element_text(size=7),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=11),
         axis.title = element_text(size=10),
-        legend.spacing.y = unit(0.2, "cm"))
+        legend.spacing.y = unit(0, "pt"))
 
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
 ggsave(here("csasdown/figure/hatch_prop.PNG"), width=700*2, height=400*2, dpi=240,
@@ -1070,7 +1070,8 @@ TVA$CU_f <- factor(TVA$CU, levels = CU_order)
 ggplot(TVA
        |> filter(brood_year < 2018), aes(col = model.type)) +
   geom_line(aes(x = brood_year , y = scale_prod), lwd = 1) +
-  facet_wrap(~CU_f, scales = "free_y",nrow = 3) +
+  facet_wrap(~CU_f, scales = "free_y",nrow = 3, 
+             labeller=CU_labeller) +
   theme_sleek() +
   labs(y = "Scaled productivity index", x = "Brood year") +
   scale_color_viridis_d(end=0.9) +
@@ -1079,9 +1080,10 @@ ggplot(TVA
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.key.size = unit(0.35, "cm"),
-        legend.title = element_text(size=10),
-        legend.text = element_text(size=8.5, angle=0, hjust=0),
-        strip.text = element_text(size=10))
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=11, angle=0, hjust=0),
+        strip.text = element_text(size=12),
+        axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
 my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=6.60, width=7.55)
