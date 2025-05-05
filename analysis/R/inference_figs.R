@@ -573,6 +573,11 @@ AR.pp.rob <- AR1.par.posts |>
 
 alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob)
 
+alpha.stats <- alpha.posts |>
+  group_by(CU, scenario) |>
+  summarise(mean.prod = mean(value)) |>
+  filter(scenario != "stationary")
+
 alpha.posts |> filter(scenario != "stationary") |>
   mutate(CU_f = factor(CU, levels=CU_order)) |>
   mutate(scenario = str_to_sentence(scenario)) |>
@@ -948,13 +953,13 @@ x_trunc <- x[x>=170 & x <=270]
 y_dpt <- rpt$rho_dst
 y_dp  <- apply( y_dpt, 1:2, mean )
 
-png( file=here("analysis/plots/CU-run-timing.PNG"), width= 9, height = 5.562,units="in", res =700 )
+png( file=here("csasdown/figure/CU-run-timing.PNG"), width= 9, height = 5.562,units="in", res =700 )
 
 par(mar=c(5,15,1,1),oma=c(0,0,0,0),
     col.lab = "grey40")
 
 plot( x=range(x_trunc), c(1,rpt$nS+1.5), type="n", axes=FALSE,
-      xlab="Ordinal date", ylab="" )
+      xlab="Day of year", ylab="" )
 axis( side=1 , col="grey40", col.axis="grey40") 
 axis( side=2, at=rpt$nS:1, labels=CU_name_lookup$CU_pretty[match(rpt$stocks, CU_name_lookup$CU_f)], 
       las=1, cex.axis=1, col="grey40", col.axis="grey40" ) 

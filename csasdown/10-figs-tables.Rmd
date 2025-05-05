@@ -1,83 +1,83 @@
 # FIGURES
 
-(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and major and minor spawning locations as cataloged in @brown2017.
+(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
 ```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
-(ref:fig-map-gsi) Genetic sampling locations and number of samples per site in the Canadian portion of the Yukon River watershed.
+(ref:fig-map-gsi) Locations of Chinook salmon genetic baseline samples in the Canadian portion of the Yukon River watershed. Sites are scaled to the number of samples collected to date.
 ```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Sites of major assessment projects for adult Canadian-origin Yukon Chinook that may inform in-season management decisions. A full list of assessment projects is in Table \@ref(tab:assess-proponents).
+(ref:fig-map-assess) Sites of major assessment projects for adult Chinook salmon Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
 
-(ref:fig-trib-spawn) Spawner abundances over time by tributary assessment project.
+(ref:fig-trib-spawn) Estimates of spawner abundances over time by tributary assessment project. For more details on each assessment project see Table \@ref(tab:assess-proponents).
 
 ```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
-(ref:fig-trib-vs-CU-spawn) Tributary assessment project vs. reconstructed spawner abundance over time.
+(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents)
 
 ```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```
 
-(ref:fig-run-timing) Run-timing, at border, by CU.
+(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from Alaska into the Yukon Territory for each Conservation Unit. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. 
 
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
 \clearpage
 
-(ref:fig-CU-spawn) Reconstructed spawner abundance over time by CU.
+(ref:fig-CU-spawn) Reconstructed spawner abundance over time by Conservation Unit (median and 95% confidence intervals).
 
 ```{r fig-CU-spawn, fig.cap = "(ref:fig-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 ```
 
-(ref:fig-CU-SR) Spawner recruitment relationships by CU.
+(ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equals recruits is shown in grey. 
 
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
-(ref:fig-prod-trends) Trends in intrinsic productivity (ricker $\alpha$ parameter; maximum recruits per spawner) over time by CU as predicted by time-varying productivity models.
+(ref:fig-prod-trends) Estimated average intrinsic productivity (ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit. The dashed grey line is replacement.
 
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Age, sex, and length trends in Canadian-origin Yukon River Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners ! DEFINE MEFL?!, c) proportion of returning spawners in each age class over time, d) Average reproductive output of female spawners (eggs per female spawner).
+(ref:fig-asl) Age, sex, length, and reproductive output trends in Canadian-origin Yukon River Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner).
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```
 
-(ref:fig-CU-EMR) Predicted egg mass-recruitment relationships by CU (black lines) with uncertainty (80% credible intervals; shaded areas). Points are data inputs to egg mass models 
+(ref:fig-CU-EMR) Relationship between total egg mass of spawning females and recruitment by Conservation Units. Individual egg mass-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between egg mass and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equals recruits is shown in grey.
 
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-em-vs-spw-sr-TVA) Scaled time trends in recruits-per-reproductive unit across alternative SR models.
+(ref:fig-em-vs-spw-sr-TVA) Scaled trends in intrinsic productivity index for two alternative recruitment models.
 
 ```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook WSP rapid statuses for years with applicable data. Each row summarizes the rapid statuses available for each CU in this SMU.
+(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone is not shown. 
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 ```
 
-(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River SMU. Thick lines are medians and shaded areas indicate 95% credible intervals.
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River Stock Management Unit. Thick lines are medians and shaded areas indicate 95% credible intervals.
 
 ```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
@@ -95,7 +95,7 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 ```
 
-(ref:fig-schematic) Illustration of steps in the forward simulation highlighting alternate scenarios in population dynamics and harvest control rules.
+(ref:fig-schematic) Illustration of steps in the closed loop simulations that were used to quantify future biological and fishery consequences of current and alternative harvest management measures.
 
 ```{r fig-schematic, fig.cap = "(ref:fig-schematic)"}
 knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
