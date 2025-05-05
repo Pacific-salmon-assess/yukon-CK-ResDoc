@@ -641,7 +641,7 @@ demo.bench$CU_f <- factor(demo.bench$CU, levels = CU_order)
 
 # assign HCRs to groups for subsetting harvest scenarios / HCRs
 ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
-HCRs <- c("no.fishing", "IMEG", "IMEG.cap", "moratorium", "moratorium.cap", "PA.alternative", paste0("fixed.ER.", ER_seq)) 
+HCRs <- c("no.fishing", "moratorium", "IMEG", "moratorium.cap", "IMEG.cap", "PA.alternative", paste0("fixed.ER.", ER_seq)) 
 HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
                  moratorium = c("no.fishing", "moratorium", "moratorium.cap", "PA.alternative"),
                  IMEG = c("no.fishing", 
@@ -651,8 +651,8 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
 # colours 
 HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
 names(HCR_cols) <- c("PA Alternative", "Fixed ER 60", "No fishing", "Moratorium", "Moratorium cap", "IMEG", "IMEG cap")
-HCR_lookup <- data.frame(HCR=c(HCRs[1:6], "fixed.ER.60"), HCR_name = names(HCR_cols)[c(3,6:7,4:5,1:2)])
-
+HCR_lookup <- data.frame(HCR=c(HCRs[1:6], "fixed.ER.60"), HCR_name = names(HCR_cols)[c(3:4,6,5,7,1:2)])
+# CHECK HCR_lookup to make sure names match.
 
 ## Spawners projection ----
                   
@@ -723,7 +723,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 ## -- performance metrics and status multipanel (all HCR excl. fixed ER, all PMs) ---- 
 #metrics
 perf.metrics <- perf.metrics |> left_join(HCR_lookup, by="HCR") |>
-  mutate(HCR_name = factor(HCR_name, levels=unique(HCR_name)[c(8,1:2,6:7,3:4)]))
+  mutate(HCR_name = factor(HCR_name, levels=HCR_lookup$HCR_name))
 
 pm_plot <- perf.metrics |> 
   filter(!(HCR %in% HCR_grps[["fixed"]])) |> 
@@ -746,7 +746,7 @@ pm_plot <- perf.metrics |>
   theme(legend.position = c(0.8,0.15), 
         axis.text.x = element_blank(), 
         legend.title = element_blank()) +
-  guides(fill=guide_legend(ncol=2)) +
+  guides(fill=guide_legend(ncol=2, byrow=T)) +
   labs(x="", y="") 
 
 # status
