@@ -47,7 +47,7 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
-(ref:fig-prod-trends) Estimated average intrinsic productivity (ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit. The dashed grey line is replacement.
+(ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit. The dashed grey line is replacement.
 
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
@@ -577,7 +577,7 @@ HCR.df |>
 
 \clearpage
 \begin{landscapepage}
-(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the reference (base case) productivity operating model scenario.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the reference (base case) productivity operating model scenario. LSR and USR refer to lower and upper reference points, respectively.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
@@ -618,7 +618,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the robustness (worst case) productivity operating model scenario.
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the robustness (worst case) productivity operating model scenario.LSR and USR refer to lower and upper reference points, respectively.
 
 
 ```{r tab-rob-perf-measures, results = "asis"}
