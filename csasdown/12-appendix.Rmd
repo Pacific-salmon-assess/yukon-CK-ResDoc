@@ -21,7 +21,7 @@ knitr::include_graphics(here::here("csasdown/figure/gsi-run-samples.png"))
 
 \clearpage
 
-(ref:tab-gsi-tribs) Canadian-origin Yukon Chinook salmon populations considered the primary spawning tributaries or location where samples were collected for the genetic baseline (Tributary name) total number of baseline genetic samples (Msat(N), SNP(N)), corresponding Conservation Units (CU), CU codes, and probability of correctly assigning a genetic sample for a tributary (collection) back to its known tributary or CU based on simulation analysis. 
+(ref:tab-gsi-tribs) Canadian-origin Yukon Chinook salmon populations considered the primary spawning tributaries or location where samples were collected for the genetic baseline (Tributary name) total number of baseline genetic samples (Msat(n), SNP(n)), corresponding Conservation Units (CU), CU codes, and probability of correctly assigning a genetic sample for a tributary (collection) back to its known tributary or CU based on simulation analysis. 
 
 ```{r tab-gsi-tribs, results = "asis"}
 
@@ -36,7 +36,7 @@ gsi_tribs <- gsi_tribs |>
               dplyr::mutate(Cucode = gsub("-", " ", Cucode))
 
 
-names(gsi_tribs) <- c("Tributary name (baseline sample size)",	"Msat(N)",	"SNP(N)",	"CU",	"Conservation Unit code$^{2}$",	"Probability (Msat)",	"Probability to CU (SNP)")
+names(gsi_tribs) <- c("Tributary name (baseline sample size)",	"Msat(n)",	"SNP(n)",	"CU",	"Conservation Unit code$^{2}$",	"Probability (Msat)",	"Probability to CU (SNP)")
 
 
 gsi_tribs |>
