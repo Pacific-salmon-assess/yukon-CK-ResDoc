@@ -151,13 +151,15 @@ names(smucutable)[2] <- "Conservation Unit ID"
 
 
 smucutable |> 
+  mutate(`Stock Management Unit` = str_to_title(`Stock Management Unit`)) |>
   dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   csasdown::csas_table(format = "latex",
                        escape = FALSE,
                      caption = "(ref:tab-cons-unit-smu)", 
-                     repeat_header = TRUE) |>
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "3cm")|>
     kableExtra::column_spec(2, width = "2cm")|>
     kableExtra::column_spec(3, width = "4cm")|>
@@ -165,18 +167,23 @@ smucutable |>
 ```
 
 \clearpage
+\begin{landscapepage}
 (ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from Alaska into the Yukon Territory for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
 ```{r tab-CU-gsi-annual-summary, results="asis"}
 
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
-names(cugsitable) <- gsub(".", " ", names(cugsitable), fixed=T)
+names(cugsitable)[2:ncol(cugsitable)] <- c("Northern Yukon R. and tribs.", 
+                                            "White and tribs.", "Stewart",  
+                                            "Middle Yukon R. and tribs.","Pelly",
+                                            "Nordenskiold",
+                                            "Upper Yukon R.","Yukon R. Teslin Headwaters")
 
 
 cugsitable |> 
   dplyr::mutate_all(function(x){round(x, 3)}) |>
   csasdown::csas_table(format = "latex",
                        escape = FALSE,
-                       caption = "(ref:tab-CU-gsi-annual-summary)", 
+                       caption = "(ref:tab-CU-gsi-annual-summary)",
                        repeat_header = TRUE) |>
   kableExtra::column_spec(-1, width = "1.5cm")
 
@@ -184,12 +191,11 @@ cugsitable |>
 ```
 
 \clearpage
-\begin{landscapepage}
 (ref:assess-proponents) Chinook salmon adult assessment projects in the Canadian portion of the Yukon River basin.  
 
 ```{r assess-proponents, results = "asis"}
 
-assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-propnents.csv")) |> select(-Contemporary.initiation)
+assess_tbl <- read.csv(file=here::here("csasdown/data/trib-assessment-proponents.csv")) |> select(-Contemporary.initiation)
 names(assess_tbl) <- gsub(".", " ", names(assess_tbl), fixed=TRUE)
 names(assess_tbl)[4] <- "Conservation Unit"
 
@@ -200,7 +206,8 @@ assess_tbl |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:assess-proponents)",
                        repeat_header = TRUE,
-                       align = "llc") |>
+                       align = "llc",
+                       linesep = "\\addlinespace") |>
   kableExtra::column_spec(1, width = "3cm") |>
   kableExtra::column_spec(2, width = "3cm") |>
   kableExtra::column_spec(3, width = "7cm") |>
