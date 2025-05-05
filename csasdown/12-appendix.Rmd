@@ -320,7 +320,7 @@ We assessed chain convergence visually via trace plots and by ensuring that $\ha
 
 Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
-(ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters.Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
+(ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters. Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
 ```{r tab-priors, results = "asis"}
 priors.df <- data.frame(Parameter = c("$ln(\\alpha)$", 
                                       "$\\beta$", 
@@ -441,29 +441,23 @@ See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID ST
 
 # COMPUTING ENVIRONMENT {#app:fifth-appendix}  
 
-This document aims to be transparent and reproducible. 
-All data and code to reproduce the analysis in the report, and generate it, is available in [this Zenodo hosted](https://doi.org/10.5281/zenodo.13328248) [GitHub repository](https://github.com/Pacific-salmon-assess/FR-PK-ResDoc/tree/v1.0?tab=readme-ov-file)  
-The document describing model diagnostics and some additional figures can be found within the repository at `Supplement-model-check.html`. 
-
-
-To reproduce this report, clone the repository from GitHub, make sure you have the required software installed, run `fit-sr-stan.R` to fit the models, then `index.Rmd` to create the document. 
-
-Look at documentation on the `README` on the main page of the repository for more details.  
-
+This document aims to be transparent and reproducible. If you made it this far in the document and are still paying attention you deserve a gold star. All data and code to reproduce the analysis in the report, and generate it, is available in [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main?tab=readme-ov-file#yukon-ck-resdoc).   
+A document describing model diagnostics and some additional figures can be found within the repository at [`Supplement-model-check.html`](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). 
 R packages (and dependencies therein) necessary to recreate this analysis are: 
 ```{r env}
 suppressWarnings({suppressMessages({
 library(here)
 library(tidyverse)
-library(rosettafish)
+library(ggpubr)
+library(ggcorrplot)
 library(csasdown)
 library(kableExtra)
 library(rstan)
 library(gsl)
 library(cowplot)
-library(scales)
+library(viridis)
 })})
-pkgs <- sort(c("here", "tidyverse", "rosettafish", "csasdown", "kableExtra", "rstan", "gsl", "cowplot", "scales"))
+pkgs <- sort(c("here", "tidyverse", "csasdown", "kableExtra", "rstan", "gsl", "cowplot", "viridis","ggpubr","ggcorrplot"))
 
 pkg_table <- devtools::session_info()$packages %>%
   dplyr::filter(package %in% pkgs) %>%

@@ -40,23 +40,22 @@ names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 ```
 
-This document describes fits from the state-space Ricker spawner-recruit models used fit in the Research Document (**link once published online**):
+This document provides diagnostic plots for several spawner-recruit models that were used to characterize Canadian-origin Yukon Chinook salmon population dynamics at the Conservation Unit scale as described in:
 
-**citation**
+> Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. In review. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 92 p.
 
-Four state-space spawner-recruit models were fit in this paper that serve different purposes. First, a Ricker model with autoregressive (AR1) recruitment residuals was fit to estimate biological benchmarks ($S_{gen}$, $S_{MSY}$, and $U_{MSY}$). Second a model with time-varying productivity (Ricker $\alpha$ parameter) was fit in order to condition the biological submodel on recent population dynamics in the closed-loop forward simulation. We then re-fit both models with total egg mass as a measure of year-specific reproductive metric instead of total spawner abundance.
+Full details are provided in the document above but briefly, four state-space spawner-recruit models were fit: spawer-recruitment models with autoregressive (AR1) recruitment residuals, (2) spawner-recruitment models with time varying intrinsic productivity, (3) egg mass-recruitment models with AR1 recruitment residuals, and (4) egg mass-recruitment models with time varying intrinsic productivity. The models 
 
-These models were fit to each of the 9 CUs one by one, yielding 18 models to diagnose total.
-
-Data and code to reproduce the analysis and report is available in this [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main), where you can see the [R code](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_fit.R) to run the models, and the [models](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan) themselves.
+These models were fit to each of the nine Conservation Units for which we had data.
 
 # Diagnostics
 
-We fit the spawner-recruitment model in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. We sampled from 4 chains with **4,000** iterations each and discarded the first half as warm-up. We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; @vehtari2021rank) was less than 1.01 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.
+We fit the spawner-recruitment model in a Bayesian estimation framework with Stan (Carpenter
+et al. 2017; Stan Development Team 2023), which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo algorithm (Hoffman and Gelman 2014)) for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. The models can be found [here](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan).We sampled from 4 chains with 4,000 iterations each and discarded the first half as warm-up. We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; Vehtari et al. 2021) was less than 1.01 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.
 
 ## Trace plots
 
-These should be clearly mixed, with no single distribution deviating from others (left column), and no chains exploring a strange space for a few iterations (right column).
+These should be clearly mixed, with no single distribution deviating substantially from others (left column), and no chains exploring a strange space for a few iterations (right column).
 
 ```{r diagnostics, results = 'asis'}
 # describe diagnostics in loop -----------------------------------------------------------
@@ -209,7 +208,7 @@ for(i in unique(sp_har$CU)){
 
 ## ESS and $\hat{R}$
 
-We hope minimum effective sample sizes are greater than ***2000*** and that $\hat{R}$ are less than 1.05.
+We aimed for minimum effective sample sizes that are greater than ***2000*** and $\hat{R}$ values less than 1.05.
 
 For the AR1 model:
 
