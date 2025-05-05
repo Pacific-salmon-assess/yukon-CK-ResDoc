@@ -425,7 +425,7 @@ demo.pars |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Canadian-origin Yukon Chinook salmon..
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Canadian-origin Yukon Chinook salmon.
 
 ```{r tab-factors-summary, results="asis"}
 # spawners
