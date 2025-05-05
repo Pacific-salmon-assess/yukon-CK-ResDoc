@@ -353,11 +353,12 @@ a.yrs.all |>
   theme(legend.position = c(0.75,0.75),
         plot.margin = margin(60,60,10,60),
         legend.text = element_text(size=7),
-        axis.title = element_text(size=8))
+        axis.title = element_text(size=10), 
+        legend.spacing.y = unit(0.01, "cm"))
 
 my.ggsave(here("analysis/plots/changing_productivity.PNG"))
-ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 550*2, 
-       width = 700*2, units="px", dpi=200)
+ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 500*2, 
+       width = 650*2, units="px", dpi=200)
 
 
 # TV SR fits ---- 
