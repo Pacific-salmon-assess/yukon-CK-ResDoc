@@ -59,7 +59,7 @@ knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```
 
-(ref:fig-CU-EMR) Relationship between total egg mass of spawning females and recruitment by Conservation Units. Individual egg mass-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between egg mass and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equals recruits is shown in grey.
+(ref:fig-CU-EMR) Relationship between total egg mass of spawning females and recruitment by Conservation Units. Individual egg mass-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between egg mass and recruitment along with 80% credible intervals in the shaded region.
 
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
