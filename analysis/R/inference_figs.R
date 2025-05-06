@@ -1044,10 +1044,10 @@ ggplot(wh.hatch, aes(x=year)) +
   theme_sleek() + labs(x="Year" ) +
   theme(axis.text.y.right = element_text(margin = margin(r=9)),
         legend.position = c(0.27,0.7),
-        legend.text = element_text(size=10),
-        legend.title = element_text(size=11),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=10),
         axis.title = element_text(size=10),
-        legend.spacing.y = unit(0, "pt"))
+        legend.spacing.y = unit(0.1, "pt"))
 
 my.ggsave(here("analysis/plots/hatch_prop.PNG"))
 ggsave(here("csasdown/figure/hatch_prop.PNG"), width=700*2, height=400*2, dpi=240,
