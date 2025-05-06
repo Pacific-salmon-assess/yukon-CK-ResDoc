@@ -38,6 +38,10 @@ AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_
                    readRDS)
 names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
+TVA.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA_egg_mass"),
+                              full.names = T), 
+                   readRDS)
+names(TVA.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 ```
 
 This document provides diagnostic plots for several spawner-recruit models that were used to characterize Canadian-origin Yukon Chinook salmon population dynamics at the Conservation Unit scale as described in:
@@ -65,6 +69,8 @@ min_ESS_TVA <- NULL
 max_Rhat_TVA <- NULL
 min_ESS_AR1_eggs <- NULL
 max_Rhat_AR1_eggs <- NULL
+min_ESS_TVA_eggs <- NULL
+max_Rhat_TVA_eggs <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
@@ -202,7 +208,56 @@ for(i in unique(sp_har$CU)){
     as.ggplot() +
     labs(title = "AR1 egg mass age probs")
     print(p)    
-  cat('\n')
+  
+#diagnostics associated w/ TVA egg mass model---
+sub_TVA_eggs_summary <- as.data.frame(rstan::summary(TVA.eggs.fits[[i]])$summary)
+
+sub_TVA_eggs_pars <- rstan::extract(TVA.eggs.fits[[i]])
+
+min_ESS_TVA_eggs <- rbind(min_ESS_TVA_eggs, data.frame(CU=i, 
+                                                       ESS=round(min(sub_TVA_eggs_summary$n_eff, na.rm=T))))
+
+max_Rhat_TVA_eggs <- rbind(max_Rhat_TVA_eggs, data.frame(CU=i, 
+                                                         Rhat=round(max(sub_TVA_eggs_summary$Rhat, na.rm=T), 3)))
+
+R <- (sub_dat$harv+sub_dat$spwn)
+R_rep <- sub_TVA_eggs_pars$H_rep[1:500,] + sub_TVA_eggs_pars$S_rep[1:500,]
+
+p <- ppc_dens_overlay(R, R_rep) +
+  xlim(NA, quantile(R_rep, 0.99)) +
+  theme(legend.position = "none") +
+  labs(y = "density", x = "y_est", title = "TVA egg mass posterior predictive check")
+print(p)
+
+p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("ln_alpha0", "beta", "F_rw", "mean_ln_R0"), 
+                combo = c("dens_overlay", "trace"),
+                gg_theme = legend_none()) |> 
+  as.ggplot() +
+  labs(title =  "TV egg mass leading parameters")
+print(p)
+
+p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("sigma_alpha", "sigma_R", "sigma_tot"), 
+                combo = c("dens_overlay", "trace"),
+                gg_theme = legend_none()) |> 
+  as.ggplot() +
+  labs(title =  "TV egg mass variance components")
+print(p)
+
+p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("D_scale", "D_sum"),
+                combo = c("dens_overlay", "trace"),
+                gg_theme = legend_none())|> 
+  as.ggplot() +
+  labs(title = "TV egg mass age pars")
+print(p)
+
+p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("Dir_alpha[1]", "Dir_alpha[2]", 
+                                        "Dir_alpha[3]", "Dir_alpha[4]"),
+                combo = c("dens_overlay", "trace"),
+                gg_theme = legend_none())|> 
+  as.ggplot() +
+  labs(title = "TV egg mass age probs")
+print(p)
+      cat('\n')
 }
 ```
 
@@ -224,13 +279,17 @@ TVA.diag <- left_join(min_ESS_TVA, max_Rhat_TVA, by = "CU")
 kable(TVA.diag)
 ```
 
-and the egg mass AR1 model:
+the egg mass AR1 model:
 
 ```{r AR1egg-diag}
 AR1egg.diag <- left_join(min_ESS_AR1_eggs, max_Rhat_AR1_eggs, by = "CU")
 kable(AR1egg.diag)
 ```
 
-With the time varying model, we explored various parametrizations and options to include [semi-informative beta priors](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan/semi_inform) that did not improve diagnostics. We imagine this model is challenging to fit due to the extreme, pronounced decline in productivity, and the correlation between productivity and the stationary capacity prior (i.e., Ricker $\beta$).
+and the time varying egg mass AR1 model:
 
-\*\*add a head(max(Rhat)) type thing to show what model\*parms had problems?\*\*
+```{r TVAegg-diag}
+AR1egg.diag <- left_join(min_ESS_TVA_eggs, max_Rhat_TVA_eggs, by = "CU")
+kable(AR1egg.diag)
+```
+
