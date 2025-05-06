@@ -829,13 +829,13 @@ ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")), height=60
 ## visualize HCRs ----
 HCR_order <- c("Moratorium", "IMEG", "Moratorium cap", "IMEG cap", "PA Alternative")
 out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
-out$HCR_names <- rep(names(HCR_cols)[c(6:7,4:5,1)], each=400)
-out$HCR_names_f <- factor(out$HCR_names, levels = HCR_order)
+out <- left_join(out, HCR_lookup, by="HCR")
+out$HCR_name <- factor(out$HCR_name, levels=HCR_order)
 
-ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_names), linewidth=0.75) +
+ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_name), linewidth=0.75) +
   scale_colour_manual(values=HCR_cols, guide="none") +
   scale_fill_manual(values="grey70", guide="legend") +
-  facet_wrap(~HCR_names) + 
+  facet_wrap(~HCR_name) + 
   labs(x="Run Size (000s)", y="Harvest Rate (%)") +
   theme_minimal() + theme(strip.text = element_text(size=10),
                           axis.title = element_text(size=10)) +
