@@ -11,7 +11,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Sites of major assessment projects for adult Chinook salmon Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
+(ref:fig-map-assess) Major assessment projects for adult Chinook salmon Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
@@ -77,7 +77,7 @@ knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 ```
 
-(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River Stock Management Unit. Thick lines are medians and shaded areas indicate 95% credible intervals.
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River Stock Management Unit. Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
 
 ```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
