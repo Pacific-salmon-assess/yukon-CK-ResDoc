@@ -228,46 +228,8 @@ assess_tbl |>
 \end{landscapepage}
 
 
-\clearpage
-
-(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performacne of alternative fishery management measures.
-
-```{r tab-perf-metrics-descriptions, results = "asis"}
-df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
-                            "Number of CUs above their upper biological reference point", 
-                            "Average annual aggregrate spawning escapement", 
-                            "Average annual harvest", 
-                            "Average annual harvest rate", 
-                            "Proportion of years with no harvest", 
-                            "Proportion of years Basic Needs Allocation met"), 
-                 Description = c("Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological refernece point, defined as 20% of the spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (20%$S_{MSR,em_{2014-2024}}$)",
-                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
-                                  "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
-                                  "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
-                                  "Average annual harvest rate ($U$) for stock aggregrate across replicate simulation and years", 
-                                  "Proportion of years across replicate simulation and years with no harvest", 
-                                  "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
-                 Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
-                              "$\\sum_i S_{i,t=2050}>S_{MSR,i,em_{2014-2024}}$", 
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
-                              "$\\frac{\\sum_{\\substack{t_1\\\\t_2}}U_{t}}{t_2-t_1+1}$",
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}=0}{t_2-t_1+1}$",
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}>BNA}{t_2-t_1+1}$"))
-df|>
-   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                     caption = "(ref:tab-perf-metrics-descriptions)", 
-                     repeat_header = TRUE, 
-                     align = "llc")|>
-  kableExtra::column_spec(1, width = "3.5cm")|>
-  kableExtra::column_spec(2, width = "6.5cm")
-```
 
 \clearpage
-
 
 (ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
 
@@ -592,8 +554,47 @@ HCR.df |>
 ```
 
 \clearpage
+
+(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performance of alternative fishery management measures.
+
+```{r tab-perf-metrics-descriptions, results = "asis"}
+df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
+                            "Number of CUs above their upper biological reference point", 
+                            "Average annual aggregrate spawning escapement", 
+                            "Average annual harvest", 
+                            "Average annual harvest rate", 
+                            "Proportion of years with no harvest", 
+                            "Proportion of years Basic Needs Allocation met"), 
+                 Description = c("Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological refernece point, defined as 20% of the spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (20%$S_{MSR,em_{2014-2024}}$)",
+                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
+                                  "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
+                                  "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
+                                  "Average annual harvest rate ($U$) for stock aggregrate across replicate simulation and years", 
+                                  "Proportion of years across replicate simulation and years with no harvest", 
+                                  "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
+                 Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\sum_i S_{i,t=2050}>S_{MSR,i,em_{2014-2024}}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
+                              "$\\frac{\\sum_{\\substack{t_1\\\\t_2}}U_{t}}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}=0}{t_2-t_1+1}$",
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}>BNA}{t_2-t_1+1}$"))
+df|>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-perf-metrics-descriptions)", 
+                     repeat_header = TRUE, 
+                     align = "llc")|>
+  kableExtra::column_spec(1, width = "3.5cm")|>
+  kableExtra::column_spec(2, width = "6.5cm")
+```
+\clearpage
+
+
 \begin{landscapepage}
-(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the reference (base case) productivity operating model scenario. LSR and USR refer to lower and upper reference points, respectively.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the reference (base case) productivity operating model scenario. LSR and USR refer to lower and upper reference points, respectively.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
@@ -634,7 +635,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table \@ref(tab:tab-perf-metrics-descriptions)) under the robustness (worst case) productivity operating model scenario.LSR and USR refer to lower and upper reference points, respectively.
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the robustness (worst case) productivity operating model scenario.LSR and USR refer to lower and upper reference points, respectively.
 
 
 ```{r tab-rob-perf-measures, results = "asis"}
