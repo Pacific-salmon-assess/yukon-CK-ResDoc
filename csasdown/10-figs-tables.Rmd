@@ -28,18 +28,27 @@ knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```
 
-(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from Alaska into the Yukon Territory for each Conservation Unit. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. 
+(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from Alaska into the Yukon Territory for each Conservation Unit. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
 
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
-\clearpage
 
+\clearpage
 (ref:fig-CU-spawn) Reconstructed spawner abundance over time by Conservation Unit (median and 95% confidence intervals).
 
 ```{r fig-CU-spawn, fig.cap = "(ref:fig-CU-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 ```
+
+\clearpage
+
+(ref:fig-CU-comps) Percentage contribution of each Conservation Unit to reconstructed total spawner abundance over time. Note these estimates of percent contribution differ from the raw values in Table \@ref(tab:tab-CU-gsi-annual-summary) because they are derived from a run-reconstruction model that explicitly tries to account for missing years and the sometimes unrepresentative GSI sampling of total returns. 
+
+```{r fig-CU-comps, fig.cap = "(ref:fig-CU-comps)"}
+knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"))
+```
+\clearpage
 
 (ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equals recruits is shown in grey. 
 

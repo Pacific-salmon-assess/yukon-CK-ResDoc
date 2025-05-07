@@ -947,8 +947,9 @@ legend( x="bottomleft", bty="n",
 dev.off()
 
 # CU run-timing plot ----
-cols <- viridis(rpt$nS)
-
+CU_order <- c(1,2,5,3,6,9,4,8)
+cols <- viridis(rpt$nS+1)
+cols_ordered <- cols[CU_order]
 x <- rpt$day_d 
 x_trunc <- x[x>=170 & x <=270]
 
@@ -969,9 +970,12 @@ for( p in 1:rpt$nS )
 {
   y <- 1.5*(y_dp[ ,p]/max(y_dp[ ,p]))
   polygon( x=c(x,rev(x)), y=rpt$nS-p+1+c(y,rep(0,length(x))),
-           border=NA, col=cols[p] )
+           border=NA, col=cols_ordered[p] )
 }
+
+abline(v=205, col="grey",lty=2)
 dev.off()
+
 
 
 # escapement stats ----
@@ -1113,7 +1117,7 @@ ggplot(prop_CU, aes(x=year, y=contr, fill=CU_pretty)) +
   labs(fill="Conservation Unit", x = "Year", y = "Contribution to total spawners (%)") +
   theme_sleek() 
 
-my.ggsave(here("csasdown/figure/percent-cc-contribution.PNG"), height=5, width=9)
+my.ggsave(here("csasdown/figure/percent-cc-contribution.PNG"), height=4.25, width=8)
 
 # CU contribution from raw GSI
 
