@@ -1089,3 +1089,61 @@ ggplot(TVA
 
 my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
 my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=6.60, width=7.55)
+
+# CU contribution timeseries ----
+
+esc |>
+  left_join(CU_name_lookup, by="CU_f") 
+
+total_spawn <- esc |>
+  left_join(CU_name_lookup, by="CU_f") |>
+  group_by(year) |>
+  summarise(total_spwn = sum(mean)) |>
+  ungroup()
+
+prop_CU <- esc |>
+  left_join(total_spawn, by="year") |>
+  left_join(CU_name_lookup, by="CU_f")  |>
+  mutate(contr = (mean/total_spwn)*100) |>
+  select(CU_f,CU_pretty,year,contr)
+
+ggplot(prop_CU, aes(x=year, y=contr, fill=CU_pretty)) + 
+  geom_area() +
+  scale_fill_viridis_d() + 
+  labs(fill="Conservation Unit", x = "Year", y = "Contribution to total spawners (%)") +
+  theme_sleek() 
+
+my.ggsave(here("csasdown/figure/percent-cc-contribution.PNG"), height=5, width=9)
+
+# CU contribution from raw GSI
+
+cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
+names(cugsitable)[2:ncol(cugsitable)] <- c("Northern Yukon R. and tribs.", 
+                                           "White and tribs.", "Stewart",  
+                                           "Middle Yukon R. and tribs.","Pelly",
+                                           "Nordenskiold",
+                                           "Upper Yukon R.","Yukon R. Teslin Headwaters")
+
+cugsitable.long <- cugsitable |>
+  pivot_longer(!Year, names_to = "Conservation Unit", values_to = "contr" )
+
+cugsitable.long$CU_f <- factor(cugsitable.long$'Conservation Unit', levels = CU_prettynames)
+
+a <- ggplot(prop_CU, aes(x=year, y=contr, fill=CU_f)) + 
+  geom_area() +
+  scale_fill_viridis_d() + 
+  labs(fill="Conservation Unit", x = "Year", y = "Contribution to total spawners (%)") +
+  theme_sleek() +
+  theme(legend.position="none")
+
+b<- ggplot(cugsitable.long, aes(x=Year, y=contr, fill=CU_f )) + 
+  geom_area() +
+  scale_fill_viridis_d() + 
+  labs(fill="Conservation Unit", x = "Year", y = "Contribution to total spawners (%)") +
+  theme_sleek() +
+  theme(legend.position="none")
+
+cowplot::plot_grid(a, b, nrow=2, labels="auto", rel_heights = c(1,1))
+
+my.ggsave(here("analysis/plots/compare-percent-cc-contribution.PNG"), height=11, width=9)
+
