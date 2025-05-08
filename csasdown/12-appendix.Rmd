@@ -105,7 +105,7 @@ rr.eqns |>
 
 ## POPULATION DYNAMICS 
 
-For each population, the daily proportion of salmon entering the model (i.e., crossing the US-Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table \@ref(tab:tab-rr-eqns).4). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table \@ref(tab:tab-rr-eqns).5). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
+For each population, the daily proportion of salmon entering the model (i.e., crossing the U.S.--Canada border into CDN waters) in a given year is calculated based on a normal probability density function, with mean $\mu_{sy}$ with variance $\sigma^2_s$, which is divided by its sum to ensure that the individual values sum to 1 (Table \@ref(tab:tab-rr-eqns).4). Numbers of salmon arriving daily for each population/year combination is subsequently calculated as the product of the daily arrival proportions and run size (Table \@ref(tab:tab-rr-eqns).5). To model interannual variability in mean run timing, we assume that the population-specific mean dates of arrival in a given year (${\lbrace \mu_{s,y}\rbrace}_{s=1}^9$ or $\mu_{y}$) are a function of run timing in the previous year, i.e.:
 
 
 \begin{equation}

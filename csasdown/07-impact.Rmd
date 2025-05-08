@@ -29,7 +29,7 @@ where the root diagonal of the covariance matrix $\Sigma_R$ is the CU specific i
 Returns in calendar year $t$, $N_{t,i}$, were then modeled as a function of the proportion of individuals that mature and return at each age:
 
 \begin{equation}
-  N_{t,i} = \sum_{a=4}^{7} R_{t-a } p_{a-3}
+  N_{t,i} = \sum_{a=4}^{7} R_{(t-a)} p_{(a-3)}
   \label{eq:totalreturn-main}
 \end{equation}
 
