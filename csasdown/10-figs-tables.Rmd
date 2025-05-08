@@ -1,6 +1,6 @@
 #  FIGURES
 
-(ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
+(ref:fig-map-spawn) Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
 ```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
@@ -11,7 +11,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Major assessment projects for adult Chinook salmon Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
+(ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
@@ -28,7 +28,7 @@ knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```
 
-(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from Alaska into the Yukon Territory for each Conservation Unit. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
+(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from the U.S. into Canada on the mainstem Yukon River for eight Conservation Units. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
 
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
@@ -62,7 +62,7 @@ knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Age, sex, length, and reproductive output trends in Canadian-origin Yukon River Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner).
+(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner).
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
@@ -80,19 +80,20 @@ knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone, is not shown. 
+(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone, is not shown, nor are the Salmon Fork and Old Crow CUs, which are data deficient.
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 ```
 
-(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon River Stock Management Unit. Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), and (b) harvest rates for the Yukon Chinook salmon Stock Management Unit. Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
 
 ```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
 
-(ref:fig-enhance-proj) Total Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 250,529 fry from the Upper Yukon raised at the McIntyre Cr facility and released in the Tatchun River (Middle Yukon River and tributaries Conservation Unit) between 2006-2011.
+(ref:fig-enhance-proj) Total Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 
+\~250,000 fry from the Upper Yukon that were released in the Tatchun River (Middle Yukon CU) between 2006-2011.
 
 ```{r fig-enhance-proj, fig.cap = "(ref:fig-enhance-proj)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
@@ -115,7 +116,7 @@ knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
 
-(ref:fig-hcrs) Illustration of the suite of harvest control rules considered in the closed-loop simulations. See Table \@ref(tab:hcrs) for description of each harvest control rule. The x-axis range in the plot corresponds approximately to the historical range of Canadian-origin Yukon Chinook salmon run sizes.
+(ref:fig-hcrs) Illustration of the suite of harvest control rules considered in the closed-loop simulations. See Table \@ref(tab:hcrs) for description of each harvest control rule. The x-axis range in the plot corresponds approximately to the historical range of Yukon Chinook salmon run sizes.
 
 ```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
 knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
@@ -150,7 +151,7 @@ knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"
 
 # TABLES
 
-(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on genetics is also shown. 
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on genetics is also shown. 
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
@@ -176,7 +177,7 @@ smucutable |>
 ```
 
 \clearpage
-(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from Alaska into the Yukon Territory for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
+(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit in the Yukon Chinook salmon SMU over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
 ```{r tab-CU-gsi-annual-summary, results="asis"}
 
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
@@ -200,7 +201,7 @@ cugsitable |>
 
 \clearpage
 \begin{landscapepage}
-(ref:assess-proponents) Chinook salmon adult assessment projects in the Canadian portion of the Yukon River basin.  
+(ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.  
 
 ```{r assess-proponents, results = "asis"}
 
@@ -447,7 +448,7 @@ demo.pars |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Canadian-origin Yukon Chinook salmon.
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Yukon Chinook salmon.
 
 ```{r tab-factors-summary, results="asis"}
 # spawners
