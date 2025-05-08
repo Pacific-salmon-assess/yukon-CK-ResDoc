@@ -389,10 +389,51 @@ bench.long <- pivot_longer(bench.posts, cols = c(Smsr.20, Smsr.40, S.recent), na
   arrange(CU, par, value) |>
   filter(value <= 10000) #hack to cut off fat tails to help with density visualization, also an IUCN cutoff... 
 
-ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
+bs <- bench.long |>
+  filter(CU == "Big.Salmon",
+         value <= 6000)
+
+n <- bench.long |>
+  filter(CU == "Nordenskiold",
+         value <= 2500)
+
+s <- bench.long |>
+  filter(CU == "Stewart",
+         value <= 4000)
+
+u <- bench.long |>
+  filter(CU == "UpperYukonR.",
+         value <= 4000)
+
+
+w <- bench.long |>
+  filter(CU == "Whiteandtribs.",
+         value <= 5000)
+
+t <- bench.long |>
+  filter(CU == "YukonR.Teslinheadwaters",
+         value <= 5000)
+
+p <- bench.long |>
+  filter(CU == "Pelly",
+         value <= 9000)
+
+m <- bench.long |>
+  filter(CU == "MiddleYukonR.andtribs.",
+         value <= 10000)
+
+no <- bench.long |>
+  filter(CU == "NorthernYukonR.andtribs.",
+         value <= 10000)
+
+custom.bench <- rbind(bs,n,s,u,w,t,p,m,no) |>
+  mutate(CU_f = CU) |>
+  left_join(CU_name_lookup, by="CU_f")
+
+ggplot(custom.bench, aes(value/1000, fill = par, color = par)) +
   geom_density(alpha = 0.3) +
-  geom_vline(xintercept = 1.5, lty=2) +
-  facet_wrap(~CU, scales = "free") +
+  geom_vline(xintercept = 1.5, lty=2, col="grey") +
+  facet_wrap(~CU_pretty, scales = "free") +
   theme(legend.position = "bottom") +
   scale_fill_manual(breaks = c("S.recent", "Smsr.20", "Smsr.40"),
                     values = c("black", "darkred", "forestgreen"), 
@@ -403,7 +444,8 @@ ggplot(bench.long, aes(value/1000, fill = par, color = par)) +
   theme_sleek()   +
   theme(axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), 
-        legend.title=element_blank())
+        legend.title=element_blank()) +
+  scale_x_continuous(limits = c(0, NA))
 my.ggsave(here("analysis/plots/status.PNG"))
 
 # EXPERIMENTAL: benchmarks with Smsr ---
@@ -445,7 +487,7 @@ esc |>
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/plots/cu-escape.PNG"))
+my.ggsave(here("analysis/plots/cu-escape.PNG"), width = 11)
 ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
 
@@ -517,7 +559,7 @@ trib_rr |>
   facet_wrap(~tribs_name, scales = "free", ncol = 4) +
   theme(axis.title = element_text(size=12))
 
-my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"))
+my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"), width = 11)
 ggsave(here("csasdown/figure/RR-vs-trib-spawners.PNG"), width=777*2, height=800*2, units="px",
        dpi=240)
 
@@ -542,13 +584,13 @@ tribs.all |>
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=5, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek() + 
   theme(axis.title = element_text(size=12),
         strip.text = element_text(size=8))
 
-my.ggsave(here("analysis/plots/trib-escape.PNG"), height = 10, dpi= 180)
+my.ggsave(here("analysis/plots/trib-escape.PNG"), width = 11, dpi= 180)
 ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2, 
        width=720*2, units="px", dpi= 240)
 
@@ -1048,8 +1090,8 @@ ggplot(wh.hatch, aes(x=year)) +
   theme_sleek() + labs(x="Year" ) +
   theme(axis.text.y.right = element_text(margin = margin(r=9)),
         legend.position = c(0.27,0.7),
-        legend.text = element_text(size=10),
-        legend.title = element_text(size=11),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=9),
         axis.title = element_text(size=10),
         legend.spacing.y = unit(0, "pt"))
 
