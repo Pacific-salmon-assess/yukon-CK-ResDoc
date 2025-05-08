@@ -100,6 +100,6 @@ g <- ggplot() +
             mapping = aes(x = 237, y = -0.5, label = year_count, hjust = 1, vjust = 2),
             size=3)
 
-png(here("analysis/plots/gsi-run-samples.PNG"), width = 6, height = 8, units = "in", res = 600)
+png(here("analysis/plots/trib-rr/gsi-run-samples.PNG"), width = 6, height = 8, units = "in", res = 600)
 print(g)
 dev.off()

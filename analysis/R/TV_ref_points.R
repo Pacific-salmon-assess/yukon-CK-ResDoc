@@ -124,7 +124,7 @@ ggplot(param.long |> filter(par == "alpha"), aes(value)) +
   theme(legend.position = "bottom") +
   theme_sleek() +
   labs(x = "ln(alpha) over last 5 brood years", y = "Posterior density")
-my.ggsave(here("analysis/plots/TV_alpha_post.PNG"))
+my.ggsave(here("analysis/plots/SR-models/TV_alpha_post.PNG"))
 
 ggplot(param.long |> filter(par == "beta"), aes(value)) +
   geom_density(alpha = 0.3, fill="grey") +
@@ -132,4 +132,4 @@ ggplot(param.long |> filter(par == "beta"), aes(value)) +
   theme(legend.position = "bottom") +
   theme_sleek() +
   labs(x = "beta", y = "Posterior density")
-my.ggsave(here("analysis/plots/TV_beta_post.PNG"))
+my.ggsave(here("analysis/plots/SR-models/TV_beta_post.PNG"))

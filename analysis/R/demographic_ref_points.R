@@ -236,7 +236,7 @@ write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
     scale_color_viridis_d(aesthetics = c("fill", "color")) +
     scale_x_continuous(limits = c(0, NA))
 
-my.ggsave(here("analysis/plots/demo_bench_compare_early-vs-recent.PNG"))
+my.ggsave(here("analysis/plots/SR-models/demo_bench_compare_early-vs-recent.PNG"))
   
   
 # source(inference_figs.R)
@@ -277,7 +277,7 @@ bench_post <- rbind(bench_eggs, bench_body) |>
         legend.text = element_text(size=8.5, angle=0, hjust=0),
         strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/plots/demo_bench_compare.PNG"))
+my.ggsave(here("analysis/plots/SR-models/demo_bench_compare.PNG"))
 my.ggsave(here("csasdown/figure/demo_bench_compare.PNG"), height=7.20, width=8.10)
 
 
@@ -316,7 +316,7 @@ ggplot() +
         legend.text = element_text(size=6, angle=0, hjust=0),
         strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/plots/EM-R_fits.PNG"))
+my.ggsave(here("analysis/plots/SR-models/EM-R_fits.PNG"))
 ggsave(here("csasdown/figure/EM-R_fits.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 
 # Demographic time-varying alpha (recruits/gram egg mass) relationships ----
@@ -327,4 +327,4 @@ ggplot(a.yrs.all
   theme_sleek() +
   labs(y = "Productivity (maximum R/EM[kg])", x = "Brood year")
 
-my.ggsave(here("analysis/plots/changing_demo_productivity.PNG"))
+my.ggsave(here("analysis/plots/SR-models/changing_demo_productivity.PNG"))

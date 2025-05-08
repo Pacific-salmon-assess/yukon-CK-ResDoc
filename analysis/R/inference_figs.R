@@ -306,7 +306,7 @@ ggplot() +
         legend.text = element_text(size=6, angle=0, hjust=0),
         strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/plots/SR_fits_AR1.PNG"))
+my.ggsave(here("analysis/plots/SR-models/SR_fits_AR1.PNG"))
 ggsave(here("csasdown/figure/SR_fits_AR1.PNG"), height=800*2, width=900*2, units="px", dpi=240)
 
 
@@ -324,7 +324,7 @@ ggplot(AR1.resids, aes(x=year, y = mid)) +
         panel.grid = element_blank()) +
   geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
 
-my.ggsave(here("analysis/plots/AR1_resids.PNG"))
+my.ggsave(here("analysis/plots/SR-models/AR1_resids.PNG"))
 
 # TV resids ----
 ggplot(TV.resids, aes(x=year, y = mid)) +
@@ -339,7 +339,7 @@ ggplot(TV.resids, aes(x=year, y = mid)) +
         panel.grid = element_blank()) +
   geom_abline(intercept = 0, slope = 0, col = "dark grey", lty = 2)
 
-my.ggsave(here("analysis/plots/TV_resids.PNG"))
+my.ggsave(here("analysis/plots/SR-models/TV_resids.PNG"))
 
 # TV alpha ----
 a.yrs.all |> 
@@ -357,7 +357,7 @@ a.yrs.all |>
         legend.text = element_text(size=7),
         axis.title = element_text(size=8))
 
-my.ggsave(here("analysis/plots/changing_productivity.PNG"))
+my.ggsave(here("analysis/plots/SR-models/changing_productivity.PNG"))
 ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 550*2, 
        width = 700*2, units="px", dpi=200)
 
@@ -382,7 +382,7 @@ ggplot() +
         legend.title = element_text(size=9),
         legend.text = element_text(size=8))
 
-my.ggsave(here("analysis/plots/TV_SR_fits.PNG"))
+my.ggsave(here("analysis/plots/SR-models/TV_SR_fits.PNG"))
 
 # "status" plots ----
 bench.long <- pivot_longer(bench.posts, cols = c(Smsr.20, Smsr.40, S.recent), names_to = "par") |>
@@ -446,7 +446,7 @@ ggplot(custom.bench, aes(value/1000, fill = par, color = par)) +
         axis.text.y = element_blank(), 
         legend.title=element_blank()) +
   scale_x_continuous(limits = c(0, NA))
-my.ggsave(here("analysis/plots/status.PNG"))
+my.ggsave(here("analysis/plots/SR-models/status.PNG"))
 
 # EXPERIMENTAL: benchmarks with Smsr ---
 bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy, Smsr, S.recent), names_to = "par") |>
@@ -487,7 +487,7 @@ esc |>
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/plots/cu-escape.PNG"), width = 11)
+my.ggsave(here("analysis/plots/trib-rr/cu-escape.PNG"), width = 11)
 ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
 
@@ -524,7 +524,7 @@ ggplot(esc_plus, aes(x = year, y = mean/1000)) +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek()  
 
-my.ggsave(here("analysis/plots/cu-agg-escape.PNG"))
+my.ggsave(here("analysis/plots/trib-rr/cu-agg-escape.PNG"))
 
 # trib vs RR spawner relationships ----
 esc_join <- esc |>
@@ -559,7 +559,7 @@ trib_rr |>
   facet_wrap(~tribs_name, scales = "free", ncol = 4) +
   theme(axis.title = element_text(size=12))
 
-my.ggsave(here("analysis/plots/RR-vs-trib-spawners.PNG"), width = 11)
+my.ggsave(here("analysis/plots/trib-rr/RR-vs-trib-spawners.PNG"), width = 11)
 ggsave(here("csasdown/figure/RR-vs-trib-spawners.PNG"), width=777*2, height=800*2, units="px",
        dpi=240)
 
@@ -590,7 +590,7 @@ tribs.all |>
   theme(axis.title = element_text(size=12),
         strip.text = element_text(size=8))
 
-my.ggsave(here("analysis/plots/trib-escape.PNG"), width = 11, dpi= 180)
+my.ggsave(here("analysis/plots/trib-rr/trib-escape.PNG"), width = 11, dpi= 180)
 ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2, 
        width=720*2, units="px", dpi= 240)
 
@@ -634,7 +634,7 @@ alpha.posts |> filter(scenario != "stationary") |>
   scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
   labs(y = "", x = expression(Log(alpha)), fill="Productivity Scenario", color="Productivity Scenario") 
   
-my.ggsave(here("analysis/plots/OM-productivity-scenarios.PNG"))
+my.ggsave(here("analysis/plots/fwd-sim/OM-productivity-scenarios.PNG"))
 ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"), height=600*2, width=777*2, 
        units = "px", dpi=240)
 
@@ -729,7 +729,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
           legend.text = element_text(size=10)) +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
-  my.ggsave(here(paste("analysis/plots/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
+  my.ggsave(here(paste("analysis/plots/fwd-sim/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
   if(names(HCR_grps[i])=="simple" && k=="TVA"){
     ggsave(here(paste("csasdown/figure/S-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")),
            height=650*2, width=810*2, units="px", dpi=240)
@@ -760,7 +760,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
     theme(legend.position = "bottom") +
     scale_color_manual(values=HCR_cols, aesthetics = c("fill", "color"))
   
-  my.ggsave(here(paste("analysis/plots/H-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
+  my.ggsave(here(paste("analysis/plots/fwd-sim/H-fwd", names(HCR_grps[i]), "grp", paste0(k, ".PNG"), sep="_")))
 }
 
 
@@ -810,7 +810,7 @@ status_plot <- perf.status |>
 
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
 
-my.ggsave(here(paste0("analysis/plots/perf_metrics_status_", k, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/fwd-sim/perf_metrics_status_", k, ".PNG")))
 ggsave(here(paste0("csasdown/figure/perf_metrics_status_", k, ".PNG")), height=900*2, 
        width=800*2, units="px", dpi=240,bg = "white")
 
@@ -863,7 +863,7 @@ status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
 b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, rel_widths=c(0.55,1), labels=c("b","c"), label_x = c(0,-0.015))
 cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,1), labels=c(NULL,"a"))
 
-my.ggsave(here(paste0("analysis/plots/fixed_ER_tradeoffs_", k, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/fwd-sim/fixed_ER_tradeoffs_", k, ".PNG")))
 ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")), height=600*2, 
        width=800*2, units="px", dpi=240)
 
@@ -884,7 +884,7 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_name), linewidth=
   lims(x=c(0,200)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
-my.ggsave(here("analysis/plots/HCR_visualize.PNG"))
+my.ggsave(here("analysis/plots/fwd_sim/HCR_visualize.PNG"))
 my.ggsave(here("csasdown/figure/HCR_visualize.PNG"), height=4, 
           width=6)
 
@@ -897,7 +897,7 @@ ggcorrplot(Sig.R.order, hc.order = TRUE, type = "lower",
            outline.col = "white",
            lab=TRUE) 
 
-my.ggsave(here(paste0("analysis/plots/recruit-corr-matrix_", k, ".PNG")))
+my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG")))
 
 
 } # end k loop
@@ -938,7 +938,7 @@ b<- ggplot(SMU_RR |>
 cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
 
-my.ggsave(here("analysis/plots/SMU-run-esc.PNG"), width = 13, height = 6)
+my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc.PNG"), width = 13, height = 6)
 ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 9750*2, height = 350*2, 
        units="px", dpi=240)
 
@@ -959,7 +959,7 @@ sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
 fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
 
-png( file=here("analysis/plots/CU-RR.PNG"), width= 9, height = 5.562,units="in", res =700 )
+png( file=here("analysis/plots/trib-rr/CU-RR.PNG"), width= 9, height = 5.562,units="in", res =700 )
 
 plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
       ylab="Total border passage (1000s)", ylim=c(0,1.1*ymax) )
@@ -1066,7 +1066,7 @@ ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease/1000, fill = REL_CU))+
         strip.text = element_text(size=11),
         axis.title = element_text(size=13))
 
-my.ggsave(here("analysis/plots/hatch_bar.PNG"))
+my.ggsave(here("analysis/plots/trib-rr/hatch_bar.PNG"))
 my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
 
 
@@ -1095,7 +1095,7 @@ ggplot(wh.hatch, aes(x=year)) +
         axis.title = element_text(size=10),
         legend.spacing.y = unit(0, "pt"))
 
-my.ggsave(here("analysis/plots/hatch_prop.PNG"))
+my.ggsave(here("analysis/plots/trib-rr/hatch_prop.PNG"))
 ggsave(here("csasdown/figure/hatch_prop.PNG"), width=700*2, height=400*2, dpi=240,
        units="px")
 
@@ -1133,7 +1133,7 @@ ggplot(TVA
         strip.text = element_text(size=12),
         axis.title = element_text(size=12))
 
-my.ggsave(here("analysis/plots/spw-vs-em-SR-TVA.PNG"))
+my.ggsave(here("analysis/plots/SR-models/spw-vs-em-SR-TVA.PNG"))
 my.ggsave(here("csasdown/figure/spw-vs-em-SR-TVA.PNG"), height=6.60, width=7.55)
 
 # CU contribution timeseries ----
@@ -1191,5 +1191,5 @@ b<- ggplot(cugsitable.long, aes(x=Year, y=contr, fill=CU_f )) +
 
 cowplot::plot_grid(a, b, nrow=2, labels="auto", rel_heights = c(1,1))
 
-my.ggsave(here("analysis/plots/compare-percent-cc-contribution.PNG"), height=11, width=9)
+my.ggsave(here("analysis/plots/trib-rr/compare-percent-cc-contribution.PNG"), height=11, width=9)
 
