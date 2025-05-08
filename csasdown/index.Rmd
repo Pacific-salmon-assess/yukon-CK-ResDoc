@@ -29,7 +29,7 @@ address: |
      Fisheries and Oceans Canada, 3190 Hammond Bay Road\
      Nanaimo, British Columbia, V9T 6N7, Canada\
   \smallskip
-  ^5^LGL Limited\ 
+  ^5^LGL Limited\
      9768 Second Street\
      Sidney, British Columbia, V8L 3Y8, Canada\ 
 
