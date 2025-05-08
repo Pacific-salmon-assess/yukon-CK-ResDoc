@@ -22,16 +22,18 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
-(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents).
-
-```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
-knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
-```
 
 (ref:fig-run-timing) Average annual daily passage (scaled to maximum) from the U.S. into Canada on the mainstem Yukon River for eight Conservation Units. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
 
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
+```
+
+
+(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents).
+
+```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
 ```
 
 \clearpage
@@ -43,20 +45,20 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 
 \clearpage
 
-(ref:fig-CU-comps) Percentage contribution of each Conservation Unit to reconstructed total spawner abundance over time. Note these estimates of percent contribution differ from the raw values in Table \@ref(tab:tab-CU-gsi-annual-summary) because they are derived from a run-reconstruction model that explicitly tries to account for missing years and the sometimes unrepresentative GSI sampling of total returns. 
+(ref:fig-CU-comps) Percentage contribution of each Conservation Unit to reconstructed total spawner abundance of the Yukon Chinook salmon Stock Management Unit over time. Note these estimates of percent contribution differ from the raw values in Table \@ref(tab:tab-CU-gsi-annual-summary) because they are derived from a run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative GSI sampling of total returns. 
 
 ```{r fig-CU-comps, fig.cap = "(ref:fig-CU-comps)"}
 knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"))
 ```
 \clearpage
 
-(ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equals recruits is shown in grey. 
+(ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with lines representing 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equal recruits, is shown in grey. 
 
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
-(ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit. The dashed grey line is replacement.
+(ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Salmon Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
 
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
@@ -74,7 +76,7 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-em-vs-spw-sr-TVA) Scaled trends in intrinsic productivity index for two alternative recruitment models.
+(ref:fig-em-vs-spw-sr-TVA) Scaled trends in intrinsic productivity index for two alternative spawner-recruitment (SR) models.
 
 ```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
@@ -139,7 +141,7 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
+(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20%$S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
@@ -177,7 +179,7 @@ smucutable |>
 ```
 
 \clearpage
-(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit in the Yukon Chinook salmon SMU over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
+(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
 ```{r tab-CU-gsi-annual-summary, results="asis"}
 
 cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
@@ -570,7 +572,7 @@ df <- data.frame(Metric = c("Number of CUs below their lower biological referenc
                                  "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
                                   "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
                                   "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
-                                  "Average annual harvest rate ($U$) for stock aggregrate across replicate simulation and years", 
+                                  "Average annual harvest rate ($U$) for stock aggregate across replicate simulation and years", 
                                   "Proportion of years across replicate simulation and years with no harvest", 
                                   "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
                  Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
