@@ -1,4 +1,4 @@
-# FIGURES
+#  FIGURES
 
 (ref:fig-map-spawn) Canadian Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
@@ -80,7 +80,7 @@ knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone is not shown. 
+(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone, is not shown. 
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))

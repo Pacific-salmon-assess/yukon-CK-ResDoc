@@ -177,24 +177,66 @@ write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
     
   bench_AR1_eggslong <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
     filter(par=="Smsr") |>
-    mutate(upper.bm = value)|>
-    filter(value <= 35000)
+    mutate(upper.bm = value)
 
   
-  bench_AR1_eggslong|> filter(period !="avg") |>
+  bs <- bench_AR1_eggslong |>
+    filter(CU == "Big.Salmon",
+           value <= 15000)
+  
+  n <- bench_AR1_eggslong |>
+    filter(CU == "Nordenskiold",
+           value <= 15000)
+  
+  s <- bench_AR1_eggslong |>
+    filter(CU == "Stewart",
+           value <= 15000)
+  
+  u <- bench_AR1_eggslong |>
+    filter(CU == "UpperYukonR.",
+           value <= 10000)
+  
+  
+  w <- bench_AR1_eggslong |>
+    filter(CU == "Whiteandtribs.",
+           value <= 15000)
+  
+  t <- bench_AR1_eggslong |>
+    filter(CU == "YukonR.Teslinheadwaters",
+           value <= 20000)
+  
+  p <- bench_AR1_eggslong |>
+    filter(CU == "Pelly",
+           value <= 40000)
+  
+  m <- bench_AR1_eggslong |>
+    filter(CU == "MiddleYukonR.andtribs.",
+           value <= 40000)
+  
+  no <- bench_AR1_eggslong |>
+    filter(CU == "NorthernYukonR.andtribs.",
+           value <= 40000)
+  
+  custom.bench <- rbind(bs,n,s,u,w,t,p,m,no) |>
+    mutate(CU_f = CU) |>
+    left_join(CU_name_lookup, by="CU_f")
+  custom.bench$CU_f <- factor(custom.bench$CU_f, levels = CU_order)
+  
+  custom.bench|> filter(period !="avg") |>
     mutate(period=str_to_sentence(period)) |>
     ggplot(aes(value, fill = period, color = period)) +
     geom_density(alpha = 0.8, adjust = 4) +
-    facet_wrap(~CU, scales = "free_y", labeller=CU_labeller) +
+    facet_wrap(~CU_f, scales = "free", labeller=CU_labeller) +
     theme_sleek()+
     xlab(expression(S[MSR])) +
     labs(y="", fill="Period", color="Period") +
-    theme(legend.position = "bottom",
+    theme(legend.position = "right",
           axis.ticks.y = element_blank(), 
           axis.text.y = element_blank()) +
-    scale_color_viridis_d(aesthetics = c("fill", "color"))
+    scale_color_viridis_d(aesthetics = c("fill", "color")) +
+    scale_x_continuous(limits = c(0, NA))
 
-my.ggsave(here("analysis/plots/demo_bench_compare_spawn-vs-recent.PNG"))
+my.ggsave(here("analysis/plots/demo_bench_compare_early-vs-recent.PNG"))
   
   
 # source(inference_figs.R)
