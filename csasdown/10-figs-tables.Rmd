@@ -179,6 +179,7 @@ smucutable |>
 ```
 
 \clearpage
+
 (ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
 ```{r tab-CU-gsi-annual-summary, results="asis"}
 
@@ -193,13 +194,14 @@ names(cugsitable)[2:ncol(cugsitable)] <- c("Northern Yukon R. and tribs.",
 cugsitable |> 
   dplyr::mutate_all(function(x){round(x, 3)}) |>
   csasdown::csas_table(format = "latex",
-                       escape = FALSE,
+                       #escape = FALSE,
                        caption = "(ref:tab-CU-gsi-annual-summary)",
                        repeat_header = TRUE) |>
-  kableExtra::column_spec(-1, width = "1.5cm")
+  kableExtra::column_spec(1, width = "1.5cm")
 
 
 ```
+
 
 \clearpage
 \begin{landscapepage}
