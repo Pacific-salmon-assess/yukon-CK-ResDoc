@@ -95,7 +95,7 @@ knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
 
 (ref:fig-enhance-proj) Total Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 
-\~250,000 fry from the Upper Yukon that were released in the Tatchun River (Middle Yukon CU) between 2006-2011.
+\~250,000 fry from the Upper Yukon that were released in the Tatchun River (Middle Yukon CU) between 2006--2011.
 
 ```{r fig-enhance-proj, fig.cap = "(ref:fig-enhance-proj)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
@@ -113,7 +113,7 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 ```
 
-(ref:fig-prod-scenarios) Alternative operating model productivity scenarios considered in the closed-loop simulations including the reference (base case) scenario, the 10-year average of recent $\alpha$ (2007-2017 brood years), and robustness scenario, the most recent $\alpha$ (2017 brood year).
+(ref:fig-prod-scenarios) Alternative operating model productivity scenarios considered in the closed-loop simulations including the reference (base case) scenario, the 10-year average of recent $\alpha$ (2007--2017 brood years), and robustness scenario, the most recent $\alpha$ (2017 brood year).
 ```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
 knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
@@ -133,7 +133,7 @@ knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
 
 \clearpage
 
-(ref:fig-ER-tradeoff-ref) Projected consequences of a range of fixed exploitation rates from the closed loop simulations under the 'reference' (base case) operating model scenario. (a) Mean number of Conservation Units that fall above, below, and between their reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over 1000 iterations. (b) Mean spawner abundance and (c) mean harvest, by Conservation Units, over all simulation years (2025-2050).
+(ref:fig-ER-tradeoff-ref) Projected consequences of a range of fixed exploitation rates from the closed loop simulations under the 'reference' (base case) operating model scenario. (a) Mean number of Conservation Units that fall above, below, and between their reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over 1000 iterations. (b) Mean spawner abundance and (c) mean harvest, by Conservation Units, over all simulation years (2025--2050).
 
 ```{r fig-ER-tradeoff-ref, fig.cap = "(ref:fig-ER-tradeoff-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png"))
@@ -141,7 +141,7 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030-2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20%$S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
+(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030--2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20%$S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
@@ -599,7 +599,7 @@ df|>
 
 
 \begin{landscapepage}
-(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the reference (base case) productivity operating model scenario. LSR and USR refer to lower and upper reference points, respectively.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the reference (base case) productivity operating model scenario. Lower Stock Reference (LSR) and Upper Stock Reference (USR) refer to lower and upper reference points, respectively.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
