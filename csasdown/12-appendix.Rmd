@@ -404,7 +404,7 @@ The harvest rate expected to lead to maximum sustainable yield, $U_{MSY}$, was d
   \label{eq:get-Umsy}
 \end{equation}
 
-To derive biological reference points from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F_{max}$ as a function of the age and sex class ($j$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex ($\pi_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
+To derive biological reference points from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically, we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F_{max}$ as a function of the age and sex class ($j$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex ($\pi_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
 
 \begin{equation}
   z_{PR,j} = \sum_{j}(1-U_{i,j})z_{i,j}pi_{i,j}

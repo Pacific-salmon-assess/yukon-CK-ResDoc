@@ -23,7 +23,7 @@ knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 
 
-(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from the U.S. into Canada on the mainstem Yukon River for eight Conservation Units. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
+(ref:fig-run-timing) Average annual daily passage (scaled to maximum) from the U.S. into Canada on the mainstem Yukon River for eight Conservation Units. The Big Salmon Conservation Unit is not shown because it cannot be seperated out from the Middle Mainstem Conservation Unit based on genetics. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
 
 ```{r fig-run-timing, fig.cap = "(ref:fig-run-timing)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
@@ -64,7 +64,7 @@ knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner).
+(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner). Data taken from fish sampled at Eagle and White and Sheep rocks.  
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
@@ -204,6 +204,7 @@ cugsitable |>
 
 
 \clearpage
+
 \begin{landscapepage}
 (ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.  
 

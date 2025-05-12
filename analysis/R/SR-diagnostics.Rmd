@@ -1,6 +1,6 @@
 ---
 title: "Supplement: Spawner-recruit model diagnostics"
-author: "Authors"
+author: ""
 output: 
   html_document:
     collapsed: no
@@ -10,6 +10,12 @@ output:
     theme: cerulean
     toc: yes
     toc_float: yes
+include-in-header: |
+          <style>
+            h1 { font-size: 18px; }
+            h2 { font-size: 12px; }
+          </style>
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -48,9 +54,7 @@ This document provides diagnostic plots for several spawner-recruit models that 
 
 > Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. In review. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 92 p.
 
-Full details are provided in the document above but briefly, four state-space spawner-recruit models were fit: spawer-recruitment models with autoregressive (AR1) recruitment residuals, (2) spawner-recruitment models with time varying intrinsic productivity, (3) egg mass-recruitment models with AR1 recruitment residuals, and (4) egg mass-recruitment models with time varying intrinsic productivity. The models 
-
-These models were fit to each of the nine Conservation Units for which we had data.
+Full details are provided in the document above but briefly, four state-space spawner-recruit models were fit: spawer-recruitment models with autoregressive recruitment residuals (labelled "AR1"), (2) spawner-recruitment models with time varying intrinsic productivity (labelled "TV"), (3) egg mass-recruitment models with AR1 recruitment residuals (labelled "AR1 egg mass"), and (4) egg mass-recruitment models with time varying intrinsic productivity (labelled "TV egg mass"). These models were fit to each of the nine Conservation Units for which we had data.
 
 # Diagnostics
 
