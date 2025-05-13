@@ -13,7 +13,7 @@ processData <- function()
 	counts$gear <- as.character(counts$gear)
 	
 	# -- GSI sub-stock sampling by day, n_sgyd --
-	gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv")) %>%
+	gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update.csv")) %>%
 	  rename( sample_num=fish )
 	stockID <- read.csv(here("analysis/data/raw/stockIDs.csv")) %>% arrange(plotOrder)
 	stockID$stockNum <- stockID$plotOrder
@@ -215,6 +215,9 @@ processData <- function()
 	save(chinookYkData, file=here('analysis/data/chinookYkData.Rdata'))
 }
 
+
+# GSI summary stats ----
+
 gsi_summary <- gsi |>
   group_by(year, CU.x) |>
   summarize(sum_prob = sum(prob),
@@ -224,4 +227,3 @@ gsi_summary <- gsi |>
   pivot_wider(names_from=CU.x, values_from=cu_percent)
 
 write.csv(gsi_summary, here("analysis/data/generated/CU-gsi-annual-summary.csv"), row.names = FALSE)
-

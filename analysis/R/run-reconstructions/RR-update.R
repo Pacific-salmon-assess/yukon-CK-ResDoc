@@ -50,15 +50,44 @@ big_salmon <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
          year < 2025)
 
 prop_comp <- mean(big_salmon$estimate/(CU_spwn[7,c(21:40)]), na.rm=TRUE)
+prop_comp_ind <- big_salmon$estimate/CU_spwn[7,c(21:40)]
+hist(prop_comp_ind)
+mu_bs_prop <- mean(prop_comp_ind, na.rm=TRUE)
+sd_bs_prop <- sd(prop_comp_ind, na.rm=TRUE)
 
-big_salmon_inf <- CU_spwn[7,] * prop_comp
-big_salmon_inf_2 <- big_salmon_inf
+r_bs_prop <- rnorm(1000,mu_bs_prop,sd_bs_prop)
+r_bs_prop <- abs(r_bs_prop)
+
+mu_my <- CU_spwn[7,]
+sd_my <- (CU_spwn_upr[7,]-CU_spwn_lwr[7,])/4
+
+bs <- matrix(NA,1000,40)
+my <- matrix(NA,1000,40)
+
+for (i in 1:1000){
+  r_bs_prop <- rnorm(1,mu_bs_prop,sd_bs_prop)
+  r_my <- rnorm(mu_my,mean=mu_my,sd=sd_my)
+  bs[i,] <- r_my*r_bs_prop
+  my[i,] <- r_my-bs[i,]
+}  
+  
+bs_mean <- apply(bs,2,mean)
+bs_upr <- apply(bs,2,quantile, probs=c(0.95))
+bs_lwr <- apply(bs,2,quantile, probs=c(0.05))
+bs_cv <- apply(bs,2,sd)/bs_mean
+
+my_mean <- apply(my,2,mean)
+my_cv <- apply(my,2,sd)/my_mean
+my_upr <- apply(my,2,quantile, probs=c(0.95))
+my_lwr <- apply(my,2,quantile, probs=c(0.05))
+
+big_salmon_inf_2 <- bs_mean
 big_salmon_inf_2[c(21:40)] <- big_salmon$estimate
-big_salmon_inf_2[38] <- big_salmon_inf[38]
+big_salmon_inf_2[38] <- bs_mean[38]
 big_salmon_recon <- big_salmon_inf_2
-CU_spwn[7,] <- CU_spwn[7,]-big_salmon_recon
-CU_spwn_upr[7,] <- CU_spwn_upr[7,]-big_salmon_recon
-CU_spwn_lwr[7,] <- CU_spwn_lwr[7,]-big_salmon_recon
+CU_spwn[7,] <- my_mean
+CU_spwn_upr[7,] <- my_upr
+CU_spwn_lwr[7,] <- my_lwr
 
 # estimate hatchery contribution from Whitehorse fishway, remove from Upper Yukon CU
 hatch_upper <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
@@ -99,15 +128,20 @@ year <- seq(1985,2024)
 big.S <- cbind(year,(big_salmon_recon))
 big.S <- as.data.frame(big.S)
 big.S$stock <- "Big.Salmon"
-big.S$cv <- 0.25
+big.S$cv <- bs_cv
 big.S$cv[c(21:40)] <- 0.05
-big.S$lwr = "na"
-big.S$upr = "na"
+big.S$lwr <- bs_lwr
+big.S$upr <- bs_upr
+
+big.S$lwr[21:40] <- (big_salmon_recon+(big_salmon_recon*0.1))[21:40]
+big.S$upr[21:40]  <- (big_salmon_recon-(big_salmon_recon*0.1))[c(21:40)]
+big.S$lwr[38] <- bs_lwr[38]
+big.S$upr[38] <- bs_upr[38]
 
 big.S <- big.S |>
   rename(mean = V2) |>
-  mutate(lower = (mean - (2*(mean*cv))),
-         upper = (mean + (2*(mean*cv)))) |>
+  mutate(lower = lwr,
+         upper = upr) |>
   select(stock, year, mean, upper, lower, cv) 
 
 # bind data frames
