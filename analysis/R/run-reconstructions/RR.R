@@ -147,7 +147,7 @@ big.S <- big.S |>
 # bind data frames
 mssr_spwn_2 <- rbind(CU_spawn_2,big.S)
 
-write.csv(mssr_spwn_2, here("analysis/data/raw/esc-data.csv"),row.names = F)
+write.csv(mssr_spwn_2, here("analysis/data/generated/esc-data.csv"),row.names = F)
 
 # calculate CU specific harvest based on reconstructed spawner abundance and aggregate exploitation rate
 er <- read.csv(here("analysis/data/raw/rr-table.csv"))
@@ -165,21 +165,7 @@ harv <- cbind(mssr_spwn_2, agg_er,agg_cv)
 harv$harv <- (harv$mean/(1-harv$agg_er))*harv$agg_er
 harvest <- harv[,c(1,2,9,8)]
 colnames(harvest) <- c("population", "year","harv","cv")
-write.csv(harvest,here("analysis/data/raw/harvest-data.csv"))
-
-# GSI summary stats ----
-
-gsi_summary <- gsi |>
-  group_by(year, CU.x) |>
-  summarize(sum_prob = sum(prob),
-            samples = n_distinct(sample_num)) |>
-  mutate(cu_percent = round(sum_prob/samples, 5)) |>
-  select(year, CU.x, cu_percent) |>
-  pivot_wider(names_from=CU.x, values_from=cu_percent)
-
-write.csv(gsi_summary, here("analysis/data/generated/CU-gsi-annual-summary.csv"), row.names = FALSE)
-
-
+write.csv(harvest,here("analysis/data/generated/harvest-data.csv"))
 
 
 
