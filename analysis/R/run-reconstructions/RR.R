@@ -113,7 +113,7 @@ big.S <- big.S |>
 # bind data frames
 mssr_spwn_2 <- rbind(CU_spawn_2,big.S)
 
-write.csv(mssr_spwn_2, here("analysis/data/raw/esc-data.csv"),row.names = F)
+write.csv(mssr_spwn_2, here("analysis/data/generated/esc-data.csv"),row.names = F)
 
 # calculate CU specific harvest based on reconstructed spawner abundance and aggregate exploitation rate
 er <- read.csv(here("analysis/data/raw/rr-table.csv"))
@@ -131,7 +131,7 @@ harv <- cbind(mssr_spwn_2, agg_er,agg_cv)
 harv$harv <- (harv$mean/(1-harv$agg_er))*harv$agg_er
 harvest <- harv[,c(1,2,9,8)]
 colnames(harvest) <- c("population", "year","harv","cv")
-write.csv(harvest,here("analysis/data/raw/harvest-data.csv"))
+write.csv(harvest,here("analysis/data/generated/harvest-data.csv"))
 
 
 

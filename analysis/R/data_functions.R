@@ -1,9 +1,9 @@
 #common data to be read in ---------------------------------------------------------------
-harvest <- read.csv(here("analysis/data/raw/harvest-data.csv")) |>
+harvest <- read.csv(here("analysis/data/generated/harvest-data.csv")) |>
   dplyr::rename(stock = population, 
                 harv_cv = cv)
 
-sp_har <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
+sp_har <- read.csv(here("analysis/data/generated/esc-data.csv")) |>
   dplyr::rename(spwn = mean, 
                 spwn_cv = cv) |>
   left_join(harvest, by = c("stock", "year")) |>
