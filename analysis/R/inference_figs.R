@@ -20,7 +20,7 @@ names(TVA.fits) <- unique(sp_har$CU)
 load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata")) # RR model fit
 
 # escapement estimates ---
-esc <- read.csv(here("analysis/data/raw/esc-data.csv")) |>
+esc <- read.csv(here("analysis/data/generated/esc-data.csv")) |>
   mutate_at(2:6, as.numeric)
 
 # process data and fits to make plots later ----------------------------------------------
@@ -448,23 +448,6 @@ ggplot(custom.bench, aes(value/1000, fill = par, color = par)) +
   scale_x_continuous(limits = c(0, NA))
 my.ggsave(here("analysis/plots/SR-models/status.PNG"))
 
-# EXPERIMENTAL: benchmarks with Smsr ---
-bench.long.Smsr <- pivot_longer(bench.posts, cols = c(Sgen, Smsy, Smsr, S.recent), names_to = "par") |>
-  select(-Umsy, - Seq) |>
-  arrange(CU, par, value) |>
-  filter(value <= 15000) #hack to cut big tails of observations, worth looking without this line
-
-ggplot(bench.long.Smsr, aes(value/1000, fill = par, color = par)) +
-  geom_density(alpha = 0.3) +
-  geom_vline(xintercept = 1.5, lty=2) +
-  facet_wrap(~CU, scales = "free_y") +
-  theme(legend.position = "right") +
-  theme(axis.ticks.y = element_blank(), 
-        axis.text.y = element_blank(), 
-        legend.title=element_blank()) +
-  labs(x = "Spawners (000s)", y = "Posterior density") +
-  theme_sleek()  
-
 # escapement plot ----
 bench_plot <- bench.par.table |>
   filter(bench.par == "Smsr") |>
@@ -490,41 +473,6 @@ esc |>
 my.ggsave(here("analysis/plots/trib-rr/cu-escape.PNG"), width = 11)
 ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
-
-# escapement plot all CUs plus aggregate ----
-porcupine <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
-  filter(CU == "Porcupine") |>
-  mutate(mean = estimate,
-         lwr = NA,
-         upr = NA) |>
-  select(year, CU, mean,lwr, upr)
-  
-aggregrate <- read.csv(here("analysis/data/raw/cdn-esc.csv")) |>
-  filter(year > 1984) |>
-  mutate(stock = "Aggregate",
-         mean = Escapement,
-         CU = stock) |>
-  select(year, CU, mean,lwr, upr)
-
-esc_plus <- esc |>
-  mutate(CU = stock,
-         lwr = lower,
-         upr = upper)|>
-  select(year, CU, mean,lwr, upr)
-
-esc_plus <- rbind(esc_plus, porcupine,aggregrate)
-esc_plus$CU_f <- factor(esc_plus$CU, levels = c("Porcupine", CU_order, "Aggregate"))
-  
-ggplot(esc_plus, aes(x = year, y = mean/1000)) + 
-  geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),  fill = "darkgrey", alpha = 0.5) +
-  geom_line(lwd = 1.1) +
-  xlab("Year") +
-  ylab("Spawners (000s)") +
-  facet_wrap(~CU_f, ncol=4, scales = "free_y") +
-  scale_y_continuous(limits = c(0, NA)) +
-  theme_sleek()  
-
-my.ggsave(here("analysis/plots/trib-rr/cu-agg-escape.PNG"))
 
 # trib vs RR spawner relationships ----
 esc_join <- esc |>
@@ -939,7 +887,7 @@ cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
 
 my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc.PNG"), width = 13, height = 6)
-ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 9750*2, height = 350*2, 
+ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 975*2, height = 350*2, 
        units="px", dpi=240)
 
 
@@ -977,7 +925,7 @@ if( is.finite(rpt$sdrpt[1,5]) )
 points( x=yr+0.2, y=E_t, pch=16, col="grey40" )
 points( x=yr, y=I_t, pch=0, lwd=1.5 )
 points( x=yr, y=sonarN_t, pch=1, lwd=1.5, col="black" )
-#points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
+points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
 
 legend( x="bottomleft", bty="n",
         legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),
