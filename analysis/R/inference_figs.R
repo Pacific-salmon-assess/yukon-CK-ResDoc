@@ -532,7 +532,7 @@ tribs.all |>
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=5, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek() + 
   theme(axis.title = element_text(size=12),
@@ -907,10 +907,10 @@ sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
 fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
 
-png( file=here("analysis/plots/trib-rr/CU-RR.PNG"), width= 9, height = 5.562,units="in", res =700 )
+png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 8, height = 6,units="in", res =700 )
 
 plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
-      ylab="Total border passage (1000s)", ylim=c(0,1.1*ymax) )
+      ylab="Total border passage (1000s)", ylim=c(0,1.3*ymax) )
 grid()
 box()
 
@@ -918,21 +918,21 @@ if( is.finite(rpt$sdrpt[1,5]) )
 {
   Ese <- filter(rpt$sdrpt,par=="runSize_t")[t, ]
   segments( x0=yr+0.2, y0=Ese$lCI*1e-3, y1=Ese$uCI*1e-3, col="grey70", lwd=2 )
-  segments( x0=yr, y0=border$lwr*1e-3, y1=border$upr*1e-3, col="black", lwd=2 )
+  segments( x0=yr, y0=border$lwr*1e-3, y1=border$upr*1e-3, col="black", lwd=1.5 )
   
 }
 
 points( x=yr+0.2, y=E_t, pch=16, col="grey40" )
 points( x=yr, y=I_t, pch=0, lwd=1.5 )
-points( x=yr, y=sonarN_t, pch=1, lwd=1.5, col="black" )
+points( x=yr, y=sonarN_t, pch=16, lwd=1.5, col="red" )
 points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
 
 legend( x="bottomleft", bty="n",
-        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),
-        pch=c(NA,NA), lwd=c(1), col=c("grey70","black","black"), lty=c(1,1,1), cex=0.75 )
+        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts", "Fish wheel counts"),
+        pch=c(NA,NA,NA,NA), lwd=c(1,1,NA,NA), col=c("grey70","black",NA,NA), lty=c(1,1,NA,NA), cex=0.75 )
 legend( x="bottomleft", bty="n",
-        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts"),
-        pch=c(16,0,1), lwd=c(1.5,1.5), col=c("grey40","black","black"), lty=c(0,0,0), cex=0.75 )
+        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts", "Fish wheel counts"),
+        pch=c(16,0,16,2), lwd=c(1.5), col=c("grey40","black","red","green"), lty=c(0), cex=0.75 )
 
 dev.off()
 
