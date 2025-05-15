@@ -171,7 +171,7 @@ knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
 (ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fishwheels after accounting for selectivity (open square), fishwheel counts (open green triangle) and the Eagle sonar (open red circle).
 
 ```{r fig-run-RR-fits, fig.cap = "(ref:fig-run-RR-fits)"}
-knitr::include_graphics(here::here("csasdown/figure/totalRunSize.png"))
+knitr::include_graphics(here::here("csasdown/figure/CU-RR-fits.png"))
 ```
 \clearpage
 

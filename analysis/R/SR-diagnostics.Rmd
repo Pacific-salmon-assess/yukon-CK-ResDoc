@@ -268,28 +268,28 @@ print(p)
 
 We aimed for minimum effective sample sizes that are greater than ***2000*** and $\hat{R}$ values less than 1.05.
 
-For the AR1 model:
+### AR1 model:
 
 ```{r AR1-diag}
 AR1.diag <- left_join(min_ESS_AR1, max_Rhat_AR1, by = "CU")
 kable(AR1.diag)
 ```
 
-the time varying model:
+### Time varying (TV) model:
 
 ```{r TV-diag}
 TVA.diag <- left_join(min_ESS_TVA, max_Rhat_TVA, by = "CU")
 kable(TVA.diag)
 ```
 
-the egg mass AR1 model:
+### Egg mass AR1 model:
 
 ```{r AR1egg-diag}
 AR1egg.diag <- left_join(min_ESS_AR1_eggs, max_Rhat_AR1_eggs, by = "CU")
 kable(AR1egg.diag)
 ```
 
-and the time varying egg mass AR1 model:
+### Time varying (TV) egg mass model:
 
 ```{r TVAegg-diag}
 AR1egg.diag <- left_join(min_ESS_TVA_eggs, max_Rhat_TVA_eggs, by = "CU")
