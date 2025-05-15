@@ -17,7 +17,7 @@ Code to analyze yukon chinook data and generate corresponding CSAS Research Docu
  - Open [`index.Rmd`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/csasdown) in RStudio and then click the knit button
  - The resulting pdf of the working paper will then be saved to a subfolder that is created called `book` 
 
-## For those who don't want to reproduce the analysis,  
-you can view current [figures](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/plots), [benchmarks](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/data/generated/bench_par_table.csv), and [data](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/data/raw). This is subject to change as the analysis is updated. Once the CSAS Research Document is published, a final version of the repository will be published on Zenodo.
+## For those who don't want to reproduce the analysis:  
+You can view current [figures](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/plots), [benchmarks](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/data/generated/bench_par_table.csv), and [data](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/data/raw). This is subject to change as the analysis is updated. Once the CSAS Research Document is published, a final version of the repository will be published on Zenodo.
 
 The model validation supplement is available [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). 
