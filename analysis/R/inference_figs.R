@@ -1147,12 +1147,12 @@ gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv"))
   rename( sample_num=fish )
 
 gsi_summary <- gsi |>
-  group_by(year, CU.x) |>
+  group_by(year, CU) |>
   summarize(sum_prob = sum(prob),
             samples = n_distinct(sample_num)) |>
   mutate(cu_percent = round(sum_prob/samples, 5)) |>
-  select(year, CU.x, cu_percent) |>
-  pivot_wider(names_from=CU.x, values_from=cu_percent)
+  select(year, CU, cu_percent) |>
+  pivot_wider(names_from=CU, values_from=cu_percent)
 
 write.csv(gsi_summary, here("analysis/data/generated/CU-gsi-annual-summary.csv"), row.names = FALSE)
 
