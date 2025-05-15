@@ -1,5 +1,5 @@
 # yukon-CK-ResDoc
-Code to analyze yukon chinook data and generate corresponding CSAS Research Document. Currently a work in progress titled:
+Code to analyze Yukon Chinook salmon data and generate corresponding CSAS Research Document. Currently a work in progress titled:
 > Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. In review. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 92 p.
 
 
