@@ -854,7 +854,8 @@ my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG"))
 # SMU run and escapement ----
 
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
-  filter(Stock == "Canada") 
+  filter(Stock == "Canada", 
+         Counts != "Harvest") 
 
 a<- ggplot(SMU_RR |>
          filter(Counts != "Exploitation")) + 
@@ -1156,3 +1157,62 @@ gsi_summary <- gsi |>
 
 write.csv(gsi_summary, here("analysis/data/generated/CU-gsi-annual-summary.csv"), row.names = FALSE)
 
+# FSAR 4 panel plot ----
+
+
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada")
+
+
+a <- ggplot(SMU_RR |>
+             filter(Counts == "Harvest")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000), col = c('#999999'),alpha=0.25) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1, col="black") + 
+  ylab("Catch (000s)") +
+  xlab("Year") +
+  theme_sleek() +
+  theme(legend.position = c(0.75,0.85),
+        legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12))
+
+b <- ggplot(SMU_RR |>
+             filter(Counts == "Escapement")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000), col = c('#999999'),alpha=0.25) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1, col="black") + 
+  geom_hline(yintercept = 19, col = "darkred", lty=2, lwd = 1) +
+  geom_hline(yintercept = 95, col = "darkgreen", lty=2, lwd = 1) +
+  ylab("Spawners (000s)") +
+  xlab("Year") +
+  theme_sleek() +
+  theme(legend.position = c(0.75,0.85),
+        legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12))
+
+c <- ggplot(SMU_RR |>
+             filter(Counts == "Exploitation")) + 
+  geom_hline(yintercept = 35, col = "darkred", lty=2, lwd=1) +
+  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), col = c('#999999'),alpha=0.25) +
+  geom_line(aes(x = Year, y = Median50.), size = 1, col = "black") + 
+  ylab("Exploitation rate (%)") +
+  xlab("Year") +
+  theme_sleek() + theme(axis.title = element_text(size=12))
+
+d <- ggplot(SMU_RR |>
+              filter(Counts == "Run")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000), col = c('#999999'),alpha=0.25) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1, col="black") + 
+  ylab("Returns (000s)") +
+  xlab("Year") +
+  theme_sleek() +
+  theme(legend.position = c(0.75,0.85),
+        legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12))
+
+cowplot::plot_grid(a, b, c, d, labels="auto", ncol=2)
+
+
+ggsave(here("csasdown/figure/fsar-4-panel.PNG"), width = 975*2, height = 675*2, 
+       units="px", dpi=240)
