@@ -753,7 +753,7 @@ status_plot <- perf.status |>
   geom_col() +
   scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
   scale_y_continuous(breaks = c(2,4,6,8)) +
-  labs(x="Harvest control rule", y = "Number of CUs", fill="Status") +
+  labs(x="Harvest control rule", y = "Average # of CUs (over 1000 simulations)", fill="Status") +
   theme_sleek()
 
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
