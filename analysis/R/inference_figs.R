@@ -474,6 +474,28 @@ my.ggsave(here("analysis/plots/trib-rr/cu-escape.PNG"), width = 11)
 ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
 
+# Add benchmarks
+esc |>
+  left_join(CU_name_lookup, by="CU_f") |>
+  ggplot(aes(x = year, y = mean/1000)) + 
+  geom_ribbon(aes(ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
+  geom_line(lwd = 1.1, col="grey30") +
+  geom_hline(data=left_join(bench_plot, CU_name_lookup, by="CU_f"),
+            aes(yintercept=upper/1000), lty="dashed", linewidth=1,
+            col="forestgreen") +
+  geom_hline(data=left_join(bench_plot, CU_name_lookup, by="CU_f"),
+             aes(yintercept=lower/1000), lty="dashed", linewidth=1,
+             col="darkred") +
+  xlab("Year") +
+  ylab("Spawners (000s)") +
+  facet_wrap(~CU_pretty, ncol=3, scales = "free_y") +
+  theme_sleek() +
+  theme(strip.text = element_text(size=10))
+ggsave(here("csasdown/figure/cu-escape-bench.PNG"), width=900*2, height=800*2, units="px",
+       dpi=240)
+
+
+
 # trib vs RR spawner relationships ----
 esc_join <- esc |>
   mutate(CU = stock,
