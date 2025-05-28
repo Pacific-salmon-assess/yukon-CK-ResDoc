@@ -186,8 +186,8 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
     if(HCR == "IMEG.cap"){
       catch <- ifelse(run.size<=42500, 0, run.size-42500)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.4){       ## Lower ER cap (40%) 
-        catch <- run.size*0.4
+      if(HR.all > 0.35){       ## Lower ER cap (40%) 
+        catch <- run.size*0.35
         HR.all <- catch/run.size }}
     if(HCR == "moratorium"){
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
@@ -198,8 +198,8 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
     if(HCR == "moratorium.cap"){
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.4){       ## lower ER cap (40%) 
-        catch <- run.size*0.4
+      if(HR.all > 0.35){       ## lower ER cap (40%) 
+        catch <- run.size*0.35
         HR.all <- catch/run.size }}
     if(grepl("fixed.ER", HCR)){
       if(run.size==0){ER <- 0}
@@ -207,9 +207,9 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
       HR.all <- catch/run.size}
     if(HCR == "PA.alternative"){
       if(run.size <= 19000) catch <- 0
-      if(run.size >= 158333) catch <- run.size*0.4
+      if(run.size >= 158333) catch <- run.size*0.35
       if(run.size > 19000 & run.size < 158333){
-        dat <- data.frame(R=c(19000,158333), ER=c(0,0.4))
+        dat <- data.frame(R=c(19000,158333), ER=c(0,0.35))
         lin <- lm(ER ~ R, data=dat)
         ER <- coef(lin)[1] + coef(lin)[2]*run.size
         catch <- run.size*ER
@@ -345,8 +345,8 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
       if(HCR == "IMEG.cap"){
         catch <- ifelse(run.size<=42500, 0, run.size-42500)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.4){       ## Lower ER cap (40%) 
-          catch <- run.size*0.4
+        if(HR.all > 0.35){       ## Lower ER cap (40%) 
+          catch <- run.size*0.35
           HR.all <- catch/run.size }}
       if(HCR == "moratorium"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
@@ -357,8 +357,8 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
       if(HCR == "moratorium.cap"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.4){       ## lower ER cap (40%) 
-          catch <- run.size*0.4
+        if(HR.all > 0.35){       ## lower ER cap (40%) 
+          catch <- run.size*0.35
           HR.all <- catch/run.size }}
       if(grepl("fixed.ER", HCR)){
         if(run.size==0){ER <- 0}
@@ -366,9 +366,9 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
         HR.all <- catch/run.size}
       if(HCR == "PA.alternative"){
         if(run.size <= 19000) catch <- 0
-        if(run.size >= 158333) catch <- run.size*0.4
+        if(run.size >= 158333) catch <- run.size*0.35
         if(run.size > 19000 & run.size < 158333){
-          dat <- data.frame(R=c(19000,158333), ER=c(0,0.4))
+          dat <- data.frame(R=c(19000,158333), ER=c(0,0.35))
           lin <- lm(ER ~ R, data=dat)
           ER <- coef(lin)[1] + coef(lin)[2]*run.size
           catch <- run.size*ER
