@@ -451,13 +451,17 @@ my.ggsave(here("analysis/plots/SR-models/status.PNG"))
 # escapement plot ----
 bench_plot <- bench.par.table |>
   filter(bench.par == "Smsr") |>
-  mutate(upper = `50%`,
+  mutate(rebuilding = `50%`,
+         upper = `50%`*0.4,
          lower = `50%`*0.2,
          stock = CU) |>
-  select(stock, upper, lower)
-
+  select(stock, rebuilding, upper, lower) |> 
+  mutate(CU_f = factor(stock, levels=CU_order)) |>
+  left_join(CU_name_lookup, by="CU_f") |>
+  left_join(data.frame(summarize(esc, plot_lim=round(max(upper)/1000), .by="stock")),
+            by="stock") |> 
+  pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench")
 esc$CU_f <- factor(esc$stock, levels = CU_order)
-bench_plot$CU_f <- factor(bench_plot$stock, levels = CU_order)
 
 esc |>
   left_join(CU_name_lookup, by="CU_f") |>
@@ -477,20 +481,26 @@ ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="
 # Add benchmarks
 esc |>
   left_join(CU_name_lookup, by="CU_f") |>
-  ggplot(aes(x = year, y = mean/1000)) + 
-  geom_ribbon(aes(ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
-  geom_line(lwd = 1.1, col="grey30") +
-  geom_hline(data=left_join(bench_plot, CU_name_lookup, by="CU_f"),
-            aes(yintercept=upper/1000), lty="dashed", linewidth=1,
-            col="forestgreen") +
-  geom_hline(data=left_join(bench_plot, CU_name_lookup, by="CU_f"),
-             aes(yintercept=lower/1000), lty="dashed", linewidth=1,
-             col="darkred") +
-  xlab("Year") +
-  ylab("Spawners (000s)") +
+  ggplot() + 
+  geom_hline(data=bench_plot, aes(yintercept=value/1000, col=label), lty="dashed") +
+  scale_colour_manual(values=c("darkred", "pink", "forestgreen"), 
+                      labels=c(expression(paste("20%", S[MSR])), expression(paste("40%", S[MSR])), 
+                               expression(S[MSR]))) +
+   #          col="pink3") +
+  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=0, ymax=lower/1000), fill="darkred", alpha=0.2) +
+  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=lower/1000, ymax=upper/1000),  fill="yellow", alpha=0.2) +
+  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=upper/1000, ymax=plot_lim),  fill="forestgreen", alpha=0.2) +
+  geom_ribbon(aes(x=year, ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
+  geom_line(aes(x = year, y = mean/1000), lwd = 1.1, col="grey30") +
+  labs(x="Year", y="Spawners (000s)", col="") +
   facet_wrap(~CU_pretty, ncol=3, scales = "free_y") +
   theme_sleek() +
-  theme(strip.text = element_text(size=10))
+  theme(strip.text = element_text(size=10),
+        legend.position="right",
+        legend.text = element_text(size=9))
+
+
+
 ggsave(here("csasdown/figure/cu-escape-bench.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
 
