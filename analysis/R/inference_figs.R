@@ -991,6 +991,9 @@ ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) +
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border.PNG"))
+
+
 # CU run-timing plot ----
 CU_order <- c(1,2,5,3,6,9,4,8)
 cols <- viridis(rpt$nS+1)

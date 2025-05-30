@@ -12,7 +12,7 @@ fw_age_sex <- read.csv(here("analysis/data/raw/fw-border-age-sex-comps.csv"))
 # Hamachan length raw data with selectivity 1981-2006
 fw_l <- read.csv(here("analysis/data/raw/FWborder.csv"))
 
-# Eage ASL data 2005-2020
+# Eage ASL data 2005-2024
 eagle_age_sex_len <- read.csv(here("analysis/data/raw/ASL_Output_Chinook_Eagle_2005-2024.csv"))
 
 ## wrangling for full age and sex dataset
