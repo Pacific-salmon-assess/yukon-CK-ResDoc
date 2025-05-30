@@ -959,6 +959,28 @@ legend( x="bottomleft", bty="n",
 
 dev.off()
 
+# Compare CU and aggregrate border passage ----
+
+Ese <- filter(rpt$sdrpt,par=="runSize_t")
+Ese$year <- seq(1985,2024)
+
+border <- read.csv(here("analysis/data/raw/border-passage.csv")) |>
+  filter(year>1984)
+
+cu_rr <- Ese[,c(6,2,4:5)]; colnames(cu_rr) <- c("year", "est", "lwr", "upr"); cu_rr$model <- "CU_rr"
+agg_rr <- border[,c(1:2,4:5)]; colnames(agg_rr) <- c("year", "est", "lwr", "upr"); agg_rr$model <- "Agg_rr"
+
+
+bp_models <- rbind(cu_rr,agg_rr)
+
+ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) + 
+  geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),   alpha = 0.5) +
+  geom_line(lwd = 1.1, ) +
+  xlab("Year") +
+  ylab("Border passage (000s)")+
+  theme_sleek() +
+  theme(strip.text = element_text(size=10))
+
 # CU run-timing plot ----
 CU_order <- c(1,2,5,3,6,9,4,8)
 cols <- viridis(rpt$nS+1)
