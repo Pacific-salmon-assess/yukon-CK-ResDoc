@@ -461,6 +461,7 @@ bench_plot <- bench.par.table |>
   left_join(data.frame(summarize(esc, plot_lim=round(max(upper)/1000), .by="stock")),
             by="stock") |> 
   pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench")
+
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 esc |>

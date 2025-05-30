@@ -105,14 +105,15 @@ CU_spwn_df <- as.data.frame(CU_spwn)
 CU_spwn_df$CU <- rownames(CU_spwn)
 
 CU_spawn_long <- CU_spwn_df %>% 
-  pivot_longer(!CU, names_to = 'Year', values_to = 'spawn')
+  pivot_longer(!CU, names_to = 'Year', values_to = 'spawn')|>
+  mutate(spawn = ifelse(spawn < 0, 10, spawn))
 
 CU_spwn_lwr_df <- as.data.frame(CU_spwn_lwr)
 CU_spwn_lwr_df$CU <- rownames(CU_spwn_lwr)
 
 CU_spawn_lwr_long <- CU_spwn_lwr_df %>% 
   pivot_longer(!CU, names_to = 'Year', values_to = 'spawn.lwr') |>
-  mutate(spawn.lwr = ifelse(spawn.lwr < 0, 10, spawn.lwr))
+  mutate(spawn.lwr = ifelse(spawn.lwr < 0, 2, spawn.lwr))
 
 CU_spwn_upr_df <- as.data.frame(CU_spwn_upr)
 CU_spwn_upr_df$CU <- rownames(CU_spwn_upr)
