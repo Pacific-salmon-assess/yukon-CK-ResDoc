@@ -885,6 +885,42 @@ my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG"))
 
 # SMU run and escapement ----
 
+# without reference points
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada", 
+         Counts != "Harvest") 
+
+a<- ggplot(SMU_RR |>
+             filter(Counts != "Exploitation")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
+  ylab("Fish (000s)") +
+  xlab("Year") +
+  scale_color_manual(values=c('#999999','#E69F00')) +
+  scale_fill_manual(values=c('#999999', '#E69F00')) +
+  theme_sleek() +
+  theme(legend.position = c(0.75,0.85),
+        legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12),
+        plot.margin = margin(0.5,20,0.5,0.5))
+
+b<- ggplot(SMU_RR |>
+             filter(Counts == "Exploitation")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), fill="darkblue", col="darkblue", alpha=0.4) +
+  geom_line(aes(x = Year, y = Median50.), size = 1, col = "darkblue") + 
+  ylab("Harvest rate (%)") +
+  xlab("Year") +
+  theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5),
+                        axis.title = element_text(size=12))
+
+cowplot::plot_grid(a, b, labels="auto", ncol=2)
+
+
+ggsave(here("analysis/plots/trib-rr/SMU-run-esc-no ref points.PNG"), width = 975*2, height = 350*2, 
+       units="px", dpi=240)
+
+# with reference points
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
   filter(Stock == "Canada", 
          Counts != "Harvest") 
@@ -971,6 +1007,9 @@ dev.off()
 
 # Compare CU and aggregrate border passage ----
 
+# make sure to select right fitted model folder
+load(here("analysis/R/run-reconstructions/fittedMod(disp=2)/rpt.Rdata"))
+
 Ese <- filter(rpt$sdrpt,par=="runSize_t")
 Ese$year <- seq(1985,2024)
 
@@ -991,7 +1030,7 @@ ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) +
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border.PNG"))
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=2)/cu-vs-agg-rr-border.PNG"))
 
 
 # CU run-timing plot ----

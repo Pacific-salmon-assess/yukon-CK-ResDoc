@@ -128,6 +128,8 @@ fem_egg_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")
 reproOutputPerSpawner <- rowSums(fem_S_comps*fem_egg_mass_comps)
 reproOutputPerSpawnerEggs <- rowSums(fem_S_comps*fem_egg_comps)
 reproOutput <- data.frame(cbind(seq(1985,2024),reproOutputPerSpawnerEggs))
+reproOutputEM <- data.frame(cbind(seq(1985,2024),reproOutputPerSpawner))
+write.csv(reproOutputEM, here("analysis/data/generated/reproOutputEM.csv"),row.names = FALSE)
 
 fem_age_comp <- fem_age_comps[,c(1,3:6)]%>%
   group_by(Sample.Year) %>%
@@ -222,3 +224,74 @@ cdn_rr$total_eggs <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_e
 cdn_rr$total_egg_mass <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_egg_mass)
 
 write.csv(cdn_rr, here("analysis/data/raw/cdn-yukon-chinook-repro-output.17Mar2025.csv"),row.names = FALSE)
+
+# age by CU ----
+
+eagle_age_sex_gen <- read.csv(here("analysis/data/raw/ASL_Eagle_2005-2024_geneticIDs.csv"))
+gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv")) 
+
+age <-eagle_age_sex_gen |>
+  mutate(fish=Genetic.Sample.Number,
+         year=sampleYear) |>
+  filter(species == "Chinook",
+         year>2008) |>
+  select(year, fish, sexID, totalAge)
+
+gsi_hProb <- gsi |>
+  filter(prob>0.5,
+         year>2008) |>
+  select(year, fish, CU, prob)
+
+gsi_age <- age |>
+  left_join(gsi_hProb, by = c("year", "fish")) |>
+  mutate(age = case_when(totalAge == 1.1 ~ 3,
+                         totalAge == 1.2 ~ 4,
+                         totalAge == 1.3 ~ 5,
+                         totalAge == 1.4 ~ 6,
+                         totalAge == 1.5 ~ 7,
+                         totalAge == 2.2 ~ 5,
+                         totalAge == 2.3 ~ 6,
+                         totalAge == 2.4 ~ 7)) |>
+  filter(age != 3)
+
+
+cu_age_sex <- gsi_age |>
+  group_by(year,CU,sexID) |>
+  count(age) |>
+  drop_na()
+
+cu_age <- gsi_age |>
+  group_by(year,CU) |>
+  count(age) |>
+  drop_na()|>
+  mutate(year_count = sum(n),
+         prop = n/year_count) |>
+  drop_na()
+
+cu_age_all_yr <- gsi_age |>
+  group_by(CU) |>
+  count(age) |>
+  mutate(year_count = sum(n),
+         prop = n/year_count) |>
+  drop_na()
+
+ggplot(cu_age_all_yr, aes(x = age, y = prop)) +
+  geom_bar(position="dodge", stat = "identity") + 
+  theme_sleek() +
+  facet_wrap(~CU) 
+
+ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fill=as.factor(age))) +
+  geom_bar( stat = "identity") + 
+  theme_sleek() +
+  facet_wrap(~year) +
+  theme(legend.position = c(0.7,0.145),
+        axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+  labs(x = "Conservation Unit", y = "Proportion") 
+my.ggsave(here("analysis/plots/SR_models/age-cu-by-yrs.PNG"))
+
+ggplot(cu_age_all_yr, aes(x = CU, y = prop, fill=as.factor(age))) +
+  geom_bar( stat = "identity") + 
+  theme_sleek() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+  labs(x = "Conservation Unit", y = "Proportion") 
+my.ggsave(here("analysis/plots/SR_models/age-cu-all-yrs.PNG"))
