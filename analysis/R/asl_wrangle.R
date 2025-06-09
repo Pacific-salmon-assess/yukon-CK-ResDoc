@@ -88,7 +88,7 @@ fw_fl$age_7 <- na.locf(zoo(fw_fl$age_7), fromLast = TRUE)
 
 # eagle data
 eagle_fl <- eagle_age_sex_len |> 
-  filter(!is.na(Total.Age), Sex != "unknown") |>
+  filter(!is.na(Total.Age), Sex != "unknown", Species != "Chum") |>
   group_by(Sample.Year, Sex, Total.Age) |>
   summarise(fl=mean(Length, na.rm = TRUE)) |>
   select(Sample.Year, Sex, Total.Age, fl) |>
