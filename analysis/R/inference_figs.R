@@ -511,6 +511,7 @@ esc_join <- esc |>
   mutate(CU = stock,
          mean = mean/1000) |>
   select(CU, year, mean, CU_f)
+esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU != "Porcupine")|>
@@ -526,17 +527,24 @@ trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
   drop_na(c("mean", "estimate")) |>
   filter(! tributary %in% c("morley_aerial", "chandindu_weir","nisutlin_sonar", "pelly_aerial", "ross_aerial"))
 
-trib_rr |> 
+
+trib_rr <- trib_rr |> 
   mutate(tribs_name = gsub("creek", " Creek", 
                            gsub("salmon", " Salmon", 
-                                gsub("_", " ", str_to_sentence(tributary))))) |>
-  ggplot(aes(x = mean, y = estimate)) +
+                                gsub("_", " ", str_to_sentence(tributary)))))
+
+trib_order_RR <- c("Klondike sonar", "Tincup aerial", "Pelly sonar", "Blind Creek weir", "Tachun foot","Tachun weir","Little Salmon aerial",
+                   "Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot","Wolf aerial","Nisutlin aerial")
+trib_rr$tribs_name_ord<- factor(trib_rr$tribs_name, levels = trib_order_RR)
+
+
+ggplot(trib_rr,aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
   xlab("CU spawners (000s)") +
   ylab("Tributary spawners") +
   theme_sleek() +
-  facet_wrap(~tribs_name, scales = "free", ncol = 4) +
+  facet_wrap(~tribs_name_ord, scales = "free", ncol = 4) +
   theme(axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/trib-rr/RR-vs-trib-spawners.PNG"), width = 11)
@@ -558,13 +566,21 @@ dat_text <- tribs.all |>
   slice_head() |>
   select(tributary, CU)
 
-tribs.all |>
-  mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
-  ggplot(aes(x = year, y = estimate/1000)) + 
+tribs.all <- tribs.all |>
+  mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary))))
+
+
+trib_order <- c("Porcupine sonar","Miner aerial","Klondike sonar","Chandindu weir","Tincup aerial" ,"Ross aerial","Pelly aerial",
+                "Pelly sonar","Blind creek weir","Tachun foot", "Tachun weir","Little Salmon aerial","Big Salmon aerial",
+                "Big Salmon sonar","Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot",
+                "Teslin sonar","Nisutlin aerial","Nisutlin sonar","Wolf aerial", "Morley aerial")
+tribs.all$tribs_name_ord<- factor(tribs.all$tribs_name, levels = trib_order)
+
+ggplot(tribs.all,aes(x = year, y = estimate/1000)) + 
   geom_line(lwd = 0.8, col="grey") +
   xlab("Year") +
   ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
+  facet_wrap(~tribs_name_ord, ncol=5, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek() + 
   theme(axis.title = element_text(size=12),
@@ -1008,7 +1024,7 @@ dev.off()
 # Compare CU and aggregrate border passage ----
 
 # make sure to select right fitted model folder
-load(here("analysis/R/run-reconstructions/fittedMod(disp=2)/rpt.Rdata"))
+load(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/rpt.Rdata"))
 
 Ese <- filter(rpt$sdrpt,par=="runSize_t")
 Ese$year <- seq(1985,2024)
@@ -1024,13 +1040,15 @@ bp_models <- rbind(cu_rr,agg_rr)
 
 ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) + 
   geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),   alpha = 0.5) +
-  geom_line(lwd = 1.1, ) +
+  geom_line(lwd = 1.1, aes(color=model)) +
   xlab("Year") +
   ylab("Border passage (000s)")+
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=2)/cu-vs-agg-rr-border.PNG"))
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/cu-vs-agg-rr-border.PNG"))
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/cu-vs-agg-rr-border-small.PNG"),
+          width= 4.5, height = 2.25, dpi= 180)
 
 
 # CU run-timing plot ----
