@@ -501,3 +501,11 @@ cowplot::plot_grid(a, b, c, labels="auto", ncol=1,rel_heights=c(0.6,0.6,1))
 
 ggsave(here("analysis/plots/SR-models/par-compare-alt-RR.PNG"), width=700*2, height=900*2, dpi=240,
        units="px")
+
+
+# summarize ----
+
+bench.posts.all |>
+  pivot_longer(cols=lnalpha:Smsr,names_to="parameter", values_to="value") |>
+  group_by(parameter, CU) |>
+  summarize(avg=mean(value))
