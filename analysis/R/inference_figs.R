@@ -594,16 +594,21 @@ ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2,
 # forward simulations ----
 
 ## reference vs robustness productivity ----  
+
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
 TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
   
-TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(24:34), names_to = "par") |>
+TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(30:35), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "reference")       
+  mutate(scenario = "reference (most recent generation)")       
+
+TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(1:35), names_to = "par") |>
+  select(CU, par, value) |>
+  mutate(scenario = "robustness (long-term average)")
 
 TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(35), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "robustness")   
+  mutate(scenario = "robustness (most recent year)")   
 
 AR.pp.rob <- AR1.par.posts |>
   mutate(scenario = "stationary",
@@ -611,7 +616,7 @@ AR.pp.rob <- AR1.par.posts |>
          value = ln_a) |>
   select(CU, par, value, scenario) 
 
-alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob)
+alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob,TV.pp.rob2.long)
 
 alpha.stats <- alpha.posts |>
   group_by(CU, scenario) |>
@@ -625,6 +630,7 @@ alpha.posts |> filter(scenario != "stationary") |>
   geom_density(alpha = 0.3) +
   facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
   theme_sleek() +
+  scale_x_continuous(limits = c(NA, 4)) +
   theme(legend.position = "bottom") +
   geom_vline(xintercept = 0, lty=2, col="grey") +
   scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
@@ -943,8 +949,8 @@ SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
 
 a<- ggplot(SMU_RR |>
          filter(Counts != "Exploitation")) + 
-  geom_hline(yintercept = 19, col = "darkred", lty=2) +
-  geom_hline(yintercept = 95, col = "dark green", lty=2) +
+  geom_hline(yintercept = 37, col = "darkred", lty=2) +
+  geom_hline(yintercept = 87, col = "dark green", lty=2) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
   ylab("Fish (000s)") +
