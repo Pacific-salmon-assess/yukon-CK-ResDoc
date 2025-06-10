@@ -62,7 +62,7 @@ Type objective_function<Type>::operator() ()
   //PARAMETER(lnErrSD);    		// Process error standard deviation (log scale)
   PARAMETER_VECTOR(lnErrSD_s);    	// Process error standard deviation (log scale)
   PARAMETER_ARRAY(logitCor_ss);   	// Correlation matrix for process errors (log scale)
-  PARAMETER_ARRAY(lnqE_sg);       	// Count catchability (log scale)
+  PARAMETER_ARRAY(lnqE_tg);       	// Count catchability (log scale)
   PARAMETER_VECTOR(lnqI_s);       	// Index catchability
   PARAMETER_ARRAY(lnDisp_tg);
 
@@ -136,7 +136,7 @@ Type objective_function<Type>::operator() ()
 
       // Store predicted abundance
       for( int g=0; g<nG; g++ )
-        Ihat_dtg.col(g).col(t) += exp(lnqE_sg(s,g))*N_dst.col(t).col(s);
+        Ihat_dtg.col(g).col(t) += exp(lnqE_tg(t,g))*N_dst.col(t).col(s);
 
     } // next s
     
@@ -170,7 +170,7 @@ Type objective_function<Type>::operator() ()
 
         // Predicted stock composition
         for( int s=0; s<nS; s++ )
-          Phat_sdtg(s,d,t,g) = exp(lnqE_sg(s,g))*N_dst(d,s,t)/Ihat_dtg(d,t,g);
+          Phat_sdtg(s,d,t,g) = exp(lnqE_tg(t,g))*N_dst(d,s,t)/Ihat_dtg(d,t,g);
 
         // Multinomial likelihood for composition data
         if( !isNA(n_sdtg(0,d,t,g)) )
@@ -267,7 +267,7 @@ Type objective_function<Type>::operator() ()
   REPORT(N_dst);
   REPORT(mu_st);
   REPORT(rho_dst);
-  REPORT(lnqE_sg);
+  REPORT(lnqE_tg);
   REPORT(arrivSD_s);
   REPORT(errSD_s);
 
