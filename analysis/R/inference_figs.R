@@ -461,6 +461,7 @@ bench_plot <- bench.par.table |>
   left_join(data.frame(summarize(esc, plot_lim=round(max(upper)/1000), .by="stock")),
             by="stock") |> 
   pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench")
+
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 esc |>
@@ -1030,7 +1031,7 @@ dev.off()
 # Compare CU and aggregrate border passage ----
 
 # make sure to select right fitted model folder
-load(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/rpt.Rdata"))
+load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
 
 Ese <- filter(rpt$sdrpt,par=="runSize_t")
 Ese$year <- seq(1985,2024)

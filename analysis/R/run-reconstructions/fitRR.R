@@ -93,7 +93,6 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   #lnDisp_tg[22,2] <- log(0.5)
   #lnDisp_tg[23,2] <- log(0.5)
   lnDisp_tg[ ,2] <- log(0.1)
-  lnDisp_tg[17,2] <- log(2)
   #lnDisp_tg[5,2] <- log(1e-5)
   #lnDisp_tg[21,2] <- log(1e-5)
   #lnDisp_tg[22,2] <- log(0.5)
