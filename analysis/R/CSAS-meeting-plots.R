@@ -509,3 +509,24 @@ bench.posts.all |>
   pivot_longer(cols=lnalpha:Smsr,names_to="parameter", values_to="value") |>
   group_by(parameter, CU) |>
   summarize(avg=mean(value))
+
+# Fishwheel catchability plots ----
+RR_pars <- rpt[["sdrpt"]]
+RR_pars$year <- seq(1984,2006)
+
+fw_catch <- as.data.frame(RR_pars) |>
+  filter(par=="lnqE_tg") |>
+  mutate(mid = exp(val),
+         lwr = exp(lCI),
+         upr = exp(uCI),
+         year = seq(1984,2006)) |>
+  filter(year > 1984,
+         year < 2005) |>
+  select(year,mid,lwr,upr)
+
+ggplot(fw_catch, aes(x = year, y = mid)) +
+  geom_bar(position="dodge", stat = "identity") + 
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0,position=position_dodge(0.9)) +
+  theme_sleek() + 
+  labs(x = "Year", y = "Fish wheel catchability") 
+my.ggsave(here("analysis/plots/RR/fishwheel-catchability.PNG"))
