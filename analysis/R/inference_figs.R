@@ -1053,8 +1053,8 @@ ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) +
   theme_sleek() +
   theme(strip.text = element_text(size=10))
 
-my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/cu-vs-agg-rr-border.PNG"))
-my.ggsave(here("analysis/R/run-reconstructions/fittedMod(disp=0.02)/cu-vs-agg-rr-border-small.PNG"),
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border.PNG"))
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border-small.PNG"),
           width= 4.5, height = 2.25, dpi= 180)
 
 
