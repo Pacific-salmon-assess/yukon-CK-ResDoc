@@ -460,7 +460,8 @@ bench_plot <- bench.par.table |>
   left_join(CU_name_lookup, by="CU_f") |>
   left_join(data.frame(summarize(esc, plot_lim=round(max(upper)/1000), .by="stock")),
             by="stock") |> 
-  pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench")
+  pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench") |>
+  mutate(bench = factor(bench, levels=c("rebuilding", "upper", "lower")))
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 esc |>
@@ -482,14 +483,13 @@ ggsave(here("csasdown/figure/cu-escape.PNG"), width=900*2, height=800*2, units="
 esc |>
   left_join(CU_name_lookup, by="CU_f") |>
   ggplot() + 
-  geom_hline(data=bench_plot, aes(yintercept=value/1000, col=label), lty="dashed") +
-  scale_colour_manual(values=c("darkred", "pink", "forestgreen"), 
-                      labels=c(expression(paste("20%", S[MSR])), expression(paste("40%", S[MSR])), 
-                               expression(S[MSR]))) +
-   #          col="pink3") +
-  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=0, ymax=lower/1000), fill="darkred", alpha=0.2) +
-  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=lower/1000, ymax=upper/1000),  fill="yellow", alpha=0.2) +
-  #geom_rect(data=bench_plot, aes(xmin=1985, xmax=2025, ymin=upper/1000, ymax=plot_lim),  fill="forestgreen", alpha=0.2) +
+  geom_hline(data=bench_plot, aes(yintercept=value/1000, col=bench), lty="dashed") +
+  scale_colour_manual(values=c(rebuilding = "pink3", 
+                               lower = "darkred", 
+                               upper = "forestgreen"), 
+                      labels=c(upper = expression(paste("40%", S[MSR])),
+                               rebuilding = expression(S[MSR]),
+                               lower = expression(paste("20%", S[MSR])))) +
   geom_ribbon(aes(x=year, ymin = lower/1000, ymax = upper/1000),  fill = "darkgrey", alpha = 0.5) +
   geom_line(aes(x = year, y = mean/1000), lwd = 1.1, col="grey30") +
   labs(x="Year", y="Spawners (000s)", col="") +
@@ -498,8 +498,6 @@ esc |>
   theme(strip.text = element_text(size=10),
         legend.position="right",
         legend.text = element_text(size=9))
-
-
 
 ggsave(here("csasdown/figure/cu-escape-bench.PNG"), width=900*2, height=800*2, units="px",
        dpi=240)
@@ -560,11 +558,14 @@ dat_text <- tribs.all |>
 
 tribs.all |>
   mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
-  ggplot(aes(x = year, y = estimate/1000)) + 
-  geom_line(lwd = 0.8, col="grey") +
-  xlab("Year") +
-  ylab("Spawners (000s)") +
-  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
+  mutate(CU_f = factor(gsub("BigSalmonR", "Big.Salmon", CU), levels=c(CU_order, "Porcupine"))) |>
+  arrange(CU_f) |>
+  mutate(tribs_name = factor(tribs_name, levels=unique(tribs_name))) |>
+  ggplot(aes(x = year, y = estimate/1000, col=CU_f)) + 
+  scale_color_viridis_d() +
+  geom_line(lwd = 0.8) +
+  labs(x="Year", y="Spawners (000s)", col="CU") +
+  facet_wrap(~tribs_name, ncol=5, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek() + 
   theme(axis.title = element_text(size=12),
@@ -632,7 +633,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA.csv")) |>
-      pivot_longer(-c(1,11), names_to = "metric") |>
+      pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA.csv"), 
                       row.names = 1)
@@ -641,7 +642,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA2.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA2.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA2.csv")) |>
-      pivot_longer(-c(1,11), names_to = "metric") |>
+      pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
                     row.names = 1)
@@ -650,7 +651,7 @@ if(k == "TVA"){
     S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_AR1.csv"))
     H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_AR1.csv"))
     perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_AR1.csv")) |>
-      pivot_longer(-c(1,11), names_to = "metric") |>
+      pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_AR1.csv"),
                       row.names = 1)
@@ -665,22 +666,33 @@ demo.bench$CU_f <- factor(demo.bench$CU, levels = CU_order)
 
 # assign HCRs to groups for subsetting harvest scenarios / HCRs
 ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
-HCRs <- c("no.fishing", "moratorium", "IMEG", "moratorium.cap", "IMEG.cap", "PA.alternative", paste0("fixed.ER.", ER_seq)) 
+HCRs <- c("no.fishing", "moratorium", "IMEG", "moratorium.cap", "IMEG.cap", "PA.alternative", "realistic", paste0("fixed.ER.", ER_seq)) 
 HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
                  moratorium = c("no.fishing", "moratorium", "moratorium.cap", "PA.alternative"),
                  IMEG = c("no.fishing", 
                                 unique(S.fwd$HCR[grepl("*IMEG*", S.fwd$HCR)])),
                  simple = c("no.fishing", "IMEG", "moratorium"),
+                 realistic = c("IMEG", "moratorium", "realistic"),
                  fixed = unique(S.fwd$HCR[grepl("fixed.ER", S.fwd$HCR)]))
 # colours 
-HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5")
-names(HCR_cols) <- c("PA Alternative", "Fixed ER 60", "No fishing", "Moratorium", "Moratorium cap", "IMEG", "IMEG cap")
-HCR_lookup <- data.frame(HCR=c(HCRs[1:6], "fixed.ER.60"), HCR_name = names(HCR_cols)[c(3:4,6,5,7,1:2)])
-# CHECK HCR_lookup to make sure names match.
+HCR_cols <- c("#B07300", "purple3", "grey25", "#CCA000", "#FEE106",  "#0F8A2E", "#3638A5", "navy")
+names(HCR_cols) <- c("PA Alternative", "Fixed ER 60", "No fishing", "Moratorium", "Moratorium cap", "IMEG", "IMEG cap", "Realistic")
+HCR_lookup <- data.frame(HCR=c(HCRs[1:7], "fixed.ER.60"), HCR_name = names(HCR_cols)[c(3:4,6,5,7,1, 8, 2)])
+HCR_lookup
 
 ## Spawners projection ----
                   
-for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
+for(i in 1:length(HCR_grps[1:5])) { # don't make this fig for all fixed exp rates
+  demo.bench.plot <- demo.bench |> 
+    filter(par == "Smsr", period=="recent") |>
+    mutate(rebuilding = median,
+           lower = median*0.2,
+           upper = median*0.4) |>
+    select(rebuilding, lower, upper, CU_f) |>
+    pivot_longer(cols=c(lower, upper, rebuilding), 
+                 values_to="value", names_to="bench")
+    
+  
   S.fwd |> filter(HCR %in% HCR_grps[[i]]) |>
     left_join(HCR_lookup, by="HCR") |>
     ggplot() +
@@ -696,10 +708,16 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
                 alpha = 0.2) +
     geom_line(aes(year, S.50/1000, color = HCR_name), lwd=1) +
     # Benchmarks:
-    geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = median/1000), 
-               color = "forestgreen", lty = 2) +
-    geom_hline(data = filter(demo.bench, par=="Smsr", period=="recent"), aes(yintercept = 
-                             (median*0.2)/1000), color = "darkred", lty = 2) +
+    geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"), 
+               aes(yintercept = median/1000), lty=2, 
+               color = "pink3") +
+    geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"), 
+               aes(yintercept = (median*0.4)/1000), lty=2, 
+               color = "forestgreen") +
+    geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"), 
+               aes(yintercept = (median*0.2)/1000), lty=2, 
+               color = "darkred") +
+    scale_linetype_manual(values=2, guide = "legend") +
     facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
     scale_x_continuous(expand = expansion(mult = c(0, .01))) +
     labs(y = "Spawners (000s)", x="Year", col="", fill="") +
@@ -718,7 +736,7 @@ for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rate
 
 
 ## Harvest projection ----
-for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
+for(i in 1:length(HCR_grps[1:5])) { # don't make this fig for all fixed exp rates
   H.fwd |> filter(HCR %in% HCR_grps[[i]], HCR != "no.fishing") |>
     left_join(HCR_lookup, by="HCR") |>
     ggplot() +
@@ -751,7 +769,8 @@ perf.metrics <- perf.metrics |> left_join(HCR_lookup, by="HCR") |>
 
 pm_plot <- perf.metrics |> 
   filter(!(HCR %in% HCR_grps[["fixed"]])) |> 
-  filter(!(metric %in% c("n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct"))) |>
+  filter(!(HCR %in% "realistic")) |>
+  filter(!(metric %in% c("n.below.LSR", "n.between.ref", "n.above.USR","n.above.reb", "n.extinct"))) |>
   mutate(metric_name = case_when(metric == "ER" ~ "Exploitation rate",
                                  metric == "pr.basic.needs" ~ "Prop. years basic needs met",
                                  metric == "pr.no.harv" ~ "Prop. years with no harvest",
@@ -775,17 +794,17 @@ pm_plot <- perf.metrics |>
 
 # status
 perf.status <- perf.metrics |>
-  filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.extinct")) |>
+  filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.above.reb", "n.extinct")) |>
   mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)), 
-    levels=c("above USR", "between ref", "below LSR", "extinct")))
+    levels=c("above reb", "above USR", "between ref", "below LSR", "extinct")))
 
 status_plot <- perf.status |>
   filter(!(HCR %in% HCR_grps[["fixed"]])) |>
   ggplot(aes(x = HCR_name, y = mean, fill = status)) + 
   geom_col() +
-  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
+  scale_fill_discrete(type = c("pink3", "forestgreen", "darkorange", "darkred", "black")) +
   scale_y_continuous(breaks = c(2,4,6,8)) +
-  labs(x="Harvest control rule", y = "Average # of CUs (over 1000 simulations)", fill="Status") +
+  labs(x="Harvest control rule", y = "Average # of CUs \n (1000 simulations)", fill="Status") +
   theme_sleek()
 
 cowplot::plot_grid(pm_plot, status_plot, nrow=2, labels="auto", rel_heights = c(1.5,1))
@@ -831,7 +850,7 @@ status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
   ggplot(aes(x=mean, y=factor(ER), fill=status)) +
   geom_col() +
   geom_vline(data=data.frame(x=seq(1:9)), aes(xintercept=x), col="white", linewidth=0.05) +
-  scale_fill_discrete(type = c("forestgreen", "darkorange", "darkred", "black")) +
+  scale_fill_discrete(type = c("pink3","forestgreen", "darkorange", "darkred", "black")) +
   scale_x_continuous(breaks = c(2,4,6,8)) +
   scale_y_discrete(breaks = seq(0,90,20)) +
   labs(y = "Exploitation Rate", fill="", x="Average # of CUs (over 1000 simulations)") +
@@ -864,7 +883,7 @@ ggplot(out) + geom_line(aes(x=run_size/1000, y=HR*100, col=HCR_name), linewidth=
   lims(x=c(0,200)) +
   scale_y_continuous(breaks=seq(0,100,20), limits=c(0,100)) 
 
-my.ggsave(here("analysis/plots/fwd_sim/HCR_visualize.PNG"))
+my.ggsave(here("analysis/plots/fwd-sim/HCR_visualize.PNG"))
 my.ggsave(here("csasdown/figure/HCR_visualize.PNG"), height=4, 
           width=6)
 

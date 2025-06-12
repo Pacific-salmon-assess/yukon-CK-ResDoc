@@ -5,19 +5,19 @@ library(mvtnorm) #for rmvnorm() nested in the functions
 source(here("analysis/R/data_functions.R"))
 
 
-fit_type <- c("TVA","TVA2")#, "AR1") # Can omit one to avoid re-simulating it
+fit_type <- c("TVA") #,"TVA2")#, "AR1") # Can omit one to avoid re-simulating it
 set.seed(2)
 
 
 # Load SR fits ---------------------------------------------------------------
 
-# Load TVA (reference set) fits
+# Load TVA fits
 TVA.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA"), 
                               full.names = T), readRDS)
 names(TVA.fits) <- unique(sp_har$CU)
 TVA.fits <- lapply(TVA.fits, rstan::extract)
 
-# Load AR1 (robustness set) fits
+# Load AR1 fits
 AR1.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1"), 
                               full.names = T), readRDS)
 names(AR1.fits) <- unique(sp_har$CU)
@@ -102,7 +102,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 1000 # number of Monte Carlo trials
+num.sims = 1000  # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # empirical estimated based on forecast vs true run 2000-present  
@@ -110,7 +110,7 @@ OU <- 0.1  ## could also base this off something else from fisheries management
 
 # --- Create array to store outcomes --------------------------------------
 ER_seq <- seq(5, 100, 5) # how many fixed ERs to test?
-HCRs <- c("no.fishing", "IMEG", "IMEG.cap", "moratorium", "moratorium.cap", "PA.alternative", paste0("fixed.ER.", ER_seq))
+HCRs <- c("no.fishing", "IMEG", "IMEG.cap", "moratorium", "moratorium.cap", "PA.alternative", "realistic", paste0("fixed.ER.", ER_seq))
 sim.outcomes <- NULL
 S.time <- NULL #null objects to bind to - because need dataframes for ggplot
 H.time <- NULL
@@ -151,7 +151,7 @@ for(i in 1:length(HCRs)){
   }
 } # end of simulation loop
 
-pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.LSR", "n.between.ref", "n.above.USR", "n.extinct")
+pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.LSR", "n.between.ref", "n.above.USR", "n.above.reb", "n.extinct")
 colnames(sim.outcomes) <- c("HCR", "sim", pms)
 qmean <- function(x){
   c(quantile(x, c(0.25, 0.5, 0.75)), mean(x))
@@ -167,6 +167,7 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
           n.below.LSR = qmean(n.below.LSR), 
           n.between.ref = qmean(n.between.ref), 
           n.above.USR = qmean(n.above.USR), 
+          n.above.reb = qmean(n.above.reb),
           n.extinct = qmean(n.extinct),
           prob=c("q_25","median","q_75","mean")
           )

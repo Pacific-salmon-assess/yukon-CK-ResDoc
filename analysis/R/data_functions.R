@@ -195,6 +195,21 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
       if(HR.all > 0.8){       ## ER cap (80%) 
         catch <- run.size*0.8
         HR.all <- catch/run.size }}
+    if(HCR == "realistic"){
+      if(i %in% (7+1):14){ # if before 2030, apply moratorium rule
+        catch <- ifelse(run.size<=71000, 0, run.size-71000)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.8){       ## ER cap (80%) 
+          catch <- run.size*0.8
+          HR.all <- catch/run.size }
+      } else { # if after 2030, return to IMEG rule
+        catch <- ifelse(run.size<=42500, 0, run.size-42500)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.8){       ## Add ER cap (80%) 
+          catch <- run.size*0.8
+          HR.all <- catch/run.size }
+      }
+    }
     if(HCR == "moratorium.cap"){
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
@@ -206,10 +221,10 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
       catch <- run.size*ER
       HR.all <- catch/run.size}
     if(HCR == "PA.alternative"){
-      if(run.size <= 19000) catch <- 0
-      if(run.size >= 158333) catch <- run.size*0.35
-      if(run.size > 19000 & run.size < 158333){
-        dat <- data.frame(R=c(19000,158333), ER=c(0,0.35))
+      if(run.size <= 17000) catch <- 0
+      if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35 
+      if(run.size > 17000 & run.size < 86000/(1-0.35)){
+        dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
         lin <- lm(ER ~ R, data=dat)
         ER <- coef(lin)[1] + coef(lin)[2]*run.size
         catch <- run.size*ER
@@ -217,9 +232,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
       HR.all <- catch/run.size
     }
 
-
-    
-    HR_adj <- 1 ##what is this? harvest adjuster? omit if not necessary? BC: can remove
+    HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
     outcome_error <- (1+rnorm(1,0,OU))
     H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) 
@@ -246,11 +259,12 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   # 5: % of yrs harv > 10k (basic needs)
   # 6: number of CUs below LRP at end of sim
   # 7: number of CUs between RPs " "
-  # 8: number of CUs above USR at ""
-  # 9: number of extinct pops 
+  # 8: number of CUs above USR, below reb. target at ""
+  # 9: number of CUs above rebuilding target at ""
+  # 10: number of extinct pops 
 
   #browser()
-  pms <- matrix(NA,1,9) 
+  pms <- matrix(NA,1,10) 
   
   # SMU level PMs 
   S[is.nan(S[,])] <- 0
@@ -269,18 +283,21 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
   #"status" - how many CUs are in each zone IN THE FINAL YEAR? 
   pms[,6] <- sum(S[ny,] < 0.2*Smax & S[ny,] !=0) 
-  pms[,7] <- sum(S[ny,] > 0.2*Smax & S[ny,] < Smax)
-  pms[,8] <- sum(S[ny,] > Smax)
-  pms[,9] <- sum(S[ny,] ==0)
+  pms[,7] <- sum(S[ny,] >= 0.2*Smax & S[ny,] < 0.4*Smax)
+  pms[,8] <- sum(S[ny,] >= 0.4*Smax & S[ny,] < Smax)
+  pms[,9] <- sum(S[ny,] >= Smax)
+  pms[,10] <- sum(S[ny,] ==0)
   
   
   # CU-level performance measures
-  # 1: % yrs above LRP (20% Smsr/Smax)
-  # 2: % yrs above Smsr/Smax
+  # 1: % yrs above lower benchmark (20% Smsr/Smax)
+  # 2: % yrs above upper benchmark (40% Smsr/Smax)
+  # 3: % yrs above Smsr/Smax
   
-  pms_cu <- matrix(NA,length(beta),2)
+  pms_cu <- matrix(NA,length(beta),3)
   pms_cu[,1] <- colSums(S[pm.yr:ny,] > matrix(0.2*Smax, 21,9, byrow = T))/(ny - pm.yr +1)
-  pms_cu[,2] <- colSums(S[pm.yr:ny,] > matrix(Smax, 21,9, byrow = T))/(ny - pm.yr +1)
+  pms_cu[,2] <- colSums(S[pm.yr:ny,] > matrix(0.4*Smax, 21,9, byrow = T))/(ny - pm.yr +1)
+  pms_cu[,3] <- colSums(S[pm.yr:ny,] > matrix(Smax, 21,9, byrow = T))/(ny - pm.yr +1)
   
   
   
@@ -365,10 +382,10 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
         catch <- run.size*ER
         HR.all <- catch/run.size}
       if(HCR == "PA.alternative"){
-        if(run.size <= 19000) catch <- 0
-        if(run.size >= 158333) catch <- run.size*0.35
-        if(run.size > 19000 & run.size < 158333){
-          dat <- data.frame(R=c(19000,158333), ER=c(0,0.35))
+        if(run.size <= 17000) catch <- 0
+        if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35
+        if(run.size > 17000 & run.size < 86000/(1-0.35)){
+          dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
           lin <- lm(ER ~ R, data=dat)
           ER <- coef(lin)[1] + coef(lin)[2]*run.size
           catch <- run.size*ER
