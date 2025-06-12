@@ -242,7 +242,7 @@ plotTotalRunSize <- function( rpt, folder="." )
   ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
   
   # Fish wheel
-  fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
+  fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_tg[ ,2])
   
   plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
         ylab="Total border passage (1000s)", ylim=c(0,1.1*ymax) )

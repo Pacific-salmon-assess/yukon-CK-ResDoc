@@ -328,3 +328,4 @@ ggplot(a.yrs.all
   labs(y = "Productivity (maximum R/EM[kg])", x = "Brood year")
 
 my.ggsave(here("analysis/plots/SR-models/changing_demo_productivity.PNG"))
+

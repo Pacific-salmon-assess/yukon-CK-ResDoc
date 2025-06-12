@@ -52,7 +52,7 @@ big_salmon <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
 
 prop_comp <- mean(big_salmon$estimate/(CU_spwn[7,c(21:40)]), na.rm=TRUE)
 prop_comp_ind <- big_salmon$estimate/CU_spwn[7,c(21:40)]
-hist(prop_comp_ind)
+
 mu_bs_prop <- mean(prop_comp_ind, na.rm=TRUE)
 sd_bs_prop <- sd(prop_comp_ind, na.rm=TRUE)
 

@@ -414,4 +414,13 @@ CU_labeller <- as_labeller(c("NorthernYukonR.andtribs." = "Northern Yukon R. and
                "UpperYukonR." = "Upper Yukon R.",
                "YukonR.Teslinheadwaters" = "Yukon R. Teslin Headwaters"))
 
+# function to derive total reproductive output for a given spawner abundance ----
+#   propF: proportion of spawners that are females
+#   units_per_fish: reproductive output units per fish
+#   spw_units: total spawners
 
+repo_unit_to_spwn <- function(propF, units_per_fish, spw_units){
+  spawners <- (spw_units/units_per_fish) * (1+((1-propF)/propF))
+  
+  return(spawners)
+}

@@ -1,0 +1,47 @@
+,Median estimates (spawner model),,,,,,
+CU,Sgen,20.Smsr,80.Smsy,40.Smsr,Smsr,Seq,Smsr_demo
+Big.Salmon,1246,1524,2643,3048,7620,7838,6351
+MiddleYukonR.andtribs.,2977,3578,6171,7155,17888,18246,17758
+Nordenskiold,211,377,1055,755,1887,3631,2385
+NorthernYukonR.andtribs.,2484,3064,4154,6128,15320,11787,10850
+Pelly,1994,2437,3745,4873,12184,10648,10598
+Stewart,948,1133,2076,2267,5667,6206,5380
+UpperYukonR.,487,648,1561,1296,3241,5007,4753
+Whiteandtribs.,788,999,1967,1997,4994,5973,5504
+YukonR.Teslinheadwaters,1039,1333,2997,2666,6665,9451,9274
+,,,,,,,
+,Difference in Median estimates,,,,,,
+CU,Sgen,20.Smsr,80.Smsy,40.Smsr,Smsr,Seq,Smsr_demo
+Big.Salmon,,22%,,15%,,,-16%
+MiddleYukonR.andtribs.,,20%,,16%,,,-1%
+Nordenskiold,,79%,,-28%,,,14%
+NorthernYukonR.andtribs.,,23%,,48%,,,-38%
+Pelly,,22%,,30%,,,-15%
+Stewart,,19%,,9%,,,-5%
+UpperYukonR.,,33%,,-17%,,,30%
+Whiteandtribs.,,27%,,2%,,,9%
+YukonR.Teslinheadwaters,,28%,,-11%,,,28%
+,,,,,,,
+,Median estimates (egg mass model),,,,,,
+CU,Sgen,20.Smsr,80.Smsy,40.Smsr,Smsr,Seq,Smsr_demo
+Big.Salmon,1246,1270,2643,2540,7620,7838,6351
+MiddleYukonR.andtribs.,2977,3552,6171,7103,17888,18246,17758
+Nordenskiold,211,477,1055,954,1887,3631,2385
+NorthernYukonR.andtribs.,2484,2170,4154,4340,15320,11787,10850
+Pelly,1994,2120,3745,4239,12184,10648,10598
+Stewart,948,1076,2076,2152,5667,6206,5380
+UpperYukonR.,487,951,1561,1901,3241,5007,4753
+Whiteandtribs.,788,1101,1967,2202,4994,5973,5504
+YukonR.Teslinheadwaters,1039,1855,2997,3710,6665,9451,9274
+,,,,,,,
+,Difference in Median estimates,,,,,,
+CU,Sgen,20.Smsr,80.Smsy,40.Smsr,Smsr,Seq,Smsr_demo
+Big.Salmon,,2%,,-4%,,,
+MiddleYukonR.andtribs.,,19%,,15%,,,
+Nordenskiold,,126%,,-10%,,,
+NorthernYukonR.andtribs.,,-13%,,4%,,,
+Pelly,,6%,,13%,,,
+Stewart,,13%,,4%,,,
+UpperYukonR.,,95%,,22%,,,
+Whiteandtribs.,,40%,,12%,,,
+YukonR.Teslinheadwaters,,78%,,24%,,,

@@ -32,7 +32,7 @@ if(refit == TRUE){
                     data = stan.data,
                     cores = 4,
                     seed = 2,
-                    iter = 4000)
+                    iter = 2000)
     
     saveRDS(AR1.fit, here("analysis/data/generated/model_fits/AR1/", 
                           paste0(i, "_AR1.rds")))
@@ -41,7 +41,7 @@ if(refit == TRUE){
                    data = stan.data,
                   cores = 4,
                   seed = 2,
-                  iter = 4000,
+                  iter = 2000,
                   control = list(adapt_delta = 0.999,
                                  max_treedepth = 20))
     

@@ -462,6 +462,7 @@ bench_plot <- bench.par.table |>
             by="stock") |> 
   pivot_longer(cols=c("rebuilding", "upper", "lower"), values_to="value", names_to="bench") |>
   mutate(bench = factor(bench, levels=c("rebuilding", "upper", "lower")))
+
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 esc |>
@@ -509,6 +510,7 @@ esc_join <- esc |>
   mutate(CU = stock,
          mean = mean/1000) |>
   select(CU, year, mean, CU_f)
+esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU != "Porcupine")|>
@@ -524,17 +526,24 @@ trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
   drop_na(c("mean", "estimate")) |>
   filter(! tributary %in% c("morley_aerial", "chandindu_weir","nisutlin_sonar", "pelly_aerial", "ross_aerial"))
 
-trib_rr |> 
+
+trib_rr <- trib_rr |> 
   mutate(tribs_name = gsub("creek", " Creek", 
                            gsub("salmon", " Salmon", 
-                                gsub("_", " ", str_to_sentence(tributary))))) |>
-  ggplot(aes(x = mean, y = estimate)) +
+                                gsub("_", " ", str_to_sentence(tributary)))))
+
+trib_order_RR <- c("Klondike sonar", "Tincup aerial", "Pelly sonar", "Blind Creek weir", "Tachun foot","Tachun weir","Little Salmon aerial",
+                   "Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot","Wolf aerial","Nisutlin aerial")
+trib_rr$tribs_name_ord<- factor(trib_rr$tribs_name, levels = trib_order_RR)
+
+
+ggplot(trib_rr,aes(x = mean, y = estimate)) +
   geom_smooth(method="lm", color="grey") +
   geom_point(size=2, color="dark grey")+ 
   xlab("CU spawners (000s)") +
   ylab("Tributary spawners") +
   theme_sleek() +
-  facet_wrap(~tribs_name, scales = "free", ncol = 4) +
+  facet_wrap(~tribs_name_ord, scales = "free", ncol = 4) +
   theme(axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/trib-rr/RR-vs-trib-spawners.PNG"), width = 11)
@@ -555,6 +564,13 @@ dat_text <- tribs.all |>
   group_by(tributary) |>
   slice_head() |>
   select(tributary, CU)
+
+
+trib_order <- c("Porcupine sonar","Miner aerial","Klondike sonar","Chandindu weir","Tincup aerial" ,"Ross aerial","Pelly aerial",
+                "Pelly sonar","Blind creek weir","Tachun foot", "Tachun weir","Little Salmon aerial","Big Salmon aerial",
+                "Big Salmon sonar","Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot",
+                "Teslin sonar","Nisutlin aerial","Nisutlin sonar","Wolf aerial", "Morley aerial")
+tribs.all$tribs_name_ord<- factor(tribs.all$tribs_name, levels = trib_order)
 
 tribs.all |>
   mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
@@ -579,16 +595,21 @@ ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2,
 # forward simulations ----
 
 ## reference vs robustness productivity ----  
+
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
 TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
   
-TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(24:34), names_to = "par") |>
+TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(30:35), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "reference")       
+  mutate(scenario = "reference (most recent generation)")       
+
+TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(1:35), names_to = "par") |>
+  select(CU, par, value) |>
+  mutate(scenario = "robustness (long-term average)")
 
 TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(35), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "robustness")   
+  mutate(scenario = "robustness (most recent year)")   
 
 AR.pp.rob <- AR1.par.posts |>
   mutate(scenario = "stationary",
@@ -596,7 +617,7 @@ AR.pp.rob <- AR1.par.posts |>
          value = ln_a) |>
   select(CU, par, value, scenario) 
 
-alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob)
+alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob,TV.pp.rob2.long)
 
 alpha.stats <- alpha.posts |>
   group_by(CU, scenario) |>
@@ -610,6 +631,7 @@ alpha.posts |> filter(scenario != "stationary") |>
   geom_density(alpha = 0.3) +
   facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
   theme_sleek() +
+  scale_x_continuous(limits = c(NA, 4)) +
   theme(legend.position = "bottom") +
   geom_vline(xintercept = 0, lty=2, col="grey") +
   scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
@@ -904,14 +926,50 @@ my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG"))
 
 # SMU run and escapement ----
 
+# without reference points
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada", 
+         Counts != "Harvest") 
+
+a<- ggplot(SMU_RR |>
+             filter(Counts != "Exploitation")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
+  geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
+  ylab("Fish (000s)") +
+  xlab("Year") +
+  scale_color_manual(values=c('#999999','#E69F00')) +
+  scale_fill_manual(values=c('#999999', '#E69F00')) +
+  theme_sleek() +
+  theme(legend.position = c(0.75,0.85),
+        legend.title = element_blank(),
+        legend.text = element_text(size=11),
+        axis.title = element_text(size=12),
+        plot.margin = margin(0.5,20,0.5,0.5))
+
+b<- ggplot(SMU_RR |>
+             filter(Counts == "Exploitation")) + 
+  geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), fill="darkblue", col="darkblue", alpha=0.4) +
+  geom_line(aes(x = Year, y = Median50.), size = 1, col = "darkblue") + 
+  ylab("Harvest rate (%)") +
+  xlab("Year") +
+  theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5),
+                        axis.title = element_text(size=12))
+
+cowplot::plot_grid(a, b, labels="auto", ncol=2)
+
+
+ggsave(here("analysis/plots/trib-rr/SMU-run-esc-no ref points.PNG"), width = 975*2, height = 350*2, 
+       units="px", dpi=240)
+
+# with reference points
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
   filter(Stock == "Canada", 
          Counts != "Harvest") 
 
 a<- ggplot(SMU_RR |>
          filter(Counts != "Exploitation")) + 
-  geom_hline(yintercept = 19, col = "darkred", lty=2) +
-  geom_hline(yintercept = 95, col = "dark green", lty=2) +
+  geom_hline(yintercept = 37, col = "darkred", lty=2) +
+  geom_hline(yintercept = 87, col = "dark green", lty=2) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) + 
   ylab("Fish (000s)") +
@@ -987,6 +1045,36 @@ legend( x="bottomleft", bty="n",
         pch=c(16,0,16,2), lwd=c(1.5), col=c("grey40","black","red","green"), lty=c(0), cex=0.75 )
 
 dev.off()
+
+# Compare CU and aggregrate border passage ----
+
+# make sure to select right fitted model folder
+load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
+
+Ese <- filter(rpt$sdrpt,par=="runSize_t")
+Ese$year <- seq(1985,2024)
+
+border <- read.csv(here("analysis/data/raw/border-passage.csv")) |>
+  filter(year>1984)
+
+cu_rr <- Ese[,c(6,2,4:5)]; colnames(cu_rr) <- c("year", "est", "lwr", "upr"); cu_rr$model <- "CU_rr"
+agg_rr <- border[,c(1:2,4:5)]; colnames(agg_rr) <- c("year", "est", "lwr", "upr"); agg_rr$model <- "Agg_rr"
+
+
+bp_models <- rbind(cu_rr,agg_rr)
+
+ggplot(bp_models,aes(x = year, y = est/1000, fill=model)) + 
+  geom_ribbon(aes(ymin = lwr/1000, ymax = upr/1000),   alpha = 0.5) +
+  geom_line(lwd = 1.1, aes(color=model)) +
+  xlab("Year") +
+  ylab("Border passage (000s)")+
+  theme_sleek() +
+  theme(strip.text = element_text(size=10))
+
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border.PNG"))
+my.ggsave(here("analysis/R/run-reconstructions/fittedMod/cu-vs-agg-rr-border-small.PNG"),
+          width= 4.5, height = 2.25, dpi= 180)
+
 
 # CU run-timing plot ----
 CU_order <- c(1,2,5,3,6,9,4,8)

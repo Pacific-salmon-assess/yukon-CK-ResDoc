@@ -80,8 +80,8 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   initMu_s   <- init$arrivMu_s
   sigma_s    <- init$arrivSD_s
   arrivErr_st <- matrix( data=0, nrow=nS, ncol=nT-1 )
-  qE_sg      <- matrix( data=1, nrow=nS, ncol=nG )
-  qE_sg[ ,2] <- 0.05
+  qE_tg      <- matrix( data=1, nrow=nT, ncol=nG )
+  qE_tg[ ,2] <- 0.05
   qI_s       <- rep(1,nS)
   errSD_s    <- init$errSD_s
   obsErrSD_g <- rep(0.1,nG)
@@ -92,8 +92,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   #lnDisp_tg[4,2]  <- log(1)
   #lnDisp_tg[22,2] <- log(0.5)
   #lnDisp_tg[23,2] <- log(0.5)
-  lnDisp_tg[ ,2] <- log(0.02)
-  lnDisp_tg[17,2] <- log(2)
+  lnDisp_tg[ ,2] <- log(0.1)
   #lnDisp_tg[5,2] <- log(1e-5)
   #lnDisp_tg[21,2] <- log(1e-5)
   #lnDisp_tg[22,2] <- log(0.5)
@@ -108,7 +107,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
                 #lnErrSD      = log(mean(errSD_s)),
                 lnErrSD_s    = log(errSD_s),
                 logitCor_ss  = logit(cor_ss,lb=-1,ub=1),
-                lnqE_sg      = log(qE_sg),
+                lnqE_tg      = log(qE_tg),
                 lnqI_s       = log(qI_s),
                 lnDisp_tg    = lnDisp_tg )
 
@@ -117,9 +116,10 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
 
   # MAP --------------------------------------------------------------------- #
 
-  qEmap_sg <- matrix( data=1:(nS*nG), nrow=nS, ncol=nG )
-  qEmap_sg[ ,1] <- NA
-  qEmap_sg[ ,2] <- ctrl$map$qFishWheel_s
+  qEmap_tg <- matrix( data=1:(nT*nG), nrow=nT, ncol=nG )
+  qEmap_tg[ ,1] <- NA
+  qEmap_tg[years>2007,2] <- NA
+  #qEmap_sg[ ,2] <- ctrl$map$qFishWheel_s
 
   corMap_ss <- matrix( data=1:(nS*nS), nrow=nS, ncol=nS )
   # Always fix diagonal
@@ -146,7 +146,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
                arrivErr_st = as.factor(mapArrivErr_st),
                lnErrSD_s   = as.factor(ctrl$map$errSD_s),
                logitCor_ss = as.factor(corMap_ss),
-               lnqE_sg     = as.factor(qEmap_sg),
+               lnqE_tg     = as.factor(qEmap_tg),
                lnqI_s      = as.factor(NA*ctrl$map$qI_s),
                lnDisp_tg   = as.factor(dispMap) )
 
