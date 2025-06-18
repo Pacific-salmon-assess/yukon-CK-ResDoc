@@ -163,7 +163,7 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
   N[6:7,3,] <- R[6:7-(5),] * mat[3]
   N[7,4,] <- R[7-(6),] * mat[4]
   
-  # Loop through years of simulation	
+  # Loop through years of simulation
   for(i in (7+1):ny){
     N[i,1,] <- R[i-(4),] * mat[1] 
     N[i,2,] <- R[i-(5),] * mat[2]
@@ -176,61 +176,58 @@ process = function(HCR,ny,vcov.matrix,mat,alpha,beta,Smax,pm.yr,for.error,OU,Rec
     if(is.na(run.size.true)){run.size.true <- 0}
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
+    
+    # Basic HCRs - these are the same regardless of year
     if(HCR == "no.fishing"){HR.all <- 0}
-    if(HCR == "IMEG"){ 
-      catch <- ifelse(run.size<=42500, 0, run.size-42500)
-      HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.8){       ## Add ER cap (80%) 
-          catch <- run.size*0.8
-          HR.all <- catch/run.size }}
-    if(HCR == "IMEG.cap"){
-      catch <- ifelse(run.size<=42500, 0, run.size-42500)
-      HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.35){       ## Lower ER cap (40%) 
-        catch <- run.size*0.35
-        HR.all <- catch/run.size }}
-    if(HCR == "moratorium"){
-      catch <- ifelse(run.size<=71000, 0, run.size-71000)
-      HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.8){       ## ER cap (80%) 
-        catch <- run.size*0.8
-        HR.all <- catch/run.size }}
-    if(HCR == "realistic"){
-      if(i %in% (7+1):14){ # if before 2030, apply moratorium rule
-        catch <- ifelse(run.size<=71000, 0, run.size-71000)
-        HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.8){       ## ER cap (80%) 
-          catch <- run.size*0.8
-          HR.all <- catch/run.size }
-      } else { # if after 2030, return to IMEG rule
-        catch <- ifelse(run.size<=42500, 0, run.size-42500)
-        HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.8){       ## Add ER cap (80%) 
-          catch <- run.size*0.8
-          HR.all <- catch/run.size }
-      }
-    }
-    if(HCR == "moratorium.cap"){
-      catch <- ifelse(run.size<=71000, 0, run.size-71000)
-      HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.35){       ## lower ER cap (40%) 
-        catch <- run.size*0.35
-        HR.all <- catch/run.size }}
     if(grepl("fixed.ER", HCR)){
       if(run.size==0){ER <- 0}
       catch <- run.size*ER
       HR.all <- catch/run.size}
-    if(HCR == "PA.alternative"){
-      if(run.size <= 17000) catch <- 0
-      if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35 
-      if(run.size > 17000 & run.size < 86000/(1-0.35)){
-        dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
-        lin <- lm(ER ~ R, data=dat)
-        ER <- coef(lin)[1] + coef(lin)[2]*run.size
-        catch <- run.size*ER
+    
+    # Alternative HCRs:
+    if(i %in% (7+1):14){ # if before 2030, always apply moratorium rule
+      catch <- ifelse(run.size<=71000, 0, run.size-71000)
+      HR.all <- ifelse(run.size==0, 0, catch/run.size)
+      if(HR.all > 0.8){       ## ER cap (80%) 
+        catch <- run.size*0.8
+        HR.all <- catch/run.size }
+    } else {
+      if(HCR == "IMEG"){ 
+        catch <- ifelse(run.size<=42500, 0, run.size-42500)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.8){       ## Add ER cap (80%) 
+            catch <- run.size*0.8
+            HR.all <- catch/run.size }}
+      if(HCR == "IMEG.cap"){
+        catch <- ifelse(run.size<=42500, 0, run.size-42500)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.35){       ## Lower ER cap (40%) 
+          catch <- run.size*0.35
+          HR.all <- catch/run.size }}
+      if(HCR == "moratorium"){
+        catch <- ifelse(run.size<=71000, 0, run.size-71000)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.8){       ## ER cap (80%) 
+          catch <- run.size*0.8
+          HR.all <- catch/run.size }}
+      if(HCR == "moratorium.cap"){
+        catch <- ifelse(run.size<=71000, 0, run.size-71000)
+        HR.all <- ifelse(run.size==0, 0, catch/run.size)
+        if(HR.all > 0.35){       ## lower ER cap (40%) 
+          catch <- run.size*0.35
+          HR.all <- catch/run.size }}
+      if(HCR == "PA.alternative"){
+        if(run.size <= 17000) catch <- 0
+        if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35 
+        if(run.size > 17000 & run.size < 86000/(1-0.35)){
+          dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
+          lin <- lm(ER ~ R, data=dat)
+          ER <- coef(lin)[1] + coef(lin)[2]*run.size
+          catch <- run.size*ER
+        }
+        HR.all <- catch/run.size
       }
-      HR.all <- catch/run.size
-    }
+    } # end if year loop
 
     HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
