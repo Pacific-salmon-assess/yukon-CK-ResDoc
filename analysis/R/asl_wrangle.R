@@ -1,5 +1,3 @@
-#wrangling ASL data i
-
 library(tidyverse)
 library(here)
 library(zoo)
@@ -17,7 +15,7 @@ eagle_age_sex_len <- read.csv(here("analysis/data/raw/ASL_Output_Chinook_Eagle_2
 
 ## wrangling for full age and sex dataset
 #  eagle ASL prep
-eagle_asl <- eagle_age_sex_len %>% 
+eagle_asl <- eagle_age_sex_len %>%
   filter(!is.na(Total.Age), Sex != "unknown", Species != "Chum") |>
   group_by(Sample.Year, Sex, Total.Age) |>
   count() |>
@@ -63,7 +61,7 @@ write.csv(cdn_as_1985_2024[which(cdn_as_1985_2024$Sex=="male"),], here("analysis
 
 ## wrangling for full length dataset
 # fish wheel data
-fw_fl <- fw_l |> 
+fw_fl <- fw_l |>
   filter(!is.na(Age)) |>
   group_by(Year, Sex, Age) |>
   summarise(mean_fl=sum(Length*nsel)/sum(nsel)) |>
@@ -87,7 +85,7 @@ fw_fl$age_7 <- na.locf(zoo(fw_fl$age_7), fromLast = TRUE)
 #fw_fl <- fw_fl[,-1]
 
 # eagle data
-eagle_fl <- eagle_age_sex_len |> 
+eagle_fl <- eagle_age_sex_len |>
   filter(!is.na(Total.Age), Sex != "unknown", Species != "Chum") |>
   group_by(Sample.Year, Sex, Total.Age) |>
   summarise(fl=mean(Length, na.rm = TRUE)) |>
@@ -102,6 +100,7 @@ eagle_fl <- eagle_age_sex_len |>
   filter(Sex!= "male", Sample.Year>2006) |>
   ungroup()
 
+eagle_fl$age_4 <- na.locf(zoo(eagle_fl$age_4), fromfirst = TRUE)
 eagle_fl$age_7 <- na.locf(zoo(eagle_fl$age_7), fromfirst = TRUE)
 
 # merge datasets, add in "data" for missing 1984 year
@@ -145,7 +144,7 @@ fem_age_comp <- fem_age_comps[,c(1,3:6)]%>%
 
 fem_age_comp$age_f <- factor(fem_age_comp$Age, levels = c("Four", "Five", "Six", "Seven"))
 
-a <- ggplot(fem_age_comp, aes(fill=age_f, y=prop, x=Sample.Year)) + 
+a <- ggplot(fem_age_comp, aes(fill=age_f, y=prop, x=Sample.Year)) +
   geom_bar(position="stack", stat="identity")+
   xlab("Year") +
   ylab("Proportion") +
@@ -166,7 +165,7 @@ sex_ratio<-as.data.frame(sex_ratio)
 
 b <- ggplot(sex_ratio, aes(x = Year, y = prop_fem)) +
   geom_smooth(method="lm", color="grey") +
-  geom_point(size=2, color="dark grey")+ 
+  geom_point(size=2, color="dark grey")+
   xlab("Year") +
   ylab("Proportion female") +
   coord_cartesian(ylim=c(0,1)) +
@@ -177,14 +176,14 @@ laa <- as.data.frame(fem_len_comp)%>%
   select(Sample.Year,age_4, age_5, age_6, age_7)%>%
   rename(Four = age_4, Five = age_5, Six = age_6, Seven = age_7)%>%
   pivot_longer(!Sample.Year , names_to = "Age",
-               values_to = "length") 
+               values_to = "length")
 
 
 laa$age_f <- factor(laa$Age, levels = c("Four", "Five", "Six", "Seven"))
 
 c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
   geom_smooth(method="lm", color="grey") +
-  geom_point(size=2, color="dark grey")+ 
+  geom_point(size=2, color="dark grey")+
   xlab("Year") +
   ylab("Female length \n  (mm; MEFL)") +
   theme_sleek() +
@@ -195,19 +194,19 @@ c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
 
 d <- ggplot(reproOutput, aes(x = V1, y = reproOutputPerSpawnerEggs)) +
   geom_smooth(method="lm", color="grey") +
-  geom_point(size=2, color="dark grey")+ 
+  geom_point(size=2, color="dark grey")+
   xlab("Year") +
   ylab("Average reproductive output \n (total eggs per spawner)") +
   theme_sleek() +
   theme(plot.margin = margin(45,10,0.5,0.5))
-g <- ggarrange(b,c,a,d, 
+g <- ggarrange(b,c,a,d,
                labels = c("a", "b","c", "d"),
                heights = c(0.8,1))
 
 
 g
 my.ggsave(here("analysis/plots/trib-rr/asl.PNG"))
-ggsave(here("csasdown/figure/asl.PNG"), height = 550*2, 
+ggsave(here("csasdown/figure/asl.PNG"), height = 550*2,
        width = 700*2, units="px", dpi=200)
 
 
@@ -228,7 +227,7 @@ write.csv(cdn_rr, here("analysis/data/raw/cdn-yukon-chinook-repro-output.17Mar20
 # age by CU ----
 
 eagle_age_sex_gen <- read.csv(here("analysis/data/raw/ASL_Eagle_2005-2024_geneticIDs.csv"))
-gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv")) 
+gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv"))
 
 age <-eagle_age_sex_gen |>
   mutate(fish=Genetic.Sample.Number,
@@ -276,22 +275,22 @@ cu_age_all_yr <- gsi_age |>
   drop_na()
 
 ggplot(cu_age_all_yr, aes(x = age, y = prop)) +
-  geom_bar(position="dodge", stat = "identity") + 
+  geom_bar(position="dodge", stat = "identity") +
   theme_sleek() +
-  facet_wrap(~CU) 
+  facet_wrap(~CU)
 
 ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fill=as.factor(age))) +
-  geom_bar( stat = "identity") + 
+  geom_bar( stat = "identity") +
   theme_sleek() +
   facet_wrap(~year) +
   theme(legend.position = c(0.7,0.145),
         axis.text.x = element_text(angle = 45, vjust = 0.5)) +
-  labs(x = "Conservation Unit", y = "Proportion") 
+  labs(x = "Conservation Unit", y = "Proportion")
 my.ggsave(here("analysis/plots/SR_models/age-cu-by-yrs.PNG"))
 
 ggplot(cu_age_all_yr, aes(x = CU, y = prop, fill=as.factor(age))) +
-  geom_bar( stat = "identity") + 
+  geom_bar( stat = "identity") +
   theme_sleek() +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
-  labs(x = "Conservation Unit", y = "Proportion") 
+  labs(x = "Conservation Unit", y = "Proportion")
 my.ggsave(here("analysis/plots/SR_models/age-cu-all-yrs.PNG"))
