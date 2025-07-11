@@ -49,12 +49,21 @@ ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"), height=600*2, widt
        units = "px", dpi=240)
 
 
-# Use demographic benchmarks
+# Load both S-R and egg mass -based biol. benchmarks by CU
 bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
 demo.bench <- read.csv(here("analysis/data/generated/demographic_parameters.csv"))
+# Make a dataframe of benchmarks used in sims
+all.bench <- bench.par.table |>
+  filter(bench.par == "Smsr") |>
+  mutate(lwr_bench = 0.2*X50.,
+         upr_bench = 0.4*X50.) |>
+  left_join(filter(demo.bench, par=="Smsr", period=="recent"), by="CU") |>
+  rename(rt = median) |>
+  select(c("CU", "upr_bench", "lwr_bench", "rt"))
+
 
 # Generate plots for which set of fwd simulations?
-sceanarios <- c("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
+sceanarios <- list("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
 
 for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
 
@@ -91,7 +100,7 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
   # Variables as factors for plotting
   S.fwd$CU_f <- factor(S.fwd$CU, levels = CU_order)
   H.fwd$CU_f <- factor(H.fwd$CU, levels = CU_order)
-  demo.bench$CU_f <- factor(demo.bench$CU, levels = CU_order)
+  all.bench$CU_f <- factor(all.bench$CU, levels = CU_order)
 
   # assign HCRs to groups for subsetting harvest scenarios / HCRs
   ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
@@ -111,15 +120,6 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
   ## Spawners projection ----
 
   for(i in 1:length(HCR_grps[1:4])) { # don't make this fig for all fixed exp rates
-    demo.bench.plot <- demo.bench |>
-      filter(par == "Smsr", period=="recent") |>
-      mutate(rebuilding = median,
-             lower = median*0.2,
-             upper = median*0.4) |>
-      select(rebuilding, lower, upper, CU_f) |>
-      pivot_longer(cols=c(lower, upper, rebuilding),
-                   values_to="value", names_to="bench")
-
 
     S.fwd |> filter(HCR %in% HCR_grps[[i]]) |>
       left_join(HCR_lookup, by="HCR") |>
@@ -136,14 +136,14 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
                   alpha = 0.2) +
       geom_line(aes(year, S.50/1000, color = HCR_name), lwd=1) +
       # Benchmarks:
-      geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"),
-                 aes(yintercept = median/1000), lty=2,
+      geom_hline(data=all.bench,
+                 aes(yintercept = rt/1000), lty=2,
                  color = "pink3") +
-      geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"),
-                 aes(yintercept = (median*0.4)/1000), lty=2,
+      geom_hline(data=all.bench,
+                 aes(yintercept = upr_bench/1000), lty=2,
                  color = "forestgreen") +
-      geom_hline(data=filter(demo.bench, par=="Smsr", period=="recent"),
-                 aes(yintercept = (median*0.2)/1000), lty=2,
+      geom_hline(data=all.bench,
+                 aes(yintercept = lwr_bench/1000), lty=2,
                  color = "darkred") +
       scale_linetype_manual(values=2, guide = "legend") +
       facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
@@ -332,7 +332,9 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
 
   ggcorrplot(Sig.R.order, hc.order = TRUE, type = "lower",
              outline.col = "white",
-             lab=TRUE)
+             lab=TRUE) +
+    scale_fill_gradient2(limit=c(0,max(Sig.R[row(Sig.R) != col(Sig.R)])),
+                         high="red") # this scales the colours for each plot
 
   my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG")))
 
