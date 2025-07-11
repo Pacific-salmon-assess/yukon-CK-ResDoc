@@ -8,7 +8,7 @@ source(here("analysis/R/data_functions.R"))
 set.seed(2)
 
 ## Specify set of productivity (alpha) scenarios to condition sims on
-scenarios <- c("TVA","TVA2", "AR1")
+scenarios <- list("TVA","TVA2", "AR1")
 # TVA = median alpha of most recent generation (6 years- 2014:2019)
 # TVA2 = alpha of last brood yr where returns up to age 7 observed (2018)
 # AR1 = alpha estimated by time-invarying alpha models (1985:2024)
@@ -36,9 +36,14 @@ demo.bench <- read.csv(here("analysis/data/generated/demographic_parameters.csv"
   filter(period == "recent", par == "Smsr") |>
   select(!c("lower", "upper"))
 
+# Set up to run scenarios in parallel
+future::plan("multisession", workers=parallel::detectCores()-1)
+options(future.globals.maxSize = 850*1024^2,
+        future.seed = TRUE)
 
 ## Loop over TVA and AR1 fit types to create a 'samps' object for each
-for(k in scenarios){
+furrr::future_map(scenarios,
+function(k){
 
 # Populate "samps" object ----------------------------------------------
 
@@ -106,7 +111,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 1000  # number of Monte Carlo trials
+num.sims = 500  # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # forecast error: empirically estimated based on forecast vs true run 2000-present
@@ -162,7 +167,7 @@ for(i in 1:length(HCRs)){
   }
 } # end of simulation loop
 
-pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.LSR", "n.between.ref", "n.above.USR", "n.above.reb", "n.extinct")
+pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.lwr", "n.between.bench", "n.above.upr", "n.above.reb", "n.extinct")
 colnames(sim.outcomes) <- c("HCR", "sim", pms)
 qmean <- function(x){
   c(quantile(x, c(0.25, 0.5, 0.75)), mean(x))
@@ -218,3 +223,4 @@ write.csv(H.fwd.summmary, here('analysis', 'data', 'generated', 'simulations',
                                paste0('H_fwd_', k, '.csv')),  row.names = FALSE)
 
 } # end k loop
+, .options=furrr_options(seed=2)) # end parallel processing
