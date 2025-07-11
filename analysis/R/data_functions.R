@@ -118,7 +118,7 @@ process.iteration = function(samp) {
 }
 
 #------------------------------------------------------------------------------#
-# Multi-stock simulation function with alternative structural forms
+# Multi-stock simulation function
 #------------------------------------------------------------------------------#
 # HCR <- which pre-determined HCR are we using
 # ny <- the number of years
@@ -197,15 +197,9 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
 
-    # Basic HCRs - these are the same regardless of year
-    if(HCR == "no.fishing"){HR.all <- 0}
-    if(grepl("fixed.ER", HCR)){
-      if(run.size==0){ER <- 0}
-      catch <- run.size*ER
-      HR.all <- catch/run.size}
 
-    # Alternative HCRs:
-    if(i %in% (7+1):14){ # if before 2030, always apply moratorium rule
+    # Apply alternative HCRs:
+    if(i %in% (7+1):14){ # up to and including 2030, always apply moratorium rule
       catch <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
       if(HR.all > 0.8){       ## ER cap (80%)
@@ -247,7 +241,14 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
         }
         HR.all <- catch/run.size
       }
-    } # end if year loop
+    }
+
+    # Illustrative HCRs - these are the same regardless of year
+    if(HCR == "no.fishing"){HR.all <- 0}
+    if(grepl("fixed.ER", HCR)){
+      if(run.size==0){ER <- 0}
+      catch <- run.size*ER
+      HR.all <- catch/run.size}
 
     HR_adj <- 1
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
@@ -273,10 +274,10 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
   #	2: avg annual harvest
   #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty) (ER)
   # 4: % of years with no harvest
-  # 5: % of yrs harv > 10k (basic needs)
-  # 6: number of CUs below LRP at end of sim
-  # 7: number of CUs between RPs " "
-  # 8: number of CUs above USR, below reb. target at ""
+  # 5: % of yrs harv > 10k (basic needs allocation)
+  # 6: number of CUs below lower biol. benchmark at end of sim
+  # 7: number of CUs between biol. benchmarks " "
+  # 8: number of CUs above upper biol. benchmark, below rebuilding target at ""
   # 9: number of CUs above rebuilding target at ""
   # 10: number of extinct pops
 
