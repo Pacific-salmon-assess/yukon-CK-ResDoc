@@ -198,7 +198,7 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
   pm_plot <- perf.metrics |>
     filter(!(HCR %in% HCR_grps[["fixed"]])) |>
     filter(!(HCR %in% "realistic")) |>
-    filter(!(metric %in% c("n.below.LSR", "n.between.ref", "n.above.USR","n.above.reb", "n.extinct"))) |>
+    filter(!(metric %in% c("n.above.upr", "n.between.bench", "n.below.lwr", "n.above.reb", "n.extinct"))) |>
     mutate(metric_name = case_when(metric == "ER" ~ "Exploitation rate",
                                    metric == "pr.basic.needs" ~ "Prop. years basic needs met",
                                    metric == "pr.no.harv" ~ "Prop. years with no harvest",
@@ -222,9 +222,9 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
 
   # status
   perf.status <- perf.metrics |>
-    filter(metric %in% c("n.above.USR", "n.between.ref", "n.below.LSR", "n.above.reb", "n.extinct")) |>
+    filter(metric %in% c("n.above.upr", "n.between.bench", "n.below.lwr", "n.above.reb", "n.extinct")) |>
     mutate(status = factor(gsub("^n ", "", gsub("\\.", " ", metric)),
-                           levels=c("above reb", "above USR", "between ref", "below LSR", "extinct")))
+                           levels=c("above reb", "above upr", "between bench", "below lwr", "extinct")))
 
   status_plot <- perf.status |>
     filter(!(HCR %in% HCR_grps[["fixed"]])) |>

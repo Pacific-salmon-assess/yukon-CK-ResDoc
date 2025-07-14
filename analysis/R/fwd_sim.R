@@ -180,9 +180,9 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
           ER = qmean(ER),
           pr.no.harv = qmean(pr.no.harv),
           pr.basic.needs = qmean(pr.basic.needs),
-          n.below.LSR = qmean(n.below.LSR),
-          n.between.ref = qmean(n.between.ref),
-          n.above.USR = qmean(n.above.USR),
+          n.below.lwr = qmean(n.below.lwr),
+          n.between.bench = qmean(n.between.bench),
+          n.above.upr = qmean(n.above.upr),
           n.above.reb = qmean(n.above.reb),
           n.extinct = qmean(n.extinct),
           prob=c("q_25","median","q_75","mean")
