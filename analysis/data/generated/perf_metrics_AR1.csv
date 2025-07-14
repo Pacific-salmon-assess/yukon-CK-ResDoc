@@ -1,4 +1,4 @@
-"HCR","escapement","harvest","ER","pr.no.harv","pr.basic.needs","n.below.LSR","n.between.ref","n.above.USR","n.above.reb","n.extinct","prob"
+"HCR","escapement","harvest","ER","pr.no.harv","pr.basic.needs","n.below.lwr","n.between.bench","n.above.upr","n.above.reb","n.extinct","prob"
 "IMEG",34895.4850123956,23680.1453466179,0.267583207607971,0.19047619047619,0.428571428571429,1,1,1,1,0,"q_25"
 "IMEG",45208.1144340263,53934.7490021542,0.400939154437481,0.285714285714286,0.619047619047619,2,1,2,2,0,"median"
 "IMEG",58049.4465164569,108775.266666375,0.509007514155835,0.476190476190476,0.773809523809524,4,2,4,3,0,"q_75"
