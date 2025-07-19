@@ -101,7 +101,7 @@ median.p.samps <- median.p.samps[,  c(1,5,9, 2,6,10, 3,7,11, 4,8,12)] #rearrange
 colnames(median.p.samps) <- paste("p", (nyrs+1):nRyrs, rep(1:4, each=3), sep = "_")
 
 
-Sig.R <- cov(sig.R.samps) ##look at this object and double check all good; this should calculate var-cov matrix based on median estimates of recruitment residuals by CU and year
+Sig.R <- cov(sig.R.samps) # calculate var-cov matrix based on median estimates of recruitment residuals by CU and year
 colnames(Sig.R) = rownames(Sig.R) = names(fits)
 write.csv(Sig.R, here('analysis', 'data', 'generated', 'simulations', paste0('var_covar_', k, '.csv')))
 
@@ -111,7 +111,7 @@ samps <- cbind(samps, median.p.samps, median.pi.samps)
 
 #Set common conditions for simulations----------------------------------
 
-num.sims = 500  # number of Monte Carlo trials
+num.sims = 1000 # number of Monte Carlo trials
 ny = 34 # number of years in forward simulation (complete years through 2050; 26+8)
 pm.yr <- ny-20 # nyrs that we evaluate pms across
 for.error <- 0.79 # forecast error: empirically estimated based on forecast vs true run 2000-present
@@ -142,15 +142,12 @@ for(i in 1:length(HCRs)){
     phi <- 0.75 # mean across CUs
     Smax_sr <- sr.bench$median # median Smax to calculate benchmarks
     Smax_demo <- demo.bench$median # median egg-based Smax
-
-    if(grepl('fixed.ER', HCR)) {
-      ER <- as.numeric(gsub("\\D", "", HCR))/100
-      } else {ER <- NULL} # Set ER for fixed ER sims
+    ER.cap <- 0.43 # Umsr from egg-mass models for stock aggregate (from Connors et al 2022)
 
     out <- process(HCR, ny, vcov.matrix, mat,alpha, beta,
                    lwr.ben=Smax_sr*0.2, upr.ben=Smax_sr*0.4, rt=Smax_demo,
                    pm.yr, for.error,
-                   OU, Rec, Spw, lst.resid, phi, ER)
+                   OU, Rec, Spw, lst.resid, phi, ER.cap)
 
     # Checks
     if(anyNA(out$S) | any(is.nan(out$S[,]))) { print("Stop: NA/NAN spawners produced")}
@@ -167,7 +164,7 @@ for(i in 1:length(HCRs)){
   }
 } # end of simulation loop
 
-pms <- c("escapement", "harvest", "ER", "pr.no.harv", "pr.basic.needs",  "n.below.lwr", "n.between.bench", "n.above.upr", "n.above.reb", "n.extinct")
+pms <- c("escapement", "harvest", "cdn.harvest", "ER", "pr.closed", "n.below.lwr", "n.between.bench", "n.above.upr", "n.above.reb", "n.extinct")
 colnames(sim.outcomes) <- c("HCR", "sim", pms)
 qmean <- function(x){
   c(quantile(x, c(0.25, 0.5, 0.75)), mean(x))
@@ -177,9 +174,9 @@ sim.outcome.summary <- as.data.frame(sim.outcomes) |>
   group_by(HCR) |>
   reframe(escapement = qmean(escapement),
           harvest = qmean(harvest),
+          cdn.harvest = qmean(cdn.harvest),
           ER = qmean(ER),
-          pr.no.harv = qmean(pr.no.harv),
-          pr.basic.needs = qmean(pr.basic.needs),
+          pr.closed = qmean(pr.closed),
           n.below.lwr = qmean(n.below.lwr),
           n.between.bench = qmean(n.between.bench),
           n.above.upr = qmean(n.above.upr),

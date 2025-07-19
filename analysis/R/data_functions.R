@@ -120,7 +120,7 @@ process.iteration = function(samp) {
 #------------------------------------------------------------------------------#
 # Multi-stock simulation function
 #------------------------------------------------------------------------------#
-# HCR <- which pre-determined HCR are we using
+# HCR <- pre-determined harvest control rule to apply
 # ny <- the number of years
 # vcov.matrix <- process error variance-covariance matrix
 # phi <- the expected correlation through time
@@ -137,13 +137,16 @@ process.iteration = function(samp) {
 # Spw <- estimated spawners from last years of empirical data
 # lst.resid <- estimated recruitment deviation from last year of empirical data
 # phi <- expected correlation in recruitment deviation from one year to next
-# ER <- fixed exploitation rate (illustrative)
+# ER.cap <- value of lower 'cap' on exploitation rate for certain HCRs, e.g. Umsy
 
 process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
                    alpha=alpha,beta=beta,
                    lwr.ben=NULL,upr.ben=NULL,rt=NULL,
                    pm.yr=pm.yr,for.error=for.error,OU=OU,
-                   Rec=Rec,Spw=Spw,lst.resid=lst.resid, phi=phi, ER=ER){
+                   Rec=Rec,Spw=Spw,lst.resid=lst.resid, phi=phi,
+                   ER.cap=ER.cap){
+
+  #browser()
 
   ns <- length(alpha) #number of sub-stocks
   for.error <- for.error
@@ -161,10 +164,11 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
   R[1:3,] <- Rec # observed recruitment indexed by brood/spawning year
   N <- array(0,dim=c(ny,4,ns))
   Ntot <- R; Ntot[,]<-0
-  H <- Ntot; S <- Ntot
+  H <- Ntot; S <- Ntot; cdn_harv <- Ntot
   S[4:7,] <- Spw
   predR <- Ntot
-  error <- matrix(NA, nrow=ny, ncol=4)
+  error <- matrix(NA, nrow=ny, ncol=5)
+  tac <- rep(NA, ny)
 
   # populate first few years with realized states
   R[4,] <- alpha[]*S[4,]*exp(-beta[]*S[4,]+(phi*lst.resid)+epi[4,])
@@ -196,69 +200,91 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
     if(is.na(run.size.true)){run.size.true <- 0}
     run.size <- rlnorm(1,log(run.size.true),for.error) # forecasted run-size
     if(is.na(run.size)==TRUE){run.size <- 0}
-
+    inc.catch <- rnorm(1, 1000, 250) # Add incidental catch around 1000 fish when harv should be 0.
 
     # Apply alternative HCRs:
     if(i %in% (7+1):14){ # up to and including 2030, always apply moratorium rule
-      catch <- ifelse(run.size<=71000, 0, run.size-71000)
+      catch <- ifelse(run.size<=71000, inc.catch, run.size-71000)
+      tac[i] <- ifelse(run.size<=71000, 0, run.size-71000)
       HR.all <- ifelse(run.size==0, 0, catch/run.size)
-      if(HR.all > 0.8){       ## ER cap (80%)
+      if(HR.all > 0.8){       ## cap ER at 80%, approx. the highest ever observed in system
         catch <- run.size*0.8
         HR.all <- catch/run.size }
     } else {
       if(HCR == "IMEG"){
-        catch <- ifelse(run.size<=42500, 0, run.size-42500)
+        catch <- ifelse(run.size<=42500, inc.catch, run.size-42500)
+        tac[i] <- ifelse(run.size<=42500, 0, run.size-42500)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.8){       # 80% ER cap based on max observed ER
             catch <- run.size*0.8
             HR.all <- catch/run.size }}
       if(HCR == "IMEG.cap"){
-        catch <- ifelse(run.size<=42500, 0, run.size-42500)
+        catch <- ifelse(run.size<=42500, inc.catch, run.size-42500)
+        tac[i] <- ifelse(run.size<=42500, 0, run.size-42500)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.35){       # Lower ER cap based on lowest CU Umsy
           catch <- run.size*0.35
           HR.all <- catch/run.size }}
       if(HCR == "moratorium"){
-        catch <- ifelse(run.size<=71000, 0, run.size-71000)
+        catch <- ifelse(run.size<=71000, inc.catch, run.size-71000)
+        tac[i] <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.8){       # 80% ER cap based on max observed ER
           catch <- run.size*0.8
           HR.all <- catch/run.size }}
       if(HCR == "moratorium.cap"){
-        catch <- ifelse(run.size<=71000, 0, run.size-71000)
+        catch <- ifelse(run.size<=71000, inc.catch, run.size-71000)
+        tac[i] <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
         if(HR.all > 0.35){       # Lower ER cap based on lowest CU Umsy
           catch <- run.size*0.35
           HR.all <- catch/run.size }}
       if(HCR == "PA.alternative"){
-        if(run.size <= 17000) catch <- 0
-        if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35
+        if(run.size <= 17000) catch <- inc.catch; tac[i] <- 0
+        if(run.size >= 86000/(1-0.35)) catch <- tac[i] <- run.size*0.35
         if(run.size > 17000 & run.size < 86000/(1-0.35)){
           dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
           lin <- lm(ER ~ R, data=dat)
           ER <- coef(lin)[1] + coef(lin)[2]*run.size
-          catch <- run.size*ER
+          catch <- tac[i] <- run.size*ER
         }
         HR.all <- catch/run.size
       }
     }
 
-    # Illustrative HCRs - these are the same regardless of year
-    if(HCR == "no.fishing"){HR.all <- 0}
+    # Illustrative HCRs - these are the same regardless of year and don't include incidental catch
+    if(HCR == "no.fishing"){
+      HR.all <- 0
+      catch <- tac[i] <- 0}
     if(grepl("fixed.ER", HCR)){
-      if(run.size==0){ER <- 0}
-      catch <- run.size*ER
+      if(run.size==0){ER <- 0} else {
+          ER <- as.numeric(gsub("\\D", "", HCR))/100
+          }
+      catch <- tac[i] <- run.size*ER
       HR.all <- catch/run.size}
 
-    HR_adj <- 1
+    HR_adj <- 1 # harvest rate adjuster
     realized.HR <- (HR.all*HR_adj); realized.HR[realized.HR < 0] <- 0; realized.HR[realized.HR > 1] <-1
+    cdn_catch <- ifelse(tac[i] <= 110000, 0.23*catch, ((0.23*110000)+(catch-110000)*0.5))
+    cdn_HR <- cdn_catch/run.size # calculate canadian portion of catch according to YK River salmon agreement
     outcome_error <- (1+rnorm(1,0,OU))
-    H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error)
+    H[i,] <- realized.HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error) # add outcome error to harvest
+    cdn_harv[i, ] <- cdn_HR*Ntot[i,]*ifelse(outcome_error<0, 0, outcome_error)
     S_exp <- Ntot[i,]-H[i,]
     S_exp[S_exp<0] <- 0  ##cutting out small and negative spawner obs
     S_exp[S_exp<50] <- 0
     S[i,] <- S_exp
-    error[i,1] <- HR.all*ifelse(outcome_error<0, 0, outcome_error); error[i,2] <- realized.HR; error[i,3] <- run.size; error[i,4] <- run.size.true
+    # Error output:
+    # 1: HR with outcome error
+    # 2: HR without outcome error
+    # 3: Forecast run size (with forecast error)
+    # 4: True run size (without forecast error)
+    # 5: TAC (total allowable catch) based on forecast run size
+    error[i,1] <- HR.all*ifelse(outcome_error<0, 0, outcome_error)
+    error[i,2] <- realized.HR
+    error[i,3] <- run.size
+    error[i,4] <- run.size.true
+    error[i,5] <- tac[i]
 
     # predict recruitment
     R[i,] <- alpha[]*S[i,]*exp(-beta[]*S[i,]+phi*v[i-1,]+epi[i,])
@@ -268,25 +294,23 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
 
   } # end years loop
 
-  # Output
+  # PM output:
   # SMU-level Performance measures:
   #	1: avg annual escapement
   #	2: avg annual harvest
-  #	3: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty) (ER)
-  # 4: % of years with no harvest
-  # 5: % of yrs harv > 10k (basic needs allocation)
+  # 3: avg annual CANADIAN harvest
+  #	4: harvest rate (associated with REALIZED harvest, i.e. including outcome uncertainty) (ER)
+  # 5: % of years with fishery closure (not zero harvest, because incidental harvest added to closure years)
   # 6: number of CUs below lower biol. benchmark at end of sim
   # 7: number of CUs between biol. benchmarks " "
   # 8: number of CUs above upper biol. benchmark, below rebuilding target at ""
   # 9: number of CUs above rebuilding target at ""
   # 10: number of extinct pops
 
-  #browser()
   pms <- matrix(NA,1,10)
-
-  # SMU level PMs
   S[is.nan(S[,])] <- 0
   H[is.nan(H[,])] <- 0
+  cdn_harv[is.nan(cdn_harv[,])] <- 0
   Ntot[is.nan(Ntot[,])] <- 0
   harvest_rates <- (H[pm.yr:ny,]/Ntot[pm.yr:ny,])
   harvest_rates[is.nan(harvest_rates[,])] <- 0
@@ -294,9 +318,9 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
   Smsy <- round((ln.alpha*(0.5-0.07* ln.alpha))/m.beta)
   pms[,1] <- (sum(S[pm.yr:ny,])/(ny - pm.yr +1))
   pms[,2] <- (sum(H[pm.yr:ny,])/(ny - pm.yr +1))
-  pms[,3] <- mean(harvest_rates) #was median before
-  pms[,4] <- sum(rowSums(H[pm.yr:ny,])==0)/(ny - pm.yr +1)
-  pms[,5] <- sum(rowSums(H[pm.yr:ny,])> 10000)/(ny - pm.yr +1)
+  pms[,3] <- (sum(cdn_harv[pm.yr:ny,])/(ny - pm.yr +1))
+  pms[,4] <- mean(harvest_rates)
+  pms[,5] <- sum(tac[pm.yr:ny]==0)/(ny - pm.yr +1)
   #"status" - how many CUs are in each zone IN THE FINAL YEAR?
   pms[,6] <- sum(S[ny,] < lwr.ben & S[ny,] !=0)
   pms[,7] <- sum(S[ny,] >= lwr.ben & S[ny,] < upr.ben)
@@ -317,7 +341,7 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
 
 
 
-  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms, PMs_cu=pms_cu, error)
+  list(S=S[,],R=R[,], N=Ntot[,],H=H[,],PMs=pms, PMs_cu=pms_cu, error=error)
 }
 
 #------------------------------------------------------------------------------#
