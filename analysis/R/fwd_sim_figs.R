@@ -200,12 +200,11 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
     filter(!(HCR %in% "realistic")) |>
     filter(!(metric %in% c("n.above.upr", "n.between.bench", "n.below.lwr", "n.above.reb", "n.extinct"))) |>
     mutate(metric_name = case_when(metric == "ER" ~ "Exploitation rate",
-                                   metric == "pr.basic.needs" ~ "Prop. years basic needs met",
-                                   metric == "pr.no.harv" ~ "Prop. years with no harvest",
+                                   metric == "cdn.harvest" ~ "Canadian harvest",
+                                   metric == "pr.closed" ~ "Prop. years fishery closed",
                                    .default = str_to_sentence(metric)))|>
-    mutate(metric_name = factor(metric_name, levels=c("Escapement", "Harvest", "Prop. years with no harvest", "Prop. years basic needs met", "Exploitation rate"))) |>
+    mutate(metric_name = factor(metric_name, levels=c("Escapement", "Harvest", "Canadian harvest", "Prop. years fishery closed","Exploitation rate"))) |>
     ggplot() +
-    #geom_point(aes(x=factor(HCR, levels=HCRs[1:6]), y=mean), col="grey75", alpha=0.4) + #see means?
     geom_col(aes(x=HCR_name, y = median, fill=HCR_name)) +
     geom_segment(aes(x=HCR_name,
                      xend=HCR_name,
