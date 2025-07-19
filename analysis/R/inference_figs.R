@@ -896,6 +896,8 @@ prop_CU <- esc |>
   mutate(contr = (mean/total_spwn)*100) |>
   select(CU_f,CU_pretty,year,contr)
 
+write.csv(prop_CU,here("analysis/data/generated/CU-border-comps.csv"), row.names = FALSE)
+
 ggplot(prop_CU, aes(x=year, y=contr, fill=CU_pretty)) +
   geom_area() +
   scale_fill_viridis_d() +
