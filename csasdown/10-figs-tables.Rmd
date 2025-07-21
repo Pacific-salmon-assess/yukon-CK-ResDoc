@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 #  FIGURES
 
 (ref:fig-map-spawn) Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
@@ -612,7 +617,7 @@ df|>
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
-  tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
+  tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
 perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
@@ -654,7 +659,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 ```{r tab-rob-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.csv"))|>
-  tidyr::pivot_longer(cols=2:10, values_to="value", names_to="metric") |>
+  tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
 perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
 
