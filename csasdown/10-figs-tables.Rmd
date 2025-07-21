@@ -82,7 +82,7 @@ knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River Stock Management Unit. The Porcupine Conservation Unit, which is provisionally assessed as in the Red status zone, is not shown, nor are the Salmon Fork and Old Crow CUs, which are data deficient.
+(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
