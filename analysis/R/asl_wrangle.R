@@ -286,11 +286,11 @@ ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fil
   theme(legend.position = c(0.7,0.145),
         axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   labs(x = "Conservation Unit", y = "Proportion")
-my.ggsave(here("analysis/plots/SR_models/age-cu-by-yrs.PNG"))
+my.ggsave(here("analysis/plots/SR-models/age-cu-by-yrs.PNG"))
 
 ggplot(cu_age_all_yr, aes(x = CU, y = prop, fill=as.factor(age))) +
   geom_bar( stat = "identity") +
   theme_sleek() +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   labs(x = "Conservation Unit", y = "Proportion")
-my.ggsave(here("analysis/plots/SR_models/age-cu-all-yrs.PNG"))
+my.ggsave(here("analysis/plots/SR-models/age-cu-all-yrs.PNG"))
