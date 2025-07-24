@@ -6,15 +6,15 @@
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
 TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
 
-TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(30:35), names_to = "par") |>
+TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(30:34), names_to = "par") |>
   select(CU, par, value) |>
   mutate(scenario = "reference (most recent generation)")
 
-TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(1:35), names_to = "par") |>
+TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(1:34), names_to = "par") |>
   select(CU, par, value) |>
   mutate(scenario = "robustness (long-term average)")
 
-TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(35), names_to = "par") |>
+TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(34), names_to = "par") |>
   select(CU, par, value) |>
   mutate(scenario = "robustness (most recent year)")
 
@@ -26,11 +26,13 @@ AR.pp.rob <- AR1.par.posts |>
 
 alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob,TV.pp.rob2.long)
 
+# Alpha comparison
 alpha.stats <- alpha.posts |>
   group_by(CU, scenario) |>
   summarise(mean.prod = mean(value)) |>
   filter(scenario != "stationary")
 
+# Plot comparison of scenarios
 alpha.posts |> filter(scenario != "stationary") |>
   mutate(CU_f = factor(CU, levels=CU_order)) |>
   mutate(scenario = str_to_sentence(scenario)) |>
@@ -48,6 +50,24 @@ my.ggsave(here("analysis/plots/fwd-sim/OM-productivity-scenarios.PNG"))
 ggsave(here("csasdown/figure/OM-productivity-scenarios.PNG"), height=600*2, width=777*2,
        units = "px", dpi=240)
 
+# Plot comparison of TVA long-term average vs stationary alpha
+alpha.posts |> filter(scenario %in% c("stationary", "robustness (long-term average)")) |>
+  mutate(scenario2 = case_when(scenario == "robustness (long-term average)" ~ "TV model average",
+                               scenario == "stationary" ~ "Stationary model",
+                               .default = scenario)) |>
+  mutate(CU_f = factor(CU, levels=CU_order)) |>
+  ggplot(aes(value, fill = scenario2, color = scenario2)) +
+  geom_density(alpha = 0.3) +
+  facet_wrap(~CU_f, scales = "free_y", labeller=CU_labeller) +
+  theme_sleek() +
+  scale_x_continuous(limits = c(NA, 4)) +
+  theme(legend.position = "bottom") +
+  geom_vline(xintercept = 0, lty=2, col="grey") +
+  scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
+  labs(y = "", x = expression(Log(alpha)), fill="Productivity Scenario", color="Productivity Scenario")
+my.ggsave(here("analysis/plots/fwd-sim/OM-long-term-scenarios.PNG"))
+
+
 
 # Load both S-R and egg mass -based biol. benchmarks by CU
 bench.par.table <- read.csv(here("analysis/data/generated/bench_par_table.csv"))
@@ -63,7 +83,7 @@ all.bench <- bench.par.table |>
 
 
 # Generate plots for which set of fwd simulations?
-sceanarios <- list("TVA", "TVA2", "AR1") # Can omit one to avoid re-generating figures
+sceanarios <- list("TVA", "TVA2", "TVA3") # "AR1") # Can omit one to avoid re-generating figures
 
 for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robustness set (AR1)
 
@@ -83,6 +103,15 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
       pivot_longer(-c(1,12), names_to = "metric") |>
       pivot_wider(names_from=prob, values_from=value)
     Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA2.csv"),
+                      row.names = 1)
+    spwn.obs = TV.spwn; harv.obs = TV.harv
+  } else if (k == "TVA3"){
+    S.fwd <- read.csv(here("analysis/data/generated/simulations/S_fwd_TVA3.csv"))
+    H.fwd <- read.csv(here("analysis/data/generated/simulations/H_fwd_TVA3.csv"))
+    perf.metrics <- read.csv(here("analysis/data/generated/perf_metrics_TVA3.csv")) |>
+      pivot_longer(-c(1,12), names_to = "metric") |>
+      pivot_wider(names_from=prob, values_from=value)
+    Sig.R <- read.csv(here("analysis/data/generated/simulations/var_covar_TVA3.csv"),
                       row.names = 1)
     spwn.obs = TV.spwn; harv.obs = TV.harv
   } else if (k == "AR1"){
