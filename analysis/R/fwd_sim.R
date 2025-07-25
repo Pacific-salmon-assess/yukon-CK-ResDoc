@@ -8,7 +8,7 @@ source(here("analysis/R/data_functions.R"))
 set.seed(2)
 
 ## Specify set of productivity (alpha) scenarios to condition sims on
-scenarios <- list("TVA","TVA2", "AR1")
+scenarios <- list("TVA","TVA2", "TVA3") # "AR1")
 # TVA = median alpha of most recent generation (6 years- 2014:2019)
 # TVA2 = alpha of last brood yr where returns up to age 7 observed (2018)
 # AR1 = alpha estimated by time-invarying alpha models (1985:2024)
@@ -50,7 +50,8 @@ function(k){
   if(k=="AR1") {
     fits = AR1.fits} else if(k == "TVA") {
       fits = TVA.fits} else if(k == "TVA2") {
-        fits = TVA.fits}
+        fits = TVA.fits} else if(k == "TVA3"){
+          fits = TVA.fits}
 
 samps <- NULL
 pi.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits)))
@@ -66,6 +67,8 @@ for(i in 1:length(names(fits))){ # loop over CUs to get parameters
     alpha <- exp(fits[[i]]$ln_alpha[, comp.brood-1]) # alpha of last brood yr where returns up to age 7 observed (2018)
   }else if(k=="AR1") {
     alpha <- exp(fits[[i]]$lnalpha) # long-term alpha from non- time varying models
+  } else if(k=="TVA3"){
+    alpha <- exp(apply(fits[[i]]$ln_alpha[, 1:comp.brood], 1, median)) # long-term median alpha from time-varying models
   }
   # Get posteriors of parameters to sample from in simulation
   sub_samps <- cbind(alpha,
