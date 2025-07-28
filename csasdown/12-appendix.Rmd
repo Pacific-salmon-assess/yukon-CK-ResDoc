@@ -153,14 +153,14 @@ For the Big Salmon CU, which cannot be reliably differentiated with genetics fro
 For the Upper Yukon CU we removed the estimated contribution of hatchery fish based on the count of hatchery fish at the Whitehorse Fishway. 
 
 \clearpage
-(ref:fig-eagle-RR-fits) Fits of the run-reconstruction model (lines) to daily sonar counts at Eagle (circles).
+(ref:fig-eagle-RR-fits) Fits of the run-reconstruction model (lines) to daily sonar counts (circles) at Eagle, near the U.S. --Canada border.
 
 ```{r fig-eagle-RR-fits, fig.cap = "(ref:fig-eagle-RR-fits)"}
 knitr::include_graphics(here::here("csasdown/figure/indexFitsg1.png"))
 ```
 
 \clearpage
-(ref:fig-fw-RR-fits) Fits of the run-reconstruction model (lines) to daily fishwheel counts (circles).
+(ref:fig-fw-RR-fits) Fits of the run-reconstruction model (lines) to daily fishwheel counts (circles) at White and Sheep Rocks, near the U.S. --Canada border.
 
 ```{r fig-fw-RR-fits, fig.cap = "(ref:fig-fw-RR-fits)"}
 knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
