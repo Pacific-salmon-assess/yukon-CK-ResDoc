@@ -557,7 +557,7 @@ trib_order <- c("Porcupine sonar","Miner aerial","Klondike sonar","Chandindu wei
                 "Pelly sonar","Blind creek weir","Tachun foot", "Tachun weir","Little Salmon aerial","Big Salmon aerial",
                 "Big Salmon sonar","Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot",
                 "Teslin sonar","Nisutlin aerial","Nisutlin sonar","Wolf aerial", "Morley aerial")
-tribs.all$tribs_name_ord<- factor(tribs.all$tribs_name, levels = trib_order)
+tribs.all$tribs_name_ord<- factor(tribs.all$tributary, levels = trib_order)
 
 tribs.all |>
   mutate(tribs_name = gsub("salmon", "Salmon", gsub("_", "-", str_to_sentence(tributary)))) |>
@@ -670,7 +670,7 @@ I_t <- rpt$I_t[t]*1e-3/exp(rpt$lnqI_s[1])
 E_t <- colSums(exp(rpt$lnRunSize_st))[t]*1e-3
 sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
-fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_sg[1,2])
+fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_tg[ ,2])
 
 png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 8, height = 6,units="in", res =700 )
 
@@ -693,10 +693,10 @@ points( x=yr, y=sonarN_t, pch=16, lwd=1.5, col="red" )
 points( x=yr, y=fw_t, pch=2, lwd=1.5, col="green" )
 
 legend( x="bottomleft", bty="n",
-        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts", "Fish wheel counts"),
+        legend=c("CU border passage estimates","Aggregrate JTC border passage estimates","Sonar counts", "Fish wheel counts"),
         pch=c(NA,NA,NA,NA), lwd=c(1,1,NA,NA), col=c("grey70","black",NA,NA), lty=c(1,1,NA,NA), cex=0.75 )
 legend( x="bottomleft", bty="n",
-        legend=c("CU run reconstruction estimates","Aggregrate run reconstruction estimates","Sonar counts", "Fish wheel counts"),
+        legend=c("","","", ""),
         pch=c(16,0,16,2), lwd=c(1.5), col=c("grey40","black","red","green"), lty=c(0), cex=0.75 )
 
 dev.off()
