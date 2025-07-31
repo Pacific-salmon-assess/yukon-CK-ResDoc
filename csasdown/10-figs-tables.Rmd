@@ -69,7 +69,7 @@ knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner). Data taken from fish sampled at Eagle and White and Sheep rocks.  
+(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners by age (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner). Data taken from fish sampled at Eagle and White and Sheep rocks.  
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
@@ -250,7 +250,7 @@ assess_tbl |>
 
 \clearpage
 
-(ref:ref-points) Definitions of some common biological reference points used for salmon at either Stock Management Unit or Conservation Unit scale.
+(ref:ref-points) Definitions of some common biological reference points used for salmon at either the Stock Management Unit (SMU) or Conservation Unit (CU) scale.
 
 ```{r ref-points, results = "asis"}
 priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)", 

@@ -9,8 +9,9 @@ set.seed(2)
 
 ## Specify set of productivity (alpha) scenarios to condition sims on
 scenarios <- list("TVA","TVA2", "TVA3") # "AR1")
-# TVA = median alpha of most recent generation (6 years- 2014:2019)
-# TVA2 = alpha of last brood yr where returns up to age 7 observed (2018)
+# TVA = median alpha of most recent generation (6 years- 2013:2018)
+# TVA2 = alpha of last brood yr where returns up to age 7 observed (2017)
+# TVA3 = median alpha from time-varying models across all years (1985:2024)
 # AR1 = alpha estimated by time-invarying alpha models (1985:2024)
 
 # Load SR fits ---------------------------------------------------------------
@@ -62,9 +63,9 @@ a_yrs = 10 # number of years to average productivity over for reference test
 
 for(i in 1:length(names(fits))){ # loop over CUs to get parameters
   if(k=="TVA") {
-    alpha <- exp(apply(fits[[i]]$ln_alpha[, (comp.brood-6+1):comp.brood], 1, median)) # median alpha of most recent generation (6 years; 2014:2019)
+    alpha <- exp(apply(fits[[i]]$ln_alpha[, (comp.brood-6+1):comp.brood], 1, median)) # median alpha of most recent generation (6 years; 2013:2018)
   } else if(k=="TVA2") {
-    alpha <- exp(fits[[i]]$ln_alpha[, comp.brood-1]) # alpha of last brood yr where returns up to age 7 observed (2018)
+    alpha <- exp(fits[[i]]$ln_alpha[, comp.brood-1]) # alpha of last brood yr where returns up to age 7 observed (2017)
   }else if(k=="AR1") {
     alpha <- exp(fits[[i]]$lnalpha) # long-term alpha from non- time varying models
   } else if(k=="TVA3"){
