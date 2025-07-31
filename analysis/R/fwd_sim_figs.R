@@ -275,14 +275,21 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
     filter(HCR %in% HCR_grps[["fixed"]]) %>%
     group_by(HCR) %>%
     mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
-    filter(metric == "n.below.LSR") %>%
-    #mutate(prec = if_else(median <= 1, 1, 0)) %>%
-    ggplot(aes(x=ER, y=mean)) +
+    filter(metric == "n.below.lwr") %>%
+    mutate(prec = if_else(median <= 1, 1, 0)) %>%
+    ggplot(aes(x=ER, y=median, col=prec)) +
+    geom_point()
+
+  perf.metrics %>%
+    filter(HCR %in% HCR_grps[["fixed"]]) %>%
+    group_by(HCR) %>%
+    mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
+    filter(metric == "escapement") %>%
+    ggplot(aes(x=ER, y=median)) +
     geom_point()
 
 
   ## fixed ER trade-off multipanel ----
-
   spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
     group_by(HCR, CU_f) %>%
     summarize(mean_spwn = mean(S.50)) %>%
