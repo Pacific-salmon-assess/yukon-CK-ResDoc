@@ -223,7 +223,7 @@ cdn_rr$total_females <- cdn_rr$Escapement*rowSums(fem_S_comps)
 cdn_rr$total_eggs <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_eggs)
 cdn_rr$total_egg_mass <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_egg_mass)
 
-write.csv(cdn_rr, here("analysis/data/raw/cdn-yukon-chinook-repro-output.05Aug2025.csv"),row.names = FALSE)
+write.csv(cdn_rr, here("analysis/data/generated/cdn-yukon-chinook-repro-output.05Aug2025.csv"),row.names = FALSE)
 
 # age by CU ----
 
