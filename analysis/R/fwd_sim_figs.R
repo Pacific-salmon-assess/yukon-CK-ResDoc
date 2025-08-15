@@ -275,14 +275,21 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
     filter(HCR %in% HCR_grps[["fixed"]]) %>%
     group_by(HCR) %>%
     mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
-    filter(metric == "n.below.LSR") %>%
-    #mutate(prec = if_else(median <= 1, 1, 0)) %>%
-    ggplot(aes(x=ER, y=mean)) +
+    filter(metric == "n.below.lwr") %>%
+    mutate(prec = if_else(median <= 1, 1, 0)) %>%
+    ggplot(aes(x=ER, y=median, col=prec)) +
+    geom_point()
+
+  perf.metrics %>%
+    filter(HCR %in% HCR_grps[["fixed"]]) %>%
+    group_by(HCR) %>%
+    mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
+    filter(metric == "escapement") %>%
+    ggplot(aes(x=ER, y=median)) +
     geom_point()
 
 
   ## fixed ER trade-off multipanel ----
-
   spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
     group_by(HCR, CU_f) %>%
     summarize(mean_spwn = mean(S.50)) %>%
@@ -295,20 +302,25 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
           axis.title = element_text(size=12)) +
     labs(x="Spawners (000s)", y="Exploitation rate", col="Conservation Unit")
 
-  harv_v_ER <- H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
-    group_by(HCR, CU_f) |>
-    summarize(mean_harv = mean(H.50)) |>
+harv_v_ER <-
+    H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
+    summarize(mean_harv = mean(H.50), .by=c(HCR, CU_f)) |>
+    mutate(smu_mean_harv = sum(mean_harv), .by=HCR) |>
     mutate(ER = as.numeric(gsub("\\D", "", HCR))) |>
     left_join(CU_name_lookup) |>
+    arrange(ER) |>
     ggplot() +
     geom_point(aes(y=ER, x=mean_harv/1000, col=CU_pretty), shape='circle', size=2, alpha=0.7) +
+    geom_point(aes(y=ER, x=(smu_mean_harv)/2500), col="grey20", shape="diamond", size=2) +
     scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
+    scale_x_continuous(sec.axis = sec_axis(transform = (~.*2.5), name="SMU Harvest (000s)",
+                       breaks=c(0,5,10))) +
     theme_sleek() +
     theme(axis.title.y = element_blank(),
           axis.text.y = element_blank(),
           legend.text = element_text(size=10),
           axis.title = element_text(size=12)) +
-    labs(x="Harvest (000s)", y="Exploitation rate", col="Conservation Unit")
+    labs(x="CU Harvest (000s)", y="Exploitation rate", col="Conservation Unit")
 
   status_ER <- perf.status %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
     mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%

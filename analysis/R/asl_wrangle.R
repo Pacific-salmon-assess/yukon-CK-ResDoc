@@ -3,6 +3,7 @@ library(here)
 library(zoo)
 library(ggpubr)
 library(ggsidekick)
+source(here("analysis/R/data_functions.R"))
 
 # Hamachan selectivity corrected age and sex comps 1981-2006
 fw_age_sex <- read.csv(here("analysis/data/raw/fw-border-age-sex-comps.csv"))
@@ -210,7 +211,7 @@ ggsave(here("csasdown/figure/asl.PNG"), height = 550*2,
        width = 700*2, units="px", dpi=200)
 
 
-# calculate total egg and egg mass time series for Jim M
+# calculate total egg and egg mass time series for Jim M and Lukas DP
 rr <- read.csv(here("analysis/data/raw/rr-table.csv"))
 
 cdn_rr <- rr %>%
@@ -222,7 +223,7 @@ cdn_rr$total_females <- cdn_rr$Escapement*rowSums(fem_S_comps)
 cdn_rr$total_eggs <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_eggs)
 cdn_rr$total_egg_mass <- rowSums(cdn_rr$Escapement*fem_S_comps*female_length_comps_egg_mass)
 
-write.csv(cdn_rr, here("analysis/data/raw/cdn-yukon-chinook-repro-output.17Mar2025.csv"),row.names = FALSE)
+write.csv(cdn_rr, here("analysis/data/generated/cdn-yukon-chinook-repro-output.05Aug2025.csv"),row.names = FALSE)
 
 # age by CU ----
 
