@@ -22,17 +22,46 @@ cdn_harvest <- read.csv(here("analysis/data/raw/YkCk_Harvest_CA_Data_2024.csv"))
          Year > 1984) %>%
   select(Year, Estimate)
 
-border_passage <- rpt[["runSize_t"]]
-cdn_er <- cdn_harvest$Estimate/(cdn_harvest$Estimate+border_passage)
+# remove McQuesten fish from Northern CU border passage and assign to Stewart CU border passage
+mcquesten_cont <- read.csv(here("analysis/data/raw/mcquesten.csv"))
+mu_mcq_prop <- mean(mcquesten_cont$per_cont) # average percent contribution
+sd_mcq_prop <- sd(mcquesten_cont$per_cont) # SD percent contribution
 
-CU_border_passage <- exp(rpt$lnRunSize_st)
-CU_cdn_er <- matrix( data=rep((1-cdn_er),each=8), nrow=8, ncol=40)
-CU_spwn <- CU_border_passage * CU_cdn_er
+mcq_counts <- matrix(NA, 1000,40)
 
-# extract CIs for border passage, calculate spawners
-Rse <- filter(rpt$sdrpt,par=="runSize_st")
-CU_spwn_upr <- matrix( data=Rse$uCI, nrow=8, ncol=40) * CU_cdn_er
-CU_spwn_lwr <- matrix( data=Rse$lCI, nrow=8, ncol=40) * CU_cdn_er
+border_total <- filter(rpt$sdrpt,par=="runSize_t") # total border passage (estimated by CU-RR model)
+mu_border_total<-border_total$val
+sd_border_total<-(border_total$uCI-border_total$lCI)/4
+
+for(i in 1:1000) { #
+  mcq_count <- rnorm(n=40,mean=mu_border_total,sd=sd_border_total)*rnorm(40,mu_mcq_prop,sd_mcq_prop)
+  mcq_count[mcq_count<0] <- 0
+  mcq_counts[i,] <- mcq_count
+}
+
+mcq_cont_avg <- colMeans(mcq_counts) # average McQuesten contribution to border passage
+
+CU_border_passage_corr <-  CU_border_passage
+CU_border_passage_corr[1,] <- CU_border_passage[1,]-mcq_cont_avg # remove McQuesten from Northern CU
+CU_border_passage_corr[4,] <- CU_border_passage[4,]+mcq_cont_avg # add McQuesten to Stewart CU
+
+CU_border_upr <- matrix(data=Rse$uCI, nrow=8, ncol=40)
+CU_border_lwr <- matrix(data=Rse$lCI, nrow=8, ncol=40)
+
+CU_border_upr_corr <- CU_border_upr
+CU_border_lwr_corr <- CU_border_lwr
+CU_border_upr_corr[1,] <- CU_border_upr[1,]-mcq_cont_avg
+CU_border_lwr_corr[1,] <- CU_border_lwr[1,]-mcq_cont_avg
+CU_border_upr_corr[4,] <- CU_border_upr[4,]+mcq_cont_avg
+CU_border_lwr_corr[4,] <- CU_border_lwr[4,]+mcq_cont_avg
+
+# estimate spawners by CU
+cdn_er <- cdn_harvest$Estimate/(cdn_harvest$Estimate+border_total$val)
+
+CU_cdn_er <- matrix(data=rep((1-cdn_er),each=8), nrow=8, ncol=40)
+CU_spwn <- CU_border_passage_corr * CU_cdn_er
+CU_spwn_upr <- CU_border_upr_corr * CU_cdn_er
+CU_spwn_lwr <- CU_border_lwr_corr * CU_cdn_er
 
 # add CUs and years
 colnames(CU_spwn) <- seq(1985,2024)
@@ -70,8 +99,8 @@ for (i in 1:1000){
   r_my <- rnorm(mu_my,mean=mu_my,sd=sd_my)
   bs[i,] <- r_my*r_bs_prop
   my[i,] <- r_my-bs[i,]
-}  
-  
+}
+
 bs_mean <- apply(bs,2,mean)
 bs_upr <- apply(bs,2,quantile, probs=c(0.95))
 bs_lwr <- apply(bs,2,quantile, probs=c(0.05))
@@ -104,21 +133,21 @@ CU_spwn_lwr[8,] <- CU_spwn_lwr[8,]-hatch_upper$hatch
 CU_spwn_df <- as.data.frame(CU_spwn)
 CU_spwn_df$CU <- rownames(CU_spwn)
 
-CU_spawn_long <- CU_spwn_df %>% 
+CU_spawn_long <- CU_spwn_df %>%
   pivot_longer(!CU, names_to = 'Year', values_to = 'spawn')
 
 CU_spwn_lwr_df <- as.data.frame(CU_spwn_lwr)
 CU_spwn_lwr_df$CU <- rownames(CU_spwn_lwr)
 
-CU_spawn_lwr_long <- CU_spwn_lwr_df %>% 
+CU_spawn_lwr_long <- CU_spwn_lwr_df %>%
   pivot_longer(!CU, names_to = 'Year', values_to = 'spawn.lwr') |>
   mutate(spawn.lwr = ifelse(spawn.lwr < 0, 10, spawn.lwr))
 
 CU_spwn_upr_df <- as.data.frame(CU_spwn_upr)
 CU_spwn_upr_df$CU <- rownames(CU_spwn_upr)
 
-CU_spawn_upr_long <- CU_spwn_upr_df %>% 
-  pivot_longer(!CU, names_to = 'Year', values_to = 'spawn.upr') 
+CU_spawn_upr_long <- CU_spwn_upr_df %>%
+  pivot_longer(!CU, names_to = 'Year', values_to = 'spawn.upr')
 
 CU_spawn_2 <- cbind(CU_spawn_long,CU_spawn_lwr_long[,3],CU_spawn_upr_long[,3]) |>
   mutate(cv = ((spawn.upr-spawn.lwr)/4)/spawn) |>
@@ -143,7 +172,7 @@ big.S <- big.S |>
   rename(mean = V2) |>
   mutate(lower = lwr,
          upper = upr) |>
-  select(stock, year, mean, upper, lower, cv) 
+  select(stock, year, mean, upper, lower, cv)
 
 # bind data frames
 mssr_spwn_2 <- rbind(CU_spawn_2,big.S)
