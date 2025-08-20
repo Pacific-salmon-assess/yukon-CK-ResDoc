@@ -369,8 +369,8 @@ priors.df |>
     kableExtra::column_spec(2, width = "6cm")
 ```
 
-## BIOLOGICAL REFERENCE POINTS 
-We calculated biological reference points for each MCMC sample and then summarized them across MCMC samples. The spawning abundance expected to maximize sustainable yield over the long-term under equilibrium conditions, $S_{MSY}$ was derived as:  
+## BIOLOGICAL BENCHMARKS 
+We calculated biological benchmarks points for each MCMC sample and then summarized them across MCMC samples. The spawning abundance expected to maximize sustainable yield over the long-term under equilibrium conditions, $S_{MSY}$ was derived as:  
 
 \begin{equation}
   S_{MSY} = 1 - W(e^{1-ln(\alpha)})/\beta
@@ -408,7 +408,7 @@ The harvest rate expected to lead to maximum sustainable yield, $U_{MSY}$, was d
   \label{eq:get-Umsy}
 \end{equation}
 
-To derive biological reference points from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically, we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F_{max}$ as a function of the age and sex class ($j$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex ($\pi_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
+To derive biological benchmarks from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically, we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F_{max}$ as a function of the age and sex class ($j$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex ($\pi_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
 
 \begin{equation}
   z_{PR,j} = \sum_{j}(1-U_{i,j})z_{i,j}pi_{i,j}
