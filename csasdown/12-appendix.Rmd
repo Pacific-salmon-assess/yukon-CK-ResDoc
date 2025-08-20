@@ -437,7 +437,13 @@ and calculated totals for harvest and spawning escapement by summing over ages a
 
 We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$, respectively.
 
+**PUT TABLES WITH SR PARAMETERS AND BENCHMARKS FOR EACH TYPE OF SR MODEL HERE**
 
+(ref:fig-bench-compare) Comparison of alternative (a) lower and (b) upper biological benchmarks as well as (c) estimates of maximum returns ($S_{MSR}$) or equilibrium population size ($S_{EQ}$) across CUs. The numeric value in legends refers to a percentage of the benchmark and those labelled "egg-mass" are derived from analyses that account for demographic change and are based on demographic characteristics observed over the most recent generation (2019-2024). Bars are medians and whiskers are upper 95th percentiles.
+
+```{r fig-bench-compare, fig.cap = "(ref:fig-bench-compare)"}
+knitr::include_graphics(here::here("csasdown/figure/bench-compare.png"))
+```
 # WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:fourth-appendix}
 
 See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID STATUS SUMMARY: YUKON CHINOOK and PORCUPINE CHINOOK STOCK MANAGEMENT UNITS" 
