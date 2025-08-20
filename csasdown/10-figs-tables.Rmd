@@ -50,7 +50,7 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 
 \clearpage
 
-(ref:fig-CU-comps) Percentage contribution of each Conservation Unit to reconstructed total spawner abundance of the Yukon Chinook salmon Stock Management Unit over time. Note these estimates of percent contribution differ from the raw values in Table \@ref(tab:tab-CU-gsi-annual-summary) because they are derived from a run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative GSI sampling of total returns. 
+(ref:fig-CU-comps) Percentage contribution of each Conservation Unit (CU) to reconstructed total return abundance of the Yukon Chinook salmon Stock Management Unit over time. Estimates are based on the multi-CU run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative genetic sampling of total returns. 
 
 ```{r fig-CU-comps, fig.cap = "(ref:fig-CU-comps)"}
 knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"))
@@ -62,6 +62,13 @@ knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
+
+(ref:fig-par-ref-hist) Conservation Unit specific posterior distributions of estimates of intrinsic productivity (a;$\alpha$ in units of recruits-per-spawner), spawner abundance associated with maximum recruitment (b; $S_{MSR}$), and exploitation rate associated with maximum sustainable yield (c; $U_{MSY}$)  . 
+
+```{r fig-par-ref-hist, fig.cap = "(ref:fig-par-ref-hist)"}
+knitr::include_graphics(here::here("csasdown/figure/par-ref-hist.png"))
+```
+
 
 (ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Salmon Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
 
@@ -158,7 +165,7 @@ knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"
 
 # TABLES
 
-(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on genetics is also shown. 
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on reconstructed border passage is also shown. 
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
@@ -182,39 +189,6 @@ smucutable |>
     kableExtra::column_spec(3, width = "4cm")|>
     kableExtra::column_spec(4, width = "2cm") 
 ```
-
-\clearpage
-
-(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
-```{r tab-CU-gsi-annual-summary, results="asis"}
-
-cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
-names(cugsitable)[2:ncol(cugsitable)] <- c("Northern Yukon R. and tribs.", 
-                                            "White and tribs.", "Stewart",  
-                                            "Middle Yukon R. and tribs.","Pelly",
-                                            "Nordenskiold",
-                                            "Upper Yukon R.","Yukon R. Teslin Headwaters")
-
-
-cugsitable |> 
-  dplyr::mutate_all(function(x){round(x, 3)}) |>
-  csasdown::csas_table(format = "latex",
-                       #escape = FALSE,
-                       caption = "(ref:tab-CU-gsi-annual-summary)",
-                       repeat_header = TRUE) |>
-  kableExtra::column_spec(1, width = "0.75cm")|>
-    kableExtra::column_spec(2, width = "1.5cm")|>
-    kableExtra::column_spec(3, width = "1.5cm")|>
-    kableExtra::column_spec(4, width = "1.5cm")|>
-    kableExtra::column_spec(5, width = "1.5cm")|>
-    kableExtra::column_spec(6, width = "1.5cm")|>
-    kableExtra::column_spec(7, width = "2cm")|>
-    kableExtra::column_spec(8, width = "1.5cm")|>
-    kableExtra::column_spec(9, width = "2cm") 
-
-
-```
-
 
 \clearpage
 
