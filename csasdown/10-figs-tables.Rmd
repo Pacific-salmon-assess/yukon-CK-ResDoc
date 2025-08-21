@@ -353,7 +353,6 @@ om.alpha <- om.alpha |>
 
 names(om.alpha) <- c("Conservation Unit",
                      "Productivity Scenario",
-                     "Model type",
                      "Median (95$^{\\text{th}}$ percentile)")
 om.alpha |>
   dplyr::arrange(`Conservation Unit`, `Productivity Scenario`) |>
