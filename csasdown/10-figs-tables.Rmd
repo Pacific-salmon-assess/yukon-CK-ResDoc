@@ -220,45 +220,68 @@ assess_tbl |>
 ```
 \end{landscapepage}
 
-
-
 \clearpage
 
-(ref:ref-points) Definitions of some common biological reference points used for salmon at either the Stock Management Unit (SMU) or Conservation Unit (CU) scale.
+(ref:benchmarks) Definitions, values, and rationale for proposed biological benchmarks and rebuilding targets at the Conservation Unit (CU) scale.
 
-```{r ref-points, results = "asis"}
-priors.df <- data.frame(Reference = c("Limit Reference Point (LRP)", 
-                                               "Upper Stock Reference Point (USR)", 
-                                               "Removal Reference Point", 
-                                               "Lower stock reference point", 
-                                               "Lower Wild Salmon Policy biological benchmark ", 
-                                               "Upper Wild Salmon Policy biological benchmark ",
-                                               "Other biological reference points"), 
-                        Scale = c("Stock Management Unit", 
-                                     "Stock Management Unit", 
-                                     "Stock Management Unit or Conservation Unit", 
-                                     "Stock Management Unit", 
-                                     "Conservation Unit", 
-                                     "Conservation Unit",
-                                     "Stock Management Unit or Conservation Unit"),
-                           Definition = c("CU-status based; an SMU is below its LRP when one or more component CUs are in the WSP Red status zone. This definition is aligned with principle that LRPs be aligned with Canada’s WSP objective of preserving biodiversity of salmon at the scale of CUs (DFO 2022; Holt et al. 2023a). However, it is difficult to operationalize this type of LRP for fisheries management, and so for management purposes an LRP-Lower may also be required. ",
-                                          "Spawning abundance associated with fully meeting socio-economic objectives for the system, and above which maximum allowable harvest rates (see Removal Reference Point) can be sustained. Under the DFO Precautionary Approach Framework this is often 80% of $S_{MSY}$, but this is not a requirement and may vary by system depending on the fishery and broader socio-economic and ecosystem objectives. ",
-                                          "The maximum acceptable harvest rate the SMU can be subject to; is typically set to be less than or equal to the removal rate associated with maximum sustainable yield ($U_{MSY}$).", 
-                                          "Aggregate SMU spawner abundance below which all fishery removals should be limited to the maximum extent possible and below which there is a high risk of serious and irreversible harm to the stock. This type of reference point is helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized.", 
-                                          "Differentiates amber and red Wild Salmon Policy status zones. Assessing WSP rapid statuses considers multiple metrics, and this is one metric that is applied if the data and related benchmarks are available. When it can be estimated $S_{GEN}$ is often used and it is the spawning abundance that is expected to lead to recovery to $S_{MSY}$ in one salmon generation in the absence of fishing under equilibrium conditions (Holt 2009). Spawning abundances below this reference point (red status) are expected to be associated with high risk of irreversible harm to the CU and align with a COSEWIC assessment of “endangered”. ",
-                                          "The spawning abundance that differentiates amber and green Wild Salmon Policy status zones. When it can be estimated 80% $S_{MSY}$ is used and is the spawner abundance expected to provide, on average annual basis, the maximum annual catch for the CU, given existing environmental conditions and where “there would not be a high probability of losing the CU” (DFO 2005).",
-                                          "Other biologically based reference points like $S_{MSR}$, which is the spawner abundance expected to maximize returns on average annual basis, may be used as an upper biological reference point and 20% of $S_{MSR}$ which has been proposed as a lower biological reference point. $S_{MSR}$ is sometimes referred to as $S_{MAX}$, and escapement goals based on this quantity are sometimes deemed more appropriate where the fishery is dominated by subsistence fisheries that wish to harvest a fixed number of fish each year and are attempting to minimize the effort needed to harvest (Liller and Savereide 2022)."))
+```{r benchmarks, results = "asis"}
+bench.df <- data.frame(Metric = c("Lower biological benchmark ", 
+                                  "Upper biological benchmark ",
+                                  "Rebuilding target"), 
+                        Definition = c("Spawner abundances below which CU is expected to have high risk of irreversible harm and which aligns with a Committee on the Status of Endangered Wildlife in Canada (COSEWIC) assessment of “endangered”", 
+                                     "Spawner abundances associated with low risk of irreversible harm, delineatinating amber and green Wild Salmon Policy biological status zones",
+                                     "Spawner abundances associated with a “healthy” state that meets socio-ecological objectives and is expected to be resilient in the face of rapid and unpredictable environmental change"),
+                       Value = c("20% of $S_{MSR}$",
+                                          "40% of $S_{MSR}$",
+                                          "$S_{MSR}$ based on demographic characteristics of spawners in most recent generation (2019-2024)"),
+                       Rationale = c("More biologically based than MSY based biological benchmarks that are implicitly tied to yield based objectives (Frid et al. 2023). Less sensitive to temporal variation in intrinsic productivity than MSY based benchmarks (Holt and Michielsens 2020). Aligned with proposed use of $S_{MSR}$ based reference points at SMU scale",
+                       "Same as above",
+                       "Targets linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more consistent with indigenous and ecosystem based principles and to afford greater resilience to environmental and ecosystem change (Reid et al. 2022; Frid et al 2023)"))
 
-priors.df |>
+bench.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
-                     caption = "(ref:ref-points)", 
+                     caption = "(ref:benchmarks)", 
                      repeat_header = TRUE) |>
-    kableExtra::column_spec(1, width = "3cm")|>
-    kableExtra::column_spec(2, width = "3cm")|>
-    kableExtra::column_spec(3, width = "10cm")
+    kableExtra::column_spec(1, width = "2.5cm")|>
+    kableExtra::column_spec(2, width = "5cm")|>
+    kableExtra::column_spec(3, width = "3cm")|>
+    kableExtra::column_spec(4, width = "5cm")
+```
+
+(ref:refpoints) Definitions, values, and rationale for proposed reference points for the Yukon Stock Management Unit (SMU).
+
+```{r refpoints, results = "asis"}
+ref.df <- data.frame(Metric = c("Limit Reference Point (LRP) ", 
+                                  "Upper Stock Reference Point (USR)",
+                                  "Maximum Removal Reference (RR)",
+                                  "Fishery Reference Point - Lower (FRP-L)"), 
+                        Definition = c("Point below which serious harm may occur to the stock and where there may also be impacts to the ecosystem, associated species, and/or a long-term loss of fishing opportunities",
+                                       "Stock size with a low probability of the stock dropping below it's LRP, and a target for meeting biological and/or socio-economic objectives",
+                                       "The maximum acceptable harvest rate the SMU can be subject to",
+                                       "Aggregate SMU spawner abundance below which fishery removals should be limited to the maximum extent possible"),
+                       Value = c("One or more component CUs for the MSU in Wild Salmon Policy Red status zone",
+                                 "86,000 spawners; median estimate of $S_{MSR}$ for the SMU based on demographic characteristics of spawners (and impacts on total egg mass) in most recent decade (2009-2019) at time of analysis (Connors et al. 2022)",
+                                 "40%; Harvest rate associated with MSY ($U_{MSY}$) for the least productive CU in the SMU",
+                                 "25,000 spawners; average SMU spawner abundance associated with no greater than 50% chance of at least one CU falling in the Wild Salmon Policy Red status zone"),
+                     Rationale = c("Required under Fish Stock Provision of *Fisheries Act*. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
+                                   "Required under Fish Stock Provision of *Fisheries Act*. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
+                                   "Required under Fish Stock Provision of *Fisheries Act*. Federal and international fishery policy typically set maximum fishery removals to be less than or equal to those associated with $U_{MSY}$. Propose this value be from least productive CU to align with Wild Salmon Policy objective to takee biodiversity at the scale of CUs into account",
+                                   "not required under Fish Stock Provision of Fisheries Act but helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized (compared to the CU-status based LRP)"))
+
+ref.df |>
+   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:refpoints)", 
+                     repeat_header = TRUE) |>
+    kableExtra::column_spec(1, width = "2.5cm")|>
+    kableExtra::column_spec(2, width = "4cm")|>
+    kableExtra::column_spec(3, width = "4cm")|> 
+    kableExtra::column_spec(4, width = "4cm")
 ```
 
 \clearpage
