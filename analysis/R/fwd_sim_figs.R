@@ -6,25 +6,44 @@
 AR1.par.posts <- read.csv(here("analysis/data/generated/AR1_posteriors.csv"))
 TVA.par.posts <- read.csv(here("analysis/data/generated/TVA_posteriors.csv"))
 
-TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(30:34), names_to = "par") |>
+TV.pp.ref.long <- pivot_longer(TVA.par.posts, cols = c(paste0("X", 29:34)), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "reference (most recent generation)")
+  mutate(year = as.integer(gsub("X", "", par))+1985-1,
+         par = "alpha") |>
+  mutate(scenario = "reference (most recent generation)",
+         model = "Time-varying alpha")
 
-TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(1:34), names_to = "par") |>
+TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c("X34"), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "robustness (long-term average)")
+  mutate(year = as.integer(gsub("X", "", par))+1985-1,
+         par = "alpha") |>
+  mutate(scenario = "robustness (most recent year)",
+         model = "Time-varying alpha")
 
-TV.pp.rob.long <- pivot_longer(TVA.par.posts, cols = c(34), names_to = "par") |>
+TV.pp.rob2.long <- pivot_longer(TVA.par.posts, cols = c(paste0("X", 1:34)), names_to = "par") |>
   select(CU, par, value) |>
-  mutate(scenario = "robustness (most recent year)")
+  mutate(year = as.integer(gsub("X", "", par))+1985-1,
+         par = "alpha") |>
+  mutate(scenario = "robustness (long-term average)",
+         model = "Time-varying alpha")
 
 AR.pp.rob <- AR1.par.posts |>
   mutate(scenario = "stationary",
-         par= 1,
-         value = ln_a) |>
-  select(CU, par, value, scenario)
+         par = "alpha",
+         value = ln_a,
+         year = NA,
+         model = "stationary") |>
+  select(CU, par, value, year, scenario, model)
 
 alpha.posts <- rbind(TV.pp.ref.long, TV.pp.rob.long, AR.pp.rob,TV.pp.rob2.long)
+
+alpha.posts.summary <- alpha.posts |> group_by(CU, par, scenario, model) |>
+  summarize(post_mean = mean(value),
+            post_med = median(value),
+            post_lwr = quantile(value, 0.025),
+            post_upr = quantile(value, 0.975)) |>
+  arrange(scenario, CU, par)
+write.csv(alpha.posts.summary, file=here("analysis/data/generated/OM-alpha-scenarios.csv"))
 
 # Alpha comparison
 alpha.stats <- alpha.posts |>
