@@ -15,7 +15,7 @@ Parameters,
 \sigma_i,Standard deviation around mean Julian date of arrival by CU
 \varepsilon_{iy},Process error in arrival timing by CU/year
 \Sigma,Process error covariance
-q_gy^{(E)},Daily counts catchability by gear and year
+q_{gy}^{(E)},Daily counts catchability by gear and year
 Latent variables,
 N_{iyd},Daily numbers arriving by CU /year
 \rho_{iyd},Daily arrival proportions by CU /year
