@@ -140,7 +140,7 @@ In some years prior to the implementation of sonar monitoring, the fishwheel dat
 
 ## MODEL FITTING AND RECONSTRUCTIONS OF SPAWNER ABUNDANCE 
 
-We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations ()
 
 The model tended to fit the sonar count data well (Figure \@ref(fig:fig-eagle-RR-fits)) and in contrast, model fits to the fishwheel counts for 1985--2007 were more variable, which was expected due to the relatively imprecise nature of the fishwheel data (Figure \@ref(fig:fig-fw-RR-fits)). In years when sonar and fishwheel counts overlapped (2005--2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fishwheel data. 
 

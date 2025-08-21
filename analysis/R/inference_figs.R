@@ -1223,5 +1223,4 @@ ggplot(fw_catch, aes(x = year, y = mid)) +
   theme_sleek() +
   labs(x = "Year", y = "Fish wheel catchability")
 my.ggsave(here("analysis/plots/RR/fishwheel-catchability.PNG"))
-ggsave(here("csasdown/figure/fishwheel-catchability.PNG"), width = 500*2, height = 300*2,
-       units="px", dpi=240)
+ggsave(here("csasdown/figure/fishwheel-catchability.PNG"), height=4.25, width=8)

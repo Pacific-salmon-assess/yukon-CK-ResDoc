@@ -1,6 +1,6 @@
 Equation,Formula
 Population Dynamics,
-(TB.2.1) Estimated Parameters,"$\Theta = \left\{ \hat{R}_{iy},\ \hat{\mu}_i,\ \sigma_i,\ \varepsilon_{iy},\ \sum,\ q_{E,i,g},\ \tau \right\}$"
+(TB.2.1) Estimated Parameters,"$\Theta = \left\{ \hat{R}_{iy},\ \hat{\mu}_i,\ \sigma_i,\ \varepsilon_{iy},\ \sum,\ q_{gy}^{(E)},\ \tau \right\}$"
 "(TB.2.2) Arrival timing, y=1","$\mu_{i,1} = \widehat{\mu}_i$"
 "(TB.2.3) Arrival timing, y>1","$\mu_{i,y} = \mu_{i,y-1}\exp(\varepsilon_{i,y-1})$"
 (TB.2.4) Daily arrival proportions,$\rho_{iyd}= \frac{exp(-0.5(d\;-\;\mu_{iy})^2\sigma_i^{-2})}{\sum_k exp(-0.5(k\;-\;\mu_{iy})^2 \sigma_i^{-2}}$
