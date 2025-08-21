@@ -50,7 +50,7 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 
 \clearpage
 
-(ref:fig-CU-comps) Percentage contribution of each Conservation Unit to reconstructed total spawner abundance of the Yukon Chinook salmon Stock Management Unit over time. Note these estimates of percent contribution differ from the raw values in Table \@ref(tab:tab-CU-gsi-annual-summary) because they are derived from a run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative GSI sampling of total returns. 
+(ref:fig-CU-comps) Percentage contribution of each Conservation Unit (CU) to reconstructed total return abundance of the Yukon Chinook salmon Stock Management Unit over time. Estimates are based on the multi-CU run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative genetic sampling of total returns. 
 
 ```{r fig-CU-comps, fig.cap = "(ref:fig-CU-comps)"}
 knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"))
@@ -62,6 +62,13 @@ knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
+
+(ref:fig-par-ref-hist) Conservation Unit specific posterior distributions of estimates of intrinsic productivity (a;$\alpha$ in units of recruits-per-spawner), spawner abundance associated with maximum recruitment (b; $S_{MSR}$), and exploitation rate associated with maximum sustainable yield (c; $U_{MSY}$)  . 
+
+```{r fig-par-ref-hist, fig.cap = "(ref:fig-par-ref-hist)"}
+knitr::include_graphics(here::here("csasdown/figure/par-ref-hist.png"))
+```
+
 
 (ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Salmon Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
 
@@ -178,7 +185,7 @@ CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.",
 
 ```
 
-(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on genetics is also shown. 
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on reconstructed border passage is also shown. 
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
@@ -238,7 +245,8 @@ cugsitable |>
 
 \clearpage
 
-(ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.  
+
+(ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.
 
 ```{r assess-proponents, results = "asis"}
 
