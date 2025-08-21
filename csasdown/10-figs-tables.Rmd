@@ -167,6 +167,7 @@ knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"
 
 ```{r dependencies, include=FALSE}
 library(tidyr)
+library(here)
 library(dplyr)
 library(stringr)
 library(kableExtra)
@@ -330,7 +331,6 @@ om.alpha <- om.alpha |>
 
 names(om.alpha) <- c("Conservation Unit",
                      "Productivity Scenario",
-                     "Model type",
                      "Median (95$^{\\text{th}}$ percentile)")
 om.alpha |>
   dplyr::arrange(`Conservation Unit`, `Productivity Scenario`) |>
@@ -783,3 +783,4 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 
 ```
+
