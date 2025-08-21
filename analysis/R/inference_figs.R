@@ -1203,3 +1203,25 @@ cowplot::plot_grid(a, b, c, labels="auto", ncol=1)
 
 ggsave(here("csasdown/figure/par-ref-hist.PNG"), width = 675*2, height = 900*2,
        units="px", dpi=240)
+
+# Fishwheel catchability  ----
+RR_pars <- rpt[["sdrpt"]]
+
+fw_catch <- as.data.frame(RR_pars) |>
+  filter(par=="lnqE_tg") |>
+  mutate(mid = exp(val),
+         lwr = exp(lCI),
+         upr = exp(uCI),
+         year = seq(1984,2006)) |>
+  filter(year > 1984,
+         year < 2005) |>
+  select(year,mid,lwr,upr)
+
+ggplot(fw_catch, aes(x = year, y = mid)) +
+  geom_bar(position="dodge", stat = "identity") +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0,position=position_dodge(0.9)) +
+  theme_sleek() +
+  labs(x = "Year", y = "Fish wheel catchability")
+my.ggsave(here("analysis/plots/RR/fishwheel-catchability.PNG"))
+ggsave(here("csasdown/figure/fishwheel-catchability.PNG"), width = 500*2, height = 300*2,
+       units="px", dpi=240)
