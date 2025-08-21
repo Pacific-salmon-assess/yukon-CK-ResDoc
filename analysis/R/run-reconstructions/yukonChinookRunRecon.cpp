@@ -8,13 +8,13 @@ bool isNA(Type x){
 }
 
 // square()
-template <class Type> 
+template <class Type>
 Type square(Type x){
   return pow(x,2);
 }
 
 // Bounded inverse logit
-template <class Type> 
+template <class Type>
 Type binvlogit(Type x)
 {
   Type lb = -1;
@@ -23,7 +23,7 @@ Type binvlogit(Type x)
 }
 
 // posfun() - replicates Dave Fournier's ADMB function
-// Compares a quantity x to a threshold epsilon and if below the threshold, 
+// Compares a quantity x to a threshold epsilon and if below the threshold,
 // increases x above the threshold and increments a penalty
 template<class Type>
 Type posfun(Type x, Type eps, Type &pen){
@@ -63,7 +63,7 @@ Type objective_function<Type>::operator() ()
   PARAMETER_VECTOR(lnErrSD_s);    	// Process error standard deviation (log scale)
   PARAMETER_ARRAY(logitCor_ss);   	// Correlation matrix for process errors (log scale)
   PARAMETER_ARRAY(lnqE_tg);       	// Count catchability (log scale)
-  PARAMETER_VECTOR(lnqI_s);       	// Index catchability
+  PARAMETER_VECTOR(lnqI_s);       	// Index catchability, fixed at one
   PARAMETER_ARRAY(lnDisp_tg);
 
   // Transformed parameters
@@ -97,7 +97,7 @@ Type objective_function<Type>::operator() ()
   N_dt.fill(0);
   nllI_tg.fill(0);
   nllP_g.fill(0);
-  
+
   // Intialize random walks
   mu_st.col(0) = exp(lnArrivMu_s);
 
@@ -124,7 +124,7 @@ Type objective_function<Type>::operator() ()
       // Relative daily arrivals
       for( int d=0; d<nD; d++ )
         rho_dst(d,s,t) = exp( -square(day_d(d)-mu_st(s,t))/(2*square(arrivSD_s(s))) );
-      
+
       // Convert relative daily arrivals to proportions
       rho_dst.col(t).col(s) /= rho_dst.col(t).col(s).sum();
 
@@ -139,7 +139,7 @@ Type objective_function<Type>::operator() ()
         Ihat_dtg.col(g).col(t) += exp(lnqE_tg(t,g))*N_dst.col(t).col(s);
 
     } // next s
-    
+
     // Mark-recapture predicted index
     mrIhat_t(t) = (exp(lnqI_s)*runSize_st.col(t)).sum();
 
@@ -193,7 +193,7 @@ Type objective_function<Type>::operator() ()
     }
 
   }
-  
+
   // Priors ---------------------------------------------------------------- //
 
   // Diagonal matrix with process error SDs on diagonal
@@ -211,7 +211,7 @@ Type objective_function<Type>::operator() ()
   for( int t=0; t<(nT-1); t++ )
   {
     nlp += errDens(arrivErr_st.col(t));
-    
+
     if( runRW==1 )
     {
       if( t < 20 ) // Comment this line out to apply run size prior in every year
