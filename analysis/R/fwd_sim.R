@@ -59,7 +59,6 @@ pi.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits)))
 p.samps <- array(NA, dim = c(nrow(fits[[1]]$beta), A, length(fits), 3))
 sig.R.samps <- NULL
 comp.brood <- nyrs-6 # remove incompletely observed brood years - assuming 6 year gen length
-a_yrs = 10 # number of years to average productivity over for reference test
 
 for(i in 1:length(names(fits))){ # loop over CUs to get parameters
   if(k=="TVA") {
@@ -165,7 +164,18 @@ for(i in 1:length(HCRs)){
                                   (max(sp_har$year)):(max(sp_har$year)+ny-a_max),
                                   rep(j, ny-a_max+1)))
 
-  }
+    # save parameters
+    pars.out <- as.data.frame(apply(samps[,grepl("^alpha|beta|pi", colnames(samps))], 2, function(x){
+      c(quantile(x, c(0.25, 0.5, 0.75)), mean(x))}))
+    pars.out$phi <- phi
+    pars.out$for_error <- for.error
+    pars.out$OU <- OU
+    pars.out$ny <- ny
+    pars.out$nstk <- length(names(fits))
+    pars.out$nsim <- num.sims
+    write.csv(pars.out, file=here("analysis/data/generated", paste0('sim_pars', k, '.csv')))
+
+    }
 } # end of simulation loop
 
 pms <- c("escapement", "harvest", "cdn.harvest", "ER", "pr.closed", "n.below.lwr", "n.between.bench", "n.above.upr", "n.above.reb", "n.extinct")
