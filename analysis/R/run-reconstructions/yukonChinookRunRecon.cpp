@@ -39,7 +39,7 @@ Type objective_function<Type>::operator() ()
   using namespace density;
 
   // Data and controls
-  DATA_ARRAY(n_sdtg);     // Observed abundance by stock
+  DATA_ARRAY(n_sdtg);     // Observed abundance by Conservation Unit (or stock)
   DATA_ARRAY(E_dtg);      // Daily counts
   DATA_VECTOR(I_t);       // Run size indices from mark-recapture
   DATA_VECTOR(day_d);     // Model days (Julian)
@@ -51,20 +51,20 @@ Type objective_function<Type>::operator() ()
   int nS = n_sdtg.dim(0);    // Number of stocks
   int nD = n_sdtg.dim(1);    // Number of days
   int nT = n_sdtg.dim(2);    // Number of time steps
-  int nG = n_sdtg.dim(3);    // Number of fleets
+  int nG = n_sdtg.dim(3);    // Number of fleets/gears
 
   // Parameters
   PARAMETER_ARRAY(lnRunSize_st);  	// Run size (log scale)
   PARAMETER_VECTOR(lnArrivMu_s);  	// Mean date of arrival in initial year (log scale)
-  //PARAMETER(lnArrivSD);  		// SD around mean Julian date of arrival (log scale)
+  //PARAMETER(lnArrivSD);  		      // SD around mean Julian date of arrival (log scale)
   PARAMETER_VECTOR(lnArrivSD_s); 	 // SD around mean Julian date of arrival (log scale)
   PARAMETER_ARRAY(arrivErr_st);   	// Process error in mean date of arrival
-  //PARAMETER(lnErrSD);    		// Process error standard deviation (log scale)
+  //PARAMETER(lnErrSD);    		      // Process error standard deviation (log scale)
   PARAMETER_VECTOR(lnErrSD_s);    	// Process error standard deviation (log scale)
   PARAMETER_ARRAY(logitCor_ss);   	// Correlation matrix for process errors (log scale)
   PARAMETER_ARRAY(lnqE_tg);       	// Count catchability (log scale)
   PARAMETER_VECTOR(lnqI_s);       	// Index catchability, fixed at one
-  PARAMETER_ARRAY(lnDisp_tg);
+  PARAMETER_ARRAY(lnDisp_tg);       // Dispersion by year and gear
 
   // Transformed parameters
   array<Type> runSize_st(nS,nT);          	// Run size
