@@ -62,7 +62,7 @@ We fit the spawner-recruitment model in a Bayesian estimation framework with Sta
 
 ## Trace plots
 
-These should be clearly mixed, with no single distribution deviating substantially from others (left column), and no chains exploring a strange space for a few iterations (right column).
+These should be clearly mixed, with no single distribution deviating substantially from others (left column), and no chains exploring a strange space for a few iterations (right column)."Dir_alpha" refers to Dirichlet shape parameter for the gamma distribution used to generate vector of age-at-maturity proportions.
 
 ```{r diagnostics, results = 'asis'}
 # describe diagnostics in loop -----------------------------------------------------------

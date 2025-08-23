@@ -672,7 +672,7 @@ sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
 fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_tg[ ,2])
 
-png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 8, height = 6,units="in", res =700 )
+png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 7, height = 5,units="in", res =700 )
 
 plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
       ylab="Total border passage (1000s)", ylim=c(0,1.3*ymax) )
