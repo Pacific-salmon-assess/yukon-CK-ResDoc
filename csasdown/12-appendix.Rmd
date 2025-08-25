@@ -36,7 +36,7 @@ gsi_tribs <- gsi_tribs |>
               dplyr::mutate(Cucode = gsub("-", " ", Cucode))
 
 
-names(gsi_tribs) <- c("Tributary name (baseline sample size)",	"Msat(n)",	"SNP(n)",	"CU",	"Conservation Unit code$^{2}$",	"Probability (Msat)",	"Probability to CU (SNP)")
+names(gsi_tribs) <- c("Tributary name (baseline sample size)",	"Msat(n)",	"SNP(n)",	"CU",	"Conservation Unit code$^{2}$",	"Probability to tributary (Msat)",	"Probability to CU (SNP)")
 
 
 gsi_tribs |>
@@ -83,7 +83,7 @@ rr.params |>
 
 
 \begin{landscapepage}
-(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model.
+(ref:tab-rr-eqns) Model equations for multi-CU run-reconstruction model. "N.B" stands for negative binomial and "NLL" stands for negative log likelihood.
 
 ```{r tab-rr-eqns, results = "asis"}
 rr.eqns <- read.csv(here::here("csasdown/data/model-eqns.csv"))
@@ -130,21 +130,29 @@ where $c_{i,j}$ is the correlation between arrival timing deviations for CU $i$ 
 
 Daily border passage counts were predicted by scaling the daily model-predicted passage by a gear-specific catchability factor (Table \@ref(tab:tab-rr-eqns).6). The fishwheel samples an unknown portion of the run, so fishwheel catchability was estimated, and allowed to vary from year to year to account for the potential influence of environmental conditions (e.g., discharge) on fishwheel catchability. While catchability may vary across CUs for a variety of reasons (i.e., bank orientation, run-timing, etc.), the data were not informative enough to estimate CU-specific catchability. In contrast, all passing fish were assumed to be observable by sonar, and so we fixed sonar catchability at 1. Similarly, the predicted border passage index was assumed to represent the total run at he border, so catchability to the border passage index was also fixed at 1 (Table \@ref(tab:tab-rr-eqns).7), and this index was taken from an updated fit of the model described in @connors_estimates_2023. Conservation Unit composition was predicted as the relative proportion of a CU present on each day (Table \@ref(tab:tab-rr-eqns).8).
 
-Daily salmon counts at the border were assumed to arise from negative-binomial ($NB$) distributions (Table \@ref(tab:tab-rr-eqns).11). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table \@ref(tab:tab-rr-eqns).9). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.02$ for the fishwheel counts in all years except for 2001, when dispersion was set to 2 to account for low perceived reliability of counts in that year.
+Daily salmon counts at the border were assumed to arise from negative-binomial ($NB$) distributions (Table \@ref(tab:tab-rr-eqns).13). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table \@ref(tab:tab-rr-eqns).10-11). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.1$ for the fishwheel counts.
 
-Conservation Unit composition data were fitted using a multinomial likelihood (Table \@ref(tab:tab-rr-eqns).12). For each year/day/gear combination, the observed number of Chinook salmon by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_in_i$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
+Conservation Unit composition data were fitted using a multinomial likelihood (Table \@ref(tab:tab-rr-eqns).14). For each year/day/gear combination, the observed number of Chinook salmon by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_in_i$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
 
 Total border passage indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the border passage index (Table \@ref(tab:tab-rr-eqns).13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table \@ref(tab:tab-rr-eqns).15).     
 
-In some years prior to the implementation of sonar monitoring, the fishwheel data was not informative enough to estimate border passage for some CUs. To stabilize estimates in these cases, we applied a normal prior on the interannual deviations of log-scale border passage for each CU (Table \@ref(tab:tab-rr-eqns).16). The prior was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate border passage and was omitted from 2005 onward, after the introduction of sonar assessment of border passage.
+In some years prior to the implementation of sonar monitoring, the fishwheel data was not informative enough to estimate border passage for some CUs. To stabilize estimates in these cases, we applied a likelihood penalty on the interannual deviations of log-scale border passage for each CU (Table \@ref(tab:tab-rr-eqns).16). The penalty was set to 1, which is wide enough to have negligible effects in years for which data were sufficiently informative to estimate border passage and was omitted from 2005 onward, after the introduction of sonar assessment of border passage.
 
 ## MODEL FITTING AND RECONSTRUCTIONS OF SPAWNER ABUNDANCE 
 
-We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations.
+We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations. 
+
+Fishwheel catchability was estimated to average around 0.02 but varied considerably from year to year (Figure \@ref(fig:fig-eagle-RR-fits)), presumably as a result of different environmental conditions (e.g., flow) and/or fishwheel operation. Interannual deviations in arrival timing were estimated to be weakly correlated among CUs (pairwise correlation, which was assumed to be the same for all CUs, estimated to be equal to 0.15). 
+
+(ref:fig-RR-catchability) Estimated fish wheel catchability, by year. Bars are median estimates +/- 95% confidence intervals.
+
+```{r fig-RR-catchability, fig.cap = "(ref:fig-RR-catchability)"}
+knitr::include_graphics(here::here("csasdown/figure/fishwheel-catchability.png"))
+```
 
 The model tended to fit the sonar count data well (Figure \@ref(fig:fig-eagle-RR-fits)) and in contrast, model fits to the fishwheel counts for 1985--2007 were more variable, which was expected due to the relatively imprecise nature of the fishwheel data (Figure \@ref(fig:fig-fw-RR-fits)). In years when sonar and fishwheel counts overlapped (2005--2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fishwheel data. 
 
-In the pre-sonar years the model attempted to simultaneously fit to the fishwheel relative abundance indices and the mark-recapture based absolute run size indices so the model tended to generate estimates of total border passage that were somewhere in between (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the mark-recapture index had essentially no effect on model estimates, and the model fit perfectly to the sonar based estimates of total border passage 2005--2024.
+In the pre-sonar years the model attempted to simultaneously fit to the fishwheel relative abundance indices and the externally derived absolute  border passage index (based on mark-recapture projects) so the model tended to generate estimates of total border passage that were in close alignment with the border passage index (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the border passage index had essentially no effect on model estimates, and the model fit perfectly to the sonar based estimates of total border passage 2005--2024.
 
 Because the reconstructions of Northern CU border passage included fish from the McQuesten River, we post-hoc estimated the annual contribution of the McQuesten River based on genetic analyses of samples collected at Eagle from 2013-2023 (mean:0.008; SD:0.006). Specifically, for each year we took a random draw from the average McQuesten River contribution to border passage, and a random draw from the border passage estimate for that year, and repeated this 1000 times. We then removed these estimates of McQuesten River border passage from the Northern CU and added them to the reconstructions of Stewart CU border passage. 
 
@@ -188,7 +196,7 @@ An alternative to the sequential modelling approach we took would have been to i
 
 These models could have also been fit in a multi-population framework [@connors_incorporating_2020; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation which appear to be spuriously too high  and low, respectively, and which could lead to biases in other model parameters in manners that are difficult to predict [@staton-etal-2020].
 
-Because the same model was fitted to each CU, all symbols in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual CUs. We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each CU separately.
+Because the same model was fitted to each CU, all variables in the presentation of the state-space model actually have a $j$ subscript appended to them to represent individual CUs. We omit this for the presentation here, both to simplify it and to emphasize that this approach fits to data from each CU separately.
 
 ## PROCESS MODEL
 
@@ -277,9 +285,9 @@ Direct estimates of harvest by CU do not exist because most harvest occurs in mi
   \label{eq:obs-harvest}
 \end{equation}
 
-and were assumed to have a CV equal to that of the joint uncertainty in spawner abundance and aggregrate harvest rate estimates which was log-normally distributed and converted to log-normal variance as per Equ. \@ref(eq:get-sigm).
+and were assumed to have a CV equal to that of the joint variability in spawner abundance and aggregrate harvest rate estimates which was log-normally distributed and converted to log-normal variance as per Equ. \@ref(eq:get-sigm).
 
-Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs. 
+Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs (ADD LINK TO AGE COMP APPENDIX). 
 
 These age composition by return year estimates were assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 50 pre-2007 and 100 thereafter. These ESSs are lower than the likely observed sample sizes to account for the non-independence of observation within a given sampling event [@maunder_review_2011] and were chosen to reflect the reduced confidence in age composition data prior to the Eagle test fishery sampling program which was standardized beginning in 2007.
 
@@ -313,14 +321,14 @@ With this alternative measure of reproductive potential we then refit our our sp
 
 where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year specific total spawner abundance, $q_{y,a}$is the year- and age-specific proportion females, and $w_{em,y,a}$ is the average total egg mass ($em$) per individual in each year ($y$) and age ($a$).
 
-This model makes several key assumptions including that total reproductive output is limited by females and that male abundance is always sufficient to fertilize all eggs [@staton_incorporating_2021]. We believe this was a reasonable assumption across the range of spawner abundances that have been observed , and at the scale at which we are modelling spawner-recruitment dynamics, though at very low abundances and in small populations, male abundance will also presumably limit reproductive output. The model also assumes that egg mass suitably indexes within-stock density effects whereas total spawners (males and females) contribute to density effects in the base model formulation. For these reasons, plus necessary assumption that border age, size, and sex composition is a reasonable proxy for CU scale demographic characteristics, we consider these demographic models exploratory and encourage greater consideration of consequences of potentially violating these assumptions in future analyses.
+This model makes several key assumptions including that total reproductive output is limited by females and that male abundance is always sufficient to fertilize all eggs [@staton_incorporating_2021]. We believe these were reasonable assumptions across the range of spawner abundances that have been observed, and at the scale at which we are modelling spawner-recruitment dynamics, though at very low abundances and in small populations, male abundance will also presumably limit reproductive output. The model also assumes that egg mass suitably indexes within-stock density effects whereas total spawners (males and females) contribute to density effects in the base model formulation. For these reasons, plus necessary assumption that border age, size, and sex composition is a reasonable proxy for CU scale demographic characteristics, we consider these demographic models exploratory and encourage greater consideration of consequences of potentially violating these assumptions in future analyses.
 
 ## MODEL FITTING AND DIAGNOSTICS 
 
 We fit the spawner-recruitment models in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
 We sampled from 4 chains with 4000 iterations each and discarded the first half as warm-up. 
-We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was less than 1.01 and that the effective sample size was greater than 200, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). Most models had leading parameters that were well estimated but the stationary spawner-recruitment model fit to data from the Teslin CU had relatively low effective sample size suggesting posterior samples were not well mixed with high autocorrelation. This was likely a result if the strong temporal pattern in recruitment residuals as evidenced by high effective samples sizes for the model that allowed for variation in intrinsic productivity over time.     
+We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was generally less than 1.1 and that the effective sample size was greater than 400, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). Most models had leading parameters that were well estimated but the stationary spawner-recruitment model fit to data from the Teslin CU had relatively low effective sample size suggesting posterior samples were not well mixed with high autocorrelation. This was likely a result if the strong temporal pattern in recruitment residuals as evidenced by high effective samples sizes for the model that allowed for variation in intrinsic productivity over time.     
 
 
 (ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters. Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
@@ -408,17 +416,17 @@ The harvest rate expected to lead to maximum sustainable yield, $U_{MSY}$, was d
   \label{eq:get-Umsy}
 \end{equation}
 
-To derive biological benchmarks from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically, we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F_{max}$ as a function of the age and sex class ($j$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex ($\pi_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
+To derive biological benchmarks from the egg mass-recruitment models we used the yield-per-recruit algorithm described in @staton_incorporating_2021. Specifically, we calculated reproductive output-per-recruit ($z_{PR}$) under fishing mortality $F$ as a function of the age and sex class ($i$) - specific reproductive output ($z_{i,j}$) in a given time block ($j$) weighted by the probability of returning by age and sex in that time block ($\omega_{i,j}$) and the probability of escaping harvest ($1-U_{i,j}$):
 
 \begin{equation}
-  z_{PR,j} = \sum_{j}(1-U_{i,j})z_{i,j}pi_{i,j}
+  z_{PR,j} = \sum_{i}(1-U_{i,j})z_{i,j}\omega_{i,j}
   \label{eq:get-YPR}
 \end{equation}
 
-We then could calculate equilibrium recruitment as:
+where $U_{i,j} = 1-exp(-F)$ and time block $j$ was either the first generation (1985-1990), all years (1985-2024), or the last generation (2019-2024) of observed spawners. We then could calculate equilibrium recruitment as:
 
 \begin{equation}
-  R_{eq,i} = \frac{log(\alpha z_{PR,j})}{\beta z_{PR,j}}
+  R_{eq,j} = \frac{log(\alpha z_{PR,j})}{\beta z_{PR,j}}
   \label{eq:get-eqR}
 \end{equation}
 
@@ -426,16 +434,16 @@ Once the scale of the equilibrium population fished at $F_{max}$ was obtained fr
 
 \begin{equation}
   \begin{aligned}
-  N_{eq,i,j}=R_{eq,i}pi_{i,j} \\
-  H_{eq,i,j}=N_{eq,i}U_{i,j} \\
-  S_{eq,i,j}=N_{eq,i}(1-U_{i,j}) \\
+  N_{eq,i,j}=R_{eq,j}\omega_{i,j} \\
+  H_{eq,i,j}=N_{eq,j}U_{i,j} \\
+  S_{eq,i,j}=N_{eq,j}(1-U_{i,j}) \\
   \end{aligned}
   \label{eq:get-eqNHS}
 \end{equation}
 
 and calculated totals for harvest and spawning escapement by summing over ages and sexes. 
 
-We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$, respectively.
+We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
 
 (ref:tab-tva-pars) Estimates of key spawner-recruitment relationship parameters from time-varying productivity models by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table. For $\alpha$ and $\sigma_\alpha$, which are time-varying parameters, values are averages of the posterior median estimated for each year along with the standard deviation among years.
 ```{r tab-tva-pars, results = "asis"}
@@ -574,6 +582,33 @@ pars |>
 ```{r fig-bench-compare, fig.cap = "(ref:fig-bench-compare)"}
 knitr::include_graphics(here::here("csasdown/figure/bench-compare.png"))
 ```
+# SENSITIVITY ANALYSES {#app:sixth-appendix}
+## AGE COMPOSITION
+Our analysis of CU spawner recruitment dynamics made the simplifying assumption that estimates of age composition by return year, taken from an stock aggregate run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We made this assumption because age composition information at the CU scale was unavailable because individual samples taken from fish for genetics at the border, and samples taken for ageing, could not be reliably linked in many years. 
+
+However, those years where age and genetic samples could be linked allow for a qualitative examination of the degree to which this simplifying assumption might be violated. For those years where there were 1000 or more linked genetic and age samples we compared age proportions by CU (Figure \@ref(fig:fig-age-compare)). These comparisons illustrate that while age composition differed among some CUs in some years, overall it was broadly similar across CUs within years and there was no evidence of consistent over/under representation of age classes unique to a given CU. The exception to this was the Nordenskiold CU which is some years exhibited very different age composition, though we caution against overinterpreting this pattern because it is the smallest CU and often had 10 or less samples in a given year.  
+
+(ref:fig-age-compare) Age composition in Chinook salmon sampled at the Alaska-Yukon Territory border, by Conservation Unit.  
+```{r fig-age-compare, fig.cap = "(ref:fig-age-compare)"}
+knitr::include_graphics(here::here("csasdown/figure/age-cu-by-yrs.png"))
+```
+
+In addition to the comparison of stock aggregate and CU scale border age composition we also compared stock aggregate age composition to Blind Creek (Pelly CU) age composition based on samples taken from fish on the spawning grounds. This comparison allowed us to qualitatively evaluate the degree to which aggregate age composition estimates at the border were a reasonably proxy for age composition on the spawning grounds. This comparison highlights that for those years where a comparison could be made there was reasonable agreement between the two sources of data on age composition.      
+
+(ref:fig-blind-age-compare) Age composition of Chinook salmon sampled at the the Blind Creek weir (in Pelly CU) and those sampled at the Alaska-Yukon Territory border.  
+```{r fig-blind-age-compare, fig.cap = "(ref:fig-blind-age-compare)"}
+knitr::include_graphics(here::here("csasdown/figure/blind-age-by-yrs.png"))
+```
+## VULNERABILITY TO HARVEST
+Our reconstructions of CU scale harvests, and subsequent population dynamics modelling and estimation of biological benchmarks, relied on the assumption that all CUs have historically experienced the same harvest rates. While this was a necessary assumption due to a lack of routine genetic assignment of fish sampled in fisheries to CUs, a multi-year study of genetic composition of fish harvested in the Alaskan portion of the Yukon in the mid to late 2000s allowed us to qualitatively examine this assumption. From 2005 to 2010 Chinook salmon were sampled in commercial and subsistence fisheries in the Alaskan portion of the Yukon River and estimates of genetic stock composition were derived for stock groupings that consisted of either individual or groups of CUs [e.g., @DeCovichHarvStockComp2011]. For each year, and river district, we calculated harvest by CU group as the product of total Canadian-origin Yukon Chinook harvest and CU group composition. We then summed these estimates across districts to calculate the total CU group composition for Canadian-origin Yukon Chinook harvested in Alaska for a given year, and compared it to estimates of CU group composition at the Alaska-Yukon Territory border based on the border passage reconstructions described in this document (Appendix \@ref(app:second-appendix)).
+
+For these few years where genetic sampling of harvest in Alaska allowed for a comparison of CU composition in both border passage and harvest there was no evidence of consistent over/under-representation of individual CUs in Alaskan harvest, though in some years for some CU groups there were qualitative differences in representation (Figure \@ref(fig:fig-CU_harv-compare). This suggests that overall, across years with data, CUs were generally equally vulnerable to harvest in Alaskan fisheries.
+
+(ref:fig-CU-harv-compare) Conservation Unit group composition of Chinook salmon sampled in commercial and subsistence fisheries in Alaska ("Harvest") and fish sampled in test fisheries at the Alaska-Yukon Territory border ("Border"). The "Border" CU grouping includes the Northern Yukon and White and tributaries CUs, the "Pelly" grouping includes the Pelly and Stewart CUs, the "Carmacks" grouping includes the Nordenskiold, Middle Yukon, Big Salmon and Teslin CUs, and the "Takhini" grouping includes the Upper Yukon CU.   
+```{r fig-CU-harv-compare, fig.cap = "(ref:fig-CU-harv-compare)"}
+knitr::include_graphics(here::here("csasdown/figure/harbest_vs_border_composition.png"))
+```
+
 # WILD SALMON POLICY RAPID STATUS ASSESSMENT {#app:fourth-appendix}
 
 See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID STATUS SUMMARY: YUKON CHINOOK and PORCUPINE CHINOOK STOCK MANAGEMENT UNITS" 

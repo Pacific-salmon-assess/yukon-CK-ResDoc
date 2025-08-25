@@ -18,8 +18,8 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
 
   # Load abundance indices and stock composition data
   load(here("analysis/data/chinookYkData.Rdata"))
-  
-  
+
+
   # Dimensions
   years  <- ctrl$initYear:ctrl$lastYear
   days   <- chinookYkData$days
@@ -89,14 +89,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   diag(cor_ss) <- 1 # Correlation matrix must have 1 on diagonal
 
   lnDisp_tg  <- matrix( data=log(1e-4), nrow=nT, ncol=nG )
-  #lnDisp_tg[4,2]  <- log(1)
-  #lnDisp_tg[22,2] <- log(0.5)
-  #lnDisp_tg[23,2] <- log(0.5)
   lnDisp_tg[ ,2] <- log(0.1)
-  #lnDisp_tg[5,2] <- log(1e-5)
-  #lnDisp_tg[21,2] <- log(1e-5)
-  #lnDisp_tg[22,2] <- log(0.5)
-  #lnDisp_tg[23,2] <- log(0.5)
 
   # Create TMB parameter object
   pars <- list( lnRunSize_st = log(runSize_st),
@@ -171,7 +164,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   upp <- obj$par*0+Inf
 
   # Optimization controlsarrivSD
-  optCtrl <- list(  eval.max = ctrl$maxFunEval, 
+  optCtrl <- list(  eval.max = ctrl$maxFunEval,
                     iter.max = ctrl$maxIterations )
 
   # Optimize
@@ -182,7 +175,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
                       lower     = low,
                       upper     = upp,
                       control   = optCtrl ) )
-  
+
   #sink()
 
   rptFE <- obj$report()
@@ -224,7 +217,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
     par <- data.frame( par  = names(opt$par),
                        val  = opt$par,
                        grad = as.numeric(obj$gr()) )
-  
+
     # Calculate standard errors via delta method
     sink("sink.txt")
     sdobj <- sdreport( obj )
@@ -233,7 +226,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
     if( mode(sdrpt)!="character" )
     {
       colnames(sdrpt) <- c("val","se")
-    
+
       sdrpt <- as.data.frame(sdrpt) %>%
              mutate( par = rownames(sdrpt),
                      lCI = val - qnorm(.95)*se,
@@ -253,7 +246,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
     #rpt$errGrad_st <- errGrad_st
 
     nObs <- sum(!is.na(data$n_sdtg[1, , , ])) +
-            sum(!is.na(data$E_dtg)) + 
+            sum(!is.na(data$E_dtg)) +
             length(data$I_t)
     nPar <- length(opt$par)
     nll  <- opt$objective
@@ -266,13 +259,13 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
 #  mcinit <- list()
 #  for( i in 1:3 )
 #    mcinit[[i]] <- rnorm(n=length(obj$par),mean=obj$par,sd=1e-5)
-#  
+#
 #  fit <- tmbstan( obj = obj,
 #                  chains = 3,
 #                  iter = 1e3,
 #                  init = mcinit )
 #  rpt$fit <- fit
-  
+
 
     if( saveRun )
     {

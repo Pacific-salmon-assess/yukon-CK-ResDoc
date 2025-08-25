@@ -679,7 +679,7 @@ sonarN_t <- colSums(rpt$E_dtg[ ,t,1])*1e-3
 ymax <- max(I_t,E_t,sonarN_t,na.rm=TRUE)
 fw_t <- 1e-3*colSums(rpt$E_dtg[,,2])/exp(rpt$lnqE_tg[ ,2])
 
-png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 8, height = 6,units="in", res =700 )
+png(file=here("csasdown/figure/CU-RR-fits.PNG"), width= 7, height = 5,units="in", res =700 )
 
 plot( x=yr, y=I_t, type="n", las=1, yaxs="i", xlab="Year",
       ylab="Total border passage (1000s)", ylim=c(0,1.3*ymax) )
@@ -1210,3 +1210,76 @@ cowplot::plot_grid(a, b, c, labels="auto", ncol=1)
 
 ggsave(here("csasdown/figure/par-ref-hist.PNG"), width = 675*2, height = 900*2,
        units="px", dpi=240)
+
+# Fishwheel catchability  ----
+RR_pars <- rpt[["sdrpt"]]
+
+fw_catch <- as.data.frame(RR_pars) |>
+  filter(par=="lnqE_tg") |>
+  mutate(mid = exp(val),
+         lwr = exp(lCI),
+         upr = exp(uCI),
+         year = seq(1984,2006)) |>
+  filter(year > 1984,
+         year < 2005) |>
+  select(year,mid,lwr,upr)
+
+ggplot(fw_catch, aes(x = year, y = mid)) +
+  geom_bar(position="dodge", stat = "identity") +
+  geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0,position=position_dodge(0.9)) +
+  theme_sleek() +
+  labs(x = "Year", y = "Fish wheel catchability")
+my.ggsave(here("analysis/plots/RR/fishwheel-catchability.PNG"))
+ggsave(here("csasdown/figure/fishwheel-catchability.PNG"), height=4.25, width=8)
+
+# Age comps by CU ----
+eagle_age_sex_gen <- read.csv(here("analysis/data/raw/ASL_Eagle_2005-2024_geneticIDs.csv"))
+gsi <- read.csv(here("analysis/data/raw/border-gsi-table-2024-update-full.csv"))
+
+age <-eagle_age_sex_gen |>
+  mutate(fish=Genetic.Sample.Number,
+         year=sampleYear) |>
+  filter(species == "Chinook",
+         year>2008) |>
+  select(year, fish, sexID, totalAge)
+
+gsi_hProb <- gsi |>
+  filter(prob>0.5,
+         year>2008) |>
+  select(year, fish, CU, prob)
+
+gsi_age <- age |>
+  left_join(gsi_hProb, by = c("year", "fish")) |>
+  mutate(age = case_when(totalAge == 1.1 ~ 3,
+                         totalAge == 1.2 ~ 4,
+                         totalAge == 1.3 ~ 5,
+                         totalAge == 1.4 ~ 6,
+                         totalAge == 1.5 ~ 7,
+                         totalAge == 2.2 ~ 5,
+                         totalAge == 2.3 ~ 6,
+                         totalAge == 2.4 ~ 7)) |>
+  filter(age != 3)
+
+
+cu_age_sex <- gsi_age |>
+  group_by(year,CU,sexID) |>
+  count(age) |>
+  drop_na()
+
+cu_age <- gsi_age |>
+  group_by(year,CU) |>
+  count(age) |>
+  drop_na()|>
+  mutate(year_count = sum(n),
+         prop = n/year_count) |>
+  drop_na()
+
+ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fill=as.factor(age))) +
+  geom_bar( stat = "identity") +
+  theme_sleek() +
+  facet_wrap(~year) +
+  labs(fill = "Age class") +
+  theme(legend.position = c(0.7,0.06),
+        axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+  labs(x = "Conservation Unit", y = "Proportion")
+my.ggsave(here("csasdown/figure/age-cu-by-yrs.PNG"), height=4.75, width=7)

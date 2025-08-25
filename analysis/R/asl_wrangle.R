@@ -275,6 +275,11 @@ cu_age_all_yr <- gsi_age |>
          prop = n/year_count) |>
   drop_na()
 
+cu_age |>
+  group_by(year) |>
+  summarize(number=sum(year_count))
+
+
 ggplot(cu_age_all_yr, aes(x = age, y = prop)) +
   geom_bar(position="dodge", stat = "identity") +
   theme_sleek() +
@@ -295,3 +300,8 @@ ggplot(cu_age_all_yr, aes(x = CU, y = prop, fill=as.factor(age))) +
   theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   labs(x = "Conservation Unit", y = "Proportion")
 my.ggsave(here("analysis/plots/SR-models/age-cu-all-yrs.PNG"))
+
+
+
+
+

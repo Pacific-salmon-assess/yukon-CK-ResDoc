@@ -52,17 +52,17 @@ names(TVA.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
 This document provides diagnostic plots for several spawner-recruit models that were used to characterize Canadian-origin Yukon Chinook salmon population dynamics at the Conservation Unit scale as described in:
 
-> Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. In review. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 92 p.
+> Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. 2025. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 107 p.
 
 Full details are provided in the document above but briefly, four state-space spawner-recruit models were fit: spawer-recruitment models with autoregressive recruitment residuals (labelled "AR1"), (2) spawner-recruitment models with time varying intrinsic productivity (labelled "TV"), (3) egg mass-recruitment models with AR1 recruitment residuals (labelled "AR1 egg mass"), and (4) egg mass-recruitment models with time varying intrinsic productivity (labelled "TV egg mass"). These models were fit to each of the nine Conservation Units for which we had data.
 
 # Diagnostics
 
-We fit the spawner-recruitment model in a Bayesian estimation framework with Stan (Carpenter et al. 2017; Stan Development Team 2023), which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo algorithm (Hoffman and Gelman 2014)) for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. The models can be found [here](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan).We sampled from 4 chains with 4,000 iterations each and discarded the first half as warm-up. We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; Vehtari et al. 2021) was less than 1.01 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.
+We fit the spawner-recruitment model in a Bayesian estimation framework with Stan (Carpenter et al. 2017; Stan Development Team 2023), which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo algorithm (Hoffman and Gelman 2014)) for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. The models can be found [here](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main/analysis/Stan).We sampled from 4 chains with 4,000 iterations each and discarded the first half as warm-up. We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ (potential scale reduction factor; Vehtari et al. 2021) was less than 1.1 and that the effective sample size was greater than 400. Posterior predictive checks were used to make sure the model returned known values, by simulating new datasets and checking how similar they were to our observed data.
 
 ## Trace plots
 
-These should be clearly mixed, with no single distribution deviating substantially from others (left column), and no chains exploring a strange space for a few iterations (right column).
+These should be clearly mixed, with no single distribution deviating substantially from others (left column), and no chains exploring a strange space for a few iterations (right column). "D_scale" is the $D$ term in equation C.4 in the research document and governs variability of age proportion vectors across cohorts."Dir_alpha" refers to Dirichlet shape parameter for the gamma distribution used to generate vector of age-at-maturity proportions.
 
 ```{r diagnostics, results = 'asis'}
 # describe diagnostics in loop -----------------------------------------------------------
@@ -106,7 +106,7 @@ for(i in unique(sp_har$CU)){
     labs(title = "AR1 leading parameters")
   print(p)
 
-  p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale", "D_sum"),
+  p <- mcmc_combo(AR1.fits[[i]], pars = c("D_scale"),
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none())|> 
     as.ggplot() +
@@ -155,7 +155,7 @@ for(i in unique(sp_har$CU)){
     labs(title =  "TV variance components")
     print(p)
 
-  p <- mcmc_combo(TVA.fits[[i]], pars = c("D_scale", "D_sum"),
+  p <- mcmc_combo(TVA.fits[[i]], pars = c("D_scale"),
                   combo = c("dens_overlay", "trace"),
                   gg_theme = legend_none())|> 
     as.ggplot() +
@@ -197,7 +197,7 @@ for(i in unique(sp_har$CU)){
     labs(title = "AR1 egg mass leading parameters")
   print(p)
 
-  p <- mcmc_combo(AR1.eggs.fits[[i]], pars = c("D_scale", "D_sum"),
+  p <- mcmc_combo(AR1.eggs.fits[[i]], pars = c("D_scale"),
              combo = c("dens_overlay", "trace"),
              gg_theme = legend_none())|> 
     as.ggplot() +
@@ -246,7 +246,7 @@ p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("sigma_alpha", "sigma_R", "sigma_to
   labs(title =  "TV egg mass variance components")
 print(p)
 
-p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("D_scale", "D_sum"),
+p <- mcmc_combo(TVA.eggs.fits[[i]], pars = c("D_scale"),
                 combo = c("dens_overlay", "trace"),
                 gg_theme = legend_none())|> 
   as.ggplot() +
@@ -266,7 +266,7 @@ print(p)
 
 ## ESS and $\hat{R}$
 
-We aimed for minimum effective sample sizes that are greater than ***2000*** and $\hat{R}$ values less than 1.05.
+We aimed for minimum effective sample sizes that are greater than ***400*** and $\hat{R}$ values less than 1.1.
 
 ### AR1 model:
 
