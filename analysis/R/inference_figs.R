@@ -1271,7 +1271,8 @@ ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fil
   geom_bar( stat = "identity") +
   theme_sleek() +
   facet_wrap(~year) +
-  theme(legend.position = c(0.7,0.145),
+  labs(fill = "Age class") +
+  theme(legend.position = c(0.7,0.06),
         axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   labs(x = "Conservation Unit", y = "Proportion")
 my.ggsave(here("csasdown/figure/age-cu-by-yrs.PNG"), height=4.75, width=7)

@@ -64,7 +64,9 @@ fish_select_explore <- AK_harv_genetics |>
 ggplot(fish_select_explore, aes(x = Stock, y = Contribution, fill = Source)) +
   geom_bar(position="dodge", stat = "identity") +
   theme_sleek() +
+  labs(x = "CU group", y = "Contribution") +
   facet_wrap(~Year)
 
 my.ggsave(here("analysis/plots/RR/harbest_vs_border_composition.PNG"), height=4.25, width=8)
+my.ggsave(here("csasdown/figure/harbest_vs_border_composition.PNG"), height=4.25, width=8)
 
