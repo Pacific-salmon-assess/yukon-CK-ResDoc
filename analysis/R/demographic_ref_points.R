@@ -12,11 +12,11 @@ fem_fec_comps <- read.csv(here("analysis/data/raw/female_length_comps_eggs.csv")
 fem_egg_mass_comps <- read.csv(here("analysis/data/raw/female_length_comps_egg_mass.csv")) # female spawner eggs by age
 
 AR1.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/AR1_egg_mass"),
-                                   full.names = T), 
+                                   full.names = T),
                         readRDS)
 names(AR1.eggs.fits) <- unique(sp_har$CU)[order(unique(sp_har$CU))]
 
-TVA.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA_egg_mass"), 
+TVA.eggs.fits <- lapply(list.files(here("analysis/data/generated/model_fits/TVA_egg_mass"),
                               full.names = T), readRDS)
 names(TVA.eggs.fits) <- unique(sp_har$CU)
 
@@ -25,30 +25,31 @@ bench_AR1_eggs <- NULL
 ER.preds <- NULL
 brood.all <- NULL
 a.yrs.all <- NULL
+demo.par.summary.out <- NULL
 
 for(i in unique(sp_har$CU)){
   sub_dat <- filter(sp_har, CU==i)
-  
+
   #load AR1 model with eggs parameters ---
   sub_AR1_eggs_pars <- rstan::extract(AR1.eggs.fits[[i]])
 
   #egg-recruit relationship
   egg.quant <- apply(exp(sub_AR1_eggs_pars$lnEM), 2, quantile, probs=c(0.1,0.5,0.9))[,1:(nyrs-a_min)]
   rec.quant <- apply(sub_AR1_eggs_pars$R, 2, quantile, probs=c(0.1,0.5,0.9))[,(A+a_min):nRyrs]
-  
+
   brood_t <- as.data.frame(cbind(sub_dat$year[1:(nyrs-A)],t(egg.quant), t(rec.quant))) |>
     round(2)
   colnames(brood_t) <- c("BroodYear","EM_lwr","EM_med","EM_upr","R_lwr","R_med","R_upr")
-  
+
   brood_t <- mutate(brood_t, CU = i)
-  
+
   brood.all <- rbind(brood.all, brood_t)
-  
+
   #SR relationship based on full posterior---
   em <- seq(0,max(brood_t$EM_upr),length.out=100)
   ER.pred <- matrix(NA,length(em), length(sub_AR1_eggs_pars$lnalpha))
-  
-  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
+
+  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     b <- sub_AR1_eggs_pars$beta[j]
     ER.pred[,j] <- (exp(ln_a)*em*exp(-b*em))
@@ -56,19 +57,19 @@ for(i in unique(sp_har$CU)){
   ER.pred <- as.data.frame(cbind(em,t(apply(ER.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
     round(2) |>
     mutate(CU = i)
-  
+
   ER.preds <- rbind(ER.preds, ER.pred)
-    
+
   #benchamrks based on early demographics
   bench_early <- matrix(NA,length(sub_AR1_eggs_pars$lnalpha),2,
                   dimnames = list(seq(1:length(sub_AR1_eggs_pars$lnalpha)), c("Smsy","Smsr")))
-  
-  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
+
+  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     beta <- sub_AR1_eggs_pars$beta[j]
-    year_index = c(1:6)  
-    #year_index = c(1:40)  
-    #year_index = c(30:40)  
+    year_index = c(1:6)
+    #year_index = c(1:40)
+    #year_index = c(30:40)
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
@@ -87,13 +88,13 @@ for(i in unique(sp_har$CU)){
   #benchamrks based on long-term average demographics
   bench_avg <- matrix(NA,length(sub_AR1_eggs_pars$lnalpha),2,
                         dimnames = list(seq(1:length(sub_AR1_eggs_pars$lnalpha)), c("Smsy","Smsr")))
-  
-  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
+
+  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     beta <- sub_AR1_eggs_pars$beta[j]
-    #year_index = c(1:10)  
-    year_index = c(1:40)  
-    #year_index = c(35:40)  
+    #year_index = c(1:10)
+    year_index = c(1:40)
+    #year_index = c(35:40)
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
@@ -112,13 +113,13 @@ for(i in unique(sp_har$CU)){
   #benchamrks based on recent demographics
   bench_recent <- matrix(NA,length(sub_AR1_eggs_pars$lnalpha),2,
                       dimnames = list(seq(1:length(sub_AR1_eggs_pars$lnalpha)), c("Smsy","Smsr")))
-  
-  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){ 
+
+  for(j in 1:length(sub_AR1_eggs_pars$lnalpha)){
     ln_a <- sub_AR1_eggs_pars$lnalpha[j]
     beta <- sub_AR1_eggs_pars$beta[j]
-    #year_index = c(1:5)  
-    #year_index = c(1:40)  
-    year_index = c(35:40)  
+    #year_index = c(1:5)
+    #year_index = c(1:40)
+    year_index = c(35:40)
     eta_as_F <- colMeans(fem_S_comps[year_index,]) # probability of returning by age for females
     eta_as_M <- colMeans(male_S_comps[year_index,]) # probability of returning by age for males
     eta_as <- c(eta_as_F,eta_as_M) # probability of returning by age and sex
@@ -133,24 +134,29 @@ for(i in unique(sp_har$CU)){
   bench_recent$Smsr[bench_recent$Smsr <0] <- NA
   bench_recent$period <- "recent"
   bench_recent$CU <- i
-  
+
   bench_AR1_eggs <- rbind(bench_AR1_eggs, bench_early, bench_avg, bench_recent)
-  
+
+  # parameter summary for research doc
+  demo.par.summary <- rstan::summary(AR1.eggs.fits[[i]], pars=c("lnalpha", "beta", "phi"),
+                                    probs=c(0.025, 0.5, 0.975))$summary
+  demo.par.summary.out <- rbind(demo.par.summary.out, as.data.frame(demo.par.summary) |> mutate(CU = i))
+
   #time varying alpha --------------------------------------------------------------------
   sub_pars_egg_TVA <- rstan::extract(TVA.eggs.fits[[i]])
-  
+
   a.yrs <- apply(exp(sub_pars_egg_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
   a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
-  
+
   colnames(a.yrs) <- c("brood_year", "lwr", "mid", "upr")
-  
-  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i)) 
+
+  a.yrs.all <- rbind(a.yrs.all, data.frame(a.yrs, CU = i))
 }
 
 colnames(ER.preds) <- c("EM", "Rec_lwr","Rec_med","Rec_upr", "CU")
 
-CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",  
-              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon", 
+CU_order <- c("NorthernYukonR.andtribs.", "Whiteandtribs.", "Stewart",
+              "MiddleYukonR.andtribs.","Pelly", "Nordenskiold", "Big.Salmon",
               "UpperYukonR.","YukonR.Teslinheadwaters")
 
 ER.preds$CU_f <- factor(ER.preds$CU, levels = CU_order)
@@ -163,65 +169,67 @@ bench_egg_mass_long <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_
             lower = quantile(value,probs=c(0.025),na.rm=T),
             upper = quantile(value,probs=c(0.975),na.rm=T))
 
-write.csv(bench_egg_mass_long, here("analysis/data/generated/demographic_parameters.csv"), 
+write.csv(bench_egg_mass_long, here("analysis/data/generated/demographic_parameters.csv"),
           row.names = FALSE)
 
+write.csv(demo.par.summary.out, here("analysis/data/generated/demographic_par_summary.csv"))
+
 a.yrs.all$model<-"em"
-write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"), 
+write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
           row.names = FALSE)
 
   summary_bench_AR1_eggs <- bench_AR1_eggs |>
     group_by(CU,period) |>
     summarize(upper.BM = median(0.8*Smsy, na.rm=T),
               upper.alt = median(Smsr, na.rm=T))
-    
+
   bench_AR1_eggslong <- pivot_longer(bench_AR1_eggs, cols = c(Smsy, Smsr), names_to = "par") |>
     filter(par=="Smsr") |>
     mutate(upper.bm = value)
 
-  
+
   bs <- bench_AR1_eggslong |>
     filter(CU == "Big.Salmon",
            value <= 15000)
-  
+
   n <- bench_AR1_eggslong |>
     filter(CU == "Nordenskiold",
            value <= 15000)
-  
+
   s <- bench_AR1_eggslong |>
     filter(CU == "Stewart",
            value <= 15000)
-  
+
   u <- bench_AR1_eggslong |>
     filter(CU == "UpperYukonR.",
            value <= 10000)
-  
-  
+
+
   w <- bench_AR1_eggslong |>
     filter(CU == "Whiteandtribs.",
            value <= 15000)
-  
+
   t <- bench_AR1_eggslong |>
     filter(CU == "YukonR.Teslinheadwaters",
            value <= 20000)
-  
+
   p <- bench_AR1_eggslong |>
     filter(CU == "Pelly",
            value <= 40000)
-  
+
   m <- bench_AR1_eggslong |>
     filter(CU == "MiddleYukonR.andtribs.",
            value <= 40000)
-  
+
   no <- bench_AR1_eggslong |>
     filter(CU == "NorthernYukonR.andtribs.",
            value <= 40000)
-  
+
   custom.bench <- rbind(bs,n,s,u,w,t,p,m,no) |>
     mutate(CU_f = CU) |>
     left_join(CU_name_lookup, by="CU_f")
   custom.bench$CU_f <- factor(custom.bench$CU_f, levels = CU_order)
-  
+
   custom.bench|> filter(period !="avg") |>
     mutate(period=str_to_sentence(period)) |>
     ggplot(aes(value, fill = period, color = period)) +
@@ -231,14 +239,14 @@ write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
     xlab(expression(S[MSR])) +
     labs(y="", fill="Period", color="Period") +
     theme(legend.position = "right",
-          axis.ticks.y = element_blank(), 
+          axis.ticks.y = element_blank(),
           axis.text.y = element_blank()) +
     scale_color_viridis_d(aesthetics = c("fill", "color")) +
     scale_x_continuous(limits = c(0, NA))
 
 my.ggsave(here("analysis/plots/SR-models/demo_bench_compare_early-vs-recent.PNG"))
-  
-  
+
+
 # source(inference_figs.R)
 bench.posts <- readRDS(here("analysis/data/generated/benchmark_posteriors.rds"))
 
@@ -251,7 +259,7 @@ bench_body <- pivot_longer(bench.posts, cols = c(Smsr), names_to = "par") |>
   select(unit, CU, par, value)
 
 bench_post <- rbind(bench_eggs, bench_body) |>
-  filter(value <= 35000)|> 
+  filter(value <= 35000)|>
   mutate(unit=str_to_sentence(unit))
 
 
@@ -262,7 +270,7 @@ bench_post <- rbind(bench_eggs, bench_body) |>
   xlab(expression(S[MSR])) +
   labs(y="", fill="Period", color="Period") +
   theme(legend.position = "bottom",
-        axis.ticks.y = element_blank(), 
+        axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         strip.text = element_text(size=11),
         axis.title = element_text(size=13)) +
@@ -292,7 +300,7 @@ summary_bench_AR1_eggs <- bench_post |>
 ggplot() +
   geom_ribbon(data = ER.preds, aes(x = EM/1000, ymin = Rec_lwr/1000, ymax = Rec_upr/1000),
               fill = "grey80", alpha=0.5, linetype=2, colour="gray46") +
-  geom_errorbar(data = brood.all, aes(x= EM_med/1000, y = R_med/1000, 
+  geom_errorbar(data = brood.all, aes(x= EM_med/1000, y = R_med/1000,
                                       ymin = R_lwr/1000, ymax = R_upr/1000),
                 colour="grey", width=0, linewidth=0.3) +
   geom_errorbarh(data = brood.all, aes(y = R_med/1000, xmin = EM_lwr/1000, xmax = EM_upr/1000),

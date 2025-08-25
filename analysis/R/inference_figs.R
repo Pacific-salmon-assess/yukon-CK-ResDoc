@@ -28,6 +28,7 @@ bench.par.table <- NULL #empty objects to rbind CU's outputs to
 bench.posts <- NULL
 par.posts <- NULL
 par.posts.tva <- NULL
+tva.par.summary.out <- NULL
 SR.preds <- NULL
 AR1.spwn <- NULL
 AR1.harv <- NULL
@@ -175,7 +176,9 @@ for(i in unique(sp_har$CU)){ # Loop over CUs to process model outputs
   par_TVA[,c(2:41)] <- sub_pars_TVA$ln_alpha
   par_TVA[,c(42)] <- sub_pars_TVA$beta
   par.posts.tva <- rbind(par.posts.tva, as.data.frame(par_TVA) |> mutate(CU = i))
-
+  tva.par.summary <- rstan::summary(TVA.fits[[i]], pars=c("ln_alpha", "beta", "pi", "alpha_dev"),
+                                probs=c(0.025, 0.5, 0.975))$summary
+  tva.par.summary.out <- rbind(tva.par.summary.out, as.data.frame(tva.par.summary) |> mutate(CU = i))
   a.yrs <- apply(exp(sub_pars_TVA$ln_alpha), 2, quantile, probs=c(0.1,0.5,0.9))
   a.yrs <- as.data.frame(cbind(sub_dat$year, t(a.yrs)))
 
@@ -238,7 +241,7 @@ TV.SR.preds$CU_f <- factor(TV.SR.preds$CU, levels = CU_order)
 esc$CU_f <- factor(esc$stock, levels = CU_order)
 
 # write important tables to repo ---------------------------------------------------------
-bench.par.table.out <- bench.par.table |>
+bench.par.table.out <- bench.par.table |> # AR1 SR model pars and benchmarks
   relocate(CU, 1) |>
   relocate(bench.par, .after = 1) |>
   relocate(mean, .after = 2) |>
@@ -246,6 +249,8 @@ bench.par.table.out <- bench.par.table |>
   arrange(bench.par, CU)
 
 bench.par.table.out[82:90,3:6] <- bench.par.table.out[82:90,3:6]*10000 # makes beta on scale of 10k so not crazu sig. digits in tables
+
+
 
 write.csv(bench.par.table.out, here("analysis/data/generated/bench_par_table.csv"),
           row.names = FALSE)
@@ -255,6 +260,8 @@ write_rds(bench.posts, here("analysis/data/generated/benchmark_posteriors.rds"))
 write.csv(par.posts, here("analysis/data/generated/AR1_posteriors.csv"))
 
 write.csv(par.posts.tva, here("analysis/data/generated/TVA_posteriors.csv"))
+
+write.csv(tva.par.summary.out, here("analysis/data/generated/TVA_par_summary.csv"))
 
 write.csv(brood.all.long, here("analysis/data/generated/brood_table_long.csv"),
           row.names = FALSE)
