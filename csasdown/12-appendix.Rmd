@@ -486,6 +486,7 @@ See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID ST
 # COMPUTING ENVIRONMENT {#app:fifth-appendix}  
 
 This document aims to be transparent and reproducible. If you made it this far in and are still paying attention you deserve a gold star. All data and code to reproduce the analysis in the report, and generate it, is available in [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main?tab=readme-ov-file#yukon-ck-resdoc).   
+
 A document describing model diagnostics and some additional figures can be found within the repository at [`SR-diagnostics.html`](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). 
 R packages (and dependencies therein) necessary to recreate our analysis and documentation are: 
 ```{r env}
@@ -494,6 +495,7 @@ library(here)
 library(tidyverse)
 library(ggpubr)
 library(ggcorrplot)
+library(ggsidekick)
 library(csasdown)
 library(kableExtra)
 library(rstan)
