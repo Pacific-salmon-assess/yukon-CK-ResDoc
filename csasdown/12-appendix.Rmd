@@ -437,7 +437,137 @@ and calculated totals for harvest and spawning escapement by summing over ages a
 
 We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$, respectively.
 
-**PUT TABLES WITH SR PARAMETERS AND BENCHMARKS FOR EACH TYPE OF SR MODEL HERE**
+(ref:tab-tva-pars) Estimates of key spawner-recruitment relationship parameters from time-varying productivity models by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table. For $\alpha$ and $\sigma_\alpha$, which are time-varying parameters, values are averages of the posterior median estimated for each year along with the standard deviation among years.
+```{r tab-tva-pars, results = "asis"}
+
+pars <- read.csv(here("analysis/data/generated/TVA_par_summary.csv"))
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
+alpha <- pars |> filter(grepl("^ln_alpha", X)) |> 
+  group_by(CU) |> 
+  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
+  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
+  mutate(par = "alpha", value = paste(mean, "(", sd, ")")) |>
+  select(-c(mean,sd))
+  
+
+alpha_dev <- pars |> filter(grepl("^alpha_dev", X)) |> 
+  group_by(CU) |> 
+  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
+  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
+  mutate(par = "alpha_dev", value = paste(mean, "(", sd, ")")) |>
+  select(-c(mean,sd))
+
+pars <- pars |> filter(grepl("^beta", X)) |> 
+  rename(value = X50.) |> mutate(par = "beta") |>
+  mutate(value = round(value*10000, 2)) |>
+  select(CU, n_eff, Rhat, par, value) |>
+  rbind(alpha_dev) |> rbind(alpha) |>
+  left_join(CU_name_lookup, by="CU") |>
+  select(CU_pretty, par, value, n_eff, Rhat) |>
+  mutate(n_eff = round(n_eff, 0), Rhat = round(Rhat, 3))
+
+
+names(pars) <- c("Conservation Unit",
+                  "Parameter",
+                  "Mean (SD) or Posterior Median",
+                  "Effective Sample Size ($N_{\\text{eff}}$)",
+                  "Chain Mixing ($\\widehat{R}$)")
+
+pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
+pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
+pars$Parameter[pars$Parameter == "alpha_dev"]<- "$\\sigma_\\alpha$"
+
+pars |> 
+  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-tva-pars)", 
+                     repeat_header = TRUE,
+                     align = "llc")  |>
+  kableExtra::column_spec(3, width = "2cm")|>
+  kableExtra::column_spec(4, width = "1.5cm")|>
+  kableExtra::column_spec(5, width = "1.5cm") |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
+```
+
+
+(ref:tab-emr-pars) Estimates of key egg mass-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table.
+```{r tab-emr-pars, results="asis"}
+pars <- read.csv(here("analysis/data/generated/demographic_par_summary.csv"))
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
+alpha <- pars |> filter(grepl("^lnalpha", X)) |> 
+  mutate_at(2:7, function(x){signif(exp(x), 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+beta <- pars |> filter(grepl("^beta", X)) |> 
+  mutate_at(2:7, function(x){signif(x*10000, 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+phi <- pars |> filter(grepl("^phi", X)) |> 
+  mutate_at(2:7, function(x){signif(x, 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+pars <- bind_rows(list(alpha=alpha, beta=beta, phi=phi), .id="par") |>
+  left_join(CU_name_lookup, by="CU") |>
+  select(CU_pretty, par, value, n_eff, Rhat)
+
+
+names(pars) <- c("Conservation Unit",
+                  "Parameter",
+                  "Mean (SD) or Posterior Median",
+                  "Effective Sample Size ($N_{\\text{eff}}$)",
+                  "Chain Mixing ($\\widehat{R}$)")
+
+pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
+pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
+pars$Parameter[pars$Parameter == "phi"]<- "$\\phi$"
+
+pars |> 
+  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-emr-pars)", 
+                     repeat_header = TRUE,
+                     align = "llc") |>
+  kableExtra::column_spec(3, width = "3cm")|>
+  kableExtra::column_spec(4, width = "1cm")|>
+  kableExtra::column_spec(5, width = "1.5cm") |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
+```
 
 (ref:fig-bench-compare) Comparison of alternative (a) lower and (b) upper biological benchmarks as well as (c) estimates of maximum returns ($S_{MSR}$) or equilibrium population size ($S_{EQ}$) across CUs. The numeric value in legends refers to a percentage of the benchmark and those labelled "egg-mass" are derived from analyses that account for demographic change and are based on demographic characteristics observed over the most recent generation (2019-2024). Bars are medians and whiskers are upper 95th percentiles.
 

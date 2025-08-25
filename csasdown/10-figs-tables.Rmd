@@ -807,3 +807,43 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 ```
 
+
+
+\clearpage
+(ref:tab-ref-sim-params) Fishery simulation parameters under the reference scenario.
+
+```{r tab-ref-sim-params, results="asis"}
+sim.pars <- data.frame(t(read.csv(here("analysis/data/generated/sim_parsTVA.csv"))))[-1,]
+names(sim.pars) <- c("q_25", "median", "q_75", "mean")
+
+sim.pars.process <- sim.pars |>
+  mutate(across(everything(), ~as.numeric(.))) |>
+  mutate(across(everything(), ~signif(., 3))) |>
+  mutate(across(everything(), ~ifelse(. < 0.01, formatC(., format="e", digits=2), .))) |>
+  mutate(across(everything(), ~as.character(.))) |>
+  mutate(par = rownames(sim.pars)) |>
+  mutate(value = if_else(grepl("^alpha|beta|pi", par), 
+                         paste(median, "(", q_25, ",", q_75, ")"),
+                         median)) |>
+  mutate(CU_id = if_else(grepl("^alpha|beta", par),
+                         gsub("\\D", "", par), NA)) |>
+  left_join(data.frame(CU_id=as.character(1:9), CU=CU_name_lookup$CU_pretty)) |>
+  mutate(par = gsub("\\_\\d$", "", par)) |>
+  select(CU, par, value)
+
+names(sim.pars.process) <- c("Conservation Unit", "Simulation Parameter", "Median (50$^{\\text{th}}$ percentiles) or value")
+
+sim.pars.process |>
+  dplyr::arrange(`Conservation Unit`) |>
+  dplyr::mutate(`Conservation Unit` = tidyr::replace_na(`Conservation Unit`, " ")) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  dplyr::mutate_all(function(x){gsub("_", "\\\\_", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       caption = "(ref:tab-ref-sim-params)", 
+                       repeat_header = TRUE,
+                       align = "llc") |>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
+```
