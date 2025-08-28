@@ -41,10 +41,12 @@ for(i in 1:1000) { #
 
 mcq_cont_avg <- colMeans(mcq_counts) # average McQuesten contribution to border passage
 
+CU_border_passage <- exp(rpt$lnRunSize_st)
 CU_border_passage_corr <-  CU_border_passage
 CU_border_passage_corr[1,] <- CU_border_passage[1,]-mcq_cont_avg # remove McQuesten from Northern CU
 CU_border_passage_corr[4,] <- CU_border_passage[4,]+mcq_cont_avg # add McQuesten to Stewart CU
 
+Rse <- filter(rpt$sdrpt,par=="runSize_st")
 CU_border_upr <- matrix(data=Rse$uCI, nrow=8, ncol=40)
 CU_border_lwr <- matrix(data=Rse$lCI, nrow=8, ncol=40)
 
