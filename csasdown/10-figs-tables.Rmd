@@ -88,12 +88,6 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-em-vs-spw-sr-TVA) Scaled trends in intrinsic productivity index for two alternative spawner-recruitment (SR) models.
-
-```{r fig-em-vs-spw-sr-TVA, fig.cap = "(ref:fig-em-vs-spw-sr-TVA)"}
-knitr::include_graphics(here::here("csasdown/figure/spw-vs-em-SR-TVA.png"))
-```
-
 (ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
