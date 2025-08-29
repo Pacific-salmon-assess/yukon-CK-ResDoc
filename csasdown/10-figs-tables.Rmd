@@ -319,9 +319,9 @@ ref.df <- data.frame(Metric = c("Limit Reference Point (LRP) ",
                                  "86,000 spawners; median estimate of $S_{MSR}$ for the SMU based on demographic characteristics of spawners (and impacts on total egg mass) in most recent decade (2009-2019) at time of analysis (Connors et al. 2022)",
                                  "40%; Harvest rate associated with MSY ($U_{MSY}$) for the least productive CU in the SMU",
                                  "25,000 spawners; average SMU spawner abundance associated with no greater than 50% chance of at least one CU falling in the Wild Salmon Policy Red status zone"),
-                     Rationale = c("Required under Fish Stock Provision of *Fisheries Act*. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
-                                   "Required under Fish Stock Provision of *Fisheries Act*. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
-                                   "Required under Fish Stock Provision of *Fisheries Act*. Federal and international fishery policy typically set maximum fishery removals to be less than or equal to those associated with $U_{MSY}$. Propose this value be from least productive CU to align with Wild Salmon Policy objective to takee biodiversity at the scale of CUs into account",
+                     Rationale = c("Required under Fish Stock Provision of \\textit{Fisheries Act}. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
+                                   "Required under Fish Stock Provision of \\textit{Fisheries Act}. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
+                                   "Required under Fish Stock Provision of \\textit{Fisheries Act}. Federal and international fishery policy typically set maximum fishery removals to be less than or equal to those associated with $U_{MSY}$. Propose this value be from least productive CU to align with Wild Salmon Policy objective to takee biodiversity at the scale of CUs into account",
                                    "not required under Fish Stock Provision of Fisheries Act but helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized (compared to the CU-status based LRP)"))
 
 ref.df |>
@@ -339,7 +339,7 @@ ref.df |>
 
 \clearpage
 
-(ref:OM-scenarios) Alternative productivity ($alpha$) scenarios tested in forward simulations.
+(ref:OM-scenarios) Alternative productivity ($alpha$) scenarios tested in forward simulations. Values are the posterior medians of ($alpha$) estimated by time-varying productivity models across three time frames: the most recent Chinook salmon generation (brood years 2013--2018), the long term average (1985--2018), and the most recent fully observed single brood year (2017).
 ```{r OM-scenarios, results = "asis"}
 om.alpha <- read.csv(here::here("analysis/data/generated/OM-alpha-scenarios.csv"))
 
@@ -647,30 +647,31 @@ HCR.df |>
 
 \clearpage
 
-(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performance of alternative fishery management measures.
+(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performance of alternative fishery management measures. Where applicable, the years over which metrics are calculated were $t_{1}$ = 2030 -- $t_{2}$ = 2050.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
-df <- data.frame(Metric = c("Number of CUs below their lower biological reference point", 
-                            "Number of CUs above their upper biological reference point", 
-                            "Average annual aggregrate spawning escapement", 
-                            "Average annual harvest", 
-                            "Average annual harvest rate", 
-                            "Proportion of years with no harvest", 
-                            "Proportion of years Basic Needs Allocation met"), 
-                 Description = c("Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological refernece point, defined as 20% of the spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (20%$S_{MSR,em_{2014-2024}}$)",
-                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological refernece point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account ($S_{MSR,em_{2014-2024}}$)",
-                                  "Average spawner abundance across all CUs across replicate simulation and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated", 
-                                  "Average annual harvest ($H$) across all CUs across replicate simulation and years", 
-                                  "Average annual harvest rate ($U$) for stock aggregate across replicate simulation and years", 
-                                  "Proportion of years across replicate simulation and years with no harvest", 
-                                  "Proportion of years across replicate simulation and years Basic Needs Allocation (BNA)met"),
-                 Equation = c("$\\sum_i S_{i,t=2050}<0.2S_{MSR,i,em_{2014-2024}}$", 
-                              "$\\sum_i S_{i,t=2050}>S_{MSR,i,em_{2014-2024}}$", 
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
+df <- data.frame(Metric = c("Escapement", 
+                            "Harvest", 
+                             "Canadian Harvest", 
+                             "Exploitation Rate", 
+                             "Prop. years fishery closed",
+                             "No. CUs below lower benchmark",
+                             "No. CUs above upper benchmark"), 
+                 Description = c("Average spawner abundance across all CUs across replicate simulations and years, where $n$ rep is the number of replicate simulations and $t_1$ and $t_2$ are the first and last years over which the metric is calculated",
+                                  "Average annual harvest ($H$) across all CUs across replicate simulations and years", 
+                                 "Average annual harvest ($H$) targeted to take place in Canada after accounting for harvest sharing provisions with Alaska",
+                                 "Average annual harvest rate ($U$) for stock aggregate across replicate simulations and years",
+                                 "Proportion of years across replicate simulations and years in which the simulated harvest control rule would cause the fishery to close (total allowable catch [TAC] = 0)", 
+                                 "Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological reference point, defined as 20% of the spawner abundance associated with maximum returns  (20%$S_{MSR}$)",
+                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological reference point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (40%$S_{MSR}$)"),
+                 Equation = c(
+                   "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
                               "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
+                   "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}*0.23$",
                               "$\\frac{\\sum_{\\substack{t_1\\\\t_2}}U_{t}}{t_2-t_1+1}$",
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}=0}{t_2-t_1+1}$",
-                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}>BNA}{t_2-t_1+1}$"))
+                              "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}TAC_{i,t}=0}{t_2-t_1+1}$",
+                 "$\\sum_i S_{i,t=2050}<0.2S_{MSR,i}$", 
+                 "$\\sum_i S_{i,t=2050}>S_{MSR,i}$"))
 df|>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
@@ -685,13 +686,23 @@ df|>
 \clearpage
 
 
-(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the reference (base case) productivity operating model scenario. Lower Stock Reference (LSR) and Upper Stock Reference (USR) refer to lower and upper reference points, respectively.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated reference (base case) scenario where productivity remains at the most recent generational average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
   tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
-perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
+
+pm_name_lookup <- data.frame(metric = unique(ref_case_pms$metric), 
+                       metric_name = c("Escapement", "Harvest", 
+                                   "Canadian Harvest", 
+                                   "Exploitation Rate", 
+                                   "Prop. years fishery closed",
+                                   "No. CUs below lower benchmark",
+                                   "No. CUs between benchmarks",
+                                   "No. CUs above upper benchmark",
+                                   "No. CUs above CU rebuilding target",
+                                   "No. CUs extinct"))
 
 
 HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
@@ -704,11 +715,11 @@ ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6] <- ref_cas
 
 ref_case_pms <- ref_case_pms |> 
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
-  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |> # join metric names
   dplyr::left_join(HCR_lookup, by="HCR") |>
+  dplyr::left_join(pm_name_lookup, by="metric") |>
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
-  dplyr::select(c("HCR_name", "Metric", "mean", "value"))
+  dplyr::select(c("HCR_name", "metric_name", "mean", "value"))
 
 names(ref_case_pms) <- c("Harvest Control Rule", "Performance measure", "Mean", "Median (50$^{\\text{th}}$ percentiles)")
 
@@ -726,14 +737,31 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the robustness (worst case) productivity operating model scenario.LSR and USR refer to lower and upper reference points, respectively.
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated robustness scenario where productivity remains severely depressed (at 2017 levels). CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
 
 
 ```{r tab-rob-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.csv"))|>
   tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
-perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
+
+HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
+                                 "IMEG.cap", "PA.alternative"),
+                         HCR_name = c("No fishing", "Moratorium", "IMEG", "Moratorium cap",
+                                        "IMEG cap", "PA Alternative"))
+fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
+
+pm_name_lookup <- data.frame(metric = unique(rob_case_pms$metric), 
+                       metric_name = c("Escapement", "Harvest", 
+                                   "Canadian Harvest", 
+                                   "Exploitation Rate", 
+                                   "Prop. years fishery closed",
+                                   "No. CUs below lower benchmark",
+                                   "No. CUs between benchmarks",
+                                   "No. CUs above upper benchmark",
+                                   "No. CUs above CU rebuilding target",
+                                   "No. CUs extinct"))
+
 
 HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
                                  "IMEG.cap", "PA.alternative"),
@@ -744,12 +772,12 @@ fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 rob_case_pms <- rob_case_pms |> 
- dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
-  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |> # join metric names
+  dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
   dplyr::left_join(HCR_lookup, by="HCR") |>
+  dplyr::left_join(pm_name_lookup, by="metric") |>
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
-  dplyr::select(c("HCR_name", "Metric", "mean", "value"))
+  dplyr::select(c("HCR_name", "metric_name", "mean", "value"))
 
 names(rob_case_pms) <- c("Harvest Control Rule", "Performance measure", "Mean", "Median (50$^{\\text{th}}$ percentiles)")
 
@@ -768,12 +796,29 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures (Table 10) under the robustness (best case, long term alpha) productivity operating model scenario. LSR and USR refer to lower and upper reference points, respectively.
+(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated robustness scenario where productivity returns to its long-term average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
 ```{r tab-rob2-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA3.csv"))|>
   tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
   tidyr::pivot_wider(values_from="value", names_from="prob")
-perf_metric_desc <- read.csv(here::here("csasdown/data/names_lookup.csv")) # to link metric names
+
+HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
+                                 "IMEG.cap", "PA.alternative"),
+                         HCR_name = c("No fishing", "Moratorium", "IMEG", "Moratorium cap",
+                                        "IMEG cap", "PA Alternative"))
+fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
+
+pm_name_lookup <- data.frame(metric = unique(rob_case_pms$metric), 
+                       metric_name = c("Escapement", "Harvest", 
+                                   "Canadian Harvest", 
+                                   "Exploitation Rate", 
+                                   "Prop. years fishery closed",
+                                   "No. CUs below lower benchmark",
+                                   "No. CUs between benchmarks",
+                                   "No. CUs above upper benchmark",
+                                   "No. CUs above CU rebuilding target",
+                                   "No. CUs extinct"))
+
 
 HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium.cap", 
                                  "IMEG.cap", "PA.alternative"),
@@ -784,12 +829,12 @@ fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 rob_case_pms <- rob_case_pms |> 
- dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
-  dplyr::left_join(perf_metric_desc[,1:2], by=c("metric" = "metric_name")) |> # join metric names
+  dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
   dplyr::left_join(HCR_lookup, by="HCR") |>
+  dplyr::left_join(pm_name_lookup, by="metric") |>
   dplyr::mutate_at(3:6, function(x){round(x, 2)}) |>
   dplyr::mutate(value=paste0(median, " (", q_25, ",", q_75, ")")) |>
-  dplyr::select(c("HCR_name", "Metric", "mean", "value"))
+  dplyr::select(c("HCR_name", "metric_name", "mean", "value"))
 
 names(rob_case_pms) <- c("Harvest Control Rule", "Performance measure", "Mean", "Median (50$^{\\text{th}}$ percentiles)")
 
@@ -816,10 +861,13 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 sim.pars <- data.frame(t(read.csv(here("analysis/data/generated/sim_parsTVA.csv"))))[-1,]
 names(sim.pars) <- c("q_25", "median", "q_75", "mean")
 
+sim.pars <- sim.pars |>
+  mutate(across(everything(), ~as.numeric(.)))
+
+sim.pars[grepl("^beta", rownames(sim.pars)),] <- sim.pars[grepl("^beta", rownames(sim.pars)),]*10000 # scale beta
+
 sim.pars.process <- sim.pars |>
-  mutate(across(everything(), ~as.numeric(.))) |>
-  mutate(across(everything(), ~signif(., 3))) |>
-  mutate(across(everything(), ~ifelse(. < 0.01, formatC(., format="e", digits=2), .))) |>
+  mutate(across(everything(), function(x){round(x, 2)})) |>
   mutate(across(everything(), ~as.character(.))) |>
   mutate(par = rownames(sim.pars)) |>
   mutate(value = if_else(grepl("^alpha|beta|pi", par), 
@@ -827,9 +875,22 @@ sim.pars.process <- sim.pars |>
                          median)) |>
   mutate(CU_id = if_else(grepl("^alpha|beta", par),
                          gsub("\\D", "", par), NA)) |>
-  left_join(data.frame(CU_id=as.character(1:9), CU=CU_name_lookup$CU_pretty)) |>
-  mutate(par = gsub("\\_\\d$", "", par)) |>
-  select(CU, par, value)
+  left_join(data.frame(CU_id=as.character(1:9), CU=CU_name_lookup$CU_pretty), by = "CU_id") |>
+  mutate(par = if_else(grepl("^alpha|beta", par),
+                       gsub("\\_\\d$", "", par),
+                       par)) |>
+  select(CU, par, value) |>
+  filter(!c(par %in% c("ny", "nstk", "nsim")))
+
+sim.pars.process$par[sim.pars.process$par == "alpha"]<- "$\\alpha$"
+sim.pars.process$par[sim.pars.process$par == "beta"]<- "$\\beta$"
+sim.pars.process$par[sim.pars.process$par == "phi"]<- "$\\phi$"
+sim.pars.process$par[sim.pars.process$par == "pi_1"]<- "$\\pi_1$"
+sim.pars.process$par[sim.pars.process$par == "pi_2"]<- "$\\pi_2$"
+sim.pars.process$par[sim.pars.process$par == "pi_3"]<- "$\\pi_3$"
+sim.pars.process$par[sim.pars.process$par == "pi_4"]<- "$\\pi_4$"
+sim.pars.process$par[sim.pars.process$par == "for_error"]<- "Forecast Error"
+sim.pars.process$par[sim.pars.process$par == "OU"]<- "Outcome Error"
 
 names(sim.pars.process) <- c("Conservation Unit", "Simulation Parameter", "Median (50$^{\\text{th}}$ percentiles) or value")
 
@@ -839,7 +900,6 @@ sim.pars.process |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  dplyr::mutate_all(function(x){gsub("_", "\\\\_", x)}) |>
   csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-ref-sim-params)", 
                        repeat_header = TRUE,
