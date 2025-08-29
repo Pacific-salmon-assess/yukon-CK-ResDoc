@@ -1,15 +1,15 @@
-\babel@toc {english}{}\relax 
+\babel@toc {english}{}\relax
 \thispagestyle {fancy}
 \contentsline {section}{ABSTRACT}{iv}{section*.1}%
 \contentsline {section}{\numberline {1}INTRODUCTION}{1}{section.0.1}%
 \contentsline {subsection}{\numberline {1.1}OBJECTIVES}{2}{subsection.0.1.1}%
 \contentsline {section}{\numberline {2}STOCK STRUCTURE, BIOLOGY, AND DISTRIBUTION}{2}{section.0.2}%
 \contentsline {section}{\numberline {3}STOCK STATUS AND TRENDS}{4}{section.0.3}%
-\contentsline {subsection}{\numberline {3.1}DATA SOURCES}{4}{subsection.0.3.1}%
+\contentsline {subsection}{\numberline {3.1}OVERVIEW OF ASSESSMENT AND SOURCES OF DATA}{4}{subsection.0.3.1}%
 \contentsline {subsection}{\numberline {3.2}RUN RECONSTRUCTION AND SPAWNER-RECRUITMENT MODELS}{5}{subsection.0.3.2}%
 \contentsline {subsection}{\numberline {3.3}BIOLOGICAL BENCHMARKS AND REFERENCE POINTS}{5}{subsection.0.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}CONSERVATION UNIT SCALE BENCHMARKS}{5}{subsubsection.0.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}STOCK MANAGEMENT UNIT SCALE REFERENCE POINTS}{6}{subsubsection.0.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.1}CONSERVATION UNIT BIOLOGICAL BENCHMARKS}{5}{subsubsection.0.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}STOCK MANAGEMENT UNIT REFERENCE POINTS}{6}{subsubsection.0.3.3.2}%
 \contentsline {subsection}{\numberline {3.4}CONSERVATION UNIT STATUS AND TRENDS}{8}{subsection.0.3.4}%
 \contentsline {subsubsection}{\numberline {3.4.1}RUN-TIMING AND RECONSTRUCTED SPAWNER ABUNDANCES}{8}{subsubsection.0.3.4.1}%
 \contentsline {subsubsection}{\numberline {3.4.2}SPAWNER-RECRUITMENT RELATIONSHIPS}{9}{subsubsection.0.3.4.2}%
@@ -18,7 +18,7 @@
 \contentsline {subsection}{\numberline {3.6}SMU STATUS AND TRENDS}{10}{subsection.0.3.6}%
 \contentsline {section}{\numberline {4}ANTHROPOGENIC, ECOSYSTEM, AND CLIMATE FACTORS AFFECTING THE STOCK}{11}{section.0.4}%
 \contentsline {subsection}{\numberline {4.1}Migrating/Spawning Adult}{11}{subsection.0.4.1}%
-\contentsline {subsection}{\numberline {4.2}Egg, fry, and smolt}{13}{subsection.0.4.2}%
+\contentsline {subsection}{\numberline {4.2}Egg, fry, and smolt}{12}{subsection.0.4.2}%
 \contentsline {subsection}{\numberline {4.3}Juvenile}{14}{subsection.0.4.3}%
 \contentsline {subsection}{\numberline {4.4}Adult}{14}{subsection.0.4.4}%
 \contentsline {section}{\numberline {5}ENHANCEMENT}{15}{section.0.5}%
@@ -28,8 +28,8 @@
 \contentsline {subsection}{\numberline {6.1}FRESHWATER HABITAT CONDITIONS}{17}{subsection.0.6.1}%
 \contentsline {subsection}{\numberline {6.2}HABITAT RESTORATION AND MONITORING ACTIVITIES THAT COULD CONTRIBUTE TO REBUILDING}{18}{subsection.0.6.2}%
 \contentsline {subsubsection}{\numberline {6.2.1}CURRENT HABITAT RESTORATION AND MONITORING PROJECTS}{20}{subsubsection.0.6.2.1}%
-\contentsline {section}{\numberline {7}IMPACT OF FISHERY MANAGEMENT MEASURES}{21}{section.0.7}%
-\contentsline {subsection}{\numberline {7.1}CLOSED LOOP SIMULATION MODEL}{21}{subsection.0.7.1}%
+\contentsline {section}{\numberline {7}IMPACT OF FISHERY MANAGEMENT MEASURES}{20}{section.0.7}%
+\contentsline {subsection}{\numberline {7.1}CLOSED LOOP SIMULATION MODEL}{20}{subsection.0.7.1}%
 \contentsline {subsubsection}{\numberline {7.1.1}OPERATING MODEL}{21}{subsubsection.0.7.1.1}%
 \contentsline {subsubsection}{\numberline {7.1.2}FISHERY SUB-MODEL}{22}{subsubsection.0.7.1.2}%
 \contentsline {subsubsection}{\numberline {7.1.3}PERFORMANCE MEASURES}{23}{subsubsection.0.7.1.3}%
