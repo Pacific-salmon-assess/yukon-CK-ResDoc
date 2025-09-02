@@ -289,26 +289,7 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
          width=800*2, units="px", dpi=240,bg = "white")
 
 
-  ## Identify LRP-F --
-  perf.metrics %>%
-    filter(HCR %in% HCR_grps[["fixed"]]) %>%
-    group_by(HCR) %>%
-    mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
-    filter(metric == "n.below.lwr") %>%
-    mutate(prec = if_else(median <= 1, 1, 0)) %>%
-    ggplot(aes(x=ER, y=median, col=prec)) +
-    geom_point()
-
-  perf.metrics %>%
-    filter(HCR %in% HCR_grps[["fixed"]]) %>%
-    group_by(HCR) %>%
-    mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
-    filter(metric == "escapement") %>%
-    ggplot(aes(x=ER, y=median)) +
-    geom_point()
-
-
-  ## fixed ER trade-off multipanel ----
+  ## fixed ER trade-off multipanel - CU ----
   spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
     group_by(HCR, CU_f) %>%
     summarize(mean_spwn = mean(S.50)) %>%
@@ -321,19 +302,15 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
           axis.title = element_text(size=12)) +
     labs(x="Spawners (000s)", y="Exploitation rate", col="Conservation Unit")
 
-harv_v_ER <-
+  harv_v_ER <-
     H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
     summarize(mean_harv = mean(H.50), .by=c(HCR, CU_f)) |>
-    mutate(smu_mean_harv = sum(mean_harv), .by=HCR) |>
     mutate(ER = as.numeric(gsub("\\D", "", HCR))) |>
     left_join(CU_name_lookup) |>
     arrange(ER) |>
     ggplot() +
     geom_point(aes(y=ER, x=mean_harv/1000, col=CU_pretty), shape='circle', size=2, alpha=0.7) +
-    geom_point(aes(y=ER, x=(smu_mean_harv)/2500), col="grey20", shape="diamond", size=2) +
     scale_colour_viridis_d() + scale_y_continuous(breaks = seq(0,100,20)) +
-    scale_x_continuous(sec.axis = sec_axis(transform = (~.*2.5), name="SMU Harvest (000s)",
-                       breaks=c(0,5,10))) +
     theme_sleek() +
     theme(axis.title.y = element_blank(),
           axis.text.y = element_blank(),
@@ -362,6 +339,41 @@ harv_v_ER <-
   my.ggsave(here(paste0("analysis/plots/fwd-sim/fixed_ER_tradeoffs_", k, ".PNG")))
   ggsave(here(paste0("csasdown/figure/fixed_ER_tradeoffs_", k, ".PNG")), height=600*2,
          width=800*2, units="px", dpi=240)
+
+  ## fixed ER trade-off multipanel - SMU -----------------
+  spwn_v_ER <- S.fwd %>% filter(HCR %in% HCR_grps[["fixed"]]) %>%
+    summarize(SMU_spwn = sum(S.50), .by=c(HCR, year)) %>%
+    summarize(mean_spwn = mean(SMU_spwn), .by=c("HCR")) %>%
+    mutate(ER = as.numeric(gsub("\\D", "", HCR))) %>%
+    ggplot() +
+    geom_point(aes(y=ER, x=mean_spwn/1000), shape='diamond', size=2, alpha=0.7) +
+    scale_y_continuous(breaks = seq(0,100,20)) +
+    theme_sleek() +
+    theme(legend.position="none",
+          axis.title = element_text(size=12)) +
+    labs(x="SMU Spawners (000s)", y="Exploitation rate")
+
+  harv_v_ER <-
+    H.fwd |> filter(HCR %in% HCR_grps[["fixed"]]) |>
+    summarize(SMU_harv = sum(H.50), .by=c(HCR, year)) |>
+    summarize(mean_harv = mean(SMU_harv), .by=c(HCR)) |>
+    mutate(ER = as.numeric(gsub("\\D", "", HCR))) |>
+    arrange(ER) |>
+    ggplot() +
+    geom_point(aes(y=ER, x=mean_harv/1000), shape='diamond', size=2, alpha=0.7) +
+    scale_y_continuous(breaks = seq(0,100,20)) +
+    theme_sleek() +
+    theme(axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          legend.text = element_text(size=10),
+          axis.title = element_text(size=12)) +
+    labs(x="SMU Harvest (000s)", y="Exploitation rate", col="Conservation Unit")
+
+  b <- cowplot::plot_grid(spwn_v_ER, harv_v_ER, nrow=1, labels=c("b","c"),
+                          label_x = c(0,-0.03))
+  cowplot::plot_grid(status_ER, b, nrow=2, rel_heights=c(1,1), labels=c(NULL,"a"))
+
+  my.ggsave(here(paste0("analysis/plots/fwd-sim/fixed_ER_SMU_tradeoffs_", k, ".PNG")))
 
 
   ## visualize HCRs ----
@@ -396,5 +408,27 @@ harv_v_ER <-
                          high="red") # this scales the colours for each plot
 
   my.ggsave(here(paste0("analysis/plots/fwd-sim/recruit-corr-matrix_", k, ".PNG")))
+
+
+  ## Identify LRP-F --
+  if(k=="TVA3"){
+    cu_below <- perf.metrics |>
+      filter(HCR %in% HCR_grps[["fixed"]]) |>
+      group_by(HCR) |>
+      mutate(ER = as.numeric(gsub("\\D", "", HCR))) |>
+      filter(metric == "n.below.lwr") |>
+      mutate(prec = if_else(median <= 1, 1, 0)) |>
+      rename(cus_below = median) |>
+      select(HCR, cus_below, prec)
+
+    lfrp <- perf.metrics|>
+      filter(HCR %in% HCR_grps[["fixed"]]) |>
+      mutate(ER = as.numeric(gsub("\\D", "", HCR))) |>
+      filter(metric == "escapement") |>
+      left_join(cu_below, by="HCR") |> # join CU status and escapement
+      filter(prec == 1, cus_below == 1) |>
+      filter(ER<80) |> # filter out very high ERs (some CUs are extinct)
+      select(median)
+  }
 
 } # end k loop
