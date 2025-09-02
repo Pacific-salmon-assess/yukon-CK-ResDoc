@@ -46,6 +46,16 @@ CU_prettynames <- c("Northern Yukon R. and tribs.",
 CU_name_lookup <- data.frame(CU_f = factor(CU_order, levels=CU_order),
                              CU_pretty = factor(CU_prettynames, levels=CU_prettynames))
 
+# Harvest control rules and groups
+ER_seq <- seq(5, 100, 5) # Must match ER_seq in "fwd_sim.R"
+HCRs <- c("no.fishing", "moratorium", "IMEG", "moratorium.cap", "IMEG.cap", "PA.alternative", paste0("fixed.ER.", ER_seq))
+HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
+                 moratorium = c("no.fishing", "moratorium", "moratorium.cap", "PA.alternative"),
+                 IMEG = c("no.fishing",
+                          unique(HCRs[grepl("*IMEG*", HCRs)])),
+                 simple = c("no.fishing", "IMEG", "moratorium"),
+                 fixed = unique(HCRs[grepl("fixed.ER", HCRs)]))
+
 
 #functions -------------------------------------------------------------------------------
 my.ggsave <- function(filename = default_name(plot), plot = last_plot(),
@@ -222,8 +232,8 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
         catch <- ifelse(run.size<=42500, inc.catch, run.size-42500)
         tac[i] <- ifelse(run.size<=42500, 0, run.size-42500)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.35){       # Lower ER cap based on lowest CU Umsy
-          catch <- run.size*0.35
+        if(HR.all > ER.cap){       # Lower ER cap based on lowest CU Umsy
+          catch <- run.size*ER.cap
           HR.all <- catch/run.size }}
       if(HCR == "moratorium"){
         catch <- ifelse(run.size<=71000, inc.catch, run.size-71000)
@@ -236,14 +246,14 @@ process = function(HCR=HCR,ny=ny,vcov.matrix=vcov.matrix,mat=mat,
         catch <- ifelse(run.size<=71000, inc.catch, run.size-71000)
         tac[i] <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.35){       # Lower ER cap based on lowest CU Umsy
-          catch <- run.size*0.35
+        if(HR.all > ER.cap){       # Lower ER cap based on lowest CU Umsy
+          catch <- run.size*ER.cap
           HR.all <- catch/run.size }}
       if(HCR == "PA.alternative"){
-        if(run.size <= 17000) catch <- inc.catch; tac[i] <- 0
-        if(run.size >= 86000/(1-0.35)) catch <- tac[i] <- run.size*0.35
-        if(run.size > 17000 & run.size < 86000/(1-0.35)){
-          dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
+        if(run.size <= 31000) catch <- inc.catch; tac[i] <- 0
+        if(run.size >= 86000/(1-ER.cap)) catch <- tac[i] <- run.size*ER.cap
+        if(run.size > 31000 & run.size < 86000/(1-ER.cap)){
+          dat <- data.frame(R=c(31000,86000/(1-ER.cap)), ER=c(0,ER.cap))
           lin <- lm(ER ~ R, data=dat)
           ER <- coef(lin)[1] + coef(lin)[2]*run.size
           catch <- tac[i] <- run.size*ER
@@ -402,8 +412,8 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
       if(HCR == "IMEG.cap"){
         catch <- ifelse(run.size<=42500, 0, run.size-42500)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.35){       ## Lower ER cap (40%)
-          catch <- run.size*0.35
+        if(HR.all > ER.cap){       ## Lower ER cap (40%)
+          catch <- run.size*ER.cap
           HR.all <- catch/run.size }}
       if(HCR == "moratorium"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
@@ -414,18 +424,18 @@ visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
       if(HCR == "moratorium.cap"){
         catch <- ifelse(run.size<=71000, 0, run.size-71000)
         HR.all <- ifelse(run.size==0, 0, catch/run.size)
-        if(HR.all > 0.35){       ## lower ER cap (40%)
-          catch <- run.size*0.35
+        if(HR.all > ER.cap){       ## lower ER cap (40%)
+          catch <- run.size*ER.cap
           HR.all <- catch/run.size }}
       if(grepl("fixed.ER", HCR)){
         if(run.size==0){ER <- 0}
         catch <- run.size*ER
         HR.all <- catch/run.size}
       if(HCR == "PA.alternative"){
-        if(run.size <= 17000) catch <- 0
-        if(run.size >= 86000/(1-0.35)) catch <- run.size*0.35
-        if(run.size > 17000 & run.size < 86000/(1-0.35)){
-          dat <- data.frame(R=c(17000,86000/(1-0.35)), ER=c(0,0.35))
+        if(run.size <= 31000) catch <- 0
+        if(run.size >= 86000/(1-ER.cap)) catch <- run.size*ER.cap
+        if(run.size > 31000 & run.size < 86000/(1-ER.cap)){
+          dat <- data.frame(R=c(31000,86000/(1-ER.cap)), ER=c(0,ER.cap))
           lin <- lm(ER ~ R, data=dat)
           ER <- coef(lin)[1] + coef(lin)[2]*run.size
           catch <- run.size*ER
