@@ -145,7 +145,8 @@ for(i in 1:length(HCRs)){
     phi <- 0.75 # mean across CUs
     Smax_sr <- sr.bench$median # median Smax to calculate benchmarks
     Smax_demo <- demo.bench$median # median egg-based Smax
-    ER.cap <- 0.43 # Umsr from egg-mass models for stock aggregate (from Connors et al 2022)
+    ER.cap <- round(min(filter(read.csv(here("analysis/data/generated/bench_par_table.csv")),
+                               bench.par == "Umsy")$mean), 2) # Umsy for least productive CU
 
     out <- process(HCR, ny, vcov.matrix, mat,alpha, beta,
                    lwr.ben=Smax_sr*0.2, upr.ben=Smax_sr*0.4, rt=Smax_demo,
