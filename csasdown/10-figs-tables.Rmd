@@ -731,7 +731,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated robustness scenario where productivity remains severely depressed (at 2017 levels). CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the  robustness scenario where productivity remains severely depressed (at 2017 levels). CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
 
 
 ```{r tab-rob-perf-measures, results = "asis"}
@@ -790,7 +790,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated robustness scenario where productivity returns to its long-term average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
+(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the robustness scenario where productivity returns to its long-term average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
 ```{r tab-rob2-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA3.csv"))|>
   tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
