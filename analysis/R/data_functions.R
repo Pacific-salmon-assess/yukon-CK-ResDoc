@@ -389,7 +389,7 @@ calcNeq <- function(Fmax)
 # Simple simulation to visualize HCRs
 # ------------------------------------------------------------------------------#
 
-visualize_HCR <- function(HCRs, max_spwn=400000, int=1000) {
+visualize_HCR <- function(HCRs, ER.cap=NULL, max_spwn=400000, int=1000) {
 
   out <- NULL
 

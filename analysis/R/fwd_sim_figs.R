@@ -378,7 +378,9 @@ for(k in sceanarios) { # generate Fwd-sim figures for reference set (TVA) & robu
 
   ## visualize HCRs ----
   HCR_order <- c("Moratorium", "IMEG", "Moratorium cap", "IMEG cap", "PA Alternative")
-  out <- visualize_HCR(HCRs=HCRs[2:6]) # get simulated HRs
+  ER.cap <- round(min(filter(read.csv(here("analysis/data/generated/bench_par_table.csv")),
+                   bench.par == "Umsy")$mean), 2) # Umsy for least productive CU
+  out <- visualize_HCR(HCRs=HCRs[2:6], ER.cap=ER.cap) # get simulated HRs
   out <- left_join(out, HCR_lookup, by="HCR")
   out$HCR_name <- factor(out$HCR_name, levels=HCR_order)
 
