@@ -60,7 +60,7 @@ knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"
 ```
 \clearpage
 
-(ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with lines representing 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equal recruits, is shown in grey. 
+(ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with lines representing 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equal recruits, is shown in grey. To aid in visualizing uncertainty we use 80% credible intervals here instead of 95%.
 
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
@@ -85,7 +85,7 @@ knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 ```
 
-(ref:fig-CU-EMR) Relationship between total egg mass of spawning females and recruitment by Conservation Units. Individual egg mass-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between egg mass and recruitment along with 80% credible intervals in the shaded region.
+(ref:fig-CU-EMR) Relationship between total egg mass of spawning females and recruitment by Conservation Units. Individual egg mass-recruitment pairs are color coded according to brood year with 80% credible intervals. The thick black line is the predicted median relationship between egg mass and recruitment along with 80% credible intervals in the shaded region. To aid in visualizing uncertainty we use 80% credible intervals here instead of 95%.
 
 ```{r fig-CU-EMR, fig.cap = "(ref:fig-CU-EMR)"}
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
@@ -110,7 +110,7 @@ knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 knitr::include_graphics(here::here("csasdown/figure/hatch_bar.png"))
 ```
 
-(ref:fig-wh-fishway) Chinook returns to Whitehorse Rapids fishway and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and Parentage Based Tagging (PBT) results of broodstock, when available. 
+(ref:fig-wh-fishway) Chinook returns to Whitehorse Rapids fishway (Upper Yukon CU) and proportion hatchery origin spawners (pHOS), based on observed adipose fin clip rates. Proportionate Natural Influence (PNI) for the last six years, calculated from adipose fin clip status and Parentage Based Tagging (PBT) results of broodstock, when available. 
 
 ```{r fig-wh-fishway, fig.cap = "(ref:fig-wh-fishway)"}
 knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
@@ -319,7 +319,7 @@ ref.df <- data.frame(Metric = c("Limit Reference Point (LRP) ",
                      Rationale = c("Required under Fish Stock Provision of \\textit{Fisheries Act}. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
                                    "Required under Fish Stock Provision of \\textit{Fisheries Act}. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
                                    "Required under Fish Stock Provision of \\textit{Fisheries Act}. Federal and international fishery policy typically set maximum fishery removals to be less than or equal to those associated with $U_{MSY}$. Propose this value be from least productive CU to align with Wild Salmon Policy objective to take biodiversity at the scale of CUs into account",
-                                   "Not required under Fish Stock Provision of Fisheries Act but helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized (compared to the CU-status based LRP)"))
+                                   "Not required under Fish Stock Provision of \\textit{Fisheries Act} but helpful for informing management since assessment and fishery decisions are often abundance based and so can be operationalized (compared to the CU-status based LRP)"))
 
 ref.df |>
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -336,39 +336,8 @@ ref.df |>
 
 \clearpage
 
-(ref:OM-scenarios) Alternative productivity ($alpha$) scenarios tested in forward simulations. Values are the posterior medians of ($alpha$) estimated by time-varying productivity models across three time frames: the most recent Chinook salmon generation (brood years 2013--2018), the long term average (1985--2018), and the most recent fully observed single brood year (2017).
-```{r OM-scenarios, results = "asis"}
-om.alpha <- read.csv(here::here("analysis/data/generated/OM-alpha-scenarios.csv"))
 
-om.alpha <- om.alpha |> 
-  mutate_at(6:9, function(x){round(x, 2)}) |>
-  mutate(value = paste0(post_med, " (", post_lwr, ",", post_upr, ")")) |>
-  mutate_at(4:5, str_to_sentence) |>
-  left_join(CU_name_lookup, by=c("CU")) |>
-  filter(scenario != "Stationary") |>
-  select(CU_pretty, scenario, value)
-
-
-names(om.alpha) <- c("Conservation Unit",
-                     "Productivity Scenario",
-                     "Median (95$^{\\text{th}}$ percentile)")
-om.alpha |>
-  dplyr::arrange(`Conservation Unit`, `Productivity Scenario`) |>
-  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                     caption = "(ref:OM-scenarios)", 
-                     repeat_header = TRUE,
-                     align = "llc",
-                     booktabs = T) |>
-  kableExtra::collapse_rows(columns=1, latex_hline = "major")
-  
-```
-
-\clearpage
-
-(ref:pars-ref-pts) Estimates of biological reference points by Conservation Unit, based on parameters from spawner-recruitment models. Values are in thousands of fish (except $U_{MSY}$).
+(ref:pars-ref-pts) Estimates of biological benchmarks by Conservation Unit, based on parameters from spawner-recruitment models assuming stationary intrinsic productivity. Values are in thousands of fish (except $U_{MSY}$).
 
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
@@ -640,6 +609,37 @@ HCR.df |>
                      repeat_header = TRUE) |>
     kableExtra::column_spec(1, width = "4cm")|>
     kableExtra::column_spec(2, width = "10cm")
+```
+
+\clearpage
+(ref:OM-scenarios) Alternative productivity ($\alpha$) scenarios tested in forward simulations. Values are the posterior medians of ($\alpha$) estimated by time-varying productivity models across three time frames: the most recent Chinook salmon generation (brood years 2012--2017), the long term average (1985--2017), and the most recent fully observed single brood year (2017).
+```{r OM-scenarios, results = "asis"}
+om.alpha <- read.csv(here::here("analysis/data/generated/OM-alpha-scenarios.csv"))
+
+om.alpha <- om.alpha |> 
+  mutate_at(6:9, function(x){round(x, 2)}) |>
+  mutate(value = paste0(post_med, " (", post_lwr, ",", post_upr, ")")) |>
+  mutate_at(4:5, str_to_sentence) |>
+  left_join(CU_name_lookup, by=c("CU")) |>
+  filter(scenario != "Stationary") |>
+  select(CU_pretty, scenario, value)
+
+
+names(om.alpha) <- c("Conservation Unit",
+                     "Productivity Scenario",
+                     "Median (95$^{\\text{th}}$ percentile)")
+om.alpha |>
+  dplyr::arrange(`Conservation Unit`, `Productivity Scenario`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:OM-scenarios)", 
+                     repeat_header = TRUE,
+                     align = "llc",
+                     booktabs = T) |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
+  
 ```
 
 \clearpage

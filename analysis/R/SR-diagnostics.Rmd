@@ -266,7 +266,7 @@ print(p)
 
 ## ESS and $\hat{R}$
 
-We aimed for minimum effective sample sizes that are greater than ***400*** and $\hat{R}$ values less than 1.1.
+We aimed for minimum effective sample sizes that are greater than ***400*** and $\hat{R}$ values less than 1.1.The tables below summarize the lowest effective sample size (ESS) and largest $\hat{R}$ across all estimated parameters for each CU and class of model.
 
 ### AR1 model:
 
