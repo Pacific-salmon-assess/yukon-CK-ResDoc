@@ -509,10 +509,6 @@ esc$CU_f <- factor(esc$stock, levels = CU_order)
 tribs <- read.csv(here("analysis/data/raw/trib-spwn.csv")) |>
   filter(CU != "Porcupine")|>
   filter(system != "teslin") |>
-  mutate(
-    estimate = case_when(
-      system == "whitehorse" ~ estimate*(1-hatch_contrib),
-      .default = estimate)) |>
   unite(tributary, c("system", "type")) |>
   select(!hatch_contrib)
 
@@ -524,7 +520,7 @@ trib_rr <- left_join(tribs,esc_join,by = join_by("CU", "year")) |>
 trib_rr <- trib_rr |>
   mutate(tribs_name = gsub("creek", " Creek",
                            gsub("salmon", " Salmon",
-                                gsub("_", " ", str_to_sentence(tributary)))))
+                                        gsub("_", " ", str_to_sentence(tributary)))))
 
 trib_order_RR <- c("Klondike sonar", "Tincup aerial", "Pelly sonar", "Blind Creek weir", "Tachun foot","Tachun weir","Little Salmon aerial",
                    "Tahkini aerial","Tahkini sonar","Whitehorse fishway","Michie foot","Wolf aerial","Nisutlin aerial")
@@ -1298,3 +1294,33 @@ ggplot(cu_age |> filter(!year %in% c(2010,2012,2013)), aes(x = CU, y = prop, fil
         axis.text.x = element_text(angle = 45, vjust = 0.5)) +
   labs(x = "Conservation Unit", y = "Proportion")
 my.ggsave(here("csasdown/figure/age-cu-by-yrs.PNG"), height=4.75, width=7)
+
+# Table of spawners by CU and aggregate ----
+esc_table <- esc |>
+  rename(Unit=stock,
+         Year=year,
+         Spawners=mean) |>
+  select(Unit,Year,Spawners)
+
+esc_agg <- esc_table |>
+  mutate(spwn = Spawners) |>
+  group_by(Year) |>
+  summarize(Spawners = sum(spwn))
+
+esc_agg$Unit <- "Aggregate"
+esc_agg <- esc_agg[,c(3,1,2)]
+
+SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
+  filter(Stock == "Canada",
+         Counts == "Escapement",
+         Year>1984) |>
+  mutate(Spawners=Mean)|>
+  select(Year, Spawners)
+
+SMU_RR$Unit <- "Aggregate (Connors et al. 2022)"
+SMU_RR <- SMU_RR[,c(3,1,2)]
+
+esc_table_all <- rbind(esc_table,esc_agg,SMU_RR) |>
+  mutate(Spawners = round(Spawners, 0))
+
+write.csv(esc_table_all,here("analysis/data/generated/spawn-table.csv"), row.names = FALSE)
