@@ -592,11 +592,11 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                                                "Moratorium w/ harvest cap", 
                                                "IMEG w/ harvest cap", 
                                                "Precationary Approach (PA) alternative"), 
-                        Description = c("Current moratorium on all directed harvest unless run-sizes are forecast to exceed 71,000 fish \n", 
-                                     "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal \n", 
-                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit \n", 
-                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~40%) \n",
-                                     "Harvest Control Rule that is consistent with DFO's Precautioanry Approach Framework (DFO 2009): no harvest below lower fishery reference point (31,000) with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point (86,000)"))
+                        Description = c("Current agreement between ADF&G and DFO (aka 'moratorium') that limits directed harvest unless border passage is expected to exceed 71,000 fish, whcih for simplicity is operatioanlized as a forecasted run-size that exceeds 71,000 \n", 
+                                     "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish (lower bound of escapement goal) no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal \n", 
+                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~37%) \n", 
+                                     "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit  \n",
+                                     "Harvest Control Rule that is consistent with DFO's Precautionary Approach Framework (DFO 2009): no harvest below lower fishery reference point (31,000) with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point (86,000)"))
 
 colnames(HCR.df)[1] <- "Harvest Control Rule"
 
