@@ -630,8 +630,10 @@ SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
 
 a<- ggplot(SMU_RR |>
          filter(Counts != "Exploitation")) +
-  geom_hline(yintercept = 37, col = "darkred", lty=2) +
-  geom_hline(yintercept = 87, col = "dark green", lty=2) +
+  geom_hline(yintercept = 31, col = "darkred", lty=2) +
+  annotate("text", label="FRP-L", x=2023, y=38, size=2.5) +
+  geom_hline(yintercept = 86, col = "dark green", lty=2) +
+  annotate("text", label="USR", x=2023, y=93, size=2.5) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000, col = Counts, fill = Counts), alpha=0.5) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1) +
   ylab("Fish (000s)") +
@@ -647,7 +649,8 @@ a<- ggplot(SMU_RR |>
 
 b<- ggplot(SMU_RR |>
              filter(Counts == "Exploitation")) +
-  geom_hline(yintercept = 40, col = "darkred", lty=2) +
+  geom_hline(yintercept = 37, col = "darkred", lty=2) +
+  annotate("text", label="RR", x=2024, y=40, size=2.5) +
   geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), fill="darkblue", col="darkblue", alpha=0.4) +
   geom_line(aes(x = Year, y = Median50.), size = 1, col = "darkblue") +
   ylab("Harvest rate (%)") +
