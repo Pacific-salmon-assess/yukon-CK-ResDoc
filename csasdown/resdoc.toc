@@ -52,11 +52,11 @@
 \contentsline {section}{\numberline {C.1}PROCESS MODEL}{97}{section.C.1}%
 \contentsline {section}{\numberline {C.2}OBSERVATION MODEL}{98}{section.C.2}%
 \contentsline {section}{\numberline {C.3}TIME-VARYING PRODUCTIVITY}{99}{section.C.3}%
-\contentsline {section}{\numberline {C.4}ESCAPEMENT QUALITY}{100}{section.C.4}%
-\contentsline {section}{\numberline {C.5}MODEL FITTING AND DIAGNOSTICS}{101}{section.C.5}%
-\contentsline {section}{\numberline {C.6}BIOLOGICAL BENCHMARKS}{102}{section.C.6}%
-\contentsline {chapter}{APPENDIX~D. SENSITIVITY ANALYSES}{108}{section*.9}%
-\contentsline {section}{\numberline {D.1}AGE COMPOSITION}{108}{section.D.1}%
-\contentsline {section}{\numberline {D.2}VULNERABILITY TO HARVEST}{109}{section.D.2}%
-\contentsline {chapter}{APPENDIX~E. WILD SALMON POLICY RAPID STATUS ASSESSMENT}{111}{section*.11}%
-\contentsline {chapter}{APPENDIX~F. COMPUTING ENVIRONMENT}{112}{section*.13}%
+\contentsline {section}{\numberline {C.4}ESCAPEMENT QUALITY}{101}{section.C.4}%
+\contentsline {section}{\numberline {C.5}MODEL FITTING AND DIAGNOSTICS}{103}{section.C.5}%
+\contentsline {section}{\numberline {C.6}BIOLOGICAL BENCHMARKS}{104}{section.C.6}%
+\contentsline {chapter}{APPENDIX~D. SENSITIVITY ANALYSES}{107}{section*.9}%
+\contentsline {section}{\numberline {D.1}AGE COMPOSITION}{107}{section.D.1}%
+\contentsline {section}{\numberline {D.2}VULNERABILITY TO HARVEST}{108}{section.D.2}%
+\contentsline {chapter}{APPENDIX~E. WILD SALMON POLICY RAPID STATUS ASSESSMENT}{110}{section*.11}%
+\contentsline {chapter}{APPENDIX~F. COMPUTING ENVIRONMENT}{111}{section*.13}%
