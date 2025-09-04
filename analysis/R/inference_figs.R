@@ -1078,6 +1078,10 @@ a <- ggplot(pars |>filter(
   geom_bar(position="dodge", stat = "identity") +
   geom_errorbar(aes(ymin = lwr, ymax = upr,col = par), width = 0,position=position_dodge(0.9)) +
   theme_sleek() +
+  scale_fill_manual(values = scales::hue_pal()(3),
+                    labels=c(expression("S"["gen"]), expression("20%S"["MSR"]),
+                             expression("20%S"["MSR, em"])),
+                    aesthetics=c("fill", "colour")) +
   theme(legend.position = c(0.8,0.825),
         axis.title.x=element_blank(),
         axis.text.x=element_blank(),
@@ -1094,6 +1098,10 @@ b <- ggplot(pars2, aes(x = CU, y = median, fill = par2)) +
   geom_bar(position="dodge", stat = "identity") +
   geom_errorbar(aes(ymin = lwr, ymax = upr,col = par2), width = 0,position=position_dodge(0.9)) +
   theme_sleek()  +
+  scale_fill_manual(values = scales::hue_pal()(3),
+                    labels=c(expression("80%S"["MSY"]), expression("40%S"["MSR"]),
+                             expression("40%S"["MSR, em"])),
+                    aesthetics=c("fill", "colour")) +
   theme(legend.position = c(0.8,0.825),
         axis.title.x=element_blank(),
         axis.text.x=element_blank(),
@@ -1101,10 +1109,14 @@ b <- ggplot(pars2, aes(x = CU, y = median, fill = par2)) +
         legend.title=element_blank()) +
   labs(x = "Conservation Unit", y = "Spawners")
 
-c <- ggplot(pars |>filter(
-  par %in% c("Seq","Smsr","Smsr.egg-mass")), aes(x = CU, y = median, fill = par)) +
+c <- pars |> filter(par %in% c("Seq","Smsr","Smsr.egg-mass")) |>
+  ggplot(aes(x = CU, y = median, fill = par)) +
   geom_bar(position="dodge", stat = "identity") +
-  geom_errorbar(aes(ymin = lwr, ymax = upr,col = par), width = 0,position=position_dodge(0.9)) +
+  geom_errorbar(aes(ymin = lwr, ymax = upr,col = par), width = 0, position=position_dodge(0.9)) +
+  scale_fill_manual(values = scales::hue_pal()(3),
+                    labels=c(expression("S"["eq"]), expression("S"["MSR"]),
+                             expression("S"["MSR, em"])),
+                    aesthetics=c("fill", "colour")) +
   theme_sleek() +
   theme(legend.position = c(0.8,0.825),
         axis.text.x = element_text(angle = 45, vjust = 0.5),
