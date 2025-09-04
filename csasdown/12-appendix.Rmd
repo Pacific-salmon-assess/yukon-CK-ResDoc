@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 <!-- The following code should appear at the beginning of the first appendix.
 After that, all subsequent sections will be turned into appendices. -->
 
@@ -7,7 +12,7 @@ After that, all subsequent sections will be turned into appendices. -->
 
 # GENETIC STOCK INFORMATION {#app:first-appendix}
 
-Biological information on Yukon Chinook salmon has been collected annually from the fishwheels at White and Sheep rocks (scales; most years from 1985–2008) and the gillnet test fishery at Eagle (tissue samples; 2005–present). Samples have typically been taken over the annual upstream adult migration period, with the number of samples taken each day roughly proportional to daily passage (Figure \@ref(fig:fig-gsi-samples)) [@connors_incorporating_2020]. Genetic material has been recovered from 150--300 archived scale samples for most years 1985--2005, and since then 500--1500 tissue samples have been taken per year for genetic stock assignment. These samples have been used to genotype individual fish by microsatellite panel [1985--2016; @beacham2006estimation) or single nucleotide polymorphism (SNP) panel (2017--2019, @beacham2018population and then assigned to one of eight Conservation Units (CUs). These CU grouping differ slightly from the grouping reported in annual Yukon River Panel Joint Technical Committee reports [@JTC2025Report]. This benchmarked baseline consists of 4,713 Chinook salmon sampled at 29 unique spawning locations (or tributaries) throughout the Canadian portion of the Yukon River Basin (Table \@ref(tab:tab-gsi-tribs)). 
+Biological information on Yukon Chinook salmon has been collected annually from the fishwheels at White and Sheep rocks (scales; most years from 1985–2008) and the gillnet test fishery at Eagle (tissue samples; 2005–present; \@ref(fig:fig-map-assess)). Samples have typically been taken over the annual upstream adult migration period, with the number of samples taken each day roughly proportional to daily passage (Figure \@ref(fig:fig-gsi-samples)) [@connors_incorporating_2020]. Genetic material has been recovered from 150--300 archived scale samples for most years 1985--2005, and since then 500--1500 tissue samples have been taken per year for genetic stock assignment. These samples have been used to genotype individual fish by microsatellite panel [1985--2016; @beacham2006estimation) or single nucleotide polymorphism (SNP) panel (2017--2019, @beacham2018population and then assigned to one of eight Conservation Units (CUs). These CU groupings differ slightly from the grouping reported in annual Yukon River Panel Joint Technical Committee reports [@JTC2025Report]. This benchmarked baseline consists of 4,713 Chinook salmon sampled at 29 unique spawning locations (or tributaries) throughout the Canadian portion of the Yukon River Basin (Table \@ref(tab:tab-gsi-tribs)). 
 
 To evaluate how accurate genetic assignments were we conducted a simulation analysis on the baseline samples (i.e., samples of known origin) in rubias [@moran2019bayesian]. Simulations indicated that the average simulation accuracy within each CU was greater than 75%, and typically greater than 95%, for all CUs using the microsatellite baseline and similar for the SNP baseline with the exception of the Chandindu, Earn, and Nisling rivers which had poorer assignment accuracies (Table \@ref(tab:tab-gsi-tribs)). Given the variable uncertainty in genetic stock assignments uncovered by these simulations we ensured the run-reconstruction model (Appendix \@ref(app:second-appendix)) fit to these data to derive annual estimates of CU border passage explicitly took uncertainty in genetic stock assignments into account. Genetic samples from the Big Salmon and Teslin (below Teslin lake) tributaries could not reliably differentiated from baseline sampling locations in the Middle Yukon CU; as a result they were grouped with the Middle Yukon CU for the purposes of our genetic analyses. Similarly, genetic samples from the McQuesten River more closely grouped with the Northern CU than with the Stewart CU that they originated from (Table \@ref(tab:tab-gsi-tribs)).These genetic misassignments were subsequently accounted for in the CU scale run-reconstructions (Appendix \@ref(app:second-appendix)).   
 
@@ -28,8 +33,8 @@ knitr::include_graphics(here::here("csasdown/figure/gsi-run-samples.png"))
 gsi_tribs <- read.csv(here::here("csasdown/data/gsi_tribs.csv"), stringsAsFactors = T)
 
 
-footnotes <- c("Samples from the Big Salmon river and Teslin river (below Teslin lake) are both assigned to the Middle Yukon CU for the purposes of this analysis because they cannot be reliably differentiated from other baseline sampling locations in the Middle Yukon CU",
-"Holtby and Ciruna 2007")
+footnotes <- c("Samples from the Big Salmon river and Teslin river (below Teslin lake) are both assigned to the Middle Yukon CU for the purposes of this analysis because they cannot be reliably differentiated from other baseline sampling locations in the Middle Yukon CU.",
+"Holtby and Ciruna (2007)")
 
 gsi_tribs <- gsi_tribs |> 
               dplyr::mutate(Tribname = stringr::str_to_title(gsub("_", " ", Tribname))) |>
@@ -50,7 +55,7 @@ gsi_tribs |>
    kableExtra::column_spec(5:7, width = "2cm") 
    #kableExtra::add_footnote(label=footnotes, notation="number") # footnote not working
   
-footnotes
+print(footnotes, quote=FALSE)
 
 ```
 
@@ -72,7 +77,7 @@ rr.params$Symbol[c(2:5, 7:10, 12:17,19:25)] <- paste0("$",rr.params$Symbol[c(2:5
 rr.params |> 
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\n","\\\\\n", x)}) |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-params)", 
                        repeat_header = TRUE) |>
@@ -91,13 +96,12 @@ rr.eqns <- read.csv(here::here("csasdown/data/model-eqns.csv"))
 rr.eqns |> 
    dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
    dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+   dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
    csasdown::csas_table(format = "latex",
                        caption = "(ref:tab-rr-eqns)", 
                        repeat_header = TRUE)|>
   kableExtra::column_spec(1, width = "5cm")|>
   kableExtra::column_spec(1, width = "8cm")
-
 
 
 ```
@@ -142,7 +146,7 @@ In some years prior to the implementation of sonar monitoring, the fishwheel dat
 
 We fit the run-reconstruction model using Template Model Builder [@kristensen2016tmb]. Model parameters were estimated via maximum likelihood and standard errors of parameters and quantities of interest were calculated using a delta method routine within TMB and were treated as equivalent to standard deviations. 
 
-Fishwheel catchability was estimated to average around 0.02 but varied considerably from year to year (Figure \@ref(fig:fig-eagle-RR-fits)), presumably as a result of different environmental conditions (e.g., flow) and/or fishwheel operation. Interannual deviations in arrival timing were estimated to be weakly correlated among CUs (pairwise correlation, which was assumed to be the same for all CUs, estimated to be equal to 0.15). 
+Fishwheel catchability was estimated to average around 0.02 but varied considerably from year to year (Figure \@ref(fig:fig-RR-catchability)), presumably as a result of different environmental conditions (e.g., flow) and/or fishwheel operation. Interannual deviations in arrival timing were estimated to be weakly correlated among CUs (pairwise correlation, which was assumed to be the same for all CUs, estimated to be equal to 0.15). 
 
 (ref:fig-RR-catchability) Estimated fish wheel catchability, by year. Bars are median estimates +/- 95% confidence intervals.
 
@@ -202,7 +206,7 @@ Because the same model was fitted to each CU, all variables in the presentation 
 
 The process model is intended to represent the true population dynamics (i.e., free of measurement error), and this component of our state-space spawner-recruitment model specifies productivity, density-dependence, and age-at-return by cohort (i.e. brood year, $y$).
 
-Recruitment abundances of adult Chinook (i.e., the total number of adults from a given brood year that will ever return, $R_y$) were treated as unobserved states and modeled as a function of spawner abundance in year $y$ ($S_y$) assuming a @ricker-1954 spawner-recruitment relationship with serially auto-correlated log-normal process variation:
+Recruitment abundances of adult Chinook salmon (i.e., the total number of adults from a given brood year that will ever return, $R_y$) were treated as unobserved states and modeled as a function of spawner abundance in year $y$ ($S_y$) assuming a @ricker-1954 spawner-recruitment relationship with serially auto-correlated log-normal process variation:
 
 \begin{equation}
   \ln(R_y) = \ln(S_y) + \ln(\alpha) - \beta S_y + v_y
@@ -271,7 +275,7 @@ It is this spawner abundance $S_y$ (which is itself made up of fish of multiple 
 
 We assumed a coefficient of variation (CV) for spawner observations that was based on the annual CV in estimated spawner abundances derived from the run reconstruction model (Appendix \@ref(app:first-appendix)).
 
-Observed spawner abundance ($S_{obs,y}$) was therefore assumed to be log-normally distributed with the CVs converted to log-normal variance following [@forbes-etal-2011]:
+Observed spawner abundance ($S_{obs,y}$) was therefore assumed to be log-normally distributed with the CVs converted to log-normal variance following @forbes-etal-2011:
 
 \begin{equation}
   \sigma^2_{o,y} = \ln\left(\mathrm{CV}_y^2 + 1\right)
@@ -287,13 +291,13 @@ Direct estimates of harvest by CU do not exist because most harvest occurs in mi
 
 and were assumed to have a CV equal to that of the joint variability in spawner abundance and aggregrate harvest rate estimates which was log-normally distributed and converted to log-normal variance as per Equ. \@ref(eq:get-sigm).
 
-Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs (ADD LINK TO AGE COMP APPENDIX). 
+Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs (\@ref(sec:sixth-appendix)). 
 
 These age composition by return year estimates were assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 50 pre-2007 and 100 thereafter. These ESSs are lower than the likely observed sample sizes to account for the non-independence of observation within a given sampling event [@maunder_review_2011] and were chosen to reflect the reduced confidence in age composition data prior to the Eagle test fishery sampling program which was standardized beginning in 2007.
 
 ## TIME-VARYING PRODUCTIVITY
 
-Given widespread evidence for changes in salmon productivity over time [@peterman_widespread_2012; @dorner2018spatial; @malick2016regional], and interest in understanding the evidence for changing productivity in Yukon Chinook salmon, we also fit a version of the model described in Equ. \@ref(eq:AR1-ricker)-\@ref(eq:obs-harvest) with time-varying intrinsic productivity. Specifically, we allowed the $\alpha$ parameter to evolve through time as a random walk, yielding time-varying estimates of productivity: 
+Given widespread evidence for changes in salmon productivity over time [@peterman_widespread_2012; @dorner2018spatial; @malick2016regional], and interest in understanding the evidence for changing productivity in Yukon Chinook salmon, we also fit a version of the model described in Equ. \@ref(eq:AR1-ricker)-\@ref(eq:obs-harvest) with time-varying intrinsic productivity (Table \@ref(tab:tab-tva-pars)). Specifically, we allowed the $\alpha$ parameter to evolve through time as a random walk, yielding time-varying estimates of productivity: 
 
 \begin{equation}
   \begin{aligned}
@@ -304,6 +308,75 @@ Given widespread evidence for changes in salmon productivity over time [@peterma
 \end{equation}
 
 where $\sigma_\alpha$ is the magnitude of process variation in productivity and where recruitment anomalies were no longer modeled as being auto-correlated but all other parameters in equation \@ref(eq:AR1-ricker) otherwise remained the same.
+
+
+(ref:tab-tva-pars) Estimates of key parameters from time-varying $alpha$  spawner-recruitment models by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table. For $\alpha$ and $\sigma_\alpha$, which are time-varying parameters, values are averages of the posterior median estimates for each year along with the standard deviation among years.
+```{r tab-tva-pars, results = "asis"}
+
+pars <- read.csv(here("analysis/data/generated/TVA_par_summary.csv"))
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
+alpha <- pars |> filter(grepl("^ln_alpha", X)) |> 
+  group_by(CU) |> 
+  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
+  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
+  mutate(par = "alpha", value = paste(mean, "(", sd, ")")) |>
+  select(-c(mean,sd))
+  
+
+alpha_dev <- pars |> filter(grepl("^alpha_dev", X)) |> 
+  group_by(CU) |> 
+  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
+  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
+  mutate(par = "alpha_dev", value = paste(mean, "(", sd, ")")) |>
+  select(-c(mean,sd))
+
+pars <- pars |> filter(grepl("^beta", X)) |> 
+  rename(value = X50.) |> mutate(par = "beta") |>
+  mutate(value = formatC(value*10000, format='f', digits=2)) |>
+  select(CU, n_eff, Rhat, par, value) |>
+  rbind(alpha_dev) |> rbind(alpha) |>
+  left_join(CU_name_lookup, by="CU") |>
+  select(CU_pretty, par, value, n_eff, Rhat) |>
+  mutate(n_eff = round(n_eff, 0), Rhat = formatC(Rhat, format='f', digits=3))
+
+
+names(pars) <- c("Conservation Unit",
+                  "Parameter",
+                  "Mean (SD) or Posterior Median",
+                  "Effective Sample Size ($N_{\\text{eff}}$)",
+                  "Chain Mixing ($\\widehat{R}$)")
+
+pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
+pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
+pars$Parameter[pars$Parameter == "alpha_dev"]<- "$\\sigma_\\alpha$"
+
+pars |> 
+  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-tva-pars)", 
+                     repeat_header = TRUE,
+                     align = "llc")  |>
+  kableExtra::column_spec(3, width = "2cm")|>
+  kableExtra::column_spec(4, width = "1.5cm")|>
+  kableExtra::column_spec(5, width = "1.5cm") |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
+```
+
 
 ## ESCAPEMENT QUALITY
 The spawner-recruitment models described in the previous section assumed that demographic attributes of spawning escapement have not changed over time such that reproductive output is homogeneous among individuals and has been static over the past 40 years. However, changes in age, sex, and length-at-age of returning Chinook salmon, including in the Yukon [@lewis_changes_2015; @ohlberger_demographic_2018; @ohlberger_reproductive_2020], have been widely observed, suggesting concurrent declines in per capita reproductive output as smaller females carry disproportionately fewer eggs of a smaller mass compared to larger females (i.e., fecundity and total egg mass scale exponentially with female size) [@ohlberger_reproductive_2020]. While changes in age, sex, and length-at-age (aka “escapement quality”) are not typically considered when deriving spawner-recruitment based reference points and setting escapement goals, previous research on Chinook salmon in the Yukon and Kuskokwim River of western Alaska suggests that failing to account for declines in escapement quality may result in underestimating the escapement needed to maximize long-term sustainable yield or recruitment [@staton_incorporating_2021;@connors_estimates_2023]. In addition, simulation analyses suggest that accounting for the consequences of declining "escapement quality" in fishery management (via reference points) can reduce conservation risks relative to assessment frameworks that do not take demographic change into account [@ohlberger2025accounting].  
@@ -319,16 +392,82 @@ With this alternative measure of reproductive potential we then refit our our sp
   (\#eq:reprometric)
 \end{equation}
 
-where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year specific total spawner abundance, $q_{y,a}$is the year- and age-specific proportion females, and $w_{em,y,a}$ is the average total egg mass ($em$) per individual in each year ($y$) and age ($a$).
+where $Z_{m,y}$ is the year-specific total egg mass $em$, $S_{y}$ is the year specific total spawner abundance, $q_{y,a}$is the year- and age-specific proportion females, and $w_{em,y,a}$ is the average total egg mass ($em$) per individual in each year ($y$) and age ($a$) (Table \@ref(tab:tab-emr-pars)).
 
 This model makes several key assumptions including that total reproductive output is limited by females and that male abundance is always sufficient to fertilize all eggs [@staton_incorporating_2021]. We believe these were reasonable assumptions across the range of spawner abundances that have been observed, and at the scale at which we are modelling spawner-recruitment dynamics, though at very low abundances and in small populations, male abundance will also presumably limit reproductive output. The model also assumes that egg mass suitably indexes within-stock density effects whereas total spawners (males and females) contribute to density effects in the base model formulation. For these reasons, plus necessary assumption that border age, size, and sex composition is a reasonable proxy for CU scale demographic characteristics, we consider these demographic models exploratory and encourage greater consideration of consequences of potentially violating these assumptions in future analyses.
+
+
+(ref:tab-emr-pars) Estimates of key egg mass-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table.
+```{r tab-emr-pars, results="asis"}
+pars <- read.csv(here("analysis/data/generated/demographic_par_summary.csv"))
+
+CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
+              "Whiteandtribs.", "Stewart",  
+              "MiddleYukonR.andtribs.","Pelly",
+              "Nordenskiold", "Big.Salmon", 
+              "UpperYukonR.","YukonR.Teslinheadwaters"), 
+                CU_pretty = c("Northern Yukon R. and tribs.", 
+                "White and tribs.", "Stewart",  
+                "Middle Yukon R. and tribs.","Pelly",
+                "Nordenskiold", "Big Salmon", 
+                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
+
+alpha <- pars |> filter(grepl("^lnalpha", X)) |> 
+  mutate_at(2:7, function(x){signif(exp(x), 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=formatC(Rhat, format='f', digits=3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+beta <- pars |> filter(grepl("^beta", X)) |> 
+  mutate_at(2:7, function(x){signif(x*10000, 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=formatC(Rhat, format='f', digits=3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+phi <- pars |> filter(grepl("^phi", X)) |> 
+  mutate_at(2:7, function(x){signif(x, 2)}) |>
+  mutate(n_eff = round(n_eff, 0), Rhat=formatC(Rhat, format='f', digits=3)) |>
+  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
+  select(CU, X, value, n_eff, Rhat)
+
+pars <- bind_rows(list(alpha=alpha, beta=beta, phi=phi), .id="par") |>
+  left_join(CU_name_lookup, by="CU") |>
+  select(CU_pretty, par, value, n_eff, Rhat)
+
+
+names(pars) <- c("Conservation Unit",
+                  "Parameter",
+                  "Median 95$^{\\text{th}}$ percentiles)",
+                  "Effective Sample Size ($N_{\\text{eff}}$)",
+                  "Chain Mixing ($\\widehat{R}$)")
+
+pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
+pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
+pars$Parameter[pars$Parameter == "phi"]<- "$\\phi$"
+
+pars |> 
+  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                     caption = "(ref:tab-emr-pars)", 
+                     repeat_header = TRUE,
+                     align = "llc") |>
+  kableExtra::column_spec(3, width = "3.5cm")|>
+  kableExtra::column_spec(4, width = "1cm")|>
+  kableExtra::column_spec(5, width = "1.5cm") |>
+  kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
+```
+
 
 ## MODEL FITTING AND DIAGNOSTICS 
 
 We fit the spawner-recruitment models in a Bayesian estimation framework with Stan [@carpenter_stan_2017; @standevelopmentteamRstanInterfaceStan2023], which implements the No-U-Turn Hamiltonian Markov chain Monte Carlo (MCMC) algorithm [@hoffman2014] for Bayesian statistical inference to generate a joint posterior probability distribution of all unknowns in the model. Priors were generally uninformative or weakly informative and are summarized in Table \@ref(tab:tab-priors).
 
-We sampled from 4 chains with 4000 iterations each and discarded the first half as warm-up. 
-We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was generally less than 1.1 and that the effective sample size was greater than 400, or 10% or the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). Most models had leading parameters that were well estimated but the stationary spawner-recruitment model fit to data from the Teslin CU had relatively low effective sample size suggesting posterior samples were not well mixed with high autocorrelation. This was likely a result if the strong temporal pattern in recruitment residuals as evidenced by high effective samples sizes for the model that allowed for variation in intrinsic productivity over time.     
+We sampled from 4 chains with 3000 iterations each and discarded the first 1000 as warm-up. 
+We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was generally less than 1.1 and that the effective sample size was greater than 400, or 10% of the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). Most models had leading parameters that were well estimated but the stationary spawner-recruitment model fit to data from the Teslin CU had relatively low effective sample size suggesting posterior samples were not well mixed with high autocorrelation. This was likely a result of the strong temporal pattern in recruitment residuals as evidenced by high effective samples sizes for the model that allowed for variation in intrinsic productivity over time.     
 
 
 (ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters. Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
@@ -444,138 +583,10 @@ Once the scale of the equilibrium population fished at $F_{max}$ was obtained fr
 and calculated totals for harvest and spawning escapement by summing over ages and sexes. 
 
 We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
-
-(ref:tab-tva-pars) Estimates of key spawner-recruitment relationship parameters from time-varying productivity models by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table. For $\alpha$ and $\sigma_\alpha$, which are time-varying parameters, values are averages of the posterior median estimated for each year along with the standard deviation among years.
-```{r tab-tva-pars, results = "asis"}
-
-pars <- read.csv(here("analysis/data/generated/TVA_par_summary.csv"))
-
-CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
-              "Whiteandtribs.", "Stewart",  
-              "MiddleYukonR.andtribs.","Pelly",
-              "Nordenskiold", "Big.Salmon", 
-              "UpperYukonR.","YukonR.Teslinheadwaters"), 
-                CU_pretty = c("Northern Yukon R. and tribs.", 
-                "White and tribs.", "Stewart",  
-                "Middle Yukon R. and tribs.","Pelly",
-                "Nordenskiold", "Big Salmon", 
-                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
-
-alpha <- pars |> filter(grepl("^ln_alpha", X)) |> 
-  group_by(CU) |> 
-  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
-  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
-  mutate(par = "alpha", value = paste(mean, "(", sd, ")")) |>
-  select(-c(mean,sd))
-  
-
-alpha_dev <- pars |> filter(grepl("^alpha_dev", X)) |> 
-  group_by(CU) |> 
-  summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
-  mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
-  mutate(par = "alpha_dev", value = paste(mean, "(", sd, ")")) |>
-  select(-c(mean,sd))
-
-pars <- pars |> filter(grepl("^beta", X)) |> 
-  rename(value = X50.) |> mutate(par = "beta") |>
-  mutate(value = round(value*10000, 2)) |>
-  select(CU, n_eff, Rhat, par, value) |>
-  rbind(alpha_dev) |> rbind(alpha) |>
-  left_join(CU_name_lookup, by="CU") |>
-  select(CU_pretty, par, value, n_eff, Rhat) |>
-  mutate(n_eff = round(n_eff, 0), Rhat = round(Rhat, 3))
-
-
-names(pars) <- c("Conservation Unit",
-                  "Parameter",
-                  "Mean (SD) or Posterior Median",
-                  "Effective Sample Size ($N_{\\text{eff}}$)",
-                  "Chain Mixing ($\\widehat{R}$)")
-
-pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
-pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
-pars$Parameter[pars$Parameter == "alpha_dev"]<- "$\\sigma_\\alpha$"
-
-pars |> 
-  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
-  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                     caption = "(ref:tab-tva-pars)", 
-                     repeat_header = TRUE,
-                     align = "llc")  |>
-  kableExtra::column_spec(3, width = "2cm")|>
-  kableExtra::column_spec(4, width = "1.5cm")|>
-  kableExtra::column_spec(5, width = "1.5cm") |>
-  kableExtra::collapse_rows(columns=1, latex_hline = "major")
-
+```{r deps}
+source("../analysis/R/load.R")
 ```
 
-
-(ref:tab-emr-pars) Estimates of key egg mass-recruitment relationship parameters by Conservation Unit along with two measures of parameter estimability and model convergence. Estimates of $\beta$ are on the scale of 10,000 fish for ease of summarizing parameters in the table.
-```{r tab-emr-pars, results="asis"}
-pars <- read.csv(here("analysis/data/generated/demographic_par_summary.csv"))
-
-CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.", 
-              "Whiteandtribs.", "Stewart",  
-              "MiddleYukonR.andtribs.","Pelly",
-              "Nordenskiold", "Big.Salmon", 
-              "UpperYukonR.","YukonR.Teslinheadwaters"), 
-                CU_pretty = c("Northern Yukon R. and tribs.", 
-                "White and tribs.", "Stewart",  
-                "Middle Yukon R. and tribs.","Pelly",
-                "Nordenskiold", "Big Salmon", 
-                "Upper Yukon R.","Yukon R. Teslin Headwaters"))
-
-alpha <- pars |> filter(grepl("^lnalpha", X)) |> 
-  mutate_at(2:7, function(x){signif(exp(x), 2)}) |>
-  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
-  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
-  select(CU, X, value, n_eff, Rhat)
-
-beta <- pars |> filter(grepl("^beta", X)) |> 
-  mutate_at(2:7, function(x){signif(x*10000, 2)}) |>
-  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
-  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
-  select(CU, X, value, n_eff, Rhat)
-
-phi <- pars |> filter(grepl("^phi", X)) |> 
-  mutate_at(2:7, function(x){signif(x, 2)}) |>
-  mutate(n_eff = round(n_eff, 0), Rhat=round(Rhat, 3)) |>
-  mutate(value = paste(X50., "(", X2.5. , ",", X97.5., ")")) |>
-  select(CU, X, value, n_eff, Rhat)
-
-pars <- bind_rows(list(alpha=alpha, beta=beta, phi=phi), .id="par") |>
-  left_join(CU_name_lookup, by="CU") |>
-  select(CU_pretty, par, value, n_eff, Rhat)
-
-
-names(pars) <- c("Conservation Unit",
-                  "Parameter",
-                  "Mean (SD) or Posterior Median",
-                  "Effective Sample Size ($N_{\\text{eff}}$)",
-                  "Chain Mixing ($\\widehat{R}$)")
-
-pars$Parameter[pars$Parameter == "alpha"]<- "$\\alpha$"
-pars$Parameter[pars$Parameter == "beta"]<- "$\\beta$"
-pars$Parameter[pars$Parameter == "phi"]<- "$\\phi$"
-
-pars |> 
-  dplyr::arrange(`Conservation Unit`, `Parameter`) |>
-  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\n","\\\\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                     caption = "(ref:tab-emr-pars)", 
-                     repeat_header = TRUE,
-                     align = "llc") |>
-  kableExtra::column_spec(3, width = "3cm")|>
-  kableExtra::column_spec(4, width = "1cm")|>
-  kableExtra::column_spec(5, width = "1.5cm") |>
-  kableExtra::collapse_rows(columns=1, latex_hline = "major")
-
-```
 
 (ref:fig-bench-compare) Comparison of alternative (a) lower and (b) upper biological benchmarks as well as (c) estimates of maximum returns ($S_{MSR}$) or equilibrium population size ($S_{EQ}$) across CUs. The numeric value in legends refers to a percentage of the benchmark and those labelled "egg-mass" are derived from analyses that account for demographic change and are based on demographic characteristics observed over the most recent generation (2019-2024). Bars are medians and whiskers are upper 95th percentiles.
 
@@ -600,9 +611,9 @@ In addition to the comparison of stock aggregate and CU scale border age composi
 knitr::include_graphics(here::here("csasdown/figure/blind-age-by-yrs.png"))
 ```
 ## VULNERABILITY TO HARVEST
-Our reconstructions of CU scale harvests, and subsequent population dynamics modelling and estimation of biological benchmarks, relied on the assumption that all CUs have historically experienced the same harvest rates. While this was a necessary assumption due to a lack of routine genetic assignment of fish sampled in fisheries to CUs, a multi-year study of genetic composition of fish harvested in the Alaskan portion of the Yukon in the mid to late 2000s allowed us to qualitatively examine this assumption. From 2005 to 2010 Chinook salmon were sampled in commercial and subsistence fisheries in the Alaskan portion of the Yukon River and estimates of genetic stock composition were derived for stock groupings that consisted of either individual or groups of CUs [e.g., @DeCovichHarvStockComp2011]. For each year, and river district, we calculated harvest by CU group as the product of total Canadian-origin Yukon Chinook harvest and CU group composition. We then summed these estimates across districts to calculate the total CU group composition for Canadian-origin Yukon Chinook harvested in Alaska for a given year, and compared it to estimates of CU group composition at the Alaska-Yukon Territory border based on the border passage reconstructions described in this document (Appendix \@ref(app:second-appendix)).
+Our reconstructions of CU scale harvests, and subsequent population dynamics modelling and estimation of biological benchmarks, relied on the assumption that all CUs have historically experienced the same harvest rates. While this was a necessary assumption due to a lack of routine genetic assignment of fish sampled in fisheries to CUs, a multi-year study of genetic composition of fish harvested in the Alaskan portion of the Yukon in the mid to late 2000s allowed us to qualitatively examine this assumption. From 2005 to 2010 Chinook salmon were sampled in commercial and subsistence fisheries in the Alaskan portion of the Yukon River and estimates of genetic stock composition were derived for stock groupings that consisted of either individual or groups of CUs [e.g., @DeCovichHarvStockComp2011]. For each year, and river district, we calculated harvest by CU group as the product of total Canadian-origin Yukon Chinook harvest and CU group composition (\@ref(eq:obs-harvest)). We then summed these estimates across districts to calculate the total CU group composition for Canadian-origin Yukon Chinook harvested in Alaska for a given year, and compared it to estimates of CU group composition at the Alaska-Yukon Territory border based on the border passage reconstructions described in this document (Appendix \@ref(app:second-appendix)).
 
-For these few years where genetic sampling of harvest in Alaska allowed for a comparison of CU composition in both border passage and harvest there was no evidence of consistent over/under-representation of individual CUs in Alaskan harvest, though in some years for some CU groups there were qualitative differences in representation (Figure \@ref(fig:fig-CU_harv-compare). This suggests that overall, across years with data, CUs were generally equally vulnerable to harvest in Alaskan fisheries.
+For these few years where genetic sampling of harvest in Alaska allowed for a comparison of CU composition in both border passage and harvest there was no evidence of consistent over/under-representation of individual CUs in Alaskan harvest, though in some years for some CU groups there were qualitative differences in representation (Figure \@ref(fig:fig-CU-harv-compare). This suggests that overall, across years with data, CUs were generally equally vulnerable to harvest in Alaskan fisheries.
 
 (ref:fig-CU-harv-compare) Conservation Unit group composition of Chinook salmon sampled in commercial and subsistence fisheries in Alaska ("Harvest") and fish sampled in test fisheries at the Alaska-Yukon Territory border ("Border"). The "Border" CU grouping includes the Northern Yukon and White and tributaries CUs, the "Pelly" grouping includes the Pelly and Stewart CUs, the "Carmacks" grouping includes the Nordenskiold, Middle Yukon, Big Salmon and Teslin CUs, and the "Takhini" grouping includes the Upper Yukon CU.   
 ```{r fig-CU-harv-compare, fig.cap = "(ref:fig-CU-harv-compare)"}

@@ -5,10 +5,12 @@ Population Dynamics,
 "(TB.2.3) Arrival timing, y>1","$\mu_{i,y} = \mu_{i,y-1}\exp(\varepsilon_{i,y-1})$"
 (TB.2.4) Daily arrival proportions,$\rho_{iyd}= \frac{exp(-0.5(d\;-\;\mu_{iy})^2\sigma_i^{-2})}{\sum_k exp(-0.5(k\;-\;\mu_{iy})^2 \sigma_i^{-2}}$
 (TB.2.5) Daily arrivals (numbers),$N_{iyd} = \widehat{R}_{iy}\rho_{iyd}$
+,
 Model predictions,
 (TB.2.6) Predicted daily border counts,$\widehat{E}_{igyd}=q_gy^{(E)}N_{iyd}$
 (TB.2.7) Predictedborder passage index,$\widehat{I}_y=\sum_i\widehat{R}_{iy}$
 (TB.2.8) Predicted CU composition,$p_{iyd}=N_{iyd}/\sum_jN_{jyd}$
+,
 Objective function,
 (TB.2.9) Mean for N.B. count likelihood,$\eta_{gyd}=\sum_i\widehat{E}_{igyd}$
 (TB.2.10) Variance for N.B. count likelihood,$\tau_{gyd}^2=\eta_{gyd}+\eta_{gyd}^2\phi_{gy}$
