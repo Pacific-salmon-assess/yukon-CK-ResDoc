@@ -16,16 +16,19 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table \@ref(tab:assess-proponents).
+(ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table 3.
+
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
 
+\begin{landscapepage}
 (ref:fig-trib-spawn) Estimates of spawner abundances over time by tributary assessment project. For more details on each assessment project see Table \@ref(tab:assess-proponents).
 
-```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)"}
+```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)", out.width = "90%"}
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
+\end{landscapepage}
 
 
 (ref:fig-run-timing) Average annual daily passage (scaled to maximum) from the U.S. into Canada on the mainstem Yukon River for eight Conservation Units. The Big Salmon Conservation Unit is not shown because it cannot be seperated out from the Middle Mainstem Conservation Unit based on genetics. For reference, in a non-leap year the 180th, 210th and 240th day of the year correspond to 29 June, 29 July, and 28 August, respectively. The dashed line represents the approximate average peak run-timing for the stock aggregate.
@@ -239,8 +242,7 @@ cugsitable |>
 
 
 \clearpage
-
-
+\begin{landscapepage}
 (ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.
 
 ```{r assess-proponents, results = "asis"}
@@ -266,6 +268,7 @@ assess_tbl |>
   kableExtra::column_spec(6, width = "3cm")|>
   kableExtra::footnote(general=c("*Project provides in-season information on returning spawners."))
 ```
+\end{landscapepage}
 
 \clearpage
 

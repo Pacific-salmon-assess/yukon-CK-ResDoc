@@ -36,7 +36,7 @@ gsi_tribs <- gsi_tribs |>
               dplyr::mutate(Cucode = gsub("-", " ", Cucode))
 
 
-names(gsi_tribs) <- c("Tributary name (baseline sample size)",	"Msat(n)",	"SNP(n)",	"CU",	"Conservation Unit code$^{2}$",	"Probability to tributary (Msat)",	"Probability to CU (SNP)")
+names(gsi_tribs) <- c("Tributary name ",	"Msat(n)",	"SNP(n)",	"CU",	"Conservation Unit code$^{2}$",	"Probability to tributary (Msat)",	"Probability to CU (SNP)")
 
 
 gsi_tribs |>

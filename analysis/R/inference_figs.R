@@ -575,15 +575,15 @@ tribs.all |>
   scale_color_viridis_d() +
   geom_line(lwd = 0.8) +
   labs(x="Year", y="Spawners (000s)", col="CU") +
-  facet_wrap(~tribs_name, ncol=5, scales = "free_y") +
+  facet_wrap(~tribs_name, ncol=4, scales = "free_y") +
   scale_y_continuous(limits = c(0, NA)) +
   theme_sleek() +
   theme(axis.title = element_text(size=12),
         strip.text = element_text(size=8))
 
 my.ggsave(here("analysis/plots/trib-rr/trib-escape.PNG"), width = 11, dpi= 180)
-ggsave(here("csasdown/figure/trib-escape.PNG"), height = 900*2,
-       width=720*2, units="px", dpi= 240)
+ggsave(here("csasdown/figure/trib-escape.PNG"), height = 700*2,
+       width=1000*2, units="px", dpi= 240)
 
 
 # SMU run and escapement ----

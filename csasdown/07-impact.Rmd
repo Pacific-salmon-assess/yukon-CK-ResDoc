@@ -15,14 +15,14 @@ Population dynamics were assumed to be driven by @ricker-1954 type spawner ($S$)
   \label{eq:AR1-ricker-main}
 \end{equation}
 
-where $\alpha$ is productivity (intrinsic rate of growth) and $\beta$ is the magnitude of within brood year ($y$) density-dependent effects for CU $i$. Inter-generational variation in survival, $\sigma_{i,y}$, was modeled as a multivariate normal vector:
+where $\alpha$ is productivity (intrinsic rate of growth), $\beta$ is the magnitude of within brood year ($y$) density-dependent effects for CU $i$, and $v_{i,y}$ is lag-1 autocorrelated recruitment residuals (i.e., $v_{i,y}=\phi v_{i,y-1} + \varepsilon_{i,y}$). Correlation in recruitment residuals ($\phi$) was fixed at the average estimate across CUs (0.75) and the portion of the recruitment anomaly that is temporally independent, $\varepsilon_{i,y}$, was modeled as a multivariate normal vector:
 
 \begin{equation}
-  \sigma_{i,y} \sim \mathcal{MVN}\left(\mathbf{0}, \Sigma_R\right)
+  \varepsilon_{i,y} \sim \mathcal{MVN}\left(\mathbf{0}, \varepsilon_R\right)
   \label{eq:var-covar}
 \end{equation}
 
-where the root diagonal of the covariance matrix $\Sigma_R$ is the CU specific inter-generational variation in survival and where correlation in the recruitment residual time series vectors $\boldsymbol{\varepsilon}_i$ and $\boldsymbol{\varepsilon}_k$ between CU $i$ and $k$ ($\rho_{i,k}$) is captured in the off-diagonal covariance elements of $\Sigma_R$.
+where the root diagonal of the covariance matrix $\varepsilon_R$ is the CU specific inter-generational variation in survival and where correlation in the recruitment residual time series vectors $\boldsymbol{\varepsilon}_i$ and $\boldsymbol{\varepsilon}_k$ between CU $i$ and $k$ ($\rho_{i,k}$) is captured in the off-diagonal covariance elements of $\varepsilon_R$. This variance-covariance matrix was fixed at the median estimates of the variance-covariance matrix of recruitment residuals by CU and year as estimated in the spawner-recruitment model described in Appendix \@ref(app:third-appendix).
 
 Returns in calendar year $t$, $N_{t,i}$, were then modeled as a function of the proportion of individuals that mature and return at each age:
 
