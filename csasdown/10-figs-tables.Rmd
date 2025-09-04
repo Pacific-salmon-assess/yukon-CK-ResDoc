@@ -294,7 +294,8 @@ bench.df |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:benchmarks)", 
-                     repeat_header = TRUE) |>
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "2.5cm")|>
     kableExtra::column_spec(2, width = "5cm")|>
     kableExtra::column_spec(3, width = "3cm")|>
@@ -327,7 +328,8 @@ ref.df |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:refpoints)", 
-                     repeat_header = TRUE) |>
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "2.5cm")|>
     kableExtra::column_spec(2, width = "4cm")|>
     kableExtra::column_spec(3, width = "4cm")|> 
@@ -342,7 +344,6 @@ ref.df |>
 ```{r pars-ref-pts, results = "asis"}
 bench.pars <- read.csv(here::here('analysis/data/generated/bench_par_table.csv'))
 
-
 bench.pars[bench.pars$bench.par != "Umsy", 3:6] <- bench.pars[bench.pars$bench.par != "Umsy", 3:6]/1000
 
 bench.pars <- bench.pars |> 
@@ -352,11 +353,15 @@ bench.pars <- bench.pars |>
   dplyr::mutate(Rhat = format(round(Rhat, 4))) |>
   dplyr::left_join(CU_name_lookup, by="CU") |>
   dplyr::relocate(CU_pretty, .before=bench.par) |>
-  dplyr::select(-CU)
+  dplyr::select(-CU) |>
+  dplyr::filter(bench.par %in% c("Smsr.20", "Smsr.40", "Smsr", 
+                                 "Sgen", "Smsy", "Umsy"))
 
 
 
 bench.pars$bench.par[bench.pars$bench.par == "Sgen"]<- "$S_{\\text{GEN}}$"
+bench.pars$bench.par[bench.pars$bench.par == "Smsr.20"]<- "20%$S_{\\text{MSR}}$"
+bench.pars$bench.par[bench.pars$bench.par == "Smsr.40"]<- "40%$S_{\\text{MSR}}$"
 bench.pars$bench.par[bench.pars$bench.par == "Smsr"]<- "$S_{\\text{MSR}}$"
 bench.pars$bench.par[bench.pars$bench.par == "Smsy"]<- "$S_{\\text{MSY}}$"
 bench.pars$bench.par[bench.pars$bench.par == "Umsy"]<- "$U_{\\text{MSY}}$"
@@ -370,7 +375,6 @@ names(bench.pars) <- c("Conservation Unit",
                        "Chain Mixing ($\\widehat{R}$)")
 
 bench.pars |> 
-  dplyr::filter(`Reference Point` %in% c("$S_{\\text{GEN}}$", "$S_{\\text{MSR}}$", "$S_{\\text{MSY}}$", "$U_{\\text{MSY}}$")) |>
   dplyr::arrange(`Conservation Unit`) |>
   dplyr::select(c(1:3)) |>
   dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
@@ -606,7 +610,8 @@ HCR.df |>
    dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:hcrs)", 
-                     repeat_header = TRUE) |>
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "4cm")|>
     kableExtra::column_spec(2, width = "10cm")
 ```
@@ -644,7 +649,7 @@ om.alpha |>
 
 \clearpage
 
-(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performance of alternative fishery management measures. Where applicable, the years over which metrics are calculated were $t_{1}$ = 2030 -- $t_{2}$ = 2050.
+(ref:tab-perf-metrics-descriptions) Biological and fishery performance measures considered in the closed-loop simulations to assess the performance of alternative fishery management measures. Where applicable, the years over which metrics are calculated were $t_{1}$=2030 -- $t_{2}$=2050.
 
 ```{r tab-perf-metrics-descriptions, results = "asis"}
 df <- data.frame(Metric = c("Escapement", 
@@ -676,7 +681,8 @@ df|>
   csasdown::csas_table(format = "latex",
                      caption = "(ref:tab-perf-metrics-descriptions)", 
                      repeat_header = TRUE, 
-                     align = "llc")|>
+                     align = "llc",
+                     linesep = "\\addlinespace")|>
   kableExtra::column_spec(1, width = "3.5cm")|>
   kableExtra::column_spec(2, width = "6.5cm")
 ```
