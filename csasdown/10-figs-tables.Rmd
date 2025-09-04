@@ -592,6 +592,7 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                                                "Moratorium w/ harvest cap", 
                                                "IMEG w/ harvest cap", 
                                                "Precationary Approach (PA) alternative"), 
+
                         Description = c("Current agreement between ADF&G and DFO (aka 'moratorium') that limits directed harvest unless border passage is expected to exceed 71,000 fish, whcih for simplicity is operatioanlized as a forecasted run-size that exceeds 71,000 \n", 
                                      "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish (lower bound of escapement goal) no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal \n", 
                                      "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~37%) \n", 
@@ -683,7 +684,7 @@ df|>
 \clearpage
 
 
-(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated reference (base case) scenario where productivity remains at the most recent generational average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
+(ref:tab-ref-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the simulated reference (base case) scenario where productivity remains at the most recent generational average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050). Harvest and escapement metrics are in units of thousands of fish and are the average value across 2030-2050. All mean and median values are summarized across 1000 simulations.
 
 ```{r tab-ref-perf-measures, results = "asis"}
 ref_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA.csv")) |>
@@ -708,7 +709,7 @@ HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium
                                         "IMEG cap", "PA Alternative"))
 fix_hcr <- unique(ref_case_pms$HCR)[grepl("^fixed.", unique(ref_case_pms$HCR))]
 
-ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6] <- ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
+ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6] <- ref_case_pms[ref_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 ref_case_pms <- ref_case_pms |> 
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
@@ -734,8 +735,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the  robustness scenario where productivity remains severely depressed (at 2017 levels). CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
-
+(ref:tab-rob-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the  robustness scenario where productivity remains severely depressed (at 2017 levels). CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050). Harvest and escapement metrics are in units of thousands of fish and are the average value across 2030-2050. All mean and median values are summarized across 1000 simulations.
 
 ```{r tab-rob-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA2.csv"))|>
@@ -766,7 +766,7 @@ HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium
                                         "IMEG cap", "PA Alternative"))
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 
-rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
+rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 rob_case_pms <- rob_case_pms |> 
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
@@ -793,7 +793,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 ```
 
 \clearpage
-(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the robustness scenario where productivity returns to its long-term average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050), while others are the average value across 2030-2050. All mean and median values are further summarized across 1000 simulations.
+(ref:tab-rob2-perf-measures) Consequences of alternative Harvest Control Rules based on range of biological and fishery performance measures under the robustness scenario where productivity returns to its long-term average. CU status performance metrics (i.e. No. CUs below lower benchmark, between benchmarks, above upper benchmark, above CU rebuilding target, and extinct) reflect status in the final year of simulations (2050). Harvest and escapement metrics are in units of thousands of fish and are the average value across 2030-2050. All mean and median values are summarized across 1000 simulations.
 ```{r tab-rob2-perf-measures, results = "asis"}
 rob_case_pms <- read.csv(here::here("analysis/data/generated/perf_metrics_TVA3.csv"))|>
   tidyr::pivot_longer(cols=2:11, values_to="value", names_to="metric") |>
@@ -823,7 +823,7 @@ HCR_lookup <- data.frame(HCR = c("no.fishing", "moratorium", "IMEG", "moratorium
                                         "IMEG cap", "PA Alternative"))
 fix_hcr <- unique(rob_case_pms$HCR)[grepl("^fixed.", unique(rob_case_pms$HCR))]
 
-rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
+rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6] <- rob_case_pms[rob_case_pms$metric %in% c("escapement", "harvest", "cdn.harvest"),3:6]/1000 # put esc and harvest in units of x1000 fish
 
 rob_case_pms <- rob_case_pms |> 
   dplyr::filter(!(HCR %in% fix_hcr)) |>  # filter out fixed harvest 
