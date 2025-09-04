@@ -66,7 +66,7 @@ print(footnotes, quote=FALSE)
 
 # RUN RECONSTRUCTION MODEL {#app:second-appendix}
 
-We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-CU run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and was adapted to allow for time-varying catchability and fit to updated data (including genetics and an externally derived border passage index) through 2024. We separately modelled the dynamics of the nine component Conservation Units (CUs), indexed by $i$, in the Yukon Chinook salmon Stock Management Unit (SMU). Annual, CU-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled time-varying catchability to two fishing “gears” (index by $g$): fishwheels and sonar, which have been used to derive annual aggregate border passage estimates (fishwheel mark-recapture from 1985--2008; sonar from 2005--2024). Model notation and equations are listed in Table \@ref(tab:tab-rr-params) and \@ref(tab:tab-rr-eqns), respectively.
+We estimated the daily passage of Chinook into Canadian (CDN) waters using a multi-CU run reconstruction (RR) model, which simultaneously accounts for uncertainty in observations and underlying population processes and allows for the inclusion of incomplete datasets. This model was originally described in @connors2022, and was adapted to allow for time-varying catchability and fit to updated data (including genetics and an externally derived border passage index) through 2024. We separately modelled the dynamics of the nine component Conservation Units (CUs), indexed by $i$, in the Yukon Chinook salmon Stock Management Unit (SMU). Annual, CU-specific border passage was the main parameter of interest estimated by the model, though we also estimated parameters for run timing and catchability. We separately modelled time-varying catchability to two fishing “gears” (index by $g$): fishwheels and sonar, which have been used to derive annual aggregate border passage estimates (fishwheel mark-recapture from 1985--2008; sonar from 2005--2024). Model notation and equations are listed in Table \@ref(tab:tab-rr-params) and \@ref(tab:tab-rr-eqns), respectively. While we refer to this model as a run reconstruction, it could also (perhaps more accurately) be referred to as a border passage reconstruction.
 
 (ref:tab-rr-params) Model notation for multi-CU run-reconstruction model. 
 
@@ -166,6 +166,8 @@ For the Big Salmon CU, which cannot be reliably differentiated with genetics fro
 
 For the Upper Yukon CU we removed the estimated contribution of hatchery fish based on the count of hatchery fish at the Whitehorse Fishway. 
 
+Resulting estimates of spawner abundance by CU, summed across CU, and as previously estimated for the stock aggregate [@connors_estimates_2023] are provide in Table \@ref(tab:tab-spawn-est). Annual aggregate estimates of spawner abundance from our multi-CU reconstructions and previous   reconstructions [@connors_estimates_2023] were, on average, within 6% of each other (~9% in years prior to Eagle sonar, and ~3% in years thereafter).  
+
 \clearpage
 (ref:fig-eagle-RR-fits) Fits of the run-reconstruction model (lines) to daily sonar counts (circles) at Eagle, near the U.S. --Canada border.
 
@@ -182,13 +184,32 @@ knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
 
 \clearpage
 
-(ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fishwheels after accounting for selectivity (open square), fishwheel counts (open green triangle) and the Eagle sonar (open red circle).
+(ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fishwheels after accounting for selectivity (open square), annual sum of daily fishwheel counts (scaled by estimated catchability, open green triangle) and the Eagle sonar (open red circle).
 
 ```{r fig-run-RR-fits, fig.cap = "(ref:fig-run-RR-fits)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-RR-fits.png"))
 ```
 \clearpage
+(ref:tab-spawn-est) Median estimates of spawner abundance by CU, summed across CU ("Aggregate"), and as previously estimated for the stock aggregate (Connors et al. 2022). 
+```{r tab-spawn-est, results='asis'}
+spawntable <- read.csv(here::here("analysis/data/generated/spawn-table.csv"))
+names(spawntable)[1] <- "Conservation Unit or stock aggregate"
 
+spawntable |> 
+  dplyr::mutate_all(function(x){gsub("\\\\.", " ", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       escape = FALSE,
+                     caption = "(ref:tab-spawn-est)", 
+                     repeat_header = TRUE,
+                     linesep = "\\addlinespace") |>
+    kableExtra::column_spec(1, width = "7cm")|>
+    kableExtra::column_spec(2, width = "2cm")|>
+    kableExtra::column_spec(3, width = "2cm") 
+```
+
+\clearpage
 
 # SPAWNER RECRUITMENT MODELS  {#app:third-appendix}
 
