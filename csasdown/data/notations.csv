@@ -1,8 +1,8 @@
 Symbol,Description
 Indices,
 i,"Conservation Unit, $i$=1, $\ldots$ ,9"
-y,"Year, y=1985, $\ldots$ ,2016"
-d,"Julian day, d=160, $\ldots$ ,285"
+y,"Year, $y$=1985, $\ldots$ ,2016"
+d,"Julian day, $d$=160, $\ldots$ ,285"
 g,"Gear type, 1=Sonar, 2=Fish Wheel"
 Data and inputs,
 x_{igyd},Observed CU composition by gear/year/day
