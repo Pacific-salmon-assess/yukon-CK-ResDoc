@@ -603,7 +603,7 @@ Once the scale of the equilibrium population fished at $F_{max}$ was obtained fr
 
 and calculated totals for harvest and spawning escapement by summing over ages and sexes. 
 
-We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological reference points $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
+We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological benchmarks $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
 ```{r deps}
 source("../analysis/R/load.R")
 ```
