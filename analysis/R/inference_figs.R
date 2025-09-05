@@ -346,10 +346,10 @@ a.yrs.all |>
   geom_hline(yintercept = 1, lty=2, col = "grey") +
   labs(y ="Productivity (\U03B1)", x = "Brood year")+
   guides(color=guide_legend(title="Conservation Unit")) +
-  theme(legend.position = c(0.75,0.75),
+  theme(legend.position = c(0.62,0.75),
         plot.margin = margin(60,60,10,60),
         legend.text = element_text(size=7),
-        axis.title = element_text(size=8))
+        axis.title = element_text(size=12))
 
 my.ggsave(here("analysis/plots/SR-models/changing_productivity.PNG"))
 ggsave(here("csasdown/figure/changing_productivity.PNG"), height = 550*2,
@@ -984,8 +984,8 @@ b <- ggplot(SMU_RR |>
              filter(Counts == "Escapement")) +
   geom_ribbon(aes(x = Year, ymin = Lower95./1000, ymax = Upper95./1000), col = c('#999999'),alpha=0.25) +
   geom_line(aes(x = Year, y = Median50./1000, col = Counts), size = 1, col="black") +
-  geom_hline(yintercept = 19, col = "darkred", lty=2, lwd = 1) +
-  geom_hline(yintercept = 95, col = "darkgreen", lty=2, lwd = 1) +
+  geom_hline(yintercept = 31, col = "darkred", lty=2, lwd = 1) +
+  geom_hline(yintercept = 86, col = "darkgreen", lty=2, lwd = 1) +
   ylab("Spawners (000s)") +
   xlab("Year") +
   theme_sleek() +
@@ -996,7 +996,7 @@ b <- ggplot(SMU_RR |>
 
 c <- ggplot(SMU_RR |>
              filter(Counts == "Exploitation")) +
-  geom_hline(yintercept = 35, col = "darkred", lty=2, lwd=1) +
+  geom_hline(yintercept = 37, col = "darkred", lty=2, lwd=1) +
   geom_ribbon(aes(x = Year, ymin = Lower95., ymax = Upper95.), col = c('#999999'),alpha=0.25) +
   geom_line(aes(x = Year, y = Median50.), size = 1, col = "black") +
   ylab("Exploitation rate (%)") +
@@ -1182,7 +1182,9 @@ b <- ggplot(custom.bench |> filter(), aes(Smsr/1000, fill = CU_pretty, color = C
   theme(axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         legend.title=element_blank(),
-        legend.position="none") +
+        legend.position=c(0.68, 0.65)) +
+  guides(fill=guide_legend(ncol=2, theme = theme(legend.byrow = TRUE)),
+         colour=guide_legend(ncol=2, theme = theme(legend.byrow = TRUE))) +
   scale_x_continuous(limits = c(0, 25))
 
 c <- ggplot(custom.bench |> filter(), aes(Umsy, fill = CU_pretty, color = CU_pretty)) +
@@ -1206,12 +1208,11 @@ par.long <- par.posts |>
 
 a <- ggplot(par.long, aes(alpha, fill = CU_pretty, color = CU_pretty)) +
   geom_density(alpha = 0.3,bw=0.4) +
-  theme(legend.position = "bottom") +
   labs(x = "Intrinsic productivity", y = "Posterior density") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   theme_sleek()   +
-  theme(legend.position = c(0.8,0.625),
+  theme(legend.position = "none",
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         legend.title=element_blank()) +
