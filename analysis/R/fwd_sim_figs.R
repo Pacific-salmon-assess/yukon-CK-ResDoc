@@ -63,6 +63,8 @@ alpha.posts |> filter(scenario != "stationary") |>
   theme(legend.position = "bottom") +
   geom_vline(xintercept = 0, lty=2, col="grey") +
   scale_colour_grey(aesthetics = c("colour", "fill"),start = 0.3, end = 0.6) +
+  guides(fill=guide_legend(nrow=2),
+         colour=guide_legend(nrow=2)) +
   labs(y = "", x = expression(Log(alpha)), fill="Productivity Scenario", color="Productivity Scenario")
 
 my.ggsave(here("analysis/plots/fwd-sim/OM-productivity-scenarios.PNG"))
