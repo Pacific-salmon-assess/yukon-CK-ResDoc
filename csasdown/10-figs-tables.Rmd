@@ -134,7 +134,7 @@ knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
 ```
 \clearpage
 
-(ref:fig-projections) Projected spawner abundance over time (median and 50th percentiles) by Conservation Unit under three alternative fishery management measures, and the reference (base case) operating model productivity scenario. The last 6 years of observed spawners are shown prior to projections. Red and green dashed lines correspond to proposed lower and upper biological reference points for each CU (20%$S_{MSR}$ and $S_{MSR}$, respectively) based on analyses that explicitly took demographic characteristics into account. 
+(ref:fig-projections) Projected spawner abundance over time (median and 50th percentiles) by Conservation Unit (CU) under three alternative fishery management measures, and the reference (base case) operating model productivity scenario. The last 6 years of observed spawners are shown prior to projections. Red and green dashed lines correspond to proposed lower and upper biological benchmarks for each CU (20%$S_{MSR}$ and 40%$S_{MSR}$, respectively) from spawner-recruitment models with stationary productivity. Salmon colored dashed lines are illustrative rebuilding targets based on analyses that explicitly took demographic characteristics into account ($S_{MSR}$ based on demographic characteristics from 2019--2024). 
 
 ```{r fig-projections, fig.cap = "(ref:fig-projections)"}
 knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
@@ -142,7 +142,7 @@ knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
 
 \clearpage
 
-(ref:fig-ER-tradeoff-ref) Projected consequences of a range of fixed exploitation rates from the closed loop simulations under the 'reference' (base case) operating model scenario. (a) Mean number of Conservation Units that fall above, below, and between their reference points (20% $S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over 1000 iterations. (b) Mean spawner abundance and (c) mean harvest, by Conservation Units, over all simulation years (2025--2050).
+(ref:fig-ER-tradeoff-ref) Projected consequences of a range of fixed exploitation rates from the closed loop simulations under the 'reference' (base case) operating model scenario. (a) Mean number of Conservation Units that fall above, below, and between their lower and upper biological benchmarks (20% $S_{MSR}$ and 40%$S_{MSR}$ based on analyses that assume stationary productivity) and illustrative rebuilding target ($S_{MSR}$ based on demographic characteristics from 2019--2024) in the final simulated year (2050), over 1000 replicate simulations. (b) Mean spawner abundance and (c) mean harvest, by Conservation Units, over all simulation years (2025--2050).
 
 ```{r fig-ER-tradeoff-ref, fig.cap = "(ref:fig-ER-tradeoff-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png"))
@@ -150,7 +150,7 @@ knitr::include_graphics(here::here("csasdown/figure/fixed_ER_tradeoffs_TVA.png")
 
 \clearpage
 
-(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030--2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between reference points (20%$S_{MSR}$ and $S_{MSR}$ based on analyses that explicitly took demographic characteristics into account) in the final simulated year (2050), over replicate simulations.
+(ref:fig-perf-ref) Performance of alternative harvest control rules the reference (base case) operating model productivity scenario. (a) Median (coloured bars) and 50% quantiles (vertical lines) of performance measures calculated over the years 2030--2050 and 1000 replicate simulations. (b) Mean number of Conservation Units that fall above, below, and between their lower and upper biological benchmarks (20% $S_{MSR}$ and 40%$S_{MSR}$ based on analyses that assume stationary productivity) and illustrative rebuilding target ($S_{MSR}$ based on demographic characteristics from 2019--2024) in the final simulated year (2050), over 1000 replicate simulations.
 
 ```{r fig-perf-ref, fig.cap = "(ref:fig-perf-ref)"}
 knitr::include_graphics(here::here("csasdown/figure/perf_metrics_status_TVA.png"))
@@ -457,7 +457,7 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) Biological reference points based on estimated egg mass-recruitment relationships by Conservation Unit. Values are in thousands of fish, and shown are reference points assuming different age, size and sex composition observed in the first six years of time series ("Early"), last six years of time series ("Recent"), or averaged over all years .
+(ref:demo-ref-pts) Biological benchmarks based on estimated egg mass-recruitment relationships by Conservation Unit. Values are in thousands of fish, and shown are reference points assuming different age, size and sex composition observed in the first six years of time series ("Early"), last six years of time series ("Recent"), or averaged over all years .
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
@@ -665,8 +665,8 @@ df <- data.frame(Metric = c("Escapement",
                                  "Average annual harvest ($H$) targeted to take place in Canada after accounting for harvest sharing provisions with Alaska",
                                  "Average annual harvest rate ($U$) for stock aggregate across replicate simulations and years",
                                  "Proportion of years across replicate simulations and years in which the simulated harvest control rule would cause the fishery to close (total allowable catch [TAC] = 0)", 
-                                 "Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological reference point, defined as 20% of the spawner abundance associated with maximum returns  (20%$S_{MSR}$)",
-                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological reference point, defined as spawner abundance associated with maximum returns when demographic characteristics over most recent decade are explicitly taken into account (40%$S_{MSR}$)"),
+                                 "Number of Conservation Units (CUs; $i$) with spawner abundance ($S$) at end of simulations that falls below CU specific lower biological benchmark, defined as 20% of the spawner abundance associated with maximum returns  (20%$S_{MSR}$) as estimated from spawner recruitment models with stationary productivity",
+                                 "Number of Conservation Units (CUs) with spawner abundance at end of simulations that is above CU specific upper biological benchmark, defined as 40% of the spawner abundance associated with maximum returns (40%$S_{MSR}$) as estimated from spawner recruitment models with stationary productivity"),
                  Equation = c(
                    "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}S_{i,t}}{t_2-t_1+1}$", 
                               "$\\frac{\\sum_i\\sum_{\\substack{n_{rep}\\\\n=1}}\\sum_{\\substack{t_1\\\\t_2}}H_{i,t}}{t_2-t_1+1}$", 
