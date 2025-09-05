@@ -122,7 +122,7 @@ knitr::include_graphics(here::here("csasdown/figure/hatch_prop.png"))
 knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 ```
 
-(ref:fig-prod-scenarios) Alternative operating model productivity scenarios considered in the closed-loop simulations including the reference (base case) scenario, the 10-year average of recent $\alpha$ (2007--2017 brood years), and robustness scenario, the most recent $\alpha$ (2017 brood year).
+(ref:fig-prod-scenarios) Alternative operating model productivity scenarios considered in the closed-loop simulations including the reference (base case) scenario, the average $\alpha$ of the most recent fully observed generation (2013--2018 brood years), and robustness scenario, the most recent $\alpha$ (2017 brood year).
 ```{r fig-prod-scenarios, fig.cap = "(ref:fig-prod-scenarios)"}
 knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
@@ -134,7 +134,7 @@ knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
 ```
 \clearpage
 
-(ref:fig-projections) Projected spawner abundance over time (median and 50th percentiles) by Conservation Unit (CU) under three alternative fishery management measures, and the reference (base case) operating model productivity scenario. The last 6 years of observed spawners are shown prior to projections. Red and green dashed lines correspond to proposed lower and upper biological benchmarks for each CU (20%$S_{MSR}$ and 40%$S_{MSR}$, respectively) from spawner-recruitment models with stationary productivity. Salmon colored dashed lines are illustrative rebuilding targets based on analyses that explicitly took demographic characteristics into account ($S_{MSR}$ based on demographic characteristics from 2019--2024). 
+(ref:fig-projections) Projected spawner abundance over time (median and 50th percentiles) by Conservation Unit (CU) under three alternative fishery management measures, and the reference (base case) operating model productivity scenario. The last 6 years of observed spawners are shown prior to projections. Red and green dashed lines correspond to proposed lower and upper biological benchmarks for each CU (20%$S_{MSR}$ and 40%$S_{MSR}$, respectively) from spawner-recruitment models with stationary productivity. Salmon colored dashed lines are CU rebuilding targets based on analyses that explicitly took demographic characteristics into account ($S_{MSR}$ based on demographic characteristics from 2019--2024). 
 
 ```{r fig-projections, fig.cap = "(ref:fig-projections)"}
 knitr::include_graphics(here::here("csasdown/figure/S-fwd_simple_grp_TVA.png"))
@@ -316,7 +316,7 @@ ref.df <- data.frame(Metric = c("Limit Reference Point (LRP) ",
                        Value = c("One or more component CUs for the MSU in Wild Salmon Policy Red status zone",
                                  "86,000 spawners; median estimate of $S_{MSR}$ for the SMU based on demographic characteristics of spawners (and impacts on total egg mass) in most recent decade (2009-2019) at time of analysis (Connors et al. 2022)",
                                  "37%; Harvest rate associated with MSY ($U_{MSY}$) for the least productive CU in the SMU",
-                                 "25,000 spawners; average SMU spawner abundance associated with no greater than 50% chance of at least one CU falling in the Wild Salmon Policy Red status zone"),
+                                 "31,000 spawners; average SMU spawner abundance associated with no greater than 50% chance of at least one CU falling in the Wild Salmon Policy Red status zone"),
                      Rationale = c("Required under Fish Stock Provision of \\textit{Fisheries Act}. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
                                    "Required under Fish Stock Provision of \\textit{Fisheries Act}. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
                                    "Required under Fish Stock Provision of \\textit{Fisheries Act}. Federal and international fishery policy typically set maximum fishery removals to be less than or equal to those associated with $U_{MSY}$. Propose this value be from least productive CU to align with Wild Salmon Policy objective to take biodiversity at the scale of CUs into account",
@@ -858,7 +858,7 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 
 \clearpage
-(ref:tab-ref-sim-params) Fishery simulation parameters under the reference scenario.
+(ref:tab-ref-sim-params) Parameters upon which closed-loop simulation model to assess impact of possible future fishery management measures was conditioned. $alpha$ values are those under the reference scenario (most recent generation productivity; 2013-2018), and $alpha$ values for alternative (robustness) productivity scenarios are found in Table \@ref(tab:OM-scenarios).
 
 ```{r tab-ref-sim-params, results="asis"}
 sim.pars <- data.frame(t(read.csv(here("analysis/data/generated/sim_parsTVA.csv"))))[-1,]
@@ -874,7 +874,7 @@ sim.pars.process <- sim.pars |>
   mutate(across(everything(), ~as.character(.))) |>
   mutate(par = rownames(sim.pars)) |>
   mutate(value = if_else(grepl("^alpha|beta|pi", par), 
-                         paste(median, "(", q_25, ",", q_75, ")"),
+                         paste0(median, " (", q_25, ",", q_75, ")"),
                          median)) |>
   mutate(CU_id = if_else(grepl("^alpha|beta", par),
                          gsub("\\D", "", par), NA)) |>
