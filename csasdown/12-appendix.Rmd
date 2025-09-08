@@ -184,7 +184,7 @@ knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
 
 \clearpage
 
-(ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fishwheels after accounting for selectivity (open square), annual sum of daily fishwheel counts (scaled by estimated catchability, open green triangle) and the Eagle sonar (open red circle).
+(ref:fig-run-RR-fits) Total border passage estimates based on the run-reconstruction model (grey circles with bars indicating the central 95% confidence interval), mark-recapture based estimates of run size from fish sampled from fishwheels after accounting for selectivity (open square), annual sum of daily fishwheel counts (scaled by estimated catchability, open green triangle) and the Eagle sonar (red circle).
 
 ```{r fig-run-RR-fits, fig.cap = "(ref:fig-run-RR-fits)"}
 knitr::include_graphics(here::here("csasdown/figure/CU-RR-fits.png"))
@@ -217,7 +217,7 @@ To characterize Yukon Chinook salmon CU spawner-recruitment relationships we fit
 
 These sources of information, along with measures of observation variance, were externally derived from the multi-CU run-reconstructions described in Appendix \@ref(app:first-appendix) for spawner abundance and published estimates for catch and age composition [@connors_estimates_2023], updated through 2024.
 
-An alternative to the sequential modelling approach we took would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model. However, we note that previous research found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
+An alternative to the sequential modelling approach we took would have been to integrate the run-reconstructions and spawner-recruitment analyses into a single model. However, we note that previous research has found that as long as the spawner-recruitment model carries forward uncertainty in input estimates from the run-reconstruction models, sequential analyses like those that we conducted (which still do not account for parameter covariance among models) produce very similar estimates of abundance, population dynamics parameters, and management reference points, both in terms of point estimates and uncertainty [@staton-etal-2017].
 
 These models could have also been fit in a multi-population framework [@connors_incorporating_2020; @staton-etal-2020]. However, these integrated models tend to yield very high estimates of recruitment variability and negative estimates of recruitment autocorrelation which appear to be spuriously too high  and low, respectively, and which could lead to biases in other model parameters in manners that are difficult to predict [@staton-etal-2020].
 
@@ -312,7 +312,7 @@ Direct estimates of harvest by CU do not exist because most harvest occurs in mi
 
 and were assumed to have a CV equal to that of the joint variability in spawner abundance and aggregrate harvest rate estimates which was log-normally distributed and converted to log-normal variance as per Equ. \@ref(eq:get-sigm).
 
-Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs (\@ref(sec:sixth-appendix)). 
+Age composition by return year at the CU scale was available from fish passing from the U.S. into Canada most years from 2008 to present, but samples sizes are small because not all fish that were aged have corresponding genetic stock identification information, and vice-versa. In earlier years (i.e., pre 2008) it was often difficult to match individual scale samples used for ageing with scales that had genetic material extracted making any inference on CU age composition unreliable. In addition, while these sources of data provide insights into age composition of fish prior to spawning they may not be representative of total return age composition because harvest can be size selective and these samples are taken after the bulk of harvest occurs. We therefore made the simplifying assumption that estimates of age composition by return year, taken from an integrated run-reconstruction and spawner-recruitment model that explicitly takes age composition in harvest and spawners into account [@connors_estimates_2023], were a reasonable proxy for CU specific age compositions. We felt this was a reasonable assumption because CU specific border age composition from 2008 to present tended to be very similar among CUs (Figure \@ref(fig:fig-age-compare)). 
 
 These age composition by return year estimates were assumed to be observed with multinomial sampling error, where uncertainty in age proportions in a given year was generated by specifying an "effective sample size" (ESS) of 50 pre-2007 and 100 thereafter. These ESSs are lower than the likely observed sample sizes to account for the non-independence of observation within a given sampling event [@maunder_review_2011] and were chosen to reflect the reduced confidence in age composition data prior to the Eagle test fishery sampling program which was standardized beginning in 2007.
 
@@ -351,7 +351,7 @@ alpha <- pars |> filter(grepl("^ln_alpha", X)) |>
   group_by(CU) |> 
   summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
   mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
-  mutate(par = "alpha", value = paste(mean, "(", sd, ")")) |>
+  mutate(par = "alpha", value = paste(mean, "(",sd,")")) |>
   select(-c(mean,sd))
   
 
@@ -359,7 +359,7 @@ alpha_dev <- pars |> filter(grepl("^alpha_dev", X)) |>
   group_by(CU) |> 
   summarize(mean = mean(X50.), sd=sd(X50.), n_eff=mean(n_eff), Rhat=mean(Rhat)) |>
   mutate(mean = round(mean, 2), sd=round(sd, 2)) |>
-  mutate(par = "alpha_dev", value = paste(mean, "(", sd, ")")) |>
+  mutate(par = "alpha_dev", value = paste(mean, "(",sd,")")) |>
   select(-c(mean,sd))
 
 pars <- pars |> filter(grepl("^beta", X)) |> 
@@ -391,7 +391,7 @@ pars |>
                      caption = "(ref:tab-tva-pars)", 
                      repeat_header = TRUE,
                      align = "llc")  |>
-  kableExtra::column_spec(3, width = "2cm")|>
+  kableExtra::column_spec(3, width = "2.5cm")|>
   kableExtra::column_spec(4, width = "1.5cm")|>
   kableExtra::column_spec(5, width = "1.5cm") |>
   kableExtra::collapse_rows(columns=1, latex_hline = "major")
@@ -399,7 +399,7 @@ pars |>
 ```
 
 
-## ESCAPEMENT QUALITY
+## DEMOGRAPHIC CHANGE
 The spawner-recruitment models described in the previous section assumed that demographic attributes of spawning escapement have not changed over time such that reproductive output is homogeneous among individuals and has been static over the past 40 years. However, changes in age, sex, and length-at-age of returning Chinook salmon, including in the Yukon [@lewis_changes_2015; @ohlberger_demographic_2018; @ohlberger_reproductive_2020], have been widely observed, suggesting concurrent declines in per capita reproductive output as smaller females carry disproportionately fewer eggs of a smaller mass compared to larger females (i.e., fecundity and total egg mass scale exponentially with female size) [@ohlberger_reproductive_2020]. While changes in age, sex, and length-at-age (aka “escapement quality”) are not typically considered when deriving spawner-recruitment based reference points and setting escapement goals, previous research on Chinook salmon in the Yukon and Kuskokwim River of western Alaska suggests that failing to account for declines in escapement quality may result in underestimating the escapement needed to maximize long-term sustainable yield or recruitment [@staton_incorporating_2021;@connors_estimates_2023]. In addition, simulation analyses suggest that accounting for the consequences of declining "escapement quality" in fishery management (via reference points) can reduce conservation risks relative to assessment frameworks that do not take demographic change into account [@ohlberger2025accounting].  
 
 To evaluate the potential consequences of changes in escapement quality over time (which we operationalized as total egg mass) we translated time trends in sex ratios, age composition, and size-at-age to annual estimates of total egg mass production. We chose to focus on total egg mass instead of eggs because it it tightly correlated with egg energy content [@ohlberger_reproductive_2020] and may be a better proxy for female reproductive output than egg number. Large females produce not only more but also larger eggs compared to small females [@ohlberger_reproductive_2020]. 
@@ -490,7 +490,7 @@ We fit the spawner-recruitment models in a Bayesian estimation framework with St
 We sampled from 4 chains with 3000 iterations each and discarded the first 1000 as warm-up. 
 We assessed chain convergence visually via trace plots and by ensuring that $\hat{R}$ [potential scale reduction factor, @vehtari2021rank] was generally less than 1.1 and that the effective sample size was greater than 400, or 10% of the iterations. Posterior predictive checks were also used to make sure that the model returned data similar to the data used to fit parameters. A summary of model diagnostics is available online [here](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). Most models had leading parameters that were well estimated but the stationary spawner-recruitment model fit to data from the Teslin CU had relatively low effective sample size suggesting posterior samples were not well mixed with high autocorrelation. This was likely a result of the strong temporal pattern in recruitment residuals as evidenced by high effective samples sizes for the model that allowed for variation in intrinsic productivity over time.     
 
-
+\clearpage
 (ref:tab-priors) Prior probability distributions for leading spawner-recruitment model parameters. Note that the egg mass and recruitment model shared the same priors except for $ln(\alpha)$ which was given a prior of $\sim N(-6,2)$ with bounds $[-10,5]$ because the parameter was on the scale of grams and not individual fish.
 ```{r tab-priors, results = "asis"}
 priors.df <- data.frame(Parameter = c("$ln(\\alpha)$", 
@@ -611,7 +611,7 @@ source("../analysis/R/load.R")
 
 (ref:fig-bench-compare) Comparison of alternative (a) lower and (b) upper biological benchmarks as well as (c) estimates of maximum returns ($S_{MSR}$) or equilibrium population size ($S_{EQ}$) across CUs. The numeric value in legends refers to a percentage of the benchmark and those labelled "egg-mass" are derived from analyses that account for demographic change and are based on demographic characteristics observed over the most recent generation (2019-2024). Bars are medians and whiskers are upper 95th percentiles.
 
-```{r fig-bench-compare, fig.cap = "(ref:fig-bench-compare)"}
+```{r fig-bench-compare, fig.cap = "(ref:fig-bench-compare)", out.width = "70%"}
 knitr::include_graphics(here::here("csasdown/figure/bench-compare.png"))
 ```
 # SENSITIVITY ANALYSES {#app:sixth-appendix}
@@ -634,7 +634,7 @@ knitr::include_graphics(here::here("csasdown/figure/blind-age-by-yrs.png"))
 ## VULNERABILITY TO HARVEST
 Our reconstructions of CU scale harvests, and subsequent population dynamics modelling and estimation of biological benchmarks, relied on the assumption that all CUs have historically experienced the same harvest rates. While this was a necessary assumption due to a lack of routine genetic assignment of fish sampled in fisheries to CUs, a multi-year study of genetic composition of fish harvested in the Alaskan portion of the Yukon in the mid to late 2000s allowed us to qualitatively examine this assumption. From 2005 to 2010 Chinook salmon were sampled in commercial and subsistence fisheries in the Alaskan portion of the Yukon River and estimates of genetic stock composition were derived for stock groupings that consisted of either individual or groups of CUs [e.g., @DeCovichHarvStockComp2011]. For each year, and river district, we calculated harvest by CU group as the product of total Canadian-origin Yukon Chinook harvest and CU group composition (\@ref(eq:obs-harvest)). We then summed these estimates across districts to calculate the total CU group composition for Canadian-origin Yukon Chinook harvested in Alaska for a given year, and compared it to estimates of CU group composition at the Alaska-Yukon Territory border based on the border passage reconstructions described in this document (Appendix \@ref(app:second-appendix)).
 
-For these few years where genetic sampling of harvest in Alaska allowed for a comparison of CU composition in both border passage and harvest there was no evidence of consistent over/under-representation of individual CUs in Alaskan harvest, though in some years for some CU groups there were qualitative differences in representation (Figure \@ref(fig:fig-CU-harv-compare). This suggests that overall, across years with data, CUs were generally equally vulnerable to harvest in Alaskan fisheries.
+For these few years where genetic sampling of harvest in Alaska allowed for a comparison of CU composition in both border passage and harvest there was no evidence of consistent over/under-representation of individual CUs in Alaskan harvest, though in some years for some CU groups there were qualitative differences in representation (Figure \@ref(fig:fig-CU-harv-compare)). This suggests that overall, across years with data, CUs were generally equally vulnerable to harvest in Alaskan fisheries.
 
 (ref:fig-CU-harv-compare) Conservation Unit group composition of Chinook salmon sampled in commercial and subsistence fisheries in Alaska ("Harvest") and fish sampled in test fisheries at the Alaska-Yukon Territory border ("Border"). The "Border" CU grouping includes the Northern Yukon and White and tributaries CUs, the "Pelly" grouping includes the Pelly and Stewart CUs, the "Carmacks" grouping includes the Nordenskiold, Middle Yukon, Big Salmon and Teslin CUs, and the "Takhini" grouping includes the Upper Yukon CU.  
 

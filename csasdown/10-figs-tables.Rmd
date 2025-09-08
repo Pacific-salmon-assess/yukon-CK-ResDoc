@@ -16,14 +16,14 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
-(ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table 3.
+(ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table 2.
 
 ```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
 
 \begin{landscapepage}
-(ref:fig-trib-spawn) Estimates of spawner abundances over time by tributary assessment project. For more details on each assessment project see Table \@ref(tab:assess-proponents).
+(ref:fig-trib-spawn) Estimates of spawner abundances over time by tributary assessment project. For more details on each assessment project see Table 2.
 
 ```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)", out.width = "90%"}
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
@@ -37,12 +37,6 @@ knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 knitr::include_graphics(here::here("csasdown/figure/CU-run-timing.png"))
 ```
 
-
-(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents).
-
-```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
-knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
-```
 
 \clearpage
 (ref:fig-CU-spawn) Reconstructed spawner abundance over time by Conservation Unit (median and 95% confidence intervals).
@@ -60,18 +54,24 @@ knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"
 ```
 \clearpage
 
+(ref:fig-trib-vs-CU-spawn) Relationship between estimates of spawner abundance from select tributary scale assessment projects and run-reconstruction based estimates at the Conservation Unit scale. Linear model fit shown in grey. For more details on each assessment project and corresponding Conservation Units see Table \@ref(tab:assess-proponents).
+
+```{r fig-trib-vs-CU-spawn, fig.cap = "(ref:fig-trib-vs-CU-spawn)"}
+knitr::include_graphics(here::here("csasdown/figure/RR-vs-trib-spawners.png"))
+```
+\clearpage
+
+(ref:fig-par-ref-hist) Conservation Unit specific posterior distributions of estimates of intrinsic productivity (a;$\alpha$ in units of recruits-per-spawner), spawner abundance associated with maximum recruitment (b; $S_{MSR}$), and exploitation rate associated with maximum sustainable yield (c; $U_{MSY}$)  . 
+
+```{r fig-par-ref-hist, fig.cap = "(ref:fig-par-ref-hist)", out.width = "70%"}
+knitr::include_graphics(here::here("csasdown/figure/par-ref-hist.png"))
+```
+
 (ref:fig-CU-SR) Relationship between spawner abundance and recruitment by Conservation Units. Individual spawner-recruitment pairs are color coded according to brood year with lines representing 80% credible intervals. The thick black line is the predicted median relationship between spawner abundance and recruitment along with 80% credible intervals in the shaded region. The replacement line, where spawners equal recruits, is shown in grey. To aid in visualizing uncertainty we use 80% credible intervals here instead of 95%.
 
 ```{r fig-CU-SR, fig.cap = "(ref:fig-CU-SR)"}
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
-
-(ref:fig-par-ref-hist) Conservation Unit specific posterior distributions of estimates of intrinsic productivity (a;$\alpha$ in units of recruits-per-spawner), spawner abundance associated with maximum recruitment (b; $S_{MSR}$), and exploitation rate associated with maximum sustainable yield (c; $U_{MSY}$)  . 
-
-```{r fig-par-ref-hist, fig.cap = "(ref:fig-par-ref-hist)"}
-knitr::include_graphics(here::here("csasdown/figure/par-ref-hist.png"))
-```
-
 
 (ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Salmon Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
 
@@ -210,38 +210,6 @@ smucutable |>
 
 \clearpage
 
-(ref:tab-CU-gsi-annual-summary) Annual proportion of total Chinook salmon passing from the U.S. into Canada in the Mainstem Yukon River for each Conservation Unit over time. These estimates are based on the raw genetic stock identification assignments. Note that this accounts for genetic assignment uncertainty (i.e., sums across all probabilities and the re-scales by sample size for a given year) but is unweighted by border passage (i.e., does not account for incomplete sampling of return migration; Figure \@ref(fig:fig-gsi-samples)).
-```{r tab-CU-gsi-annual-summary, results="asis"}
-
-cugsitable <- read.csv(here::here("csasdown/data/CU-gsi-annual-summary.csv"))
-names(cugsitable)[2:ncol(cugsitable)] <- c("Northern Yukon R. and tribs.", 
-                                            "White and tribs.", "Stewart",  
-                                            "Middle Yukon R. and tribs.","Pelly",
-                                            "Nordenskiold",
-                                            "Upper Yukon R.","Yukon R. Teslin Headwaters")
-
-
-cugsitable |> 
-  dplyr::mutate_all(function(x){round(x, 3)}) |>
-  csasdown::csas_table(format = "latex",
-                       #escape = FALSE,
-                       caption = "(ref:tab-CU-gsi-annual-summary)",
-                       repeat_header = TRUE) |>
-  kableExtra::column_spec(1, width = "0.75cm")|>
-    kableExtra::column_spec(2, width = "1.5cm")|>
-    kableExtra::column_spec(3, width = "1.5cm")|>
-    kableExtra::column_spec(4, width = "1.5cm")|>
-    kableExtra::column_spec(5, width = "1.5cm")|>
-    kableExtra::column_spec(6, width = "1.5cm")|>
-    kableExtra::column_spec(7, width = "2cm")|>
-    kableExtra::column_spec(8, width = "1.5cm")|>
-    kableExtra::column_spec(9, width = "2cm") 
-
-
-```
-
-
-\clearpage
 \begin{landscapepage}
 (ref:assess-proponents) Adult Chinook salmon assessment projects in the Canadian portion of the Yukon River basin.
 
@@ -315,7 +283,7 @@ ref.df <- data.frame(Metric = c("Limit Reference Point (LRP) ",
                                        "Aggregate SMU spawner abundance below which fishery removals should be limited to the maximum extent possible"),
                        Value = c("One or more component CUs for the MSU in Wild Salmon Policy Red status zone",
                                  "86,000 spawners; median estimate of $S_{MSR}$ for the SMU based on demographic characteristics of spawners (and impacts on total egg mass) in most recent decade (2009-2019) at time of analysis (Connors et al. 2022)",
-                                 "37%; Harvest rate associated with MSY ($U_{MSY}$) for the least productive CU in the SMU",
+                                 "36%; Harvest rate associated with MSY ($U_{MSY}$) for the least productive CU in the SMU",
                                  "31,000 spawners; average SMU spawner abundance associated with no greater than 50% chance of at least one CU falling in the Wild Salmon Policy Red status zone"),
                      Rationale = c("Required under Fish Stock Provision of \\textit{Fisheries Act}. Reflects requirement for salmon LRPs to be aligned with Wild Salmon Policy objective of preserving biodiversity of salmon at the scale of CUs (Holt et al. 2023)",
                                    "Required under Fish Stock Provision of \\textit{Fisheries Act}. Reference points linked to stock size greater than those associated with MSY, and that take demographics into account, have been argued to be more aligned with indigenous and ecosystem based principles (Reid et al. 2022; Frid et al 2023). Consistent with use of $S_{MSR}$ as border passage target under current Yukon River 7-year agreement",
@@ -457,7 +425,7 @@ bench.pars |>
 
 \clearpage
 
-(ref:demo-ref-pts) Biological benchmarks based on estimated egg mass-recruitment relationships by Conservation Unit. Values are in thousands of fish, and shown are reference points assuming different age, size and sex composition observed in the first six years of time series ("Early"), last six years of time series ("Recent"), or averaged over all years .
+(ref:demo-ref-pts) Biological benchmarks based on estimated egg mass-recruitment relationships by Conservation Unit. Values are in thousands of fish, and shown are biological benchmarks assuming different age, size and sex composition observed in the first six years of time series ("Early"), last six years of time series ("Recent"), or averaged over all years .
 
 ```{r demo-ref-pts, results = "asis"}
 demo.pars <- read.csv(here::here('analysis/data/generated/demographic_parameters.csv'))
@@ -597,9 +565,9 @@ HCR.df <- data.frame(HarvestControlRule = c("Moratorium",
                                                "IMEG w/ harvest cap", 
                                                "Precationary Approach (PA) alternative"), 
 
-                        Description = c("Current agreement between ADF&G and DFO (aka 'moratorium') that limits directed harvest unless border passage is expected to exceed 71,000 fish, whcih for simplicity is operatioanlized as a forecasted run-size that exceeds 71,000 \n", 
+                        Description = c("Current agreement between ADF&G and DFO (aka 'moratorium') that limits directed harvest unless border passage is expected to exceed 71,000 fish, which for simplicity is operationalized as a forecasted run-size that exceeds 71,000 \n", 
                                      "Interim Management Escapement goal (IMEG) that was in place prior to the current moratorium. At forecasts below 42,500 fish (lower bound of escapement goal) no directed harvest and target harvest equal to 'surplus' if forecast exceeds escapement goal \n", 
-                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~37%) \n", 
+                                     "Current moratorium unless run-sizes are forecast to exceed 71,000 fish in which case there is a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit (~36%) \n", 
                                      "Interim Management Escapement goal with a harvest rate cap at large run-sizes that is equal to $U_{MSY}$ of the least productive Conservation Unit  \n",
                                      "Harvest Control Rule that is consistent with DFO's Precautionary Approach Framework (DFO 2009): no harvest below lower fishery reference point (31,000) with progressive increase in allowable harvest rate up to maximum equal to $U_{MSY}$ of the least productive Conservation Unit when run-sizes reach spawner abundances associated with the Upper Stock Reference Point (86,000)"))
 
@@ -615,6 +583,59 @@ HCR.df |>
                      linesep = "\\addlinespace") |>
     kableExtra::column_spec(1, width = "4cm")|>
     kableExtra::column_spec(2, width = "10cm")
+```
+\clearpage
+(ref:tab-ref-sim-params) Parameters upon which closed-loop simulation model to assess impact of possible future fishery management measures was conditioned. $\alpha$ values are those under the reference scenario (most recent generation productivity; 2013-2018), and $\alpha$ values for alternative (robustness) productivity scenarios are found in Table \@ref(tab:OM-scenarios). Mean age-at-maturity probabilities ($p$s) correspond to ages 4-7.
+
+```{r tab-ref-sim-params, results="asis"}
+sim.pars <- data.frame(t(read.csv(here("analysis/data/generated/sim_parsTVA.csv"))))[-1,]
+names(sim.pars) <- c("q_25", "median", "q_75", "mean")
+
+sim.pars <- sim.pars |>
+  mutate(across(everything(), ~as.numeric(.)))
+
+sim.pars[grepl("^beta", rownames(sim.pars)),] <- sim.pars[grepl("^beta", rownames(sim.pars)),]*10000 # scale beta
+
+sim.pars.process <- sim.pars |>
+  mutate(across(everything(), function(x){round(x, 2)})) |>
+  mutate(across(everything(), ~as.character(.))) |>
+  mutate(par = rownames(sim.pars)) |>
+  mutate(value = if_else(grepl("^alpha|beta|pi", par), 
+                         paste0(median, " (", q_25, ",", q_75, ")"),
+                         median)) |>
+  mutate(CU_id = if_else(grepl("^alpha|beta", par),
+                         gsub("\\D", "", par), NA)) |>
+  left_join(data.frame(CU_id=as.character(1:9), CU=CU_name_lookup$CU_pretty), by = "CU_id") |>
+  mutate(par = if_else(grepl("^alpha|beta", par),
+                       gsub("\\_\\d$", "", par),
+                       par)) |>
+  select(CU, par, value) |>
+  filter(!c(par %in% c("ny", "nstk", "nsim")))
+
+sim.pars.process$par[sim.pars.process$par == "alpha"]<- "$\\alpha$"
+sim.pars.process$par[sim.pars.process$par == "beta"]<- "$\\beta$"
+sim.pars.process$par[sim.pars.process$par == "phi"]<- "$\\phi$"
+sim.pars.process$par[sim.pars.process$par == "pi_1"]<- "$p_1$"
+sim.pars.process$par[sim.pars.process$par == "pi_2"]<- "$p_2$"
+sim.pars.process$par[sim.pars.process$par == "pi_3"]<- "$p_3$"
+sim.pars.process$par[sim.pars.process$par == "pi_4"]<- "$p_4$"
+sim.pars.process$par[sim.pars.process$par == "for_error"]<- "Forecast Error"
+sim.pars.process$par[sim.pars.process$par == "OU"]<- "Outcome Error"
+
+names(sim.pars.process) <- c("Conservation Unit", "Parameter", "Median (50$^{\\text{th}}$ percentiles) or value")
+
+sim.pars.process |>
+  dplyr::arrange(`Conservation Unit`) |>
+  dplyr::mutate(`Conservation Unit` = tidyr::replace_na(`Conservation Unit`, " ")) |>
+  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
+  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
+  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
+  csasdown::csas_table(format = "latex",
+                       caption = "(ref:tab-ref-sim-params)", 
+                       repeat_header = TRUE,
+                       align = "llc") |>
+kableExtra::collapse_rows(columns=1, latex_hline = "major")
+
 ```
 
 \clearpage
@@ -847,7 +868,7 @@ rob_case_pms |>
   dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
   dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
   csasdown::csas_table(format = "latex",
-                       caption = "(ref:tab-rob-perf-measures)", 
+                       caption = "(ref:tab-rob2-perf-measures)", 
                        repeat_header = TRUE,
                        align = "llc") |>
 kableExtra::collapse_rows(columns=1, latex_hline = "major")
@@ -857,56 +878,3 @@ kableExtra::collapse_rows(columns=1, latex_hline = "major")
 
 
 
-\clearpage
-(ref:tab-ref-sim-params) Parameters upon which closed-loop simulation model to assess impact of possible future fishery management measures was conditioned. $alpha$ values are those under the reference scenario (most recent generation productivity; 2013-2018), and $alpha$ values for alternative (robustness) productivity scenarios are found in Table \@ref(tab:OM-scenarios).
-
-```{r tab-ref-sim-params, results="asis"}
-sim.pars <- data.frame(t(read.csv(here("analysis/data/generated/sim_parsTVA.csv"))))[-1,]
-names(sim.pars) <- c("q_25", "median", "q_75", "mean")
-
-sim.pars <- sim.pars |>
-  mutate(across(everything(), ~as.numeric(.)))
-
-sim.pars[grepl("^beta", rownames(sim.pars)),] <- sim.pars[grepl("^beta", rownames(sim.pars)),]*10000 # scale beta
-
-sim.pars.process <- sim.pars |>
-  mutate(across(everything(), function(x){round(x, 2)})) |>
-  mutate(across(everything(), ~as.character(.))) |>
-  mutate(par = rownames(sim.pars)) |>
-  mutate(value = if_else(grepl("^alpha|beta|pi", par), 
-                         paste0(median, " (", q_25, ",", q_75, ")"),
-                         median)) |>
-  mutate(CU_id = if_else(grepl("^alpha|beta", par),
-                         gsub("\\D", "", par), NA)) |>
-  left_join(data.frame(CU_id=as.character(1:9), CU=CU_name_lookup$CU_pretty), by = "CU_id") |>
-  mutate(par = if_else(grepl("^alpha|beta", par),
-                       gsub("\\_\\d$", "", par),
-                       par)) |>
-  select(CU, par, value) |>
-  filter(!c(par %in% c("ny", "nstk", "nsim")))
-
-sim.pars.process$par[sim.pars.process$par == "alpha"]<- "$\\alpha$"
-sim.pars.process$par[sim.pars.process$par == "beta"]<- "$\\beta$"
-sim.pars.process$par[sim.pars.process$par == "phi"]<- "$\\phi$"
-sim.pars.process$par[sim.pars.process$par == "pi_1"]<- "$\\pi_1$"
-sim.pars.process$par[sim.pars.process$par == "pi_2"]<- "$\\pi_2$"
-sim.pars.process$par[sim.pars.process$par == "pi_3"]<- "$\\pi_3$"
-sim.pars.process$par[sim.pars.process$par == "pi_4"]<- "$\\pi_4$"
-sim.pars.process$par[sim.pars.process$par == "for_error"]<- "Forecast Error"
-sim.pars.process$par[sim.pars.process$par == "OU"]<- "Outcome Error"
-
-names(sim.pars.process) <- c("Conservation Unit", "Simulation Parameter", "Median (50$^{\\text{th}}$ percentiles) or value")
-
-sim.pars.process |>
-  dplyr::arrange(`Conservation Unit`) |>
-  dplyr::mutate(`Conservation Unit` = tidyr::replace_na(`Conservation Unit`, " ")) |>
-  dplyr::mutate_all(function(x){gsub("&", "\\\\&", x)}) |> 
-  dplyr::mutate_all(function(x){gsub("%", "\\\\%", x)}) |>
-  dplyr::mutate_all(function(x){gsub("\\\\n","\n", x)}) |>
-  csasdown::csas_table(format = "latex",
-                       caption = "(ref:tab-ref-sim-params)", 
-                       repeat_header = TRUE,
-                       align = "llc") |>
-kableExtra::collapse_rows(columns=1, latex_hline = "major")
-
-```
