@@ -183,7 +183,7 @@ CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.",
 
 ```
 
-(ref:tab-cons-unit-smu) Stock Management and Conservation Units that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each Conservation Unit to the Yukon Chinook salmon Stock Management Unit based on reconstructed border passage is also shown. 
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units (CUs) that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each CU to the Yukon Chinook salmon Stock Management Unit based on reconstructed border passage is also shown. Contributions of individual CUs to the Porcupine SMU are unknown at present.  
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
