@@ -99,7 +99,7 @@ knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 
 (ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), with proposed Upper Stock Reference point (USR; green dashed line) and Lower Fisheries Reference Point (FRP-L; red dashed line), and (b) harvest rates for the Yukon Chinook salmon Stock Management Unit (blue) and Removal Reference point (RR; red dashed line). Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
 
-```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)"}
+```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)", out.width = "100%"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
 

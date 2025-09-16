@@ -658,8 +658,8 @@ cowplot::plot_grid(a, b, labels="auto", ncol=2)
 
 
 my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc.PNG"), width = 13, height = 6)
-ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 975*2, height = 350*2,
-       units="px", dpi=240)
+my.ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 8, height = 3)
+
 
 
 # CU run-reconstructions plot ----
@@ -816,7 +816,7 @@ ggplot(yukn_rel, aes(x=RELEASE_YEAR, y=TotalRelease/1000, fill = REL_CU))+
         axis.title = element_text(size=13))
 
 my.ggsave(here("analysis/plots/trib-rr/hatch_bar.PNG"))
-my.ggsave(here("csasdown/figure/hatch_bar.PNG"))
+my.ggsave(here("csasdown/figure/hatch_bar.PNG"),width= 8, height = 5, dpi= 180)
 
 
 
