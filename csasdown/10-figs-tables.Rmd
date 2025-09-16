@@ -25,7 +25,7 @@ knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 \begin{landscapepage}
 (ref:fig-trib-spawn) Estimates of spawner abundances over time by tributary assessment project. For more details on each assessment project see Table 2.
 
-```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)", out.width = "90%"}
+```{r fig-trib-spawn, fig.cap = "(ref:fig-trib-spawn)", out.width = "95%"}
 knitr::include_graphics(here::here("csasdown/figure/trib-escape.png"))
 ```
 \end{landscapepage}

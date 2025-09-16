@@ -156,7 +156,7 @@ knitr::include_graphics(here::here("csasdown/figure/fishwheel-catchability.png")
 
 The model tended to fit the sonar count data well (Figure \@ref(fig:fig-eagle-RR-fits)) and in contrast, model fits to the fishwheel counts for 1985--2007 were more variable, which was expected due to the relatively imprecise nature of the fishwheel data (Figure \@ref(fig:fig-fw-RR-fits)). In years when sonar and fishwheel counts overlapped (2005--2007), the tight correspondence between model estimates and sonar counts resulted in relatively poorer fits to the fishwheel data. 
 
-In the pre-sonar years the model attempted to simultaneously fit to the fishwheel relative abundance indices and the externally derived absolute  border passage index (based on mark-recapture projects) so the model tended to generate estimates of total border passage that were in close alignment with the border passage index (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the border passage index had essentially no effect on model estimates, and the model fit perfectly to the sonar based estimates of total border passage 2005--2024.
+In the pre-sonar years the model attempted to simultaneously fit to the fishwheel relative abundance indices and the externally derived absolute  border passage index (based on mark-recapture projects) so the model tended to generate estimates of total border passage that were in close alignment with the border passage index (Figure \@ref(fig:fig-fw-RR-fits)). As more reliable abundance data (i.e., sonar based estimates beginning in 2005) became available, the border passage index had essentially no effect on model estimates, and the model more closely fit to the sonar based estimates of total border passage 2005--2024.
 
 Because the reconstructions of Northern CU border passage included fish from the McQuesten River, we post-hoc estimated the annual contribution of the McQuesten River based on genetic analyses of samples collected at Eagle from 2013-2023 (mean:0.008; SD:0.006). Specifically, for each year we took a random draw from the average McQuesten River contribution to border passage, and a random draw from the border passage estimate for that year, and repeated this 1000 times. We then removed these estimates of McQuesten River border passage from the Northern CU and added them to the reconstructions of Stewart CU border passage. 
 
@@ -190,7 +190,7 @@ knitr::include_graphics(here::here("csasdown/figure/indexFitsg2.png"))
 knitr::include_graphics(here::here("csasdown/figure/CU-RR-fits.png"))
 ```
 \clearpage
-(ref:tab-spawn-est) Median estimates of spawner abundance by CU, summed across CU ("Aggregate"), and as previously estimated for the stock aggregate (Connors et al. 2022). 
+(ref:tab-spawn-est) Median estimates of spawner abundance by CU, summed across CU ("Aggregate"), and as previously estimated for the stock aggregate (Connors et al. 2022) but with data updated through 2024. 
 ```{r tab-spawn-est, results='asis'}
 spawntable <- read.csv(here::here("analysis/data/generated/spawn-table.csv"))
 names(spawntable)[1] <- "Conservation Unit or stock aggregate"

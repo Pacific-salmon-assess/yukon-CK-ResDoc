@@ -8,7 +8,7 @@ Population Dynamics,
 ,
 Model predictions,
 (TB.2.6) Predicted daily border counts,$\widehat{E}_{igyd}=q_gy^{(E)}N_{iyd}$
-(TB.2.7) Predictedborder passage index,$\widehat{I}_y=\sum_i\widehat{R}_{iy}$
+(TB.2.7) Predicted border passage index,$\widehat{I}_y=\sum_i\widehat{R}_{iy}$
 (TB.2.8) Predicted CU composition,$p_{iyd}=N_{iyd}/\sum_jN_{jyd}$
 ,
 Objective function,
@@ -20,6 +20,6 @@ Objective function,
 (TB.2.14) Multinomial NLL for stock composition,$L_x=\sum_g\sum_y\sum_d[-\ln\Gamma(\sum_ix_{igyd}+1)+\sum_i\ln\Gamma(x_{igyd}+1)-\sum_ix_{igyd}\ln(p_{iyd})]$
 (TB.2.15) Border passage index std. dev.,$\tau_y=\sqrt{\ln(CV_t^2+1)}$
 (TB.2.16) Lognormal NLL for run size index,$L_I=\sum_{y=1985}^{2008} \left[ \ln\tau_y+\frac{\ln2\pi}2+\frac{\left(\ln I_y  \;-\; \ln\widehat{I}_y\right)^2} {2\tau_y^2} \right]$
-(TB.2.17) Multivariate-normal likelihood penalty on process errors,$L_\epsilon=0.5 \left[ \ln|\boldsymbol{\sigma}| - \boldsymbol{\epsilon}^T \boldsymbol{\sigma^{-1}} \boldsymbol{\epsilon} - \ln2\pi \right]$ 
+(TB.2.17) Multivariate-normal likelihood penalty on process errors,$L_\epsilon=0.5 \left[ \ln|\boldsymbol{\sigma}| - \boldsymbol{\epsilon}^T \boldsymbol{\sigma^{-1}} \boldsymbol{\epsilon} \right]$ 
 (TB.2.18) Border passage likelihood penalty in fish wheel years,"$L_R=\sum_{y=1985}^{2005} \left[ \ln1 + \frac{\ln2\pi}2 + \frac{ \left( \ln \widehat{R}_{iy} \;-\; \ln\widehat{R}_{i,y-1} \right)^2} {2} \right]$"
 (TB.2.19) Objective function,$L = L_E + L_x + L_I + L_\varepsilon + L_R$
