@@ -136,7 +136,7 @@ Daily border passage counts were predicted by scaling the daily model-predicted 
 
 Daily salmon counts at the border were assumed to arise from negative-binomial ($NB$) distributions (Table \@ref(tab:tab-rr-eqns).13). The ($NB$) distribution, describing the number of successes in a series of Bernoulli trials before $r$ failures occur (with probability of success $p$), is broadly applicable as a model for overdispersed count data. We parameterized the $NB$ distribution in terms of the mean count $\eta$ and the dispersion $\phi$ (Table \@ref(tab:tab-rr-eqns).10-11). The variance of this distribution is $\tau^2=\eta+\eta^2\phi$, hence the $NB$ distribution is equivalent to the Poisson when $\phi=0$. We set $\phi=0$ for sonar counts, as these counts are believed to be relatively accurate. We set $\phi=0.1$ for the fishwheel counts.
 
-Conservation Unit composition data ($x_{igyd}$), which were based on summing the individual genetic assignment probabilities and rescaling to the total sample size for that CU and day thereby accounting for uncertainty in genetic assignments, were fitted using a multinomial likelihood (Table \@ref(tab:tab-rr-eqns).14). For each year/day/gear combination, the observed number of Chinook salmon by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_in_i$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a fixed value for the $NB$ dispersion parameter when modelling daily counts as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
+Conservation Unit composition data ($x_{igyd}$), which were based on summing the individual genetic assignment probabilities and rescaling to the total sample size for that CU and day thereby accounting for uncertainty in genetic assignments, were fitted using a multinomial likelihood (Table \@ref(tab:tab-rr-eqns).14). For each year/day/gear combination, the observed number of Chinook salmon by CU, $n_1,…,n_9$, was assumed to arise from a multinomial distribution with sample size $n=\sum_in_i$  and probabilities equal to the relative proportions of passage by CU for that year/day. Sample sizes in multinomial distributions for fisheries composition data are typically down-weighted to an “effective” sample size to account for correlations among fish within a given sample. However, we did not down-weight sample sizes as they were already relatively small. We note, however, that by applying a relatively large and fixed value for the $NB$ dispersion parameter when modelling daily counts, as well as to the total run size index likelihood (see below), we are effectively down weighting the stock composition data.
 
 Total border passage indices were assumed to arise from a lognormal distribution with standard deviation $\tau_y$, which was derived from the annual estimates of the CV in the border passage index (Table \@ref(tab:tab-rr-eqns).13). Process errors in arrival timing are assumed to arise from a zero-mean multivariate normal distribution with covariance $\sum$ (Table \@ref(tab:tab-rr-eqns).15).     
 
@@ -583,14 +583,14 @@ To derive biological benchmarks from the egg mass-recruitment models we used the
   \label{eq:get-YPR}
 \end{equation}
 
-where $U_{i,j} = 1-exp(-F)$ and time block $j$ was either the first generation (1985-1990), all years (1985-2024), or the last generation (2019-2024) of observed spawners. We then could calculate equilibrium recruitment as:
+where $U_{i,j} = 1-exp(-F)$ assuming all ages and sexes were equally vulnerbale to harvest, and time block $j$ was either the first generation (1985-1990), all years (1985-2024), or the last generation (2019-2024) of observed spawners. We then could calculate equilibrium recruitment as:
 
 \begin{equation}
   R_{eq,j} = \frac{log(\alpha z_{PR,j})}{\beta z_{PR,j}}
   \label{eq:get-eqR}
 \end{equation}
 
-Once the scale of the equilibrium population fished at $F_{max}$ was obtained from Eqn. \@ref(eq:get-eqR), we calculated the age- or sex-structured total return, harvest, and spawning escapement:
+Once the scale of the equilibrium population fished at $F$ was obtained from Eqn. \@ref(eq:get-eqR), we calculated the age- or sex-structured total return, harvest, and spawning escapement:
 
 \begin{equation}
   \begin{aligned}
@@ -603,7 +603,7 @@ Once the scale of the equilibrium population fished at $F_{max}$ was obtained fr
 
 and calculated totals for harvest and spawning escapement by summing over ages and sexes. 
 
-We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F_{max}$ to estimate demographically based biological benchmarks $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
+We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F$ to estimate demographically based biological benchmarks $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
 ```{r deps}
 source("../analysis/R/load.R")
 ```
