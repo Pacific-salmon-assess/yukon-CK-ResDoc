@@ -1,24 +1,19 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 #  FIGURES
 
 (ref:fig-map-spawn) Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
-```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)"}
+```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)", out.width = "80%"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
 ```
 
 (ref:fig-map-gsi) Locations of Chinook salmon genetic baseline samples in the Canadian portion of the Yukon River watershed. Sites are scaled to the number of samples collected to date.
-```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)"}
+```{r fig-map-gsi, fig.cap = "(ref:fig-map-gsi)", out.width = "80%"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-gsi.png"))
 ```
 
 (ref:fig-map-assess) Major assessment projects for adult Chinook salmon in the Canadian portion of the Yukon River watershed. A full list of assessment projects is provided in Table 2.
 
-```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)"}
+```{r fig-map-assess, fig.cap = "(ref:fig-map-assess)", out.width = "80%"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-assess.png"))
 ```
 

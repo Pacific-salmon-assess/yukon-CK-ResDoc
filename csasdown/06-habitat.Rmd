@@ -1,4 +1,5 @@
 # HABITAT {#sec:HABITAT}
+
 ## FRESHWATER HABITAT CONDITIONS
 
 The terrain of Yukon includes mountains, plateaus, and valleys that support a diverse mosaic of forest, tundra, grassland, shrubland, and wetland ecosystems. Terrestrial and aquatic ecosystems are considered to be relatively intact across the Yukon watershed [@brabets2000environmental] and access to most of the watershed is limited to boat or aircraft. The Yukon River has considerable seasonable variability in environmental conditions, with summer flows substantially higher than winter flows [@brabets2000environmental]. Streamflows as low as 1,200 $m^3s^{-1}$ occur in the winter, and streamflow discharge pulses of more than 19,800 $m^3s^{-1}$ occur in the spring [@USGS2022]. The river freezes throughout the entire watershed in the winter and ice breakup occurs in late spring, typically by mid-May [@eiler2023swimming]. The mainstem river is relatively deep, greater than 20m in the lower river, but becomes shallower, 8--10m, in the Canadian portion of the drainage [@eiler2023swimming].
