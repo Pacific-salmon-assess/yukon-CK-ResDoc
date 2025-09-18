@@ -4,8 +4,8 @@ Code to analyze Yukon Chinook salmon data and generate corresponding CSAS Resear
 
 
 ## To reproduce the analysis:
- - Fork or clone this repository
- - Make sure all software [dependencies](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/790691908819bbc86733b1c1e72aea8dec73c0a5/analysis/R/load.R) are installed  
+ - Clone or fork this repository
+ - Recreate the project environment by running [`load_environment.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/load_environment.R), then restart your R session.
  - Process the raw Genetic Stock Identification ([`gsi-wrangle.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/gsi-wrangle.R)) and age, sex, length ([`asl_wrangle.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/asl_wrangle.R)) datasets.
  - Run the run-reconstruction model fitting code ([`RR.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/run-reconstructions/RR.R)) to fit the run-reconstructions models, and generate time series of spawners, harvest and age, sex and size composition.
  - Run the spawner-recruit model fitting code ([`SR_fit.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_fit.R) to fit the spawner-recruit models, making sure you toggle `refit <- TRUE` on.
