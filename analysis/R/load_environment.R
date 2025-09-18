@@ -4,3 +4,5 @@
 
 install.packages("renv")
 renv::restore()
+
+# It is a good idea to restart your R session at this point.
