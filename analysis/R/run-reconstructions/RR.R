@@ -5,11 +5,11 @@ library(tidyverse)
 source(here("analysis/R/run-reconstructions/initRR.R"))
 
 # generate data file if inputs updated
-# source(here("analysis/R/run-reconstructions/procData.R"))
-# processData()
+source(here("analysis/R/run-reconstructions/procData.R"))
+processData()
 
 # fit run-reconstruction model
-# rpt <- fitRR()
+rpt <- fitRR()
 
 # load run-reconstruction model fit
 load(here("analysis/R/run-reconstructions/fittedMod/rpt.Rdata"))
