@@ -58,6 +58,9 @@ HCR_grps <- list(base = c("no.fishing", "fixed.ER.60", "IMEG"),
 
 
 #functions -------------------------------------------------------------------------------
+
+load <- base::load # make sure renv::load() does not mask base::load()
+
 my.ggsave <- function(filename = default_name(plot), plot = last_plot(),
                       width= 9, height = 5.562, dpi= 180){
   ggsave(filename=filename, plot = last_plot(), width=width, height=height, dpi=dpi, bg="white")
