@@ -54,13 +54,13 @@ for(i in unique(sp_har$CU)){
     b <- sub_AR1_eggs_pars$beta[j]
     ER.pred[,j] <- (exp(ln_a)*em*exp(-b*em))
   }
-  ER.pred <- as.data.frame(cbind(em,t(apply(ER.pred, 1, quantile,probs=c(0.1,0.5,0.9), na.rm=T))))|>
+  ER.pred <- as.data.frame(cbind(em,t(apply(ER.pred, 1, quantile, probs=c(0.1,0.5,0.9), na.rm=T))))|>
     round(2) |>
     mutate(CU = i)
 
   ER.preds <- rbind(ER.preds, ER.pred)
 
-  #benchamrks based on early demographics
+  #benchmarks based on early demographics
   bench_early <- matrix(NA,length(sub_AR1_eggs_pars$lnalpha),2,
                   dimnames = list(seq(1:length(sub_AR1_eggs_pars$lnalpha)), c("Smsy","Smsr")))
 
@@ -247,7 +247,6 @@ write.csv(a.yrs.all, here("analysis/data/generated/demographic_TVA.csv"),
 my.ggsave(here("analysis/plots/SR-models/demo_bench_compare_early-vs-recent.PNG"))
 
 
-# source(inference_figs.R)
 bench.posts <- readRDS(here("analysis/data/generated/benchmark_posteriors.rds"))
 
 bench_eggs <- bench_AR1_eggslong|> filter(period =="recent") |>

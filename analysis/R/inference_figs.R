@@ -269,6 +269,8 @@ write.csv(brood.all.long, here("analysis/data/generated/brood_table_long.csv"),
 a.yrs.all$model<-"spw"
 write.csv(a.yrs.all, here("analysis/data/generated/spw_TVA.csv"),
           row.names = FALSE)
+
+
 # make key plots for pub -----------------------------------------------------------------
 
 # SR fits ----
