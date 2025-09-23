@@ -604,9 +604,6 @@ Once the scale of the equilibrium population fished at $F$ was obtained from Eqn
 and calculated totals for harvest and spawning escapement by summing over ages and sexes. 
 
 We then treated $H_{eq,i,j}$ or $R_{eq,i,j}$ as the objective value to maximize via iterative numerical search on the quantity $F$ to estimate demographically based biological benchmarks $S_{MSY,j}$ or $S_{MSR,j}$ for a given time period, respectively.
-```{r deps}
-source("../analysis/R/load.R")
-```
 
 
 (ref:fig-bench-compare) Comparison of alternative (a) lower and (b) upper biological benchmarks as well as (c) estimates of maximum returns ($S_{MSR}$) or equilibrium population size ($S_{EQ}$) across CUs. The numeric value in legends refers to a percentage of the benchmark and those labelled "egg-mass" are derived from analyses that account for demographic change and are based on demographic characteristics observed over the most recent generation (2019-2024). Bars are medians and whiskers are upper 95th percentiles.
@@ -648,31 +645,8 @@ See supporting document: "LIMIT REFERENCE POINTS AND WILD SALMON POLICY RAPID ST
 
 # COMPUTING ENVIRONMENT {#app:fifth-appendix}  
 
-This document aims to be transparent and reproducible. If you made it this far in and are still paying attention you deserve a gold star. All data and code to reproduce the analysis in the report, and generate it, is available in [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main?tab=readme-ov-file#yukon-ck-resdoc).   
+This document aims to be transparent and reproducible. All data and code to reproduce the analysis in the report, and generate it, is available in the [GitHub repository](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/tree/main?tab=readme-ov-file#yukon-ck-resdoc).   
 
-A document describing model diagnostics and some additional figures can be found within the repository at [`SR-diagnostics.html`](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). 
-R packages (and dependencies therein) necessary to recreate our analysis and documentation are: 
-```{r env}
-suppressWarnings({suppressMessages({
-library(here)
-library(tidyverse)
-library(ggpubr)
-library(ggcorrplot)
-library(ggsidekick)
-library(csasdown)
-library(kableExtra)
-library(rstan)
-library(gsl)
-library(cowplot)
-library(viridis)
-})})
-pkgs <- sort(c("here", "tidyverse", "csasdown", "kableExtra", "rstan", "gsl", "cowplot", "viridis","ggpubr","ggcorrplot"))
+A document describing model diagnostics and some additional figures can be found in the repository at [`SR-diagnostics.html`](https://pacific-salmon-assess.github.io/yukon-CK-ResDoc/analysis/R/SR-diagnostics.html). 
 
-pkg_table <- devtools::session_info()$packages %>%
-  dplyr::filter(package %in% pkgs) %>%
-  dplyr::select(package, loadedversion, date) %>%
-  dplyr::rename(Package = package, Version = loadedversion, Date = date) 
-
-rownames(pkg_table) <- NULL
-csasdown::csas_table(pkg_table)
-```
+R packages, versions, and dependencies necessary to recreate our analysis and documentation are tracked by the 'renv' package [@renvpkg] in the ['renv.lock'](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/renv.lock) file. This ensures full reproducibility by allowing others to recreate the R environment where the analyses herein were run.
