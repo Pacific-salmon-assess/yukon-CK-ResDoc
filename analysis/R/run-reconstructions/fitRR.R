@@ -17,7 +17,7 @@ fitRR <- function( ctlFile="analysis/R/run-reconstructions/fittedMod/estControlF
   init  <- ctrl$inits
 
   # Load abundance indices and stock composition data
-  load(here("analysis/data/chinookYkData.Rdata"))
+  load(here("analysis/data/generated/chinookYkData.Rdata"))
 
 
   # Dimensions

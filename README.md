@@ -1,15 +1,15 @@
 # yukon-CK-ResDoc
-Code to analyze Yukon Chinook salmon data and generate corresponding CSAS Research Document. Currently a work in progress titled:
-> Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. In review. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 92 p.
+Code to reproduce analysis and documentation for: 
+> Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. 2025. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 130 p.
 
 
 ## To reproduce the analysis:
  - Clone or fork this repository
- - Recreate the project environment by running [`load_environment.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/load_environment.R), then restart your R session.
+ - Recreate the project environment ([`load_environment.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/load_environment.R)), then restart your R session.
  - Process the raw Genetic Stock Identification ([`gsi_wrangle.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/gsi_wrangle.R)) and age, sex, length ([`asl_wrangle.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/asl_wrangle.R)) datasets.
- - Run the run-reconstruction model fitting code ([`RR.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/run-reconstructions/RR.R)) to fit the run-reconstructions models, and generate time series of spawners, harvest and age, sex and size composition.
- - Run the spawner-recruit model fitting code ([`SR_fit.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_fit.R) to fit the spawner-recruit models, making sure you toggle `refit <- TRUE` on.
- - Run the egg mass spawner-recruit model fitting code ([`R_fit_eggs.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/732b656ca908b2be3552e173b73f537cb82ef376/analysis/R/SR_fit_eggs.R)) and generate demographic reference points ([`demographic_ref_points.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/732b656ca908b2be3552e173b73f537cb82ef376/analysis/R/demographic_ref_points.R))
+ - Run the run-reconstruction model fitting code ([`RR.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/run-reconstructions/RR.R)) to fit the multi-Conservation Unit border passage reconstructions model, and generate time series of spawners, harvest and age, sex, and size composition.
+ - Run the spawner-recruit model fitting code ([`SR_fit.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/SR_fit.R)) to fit the spawner-recruit models, making sure you toggle `refit <- TRUE` on.
+ - Run the egg mass spawner-recruit model fitting code ([`SR_fit_eggs.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/732b656ca908b2be3552e173b73f537cb82ef376/analysis/R/SR_fit_eggs.R)) and generate demographic reference points ([`demographic_ref_points.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/732b656ca908b2be3552e173b73f537cb82ef376/analysis/R/demographic_ref_points.R))
  - Run the forward simulation code ([`fwd_sim.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/fwd_sim.R))
  - Run the figure and benchmark generation code ([`inference_figs.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/inference_figs.R)) to generate key plots and tables for inference.
  - Run the forward simulation figure generation code ([`fwd_sim_figs.R`](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/main/analysis/R/fwd_sim_figs.R))
