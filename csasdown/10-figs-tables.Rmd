@@ -1,6 +1,6 @@
 #  FIGURES
 
-(ref:fig-map-spawn) Yukon Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
+(ref:fig-map-spawn) Yukon Chinook Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
 ```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)", out.width = "80%"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
@@ -42,7 +42,7 @@ knitr::include_graphics(here::here("csasdown/figure/cu-escape.png"))
 
 \clearpage
 
-(ref:fig-CU-comps) Percentage contribution of each Conservation Unit (CU) to reconstructed total return abundance of the Yukon Chinook salmon Stock Management Unit over time. Estimates are based on the multi-CU run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative genetic sampling of total returns. 
+(ref:fig-CU-comps) Percentage contribution of each Conservation Unit (CU) to reconstructed total return abundance of the Yukon Chinook Stock Management Unit over time. Estimates are based on the multi-CU run-reconstruction model that explicitly accounts for missing years and the sometimes unrepresentative genetic sampling of total returns. 
 
 ```{r fig-CU-comps, fig.cap = "(ref:fig-CU-comps)"}
 knitr::include_graphics(here::here("csasdown/figure/percent-cc-contribution.png"))
@@ -68,7 +68,7 @@ knitr::include_graphics(here::here("csasdown/figure/par-ref-hist.png"))
 knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 ```
 
-(ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Salmon Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
+(ref:fig-prod-trends) Estimated average intrinsic productivity (Ricker $\alpha$ parameter; maximum recruits per spawner) over time by Conservation Unit in the Yukon Chinook Stock Management Unit. The dashed grey line is replacement (recruits equal spawners).
 
 ```{r fig-prod-trends, fig.cap = "(ref:fig-prod-trends)"}
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
@@ -86,19 +86,19 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.
+(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.The * for the Porcupine and Old Crow statuses indicates they are based on a combined assessment.
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
 ```
 
-(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), with proposed Upper Stock Reference point (USR; green dashed line) and Lower Fisheries Reference Point (FRP-L; red dashed line), and (b) harvest rates for the Yukon Chinook salmon Stock Management Unit (blue) and Removal Reference point (RR; red dashed line). Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
+(ref:fig-smu-trends) Reconstructed (a) total run size (orange) and spawning escapement (grey), with proposed Upper Stock Reference point (USR; green dashed line) and Lower Fisheries Reference Point (FRP-L; red dashed line), and (b) harvest rates for the Yukon Chinook Stock Management Unit (blue) and Removal Reference point (RR; red dashed line). Thick lines are medians and shaded areas indicate 95% credible intervals. Note that harvest rate in some years (e.g., 2017 and 2019) may be overestimated due to spawning migration mortality that was unaccounted for in the model that was used to estimate them [@connors_estimates_2023].  
 
 ```{r fig-smu-trends, fig.cap = "(ref:fig-smu-trends)", out.width = "100%"}
 knitr::include_graphics(here::here("csasdown/figure/SMU-run-esc.png"))
 ```
 
-(ref:fig-enhance-proj) Total Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 
+(ref:fig-enhance-proj) Total Yukon River Chinook salmon releases by facility/type and Conservation Unit. Note: Location of brood collection and release location, by CU, are the same in all cases except for 
 \~250,000 fry from the Upper Yukon that were released in the Tatchun River (Middle Yukon CU) between 2006--2011.
 
 ```{r fig-enhance-proj, fig.cap = "(ref:fig-enhance-proj)"}
@@ -472,7 +472,7 @@ demo.pars |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Yukon Chinook salmon.
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Yukon Chinook.
 
 ```{r tab-factors-summary, results="asis"}
 # spawners
