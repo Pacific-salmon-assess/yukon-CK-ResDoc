@@ -1,6 +1,6 @@
 #  FIGURES
 
-(ref:fig-map-spawn) Yukon Chinook Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
+(ref:fig-map-spawn) Yukon River Chinook salmon Conservation Units and "major" and "minor" spawning locations as cataloged in @brown2017.
 
 ```{r fig-map-spawn, fig.cap = "(ref:fig-map-spawn)", out.width = "80%"}
 knitr::include_graphics(here::here("csasdown/figure/yukon-map-spawn.png"))
@@ -74,7 +74,7 @@ knitr::include_graphics(here::here("csasdown/figure/SR_fits_AR1.png"))
 knitr::include_graphics(here::here("csasdown/figure/changing_productivity.png"))
 ```
 
-(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners by age (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner). Data taken from fish sampled at Eagle and White and Sheep rocks.  
+(ref:fig-asl) Age, sex, length, and reproductive output trends in Yukon River Chinook salmon over time. a) sex ratio, represented as proportion of spawners that are female, b) body length of female spawners by age (mid eye to tail fork length), c) proportion of returning spawners in each age class over time, d) average reproductive output of female spawners (eggs per female spawner). Data taken from fish sampled at Eagle and White and Sheep rocks.  
 
 ```{r fig-asl, fig.cap = "(ref:fig-asl)"}
 knitr::include_graphics(here::here("csasdown/figure/asl.png"))
@@ -86,7 +86,7 @@ knitr::include_graphics(here::here("csasdown/figure/asl.png"))
 knitr::include_graphics(here::here("csasdown/figure/EM-R_fits.png"))
 ```
 
-(ref:fig-rapid-status) Yukon Chinook Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.The * for the Porcupine and Old Crow statuses indicates they are based on a combined assessment.
+(ref:fig-rapid-status) Yukon River Chinook salmon Wild Salmon Policy statuses for years with applicable data. Each row summarizes the statuses available for each Conservation Unit in the Yukon River and Porcupine Stock Management Units.The * for the Porcupine and Old Crow statuses indicates they are based on a combined assessment.
 
 ```{r fig-rapid-status, fig.cap = "(ref:fig-rapid-status)"}
 knitr::include_graphics(here::here("csasdown/figure/rapid-status.png"))
@@ -122,7 +122,7 @@ knitr::include_graphics(here::here("csasdown/figure/sim-schematic.png"))
 knitr::include_graphics(here::here("csasdown/figure/OM-productivity-scenarios.png"))
 ```
 
-(ref:fig-hcrs) Illustration of the suite of harvest control rules considered in the closed-loop simulations. See Table \@ref(tab:hcrs) for description of each harvest control rule. The x-axis range in the plot corresponds approximately to the historical range of Yukon Chinook salmon run sizes.
+(ref:fig-hcrs) Illustration of the suite of harvest control rules considered in the closed-loop simulations. See Table \@ref(tab:hcrs) for description of each harvest control rule. The x-axis range in the plot corresponds approximately to the historical range of Yukon River Chinook salmon run sizes.
 
 ```{r fig-hcrs, fig.cap = "(ref:fig-hcrs)"}
 knitr::include_graphics(here::here("csasdown/figure/HCR_visualize.png"))
@@ -178,7 +178,7 @@ CU_name_lookup <- data.frame(CU = c("NorthernYukonR.andtribs.",
 
 ```
 
-(ref:tab-cons-unit-smu) Stock Management and Conservation Units (CUs) that make up the Yukon Chinook salmon major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each CU to the Yukon Chinook salmon Stock Management Unit based on reconstructed border passage is also shown. Contributions of individual CUs to the Porcupine SMU are unknown at present.  
+(ref:tab-cons-unit-smu) Stock Management and Conservation Units (CUs) that make up the Yukon Chinook major fish stock prescribed under the Fish Stock Provisions of Canada's *Fisheries Act*. The average annual percentage contribution of each CU to the Yukon Chinook Stock Management Unit based on reconstructed border passage is also shown. Contributions of individual CUs to the Porcupine SMU are unknown at present.  
 ```{r tab-cons-unit-smu, results='asis'}
 smucutable <- read.csv(here::here("csasdown/data/tab-cons-unit-smu.csv"))
 names(smucutable) <- gsub("\\.", " ", names(smucutable))
@@ -472,7 +472,7 @@ demo.pars |>
 
 \clearpage
 
-(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Yukon Chinook.
+(ref:tab-factors-summary) Summary of anthropogenic, ecosystem, and climate factors affecting hypothesized to influence Yukon River Chinook salmon.
 
 ```{r tab-factors-summary, results="asis"}
 # spawners
