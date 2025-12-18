@@ -2,7 +2,7 @@
 Code to reproduce analysis and documentation for: 
 > Connors, B.M., O’Dell, A., Hunter, H., Glaser, D., Gill, J., Rossi, S., and Churchland, C. 2025. Stock status and biological and fishery consequences of alternative harvest and rebuilding actions for Yukon River Chinook salmon (*Oncorhynchus tshawytscha*). DFO Can. Sci. Advis. Sec. Res. Doc. 2025/nnn. iv + 130 p.
 
-An in press version of the Research Document is available [here](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/dba18480b9a538ac8aec31df5903ccdb26448b88/Yukon-chinook-resdoc.4Nov2025.pdf).
+An in press version of the Research Document is available [here](https://github.com/Pacific-salmon-assess/yukon-CK-ResDoc/blob/dba18480b9a538ac8aec31df5903ccdb26448b88/Yukon-chinook-resdoc.4Nov2025.pdf). And presentation summarizing the work at regional peer-review meeting is available [here]().
 
 ## To reproduce the analysis:
  - Clone or fork this repository
