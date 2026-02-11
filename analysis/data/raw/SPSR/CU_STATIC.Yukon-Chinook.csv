@@ -1,0 +1,13 @@
+CU_ID,CU_NAME,SMU_ID,LOWER_WSP_BENCHMARK,UPPER_WSP_BENCHMARK,LRP,USR,TR,RR,LIFE_HISTORY_TYPE,CU_TYPE
+CK-68,Yukon River-Teslin headwaters,Yukon Chinook Salmon,1019,2038,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-69,Upper Yukon River,Yukon Chinook Salmon,1079,2158,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-70,Big Salmon,Yukon Chinook Salmon,1370,2739,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-71,Nordenskiold,Yukon Chinook Salmon,319,638,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-71,Pelly,Yukon Chinook Salmon,2769,5539,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-73,Middle Yukon River and tributaries,Yukon Chinook Salmon,3891,7782,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-74,Stewart,Yukon Chinook Salmon,796,1592,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-75,White and tributaries,Yukon Chinook Salmon,1350,2700,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-76,North Yukon River and tributaries,Yukon Chinook Salmon,1609,3217,CU-status based,86000,86000,0.36,stream-type Chinook,
+CK-77,Salmon Fork,Porcupine Chinook Salmon,NA,NA,CU-status based,,,,stream-type Chinook,
+CK-78,Porcupine,Porcupine Chinook Salmon,NA,NA,CU-status based,,,,stream-type Chinook,
+CK-79,Old Crow,Porcupine Chinook Salmon,NA,NA,CU-status based,,,,stream-type Chinook,

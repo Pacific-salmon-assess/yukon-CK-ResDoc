@@ -615,11 +615,9 @@ b<- ggplot(SMU_RR |>
   theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5),
                         axis.title = element_text(size=12))
 
-cowplot::plot_grid(a, b, labels="auto", ncol=2)
+cowplot::plot_grid(a, b, labels="auto", ncol=1)
 
-
-ggsave(here("analysis/plots/trib-rr/SMU-run-esc-no ref points.PNG"), width = 975*2, height = 350*2,
-       units="px", dpi=240)
+my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc-no ref points.PNG"), width = 7, height = 5)
 
 # with reference points
 SMU_RR <- read.csv(here("analysis/data/raw/rr_95_table.csv")) |>
@@ -656,10 +654,10 @@ b<- ggplot(SMU_RR |>
   theme_sleek() + theme(plot.margin = margin(0.5,20,0.5,0.5),
                         axis.title = element_text(size=12))
 
-cowplot::plot_grid(a, b, labels="auto", ncol=2)
+cowplot::plot_grid(a, b, labels="auto", ncol=1)
 
 
-my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc.PNG"), width = 13, height = 6)
+my.ggsave(here("analysis/plots/trib-rr/SMU-run-esc.PNG"), width = 7, height = 5)
 my.ggsave(here("csasdown/figure/SMU-run-esc.PNG"), width = 8, height = 3)
 
 
