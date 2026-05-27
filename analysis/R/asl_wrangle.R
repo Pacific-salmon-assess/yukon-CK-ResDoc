@@ -302,6 +302,37 @@ ggplot(cu_age_all_yr, aes(x = CU, y = prop, fill=as.factor(age))) +
 my.ggsave(here("analysis/plots/SR-models/age-cu-all-yrs.PNG"))
 
 
+# wrangle for L. DeFilippo IPM modelling ----
+# fish wheel data
+fw_data <- fw_l |>
+  filter(!is.na(Age),
+         !is.na(Length),
+         !is.na(Sex)) |>
+  group_by(Year, Sex, Age) |>
+  summarise(mean_fl=sum(Length*nsel)/sum(nsel),
+            count = n()) |>
+  mutate(source = "FishWheel") |>
+  rename(year = Year,
+         sex = Sex,
+         age = Age)
 
 
+# eagle data
+eagle_data <- eagle_age_sex_len |>
+  filter(!is.na(Total.Age),
+         !is.na(Length),
+         Sex != "unknown",
+         Species != "Chum") |>
+  group_by(Sample.Year, Sex, Total.Age) |>
+  summarise(fl=mean(Length, na.rm = TRUE),
+            count = n()) |>
+  mutate(source = "Gillnet") |>
+  select(Sample.Year, Sex, Total.Age, fl, count,source)  |>
+  rename(year = Sample.Year,
+         sex = Sex,
+         age = Total.Age,
+         mean_fl = fl )
 
+cdn_yukon_age_length <- rbind(fw_data, eagle_data)
+
+write.csv(cdn_yukon_age_length, "analysis/data/generated/cdn_yukon_age_length.csv",row.names = FALSE)
