@@ -155,8 +155,11 @@ a <- ggplot(fem_age_comp, aes(fill=age_f, y=prop, x=Sample.Year)) +
         legend.title = element_text(size=9),
         legend.text = element_text(size=8),
         legend.position="top",
-        plot.margin = margin(10,20,0.5,20))
-
+        plot.margin = margin(10,20,0.5,20),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=10))
+a
+my.ggsave(here("analysis/plots/trib-rr/asl-c.PNG"))
 
 prop_females <- rowSums(fem_age_comps[,3:6])
 
@@ -171,7 +174,12 @@ b <- ggplot(sex_ratio, aes(x = Year, y = prop_fem)) +
   ylab("Proportion female") +
   coord_cartesian(ylim=c(0,1)) +
   theme_sleek() +
-  theme(plot.margin = margin(15,20,0.5,20))
+  theme(plot.margin = margin(15,20,0.5,20),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=10))
+b
+my.ggsave(here("analysis/plots/trib-rr/asl-a.PNG"))
+
 
 laa <- as.data.frame(fem_len_comp)%>%
   select(Sample.Year,age_4, age_5, age_6, age_7)%>%
@@ -189,9 +197,14 @@ c <- ggplot(laa, aes(x = Sample.Year, y = length)) +
   ylab("Female length \n  (mm; MEFL)") +
   theme_sleek() +
   facet_wrap(~age_f, scales = "free_y") +
-  scale_x_continuous(breaks=c(1985, 1995, 2005, 2015)) +
-  theme(strip.text.x = element_text(size=8),
+  scale_x_continuous(breaks=c(1990,2000,2010,2020)) +
+  theme(strip.text.x = element_text(size=15),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=10),
         plot.margin = margin(0.5,10,1,0.5))
+c
+my.ggsave(here("analysis/plots/trib-rr/asl-b.PNG"))
+
 
 d <- ggplot(reproOutput, aes(x = V1, y = reproOutputPerSpawnerEggs)) +
   geom_smooth(method="lm", color="grey") +
@@ -199,7 +212,12 @@ d <- ggplot(reproOutput, aes(x = V1, y = reproOutputPerSpawnerEggs)) +
   xlab("Year") +
   ylab("Average reproductive output \n (total eggs per spawner)") +
   theme_sleek() +
-  theme(plot.margin = margin(45,10,0.5,0.5))
+  theme(plot.margin = margin(45,10,0.5,0.5),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=10))
+d
+my.ggsave(here("analysis/plots/trib-rr/asl-d.PNG"))
+
 g <- ggarrange(b,c,a,d,
                labels = c("a", "b","c", "d"),
                heights = c(0.8,1))
@@ -207,8 +225,8 @@ g <- ggarrange(b,c,a,d,
 
 g
 my.ggsave(here("analysis/plots/trib-rr/asl.PNG"))
-ggsave(here("csasdown/figure/asl.PNG"), height = 550*2,
-       width = 700*2, units="px", dpi=200)
+ggsave(here("csasdown/figure/asl.PNG"), height = 550*3,
+       width = 700*3, units="px", dpi=200*2)
 
 
 # calculate total egg and egg mass time series for Jim M and Lukas DP
